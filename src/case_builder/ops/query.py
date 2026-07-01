@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Sequence
 
-from ..casefile import RECORD_FILES, CasefileError, load_records
+from ..casefile import RECORD_FILES, CasefileError, find_source, load_records, resolve_case_path
 from ..retrieval import index_case as _index_case
 from ..retrieval import query_case as _query_case
 from .policy import filter_public
@@ -28,6 +28,39 @@ def get_records(case_dir: str, record_type: str, *, include_private: bool = Fals
             "count": len(visible),
             "records": visible,
             "filtered": len(rows) - len(visible),
+        },
+    )
+
+
+def get_source_text(
+    case_dir: str,
+    source_id: str,
+    *,
+    include_private: bool = False,
+    max_chars: int | None = None,
+) -> OpResult:
+    try:
+        source = find_source(case_dir, source_id)
+    except CasefileError as exc:
+        return OpResult(name="get_source_text", ok=False, errors=[str(exc)])
+    if source.get("public_export") is False and not include_private:
+        return OpResult(
+            name="get_source_text",
+            ok=False,
+            errors=[f"Source {source_id} is public_export=false; pass include_private=True for internal review."],
+        )
+    text_path = resolve_case_path(case_dir, source.get("text_path"))
+    if not text_path or not text_path.exists():
+        return OpResult(name="get_source_text", ok=False, errors=[f"Source {source_id} has no readable text_path."])
+    text = text_path.read_text(encoding="utf-8")
+    truncated = max_chars is not None and len(text) > max_chars
+    return OpResult(
+        name="get_source_text",
+        data={
+            "source_id": source_id,
+            "text": text[:max_chars] if truncated else text,
+            "text_path": str(source.get("text_path")),
+            "truncated": truncated,
         },
     )
 
