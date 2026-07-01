@@ -23,6 +23,10 @@ agentic = [
   "langgraph-checkpoint-sqlite",
   "langsmith",
 ]
+llm = [
+  "langchain>=0.3",
+  "langchain-ollama>=0.2",
+]
 web-local = [
   "playwright>=1.50.0",
   "scrapy>=2.12.0",
