@@ -20,6 +20,7 @@ dev = [
 ]
 agentic = [
   "langgraph",
+  "langgraph-checkpoint-sqlite",
   "langsmith",
 ]
 web-local = [
