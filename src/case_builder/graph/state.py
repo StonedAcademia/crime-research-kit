@@ -10,7 +10,15 @@ class GraphState(TypedDict, total=False):
     title: str | None
     subject: str | None
     run_id: str | None
+    thread_id: str | None
     lanes: list[str]
+    source_urls: list[str]
+    source_ids: list[str]
+    packets: list[str]
+    approved_packets: list[str]
+    rejected_packets: list[dict[str, Any]]
+    export_approved: bool
+    index_enabled: bool
     planned_commands: list[list[str]]
     tool_results: list[dict[str, Any]]
     review_required: bool

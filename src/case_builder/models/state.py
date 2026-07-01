@@ -23,7 +23,15 @@ class CaseBuilderState:
     title: str | None = None
     subject: str | None = None
     run_id: str | None = None
+    thread_id: str | None = None
     lanes: list[str] = field(default_factory=list)
+    source_urls: list[str] = field(default_factory=list)
+    source_ids: list[str] = field(default_factory=list)
+    packets: list[str] = field(default_factory=list)
+    approved_packets: list[str] = field(default_factory=list)
+    rejected_packets: list[dict[str, Any]] = field(default_factory=list)
+    export_approved: bool = False
+    index_enabled: bool = False
     planned_commands: list[list[str]] = field(default_factory=list)
     tool_results: list[dict[str, Any]] = field(default_factory=list)
     review_required: bool = True
@@ -34,6 +42,8 @@ class CaseBuilderState:
     def normalized(self) -> "CaseBuilderState":
         if not self.run_id:
             self.run_id = new_run_id(self.case_dir, self.subject)
+        if not self.thread_id:
+            self.thread_id = self.run_id
         self.lanes = dedupe(self.lanes)
         return self
 
