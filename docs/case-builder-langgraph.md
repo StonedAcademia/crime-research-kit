@@ -35,10 +35,12 @@ Each package directory has a local `README.md`. Python modules are kept under
 ## Pipeline Workflow
 
 ```text
-infer_lanes -> init_case -> plan_public_records
+infer_lanes -> suggest_lanes -> init_case -> plan_public_records
   -> source_capture -> parse_or_ocr -> draft_packets
+  -> fill_packets
   -> packet_review_gate [interrupt]
   -> import_and_validate -> index_case -> readiness_audit
+  -> readiness_brief
   -> export_review_gate [interrupt]
   -> export_bundle
 ```
@@ -114,14 +116,26 @@ export LANGSMITH_PROJECT=trcr-case-builder-dev
   writing canonical records.
 - Treat LangSmith traces as operational metadata, not evidence.
 
-## Next Nodes (Phase 3)
+## LLM Agent Nodes
 
-1. `draft_extraction` LLM agent: fill the CLI-drafted packet from parsed source
-   text with schema-valid, `status: unverified` output.
-2. `readiness_audit` LLM brief: summarize the deterministic audit outputs into
-   a reviewer brief (flags, never decides).
-3. `lane_router` suggestions: optional LLM lane suggestions recorded with
-   rationale, never silently applied.
+Optional nodes activate with `--llm` (plus `--execute`) and the `TRCR_MODEL`
+environment variable (`provider:model`, default `ollama:llama3.1`; install
+`pip install -e '.[llm]'` plus the provider package):
+
+- `suggest_lanes`: lane suggestions with rationale, recorded in
+  `lane_suggestions`; never silently applied.
+- `fill_packets`: fills CLI-drafted extraction packets from parsed source
+  text. Output must be JSON matching the template, cite only the packet's
+  source ID, and pass the guilt-label lint; assertion records are forced to
+  `status: unverified`, capped confidence, `public_export: false`. One retry
+  with error feedback, then the failure is recorded and the packet is left
+  unfilled for a human.
+- `readiness_brief`: summarizes the deterministic audit outputs into
+  `staging/candidates/readiness_brief_<date>.md`. It flags; it never decides.
+
+Non-local providers are recorded as `llm_egress` rows in
+`research_actions.jsonl` because source text leaves the machine. LLM output
+is never evidence; filled packets still stop at the packet review gate.
 
 ## Local Stack Commands
 

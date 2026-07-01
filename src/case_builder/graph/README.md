@@ -10,5 +10,6 @@ review gates remain explicit so generated plans are not treated as evidence.
 | `nodes.py` | Bootstrap nodes (lanes, init, source plan) and merge helpers. |
 | `gates.py` | Packet and export review gates; interrupt-based under LangGraph, terminal otherwise. |
 | `pipeline_nodes.py` | Deterministic capture/parse/draft/import/index/audit/export nodes over the ops core. |
+| `llm_nodes.py` | Optional LLM agent nodes (lane suggestions, packet filling, readiness brief); skip unless `--llm` + execute + model factory. |
 | `checkpoint.py` | SQLite checkpointer under `<case>/.runs/checkpoints.db` for resumable runs. |
 | `runner.py` | Pipeline ordering, conditional gate edges, graph build, sequential fallback. |
