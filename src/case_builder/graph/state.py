@@ -19,6 +19,8 @@ class GraphState(TypedDict, total=False):
     rejected_packets: list[dict[str, Any]]
     export_approved: bool
     index_enabled: bool
+    llm_enabled: bool
+    lane_suggestions: list[dict[str, Any]]
     planned_commands: list[list[str]]
     tool_results: list[dict[str, Any]]
     review_required: bool
