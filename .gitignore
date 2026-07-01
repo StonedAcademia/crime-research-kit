@@ -9,3 +9,4 @@ data/cases/**
 data/exports/**
 !data/exports/
 !data/exports/.gitkeep
+*.egg-info/

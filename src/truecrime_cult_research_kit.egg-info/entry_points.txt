@@ -1,2 +1,0 @@
-[console_scripts]
-trcr-case-builder = case_builder.cli:main
