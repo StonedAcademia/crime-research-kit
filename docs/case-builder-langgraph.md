@@ -32,19 +32,39 @@ the existing TRCR import and validation commands.
 Each package directory has a local `README.md`. Python modules are kept under
 200 non-comment LOC and checked by `tests/test_case_builder_structure.py`.
 
-## Bootstrap Workflow
+## Pipeline Workflow
 
 ```text
-infer_lanes
-  -> init_case
-  -> plan_public_records
-  -> review_gate
+infer_lanes -> init_case -> plan_public_records
+  -> source_capture -> parse_or_ocr -> draft_packets
+  -> packet_review_gate [interrupt]
+  -> import_and_validate -> index_case -> readiness_audit
+  -> export_review_gate [interrupt]
+  -> export_bundle
 ```
 
-The first slice intentionally stops at a human review gate. Later slices should
-add source capture, extraction drafting, import, validation, bundle export, and
-Apothecary handoff as separate nodes with the same rule: source-backed drafts
-must be reviewed before `import-extraction`.
+Gates pause the run. Under LangGraph with `--checkpoint`, gates call
+`interrupt()` and the run is resumable; in the sequential runner (and
+non-checkpointed graphs) an unapproved gate ends the run with
+`status: waiting_for_human_review`. Canonical import always flows through
+`import_extraction(confirm=True)` downstream of the packet gate.
+
+Checkpointed run and resume:
+
+```bash
+trcr-case-builder plan data/cases/example_case \
+  --title "Example Case" --subject "Jane Doe missing person" \
+  --source-url "https://example.com/story" \
+  --runner langgraph --checkpoint --execute
+
+trcr-case-builder resume data/cases/example_case --thread <thread_id> \
+  --approve-packet S0001_extraction.json --execute
+
+trcr-case-builder resume data/cases/example_case --thread <thread_id> \
+  --approve-export --execute
+```
+
+Checkpoints persist in `data/cases/<case>/.runs/checkpoints.db`.
 
 ## Running Locally
 
@@ -94,18 +114,14 @@ export LANGSMITH_PROJECT=trcr-case-builder-dev
   writing canonical records.
 - Treat LangSmith traces as operational metadata, not evidence.
 
-## Next Nodes
+## Next Nodes (Phase 3)
 
-Recommended next implementation order:
-
-1. `source_capture`: wraps `add-source`, `ingest-url`, and `preserve-source`.
-2. `draft_extraction`: wraps `draft-extraction` and calls a bounded packet
-   drafting agent.
-3. `human_packet_review`: blocks import until the packet is approved.
-4. `import_and_validate`: wraps `import-extraction` and `validate`.
-5. `readiness_audit`: wraps narrative, privacy, contradiction, and
-   source-independence checks.
-6. `export_bundle`: exports Phanestead-readable bundles for Apothecary.
+1. `draft_extraction` LLM agent: fill the CLI-drafted packet from parsed source
+   text with schema-valid, `status: unverified` output.
+2. `readiness_audit` LLM brief: summarize the deterministic audit outputs into
+   a reviewer brief (flags, never decides).
+3. `lane_router` suggestions: optional LLM lane suggestions recorded with
+   rationale, never silently applied.
 
 ## Local Stack Commands
 

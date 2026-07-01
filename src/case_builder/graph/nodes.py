@@ -37,13 +37,6 @@ def plan_public_records_node(runner: TrcrRunner):
     return node
 
 
-def review_gate_node(state: GraphState) -> GraphState:
-    return {
-        "review_required": True,
-        "status": "waiting_for_human_review",
-    }
-
-
 def merge_result(state: GraphState, result: OpResult, success_status: str) -> GraphState:
     return {
         "planned_commands": [*(state.get("planned_commands") or []), result.command],
