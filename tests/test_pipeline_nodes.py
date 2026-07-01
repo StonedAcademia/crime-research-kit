@@ -93,3 +93,80 @@ def test_parse_or_ocr_records_runtime_errors_per_source(synthetic_case_copy):
     # Docling; the node must finish without raising and report per-source issues.
     assert update["status"] in {"sources_parsed", "error"}
     assert isinstance(update.get("errors", []), list)
+
+
+def test_import_and_validate_skips_without_approvals():
+    from case_builder.graph.pipeline_nodes import import_and_validate_node
+
+    node = import_and_validate_node(dry_runner())
+
+    update = node({"case_dir": "data/cases/x"})
+
+    assert update["status"] == "import_skipped_no_approved_packets"
+
+
+def test_import_and_validate_imports_each_approved_packet_with_confirm():
+    from case_builder.graph.pipeline_nodes import import_and_validate_node
+
+    node = import_and_validate_node(dry_runner())
+
+    update = node({"case_dir": "data/cases/x", "approved_packets": ["S1_extraction.json", "S2_extraction.json"]})
+
+    assert update["status"] == "imported_and_validated"
+    names = [item["name"] for item in update["tool_results"]]
+    assert names == ["import_extraction", "import_extraction", "validate"]
+    assert update["planned_commands"][0][2] == "import-extraction"
+    assert update["planned_commands"][0][4].endswith("staging/extractions/S1_extraction.json")
+    assert not update["errors"]  # confirm=True flowed through the gate
+
+
+def test_index_node_skips_unless_enabled():
+    from case_builder.graph.pipeline_nodes import index_case_node
+
+    node = index_case_node(dry_runner())
+
+    assert node({"case_dir": "data/cases/x"})["status"] == "index_skipped"
+    assert node({"case_dir": "data/cases/x", "index_enabled": True})["status"] == "index_skipped"  # dry run
+
+
+def test_index_node_reports_failure_without_raising(synthetic_case_copy):
+    from case_builder.graph.pipeline_nodes import index_case_node
+    from case_builder.ops.runner import TrcrRunner
+
+    node = index_case_node(TrcrRunner(repo_root=REPO_ROOT, dry_run=False))
+
+    update = node({"case_dir": str(synthetic_case_copy), "index_enabled": True})
+
+    # Retrieval extras / Qdrant are not available in CI: the node must degrade.
+    assert update["status"] in {"case_indexed", "index_failed"}
+
+
+def test_readiness_audit_runs_four_audits():
+    from case_builder.graph.pipeline_nodes import readiness_audit_node
+
+    node = readiness_audit_node(dry_runner())
+
+    update = node({"case_dir": "data/cases/x"})
+
+    subcommands = [command[2] for command in update["planned_commands"]]
+    assert subcommands == [
+        "audit-contradictions",
+        "review-narrative-readiness",
+        "audit-privacy-redactions",
+        "audit-source-independence",
+    ]
+    assert update["status"] == "readiness_audited"
+
+
+def test_export_bundle_exports_manim_and_report():
+    from case_builder.graph.pipeline_nodes import export_bundle_node
+
+    node = export_bundle_node(dry_runner())
+
+    update = node({"case_dir": "data/cases/x"})
+
+    subcommands = [command[2] for command in update["planned_commands"]]
+    assert subcommands == ["export-manim", "report"]
+    assert update["status"] == "bundle_exported"
+    assert update["review_required"] is False
+    assert "--include-private" not in update["planned_commands"][0]
