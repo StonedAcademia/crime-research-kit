@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Place",
+  "type": "object",
+  "required": [
+    "place_id",
+    "name",
+    "source_ids"
+  ],
+  "properties": {
+    "place_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "place_type": {
+      "type": "string"
+    },
+    "admin_area": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "country": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "lat": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "lon": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "precision": {
+      "type": "string",
+      "enum": [
+        "exact",
+        "approximate",
+        "city_only",
+        "region_only",
+        "unknown"
+      ]
+    },
+    "privacy_sensitive": {
+      "type": "boolean"
+    },
+    "source_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "public_export": {
+      "type": "boolean"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

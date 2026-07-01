@@ -1,0 +1,4 @@
+interface:
+  display_name: "Educational Path Records"
+  short_description: "Trace public education histories into case files"
+  default_prompt: "Use $educational-path-records to research an individual educational path from public records and source-backed material into a TRCR case file."

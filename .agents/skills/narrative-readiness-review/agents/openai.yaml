@@ -1,0 +1,4 @@
+interface:
+  display_name: "Narrative Readiness Review"
+  short_description: "Check claims before public narrative use"
+  default_prompt: "Use $narrative-readiness-review to check whether TRCR claims and events are ready for a public script or report."

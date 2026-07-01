@@ -1,0 +1,4 @@
+interface:
+  display_name: "Geographical Location Intelligence"
+  short_description: "Map evidence locations and event geography"
+  default_prompt: "Use $geographical-location-intelligence to map evidence-item locations, events, and locations of interest in a TRCR case."

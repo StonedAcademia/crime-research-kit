@@ -1,0 +1,4 @@
+interface:
+  display_name: "Source Capture Preservation"
+  short_description: "Preserve sources with hashes and capture notes"
+  default_prompt: "Use $source-capture-preservation to capture, hash, archive, and document public sources before extracting them into a TRCR case."

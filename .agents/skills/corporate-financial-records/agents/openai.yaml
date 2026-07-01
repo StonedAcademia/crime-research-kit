@@ -1,0 +1,4 @@
+interface:
+  display_name: "Corporate Financial Records"
+  short_description: "Trace corporate filings, finance events, and boards"
+  default_prompt: "Use $corporate-financial-records to research a corporation's public filings, bankruptcy history, investments, and board members into a TRCR case file."

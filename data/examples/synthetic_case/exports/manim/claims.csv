@@ -1,0 +1,2 @@
+claim_id,claim,claim_type,status,confidence,source_ids,contradicts,public_export
+CDEMO0001,The source states that the Harbor Study Circle began meeting in 1978.,timeline,single_source,0.62,SDEMO0001,,True

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Public Records Router"
+  short_description: "Route subjects to public-record lanes"
+  default_prompt: "Use $public-records-router to build a public-record source plan for a TRCR case subject."

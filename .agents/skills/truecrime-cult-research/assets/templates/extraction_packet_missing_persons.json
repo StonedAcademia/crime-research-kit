@@ -1,0 +1,107 @@
+{
+  "source_id": "",
+  "extraction_notes": "Missing-persons packet. Extract only source-supported missing-person, unidentified-person, status-update, last-seen, location/time, and candidate-match facts. Treat candidate matches as leads until identity, status, date, and location are supported by reliable public sources.",
+  "source_spans": [],
+  "source_span_guidance": {
+    "field": "source_spans",
+    "instruction": "Use source_spans for official case numbers, database record IDs, bulletin page/paragraph, report paragraph, status wording, last-seen locator, map/caption, timestamp, or archived URL fragment.",
+    "placeholder": {
+      "source_span_id": "",
+      "source_id": "",
+      "locator_type": "section",
+      "locator": {
+        "case_number": null,
+        "database_record_id": null,
+        "page": null,
+        "paragraph": null,
+        "timestamp": null,
+        "map_or_caption": null,
+        "quote_hint": null
+      },
+      "exact_text": null,
+      "summary": null,
+      "public_export": false,
+      "notes": ""
+    }
+  },
+  "topic_claim_focus": [
+    "missing_person_identity",
+    "last_seen_or_last_contact",
+    "reported_missing",
+    "official_case_status",
+    "located_or_recovered_status",
+    "unidentified_person_candidate",
+    "possible_match",
+    "excluded_or_misidentified_match",
+    "privacy_or_minor_redaction"
+  ],
+  "entity_focus": [
+    "missing_person",
+    "unidentified_person",
+    "agency",
+    "public_database",
+    "reporting_organization",
+    "vehicle",
+    "source_stated_related_entity"
+  ],
+  "place_focus": [
+    "last_known_area",
+    "reported_missing_jurisdiction",
+    "route_or_travel_area",
+    "sighting_area",
+    "recovery_or_find_area",
+    "redacted_sensitive_location"
+  ],
+  "event_focus": [
+    "last_seen",
+    "last_contact",
+    "reported_missing",
+    "bulletin_issued",
+    "sighting_reported",
+    "vehicle_or_artifact_found",
+    "search_conducted",
+    "located",
+    "recovered",
+    "identified",
+    "correction_or_misidentification"
+  ],
+  "relationship_focus": [
+    "reported_missing_by",
+    "listed_by",
+    "identified_by",
+    "possibly_same_as",
+    "not_same_as",
+    "associated_with_vehicle",
+    "associated_with_location"
+  ],
+  "candidate_match_guidance": {
+    "lead_defaults": {
+      "assertion_type": "lead_only",
+      "status": "unverified",
+      "confidence_max": 0.4,
+      "public_export": false
+    },
+    "strong_signals": [
+      "exact_name_or_source_supported_alias",
+      "date_window_overlap",
+      "jurisdiction_or_route_overlap",
+      "source_stated_related_entity_or_vehicle",
+      "independent_status_confirmation"
+    ],
+    "disqualifiers": [
+      "different_identity_or_case_number",
+      "different_date_or_jurisdiction",
+      "located_safe_or_misidentification_update",
+      "correction_or_retraction"
+    ]
+  },
+  "entities": [],
+  "places": [],
+  "artifacts": [],
+  "claims": [],
+  "events": [],
+  "event_links": [],
+  "relationships": [],
+  "quotes": [],
+  "redactions": []
+}

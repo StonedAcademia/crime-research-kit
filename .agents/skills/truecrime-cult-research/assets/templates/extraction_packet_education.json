@@ -1,0 +1,116 @@
+{
+  "source_id": "",
+  "extraction_notes": "Education-focused packet. Extract only source-stated schools attended, degrees, credentials, training, academic appointments, alumni claims, student-era events, institutional affiliations, and public education-record context. Treat school, workplace, minor, and private-person details as sensitive unless clearly public-interest and source-supported.",
+  "source_spans": [],
+  "source_span_guidance": {
+    "field": "source_spans",
+    "instruction": "Use source_spans for exact anchors such as page, paragraph, quote, transcript timestamp, or character range when available. Leave this packet-level array empty until span data is recorded.",
+    "placeholder": {
+      "source_span_id": "",
+      "source_id": "",
+      "locator_type": "paragraph",
+      "locator": {
+        "page": null,
+        "paragraph": null,
+        "timestamp": null,
+        "char_start": null,
+        "char_end": null,
+        "quote_hint": null
+      },
+      "exact_text": null,
+      "summary": null,
+      "public_export": true,
+      "notes": ""
+    }
+  },
+  "claim_assertion_type_guidance": {
+    "field": "claims[].assertion_type",
+    "instruction": "Choose an assertion_type that names what the source directly asserts. Keep it narrower than claim_type and do not infer attendance, graduation, credentials, institutional endorsement, or professional standing from a vague association.",
+    "values": [
+      "source_stated_fact",
+      "allegation",
+      "denial",
+      "court_finding",
+      "self_report",
+      "biography_claim",
+      "lead_only",
+      "expert_context"
+    ]
+  },
+  "topic_claim_focus": [
+      "attendance_or_enrollment",
+      "degree_or_credential",
+      "training_or_certification",
+      "academic_appointment",
+      "student_or_alumni_claim",
+      "institutional_affiliation",
+      "campus_or_student_event",
+      "research_or_publication_role"
+  ],
+  "claim_placeholder_examples": [
+    {
+      "claim_id": "",
+      "claim": "",
+      "assertion_type": "source_stated_fact",
+      "claim_type": "background",
+      "status": "single_source",
+      "confidence": 0,
+      "source_ids": [],
+      "source_span_ids": [],
+      "privacy_review": "needs_review",
+      "public_export": false,
+      "notes": "Use topic_claim_focus=attendance_or_enrollment in notes or claim_type context when the source explicitly states attendance or enrollment."
+    },
+    {
+      "claim_id": "",
+      "claim": "",
+      "assertion_type": "biography_claim",
+      "claim_type": "background",
+      "status": "single_source",
+      "confidence": 0,
+      "source_ids": [],
+      "source_span_ids": [],
+      "privacy_review": "needs_review",
+      "public_export": false,
+      "notes": "Use for a public biography claim about a credential, degree, or certification; corroborate before public use."
+    }
+  ],
+  "entity_focus": [
+    "school",
+    "college",
+    "university",
+    "department",
+    "training_program",
+    "credentialing_body",
+    "student",
+    "alumnus",
+    "teacher",
+    "professor",
+    "administrator",
+    "researcher",
+    "publication",
+    "archive"
+  ],
+  "relationship_focus": [
+    "attended",
+    "graduated_from",
+    "enrolled_in",
+    "trained_at",
+    "credentialed_by",
+    "appointed_by",
+    "employed_by",
+    "studied_under",
+    "taught_at",
+    "affiliated_with",
+    "published_by"
+  ],
+  "entities": [],
+  "places": [],
+  "artifacts": [],
+  "claims": [],
+  "events": [],
+  "event_links": [],
+  "relationships": [],
+  "quotes": [],
+  "redactions": []
+}

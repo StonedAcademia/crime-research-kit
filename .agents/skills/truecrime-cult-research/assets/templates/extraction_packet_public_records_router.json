@@ -1,0 +1,54 @@
+{
+  "source_id": "",
+  "extraction_notes": "Public-records-router packet. Use when a source or subject needs routing across multiple public-record lanes. Extract source-plan facts, lane choices, record identifiers, search constraints, and safety blockers. Do not treat route suggestions as evidence.",
+  "routing_focus": [
+    "legal-court",
+    "corporate",
+    "education",
+    "licensing-professional",
+    "media-transcript",
+    "missing-persons",
+    "geographical-location",
+    "property-location",
+    "source-capture",
+    "claim-contradiction",
+    "identity-resolution"
+  ],
+  "source_spans": [],
+  "source_span_guidance": {
+    "field": "source_spans",
+    "instruction": "Use source_spans for public-record identifiers, docket/accession/license/parcel numbers, transcript timestamps, archive references, or exact source-plan caveats.",
+    "placeholder": {
+      "source_span_id": "",
+      "source_id": "",
+      "locator_type": "section",
+      "locator": {
+        "section": null,
+        "identifier": null,
+        "url_fragment": null,
+        "quote_hint": null
+      },
+      "exact_text": null,
+      "summary": null,
+      "public_export": true,
+      "notes": ""
+    }
+  },
+  "topic_claim_focus": [
+    "source_lane_routing",
+    "public_record_identifier",
+    "jurisdiction_or_agency",
+    "record_access_constraint",
+    "privacy_or_redaction_blocker",
+    "lead_only_search_plan"
+  ],
+  "entities": [],
+  "places": [],
+  "artifacts": [],
+  "claims": [],
+  "events": [],
+  "event_links": [],
+  "relationships": [],
+  "quotes": [],
+  "redactions": []
+}

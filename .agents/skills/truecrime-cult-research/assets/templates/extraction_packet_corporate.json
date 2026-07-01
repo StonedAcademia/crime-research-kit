@@ -1,0 +1,118 @@
+{
+  "source_id": "",
+  "extraction_notes": "Corporate-focused packet. Extract only source-stated corporations, nonprofits, shell companies, banks, investments, ownership or control statements, officers, directors, board roles, bankruptcies, litigation, regulatory actions, contracts, and filings. Do not infer control, funding, succession, agency, or legal liability from proximity.",
+  "source_spans": [],
+  "source_span_guidance": {
+    "field": "source_spans",
+    "instruction": "Use source_spans for exact anchors such as page, paragraph, quote, or character range when available. Leave this packet-level array empty until span data is recorded.",
+    "placeholder": {
+      "source_span_id": "",
+      "source_id": "",
+      "locator_type": "paragraph",
+      "locator": {
+        "page": null,
+        "paragraph": null,
+        "char_start": null,
+        "char_end": null,
+        "quote_hint": null
+      },
+      "exact_text": null,
+      "summary": null,
+      "public_export": true,
+      "notes": ""
+    }
+  },
+  "claim_assertion_type_guidance": {
+    "field": "claims[].assertion_type",
+    "instruction": "Choose an assertion_type that names what the source directly asserts. Keep it narrower than claim_type and do not use it to imply ownership, succession, funding, agency, or wrongdoing beyond the cited wording.",
+    "values": [
+      "source_stated_fact",
+      "allegation",
+      "denial",
+      "court_finding",
+      "self_report",
+      "biography_claim",
+      "lead_only",
+      "expert_context"
+    ]
+  },
+  "topic_claim_focus": [
+      "registration_or_incorporation",
+      "officer_or_director_role",
+      "ownership_or_control",
+      "subsidiary_or_affiliate",
+      "investment_or_financing",
+      "contract_or_procurement",
+      "bankruptcy_or_dissolution",
+      "regulatory_or_court_action"
+  ],
+  "claim_placeholder_examples": [
+    {
+      "claim_id": "",
+      "claim": "",
+      "assertion_type": "source_stated_fact",
+      "claim_type": "relationship",
+      "status": "single_source",
+      "confidence": 0,
+      "source_ids": [],
+      "source_span_ids": [],
+      "privacy_review": "needs_review",
+      "public_export": false,
+      "notes": "Use topic_claim_focus=officer_or_director_role in notes or claim_type context when the source directly states an officer/director role."
+    },
+    {
+      "claim_id": "",
+      "claim": "",
+      "assertion_type": "court_finding",
+      "claim_type": "legal",
+      "status": "single_source",
+      "confidence": 0,
+      "source_ids": [],
+      "source_span_ids": [],
+      "privacy_review": "clear",
+      "public_export": true,
+      "notes": "Use for a filing, registry, bankruptcy, or court statement only when the source directly supports it."
+    }
+  ],
+  "entity_focus": [
+    "corporation",
+    "limited_liability_company",
+    "nonprofit",
+    "bank",
+    "foundation",
+    "trust",
+    "shell_company",
+    "subsidiary",
+    "parent_company",
+    "director",
+    "officer",
+    "shareholder",
+    "registered_agent",
+    "auditor",
+    "law_firm",
+    "regulator",
+    "court"
+  ],
+  "relationship_focus": [
+    "officer_of",
+    "director_of",
+    "owns_or_controls",
+    "registered_agent_for",
+    "subsidiary_of",
+    "affiliate_of",
+    "contracted_with",
+    "financed_by",
+    "sued_by",
+    "filed_for_bankruptcy",
+    "regulated_by"
+  ],
+  "entities": [],
+  "places": [],
+  "artifacts": [],
+  "claims": [],
+  "events": [],
+  "event_links": [],
+  "relationships": [],
+  "quotes": [],
+  "redactions": []
+}

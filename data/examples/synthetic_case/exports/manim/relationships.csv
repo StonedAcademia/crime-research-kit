@@ -1,0 +1,2 @@
+rel_id,src_entity_id,dst_entity_id,relation_type,start_date,end_date,claim_ids,source_ids,confidence,status,public_export
+RDEMO0001,EDEMO_LEADER,EDEMO_GROUP,founded,1978-04-00,,CDEMO0001,SDEMO0001,0.62,single_source,True

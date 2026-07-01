@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ResearchAction",
+  "description": "Audit-log row for records/research_actions.jsonl. This stream records local workflow actions such as adding sources, importing extraction packets, and running graph-linking commands.",
+  "type": "object",
+  "required": [
+    "timestamp",
+    "action",
+    "details"
+  ],
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC timestamp for when the action was recorded."
+    },
+    "action": {
+      "type": "string",
+      "description": "Stable action name. Existing actions include add_source, ingest_url, import_extraction, and link_names; keep this open for new workflow commands."
+    },
+    "details": {
+      "type": "object",
+      "description": "Command-specific payload. Prefer source_ids, record IDs, paths relative to the case root, and compact counts over prose-only notes.",
+      "additionalProperties": true
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

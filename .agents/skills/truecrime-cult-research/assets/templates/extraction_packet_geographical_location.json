@@ -1,0 +1,109 @@
+{
+  "source_id": "",
+  "extraction_notes": "Geographical-location packet. Extract source-supported evidence-item locations, event locations, routes, sightings, map/exhibit locators, and locations of interest. Preserve precision and privacy boundaries; do not geocode beyond what the source supports.",
+  "source_spans": [],
+  "source_span_guidance": {
+    "field": "source_spans",
+    "instruction": "Use source_spans for page, paragraph, timestamp, exhibit number, docket item, map sheet/grid, coordinate, route segment, caption, image frame, URL fragment, or exact location wording.",
+    "placeholder": {
+      "source_span_id": "",
+      "source_id": "",
+      "locator_type": "section",
+      "locator": {
+        "page": null,
+        "paragraph": null,
+        "timestamp": null,
+        "exhibit_number": null,
+        "map_sheet": null,
+        "grid": null,
+        "coordinate": null,
+        "route_segment": null,
+        "caption": null,
+        "quote_hint": null
+      },
+      "exact_text": null,
+      "summary": null,
+      "public_export": false,
+      "notes": ""
+    }
+  },
+  "topic_claim_focus": [
+    "event_location",
+    "evidence_item_location",
+    "last_seen_location",
+    "route_or_movement",
+    "search_area",
+    "map_or_exhibit_locator",
+    "location_of_interest_cluster",
+    "approximate_or_disputed_location",
+    "sensitive_location_redaction"
+  ],
+  "place_focus": [
+    "event_scene",
+    "evidence_find_location",
+    "route_segment",
+    "public_facility",
+    "jurisdiction",
+    "search_area",
+    "location_of_interest",
+    "redacted_sensitive_place"
+  ],
+  "artifact_focus": [
+    "map",
+    "court_exhibit",
+    "photo_or_video",
+    "transcript",
+    "public_report",
+    "route_file",
+    "map_export_packet",
+    "redaction_log"
+  ],
+  "event_focus": [
+    "occurred_at",
+    "last_seen_at",
+    "arrival_or_departure",
+    "evidence_found",
+    "search_conducted",
+    "route_documented",
+    "map_published",
+    "location_corrected"
+  ],
+  "relationship_focus": [
+    "located_at",
+    "located_in",
+    "near",
+    "route_includes",
+    "mapped_by",
+    "documented_by",
+    "recovered_at",
+    "photographed_at",
+    "redacted_location_of"
+  ],
+  "map_packet_guidance": {
+    "precision_values": [
+      "exact_coordinate",
+      "address_or_facility",
+      "intersection_or_route_segment",
+      "neighborhood_or_area",
+      "jurisdiction_only",
+      "redacted_sensitive",
+      "unknown"
+    ],
+    "confidence_values": [
+      "high",
+      "medium",
+      "low",
+      "excluded"
+    ],
+    "public_export_rule": "Public map layers must exclude private addresses, homes, minor-related locations, shelters/safe houses, medical/treatment facilities, and weak lead pins."
+  },
+  "entities": [],
+  "places": [],
+  "artifacts": [],
+  "claims": [],
+  "events": [],
+  "event_links": [],
+  "relationships": [],
+  "quotes": [],
+  "redactions": []
+}

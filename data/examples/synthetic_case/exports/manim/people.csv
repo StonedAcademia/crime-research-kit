@@ -1,0 +1,3 @@
+entity_id,entity_type,name,display_name,role_tags,privacy_level,public_export,source_ids
+EDEMO_LEADER,person,Demo Leader,Demo Leader,founder,public_figure,True,SDEMO0001
+EDEMO_GROUP,group,Harbor Study Circle,Harbor Study Circle,group,unknown,True,SDEMO0001

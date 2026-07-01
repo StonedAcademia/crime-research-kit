@@ -1,0 +1,62 @@
+{
+  "source_id": "",
+  "extraction_notes": "Source-capture packet. Preserve capture metadata, archive URLs, hashes, access notes, provenance gaps, and redaction risks before extracting claims. Do not treat AI summaries, mirrors without provenance, or lead-only reposts as evidence.",
+  "source_capture_fields": {
+    "archive_url": null,
+    "capture_method": "ingest_url|manual_registration|archive_lookup|local_file",
+    "capture_timestamp": null,
+    "content_type": null,
+    "raw_sha256": null,
+    "text_sha256": null,
+    "preservation_status": "captured|registered_with_archive|metadata_only|missing_artifacts"
+  },
+  "source_spans": [],
+  "source_span_guidance": {
+    "field": "source_spans",
+    "instruction": "Use source_spans for source-level provenance anchors such as archive capture date, docket item, accession number, page, paragraph, timestamp, or quote offset.",
+    "placeholder": {
+      "source_span_id": "",
+      "source_id": "",
+      "locator_type": "section",
+      "locator": {
+        "section": null,
+        "page": null,
+        "timestamp": null,
+        "accession": null,
+        "docket_item": null,
+        "quote_hint": null
+      },
+      "exact_text": null,
+      "summary": null,
+      "public_export": true,
+      "notes": ""
+    }
+  },
+  "topic_claim_focus": [
+    "source_origin",
+    "capture_status",
+    "archive_or_mirror_status",
+    "official_record_identifier",
+    "provenance_gap",
+    "redaction_or_privacy_risk"
+  ],
+  "artifact_focus": [
+    "raw_download",
+    "extracted_text",
+    "pdf",
+    "docket_document",
+    "transcript",
+    "archive_capture",
+    "screenshot_or_image",
+    "source_note"
+  ],
+  "entities": [],
+  "places": [],
+  "artifacts": [],
+  "claims": [],
+  "events": [],
+  "event_links": [],
+  "relationships": [],
+  "quotes": [],
+  "redactions": []
+}

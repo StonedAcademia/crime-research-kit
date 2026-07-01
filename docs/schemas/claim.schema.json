@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Claim",
+  "type": "object",
+  "required": [
+    "claim_id",
+    "claim",
+    "status",
+    "confidence",
+    "source_ids"
+  ],
+  "properties": {
+    "claim_id": {
+      "type": "string"
+    },
+    "claim": {
+      "type": "string"
+    },
+    "claim_type": {
+      "type": "string",
+      "description": "Topical category for the claim. Keep values broad; use assertion_type for how the source presents the claim.",
+      "enum": [
+        "identity",
+        "timeline",
+        "relationship",
+        "event",
+        "location",
+        "motive",
+        "quote",
+        "background",
+        "legal",
+        "eyewitness",
+        "other"
+      ]
+    },
+    "assertion_type": {
+      "type": "string",
+      "description": "How the cited material presents the assertion. This distinguishes source-stated facts from allegations, denials, findings, self-reports, biography claims, leads, and expert context.",
+      "enum": [
+        "source_stated_fact",
+        "allegation",
+        "denial",
+        "court_finding",
+        "self_report",
+        "biography_claim",
+        "lead_only",
+        "expert_context"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "verified",
+        "corroborated",
+        "single_source",
+        "disputed",
+        "unverified",
+        "false_or_retracted",
+        "excluded_from_public_script"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "description": "Numeric confidence from 0 to 1. This is intentionally a score, not a categorical enum.",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "source_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_span_ids": {
+      "type": "array",
+      "description": "Optional precise citation span IDs supporting this claim.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "contradicts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "supports": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "privacy_review": {
+      "type": "string",
+      "enum": [
+        "clear",
+        "needs_review",
+        "redact",
+        "exclude"
+      ]
+    },
+    "public_export": {
+      "type": "boolean"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

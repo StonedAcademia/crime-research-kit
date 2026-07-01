@@ -1,0 +1,47 @@
+{
+  "source_id": "",
+  "extraction_notes": "Source-independence packet. Extract provenance links, shared publisher/wire/press-release chains, copied language, same-source dependencies, primary-source anchors, and corroboration caveats. Do not upgrade corroboration merely because multiple outlets repeated the same source.",
+  "source_spans": [],
+  "independence_focus": [
+    "same_source_chain",
+    "wire_copy",
+    "press_release_repetition",
+    "shared_author_or_publisher",
+    "same_docket_or_archive_packet",
+    "primary_source_anchor",
+    "independent_corrobation_candidate",
+    "corroboration_overstated"
+  ],
+  "topic_claim_focus": [
+    "source_chain",
+    "independence_group",
+    "repeated_copy",
+    "press_release_origin",
+    "primary_record_support",
+    "independent_source_gap"
+  ],
+  "claim_placeholder_examples": [
+    {
+      "claim_id": "",
+      "claim": "",
+      "assertion_type": "source_stated_fact",
+      "claim_type": "background",
+      "status": "single_source",
+      "confidence": 0,
+      "source_ids": [],
+      "source_span_ids": [],
+      "privacy_review": "clear",
+      "public_export": false,
+      "notes": "Use for an independence finding only when source provenance supports it."
+    }
+  ],
+  "entities": [],
+  "places": [],
+  "artifacts": [],
+  "claims": [],
+  "events": [],
+  "event_links": [],
+  "relationships": [],
+  "quotes": [],
+  "redactions": []
+}

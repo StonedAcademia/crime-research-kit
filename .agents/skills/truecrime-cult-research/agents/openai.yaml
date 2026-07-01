@@ -1,0 +1,7 @@
+interface:
+  display_name: "True Crime Research"
+  short_description: "Data-first research workflow for true crime and high-control group origins."
+  brand_color: "#334155"
+  default_prompt: "Use this skill to create a source-traceable case map with sources, entities, events, claims, relationships, contradictions, and Manim exports."
+policy:
+  allow_implicit_invocation: true

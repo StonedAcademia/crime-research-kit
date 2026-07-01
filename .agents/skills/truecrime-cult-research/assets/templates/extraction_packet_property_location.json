@@ -1,0 +1,73 @@
+{
+  "source_id": "",
+  "extraction_notes": "Property/location packet. Extract only public-interest property, parcel, deed, permit, zoning, facility, map, and location facts. Redact private-person addresses and avoid publishing home-location details unless central to a widely reported public record.",
+  "source_spans": [],
+  "source_span_guidance": {
+    "field": "source_spans",
+    "instruction": "Use source_spans for parcel IDs, deed book/page, instrument numbers, permit numbers, map sheet/grid, assessor row, zoning record, page, paragraph, or coordinate/source locators.",
+    "placeholder": {
+      "source_span_id": "",
+      "source_id": "",
+      "locator_type": "section",
+      "locator": {
+        "parcel_id": null,
+        "instrument_number": null,
+        "permit_number": null,
+        "map_sheet": null,
+        "page": null,
+        "paragraph": null,
+        "quote_hint": null
+      },
+      "exact_text": null,
+      "summary": null,
+      "public_export": false,
+      "notes": ""
+    }
+  },
+  "topic_claim_focus": [
+    "parcel_identity",
+    "property_transfer",
+    "ownership_or_trust_record",
+    "permit_or_inspection",
+    "zoning_or_land_use",
+    "facility_location",
+    "address_redaction_required",
+    "map_or_boundary_context"
+  ],
+  "entity_focus": [
+    "property_owner",
+    "organization_owner",
+    "trust_or_llc",
+    "facility",
+    "government_office",
+    "permit_applicant",
+    "inspector"
+  ],
+  "place_focus": [
+    "parcel",
+    "facility",
+    "campus",
+    "public_building",
+    "vague_area",
+    "jurisdiction",
+    "redacted_private_address"
+  ],
+  "relationship_focus": [
+    "owned_by",
+    "leased_by",
+    "transferred_to",
+    "permitted_by",
+    "inspected_by",
+    "located_in",
+    "operated_at"
+  ],
+  "entities": [],
+  "places": [],
+  "artifacts": [],
+  "claims": [],
+  "events": [],
+  "event_links": [],
+  "relationships": [],
+  "quotes": [],
+  "redactions": []
+}

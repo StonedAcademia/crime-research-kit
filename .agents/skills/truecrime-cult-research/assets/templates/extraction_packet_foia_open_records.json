@@ -1,0 +1,54 @@
+{
+  "source_id": "",
+  "extraction_notes": "FOIA/open-records planning packet. Extract agency scope, request wording, public-record identifiers, likely custodians, date ranges, exemption risks, fee/appeal details, and privacy exclusions. This is a planning packet; do not treat a request plan as evidence that records exist.",
+  "source_spans": [],
+  "source_span_guidance": {
+    "field": "source_spans",
+    "instruction": "Use source_spans for statute sections, agency record series, request IDs, tracking numbers, response letters, appeal deadlines, exemption citations, page numbers, or exact agency wording.",
+    "placeholder": {
+      "source_span_id": "",
+      "source_id": "",
+      "locator_type": "section",
+      "locator": {
+        "statute": null,
+        "agency": null,
+        "request_id": null,
+        "page": null,
+        "section": null,
+        "quote_hint": null
+      },
+      "exact_text": null,
+      "summary": null,
+      "public_export": false,
+      "notes": ""
+    }
+  },
+  "topic_claim_focus": [
+    "agency_custodian",
+    "record_series",
+    "request_scope",
+    "date_range",
+    "exemption_or_redaction_risk",
+    "fee_or_waiver_status",
+    "request_tracking_status",
+    "appeal_deadline"
+  ],
+  "artifact_focus": [
+    "request_letter",
+    "agency_acknowledgment",
+    "tracking_email",
+    "response_letter",
+    "released_records",
+    "withholding_log",
+    "appeal_letter"
+  ],
+  "entities": [],
+  "places": [],
+  "artifacts": [],
+  "claims": [],
+  "events": [],
+  "event_links": [],
+  "relationships": [],
+  "quotes": [],
+  "redactions": []
+}

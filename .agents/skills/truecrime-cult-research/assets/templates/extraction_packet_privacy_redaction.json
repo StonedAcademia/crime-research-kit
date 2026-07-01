@@ -1,0 +1,45 @@
+{
+  "source_id": "",
+  "extraction_notes": "Privacy/redaction packet. Extract redaction needs, privacy blockers, public-export exclusions, private-person/minor/address/contact patterns, and replacement public wording. Do not copy sensitive details unless needed for internal redaction review; keep public_export false by default.",
+  "source_spans": [],
+  "source_span_guidance": {
+    "field": "source_spans",
+    "instruction": "Use source_spans for precise private/sensitive locator references without reproducing unnecessary sensitive data in public notes.",
+    "placeholder": {
+      "source_span_id": "",
+      "source_id": "",
+      "locator_type": "paragraph",
+      "locator": {
+        "page": null,
+        "paragraph": null,
+        "field": null,
+        "quote_hint": null
+      },
+      "exact_text": null,
+      "summary": null,
+      "public_export": false,
+      "notes": ""
+    }
+  },
+  "redaction_focus": [
+    "private_person",
+    "minor",
+    "address_or_precise_location",
+    "phone_or_email",
+    "medical_or_health",
+    "financial_identifier",
+    "family_member_detail",
+    "weak_allegation",
+    "unsupported_claim",
+    "sealed_or_exempt_record"
+  ],
+  "redactions": [],
+  "entities": [],
+  "places": [],
+  "artifacts": [],
+  "claims": [],
+  "events": [],
+  "event_links": [],
+  "relationships": [],
+  "quotes": []
+}

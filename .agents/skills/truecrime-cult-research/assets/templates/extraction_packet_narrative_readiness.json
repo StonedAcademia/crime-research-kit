@@ -1,0 +1,50 @@
+{
+  "source_id": "",
+  "extraction_notes": "Narrative-readiness packet. Use to review whether claims, events, relationships, and quotes are ready for public scripts, reports, videos, timelines, or evidence boards. Preserve uncertainty, caveats, source gaps, contradictions, and privacy blockers.",
+  "source_spans": [],
+  "readiness_checks": [
+    "source_ids_present",
+    "source_records_exist",
+    "source_spans_present_when_needed",
+    "status_and_confidence_fit_public_wording",
+    "assertion_type_not_lead_only",
+    "allegations_clearly_caveated",
+    "contradictions_represented",
+    "source_independence_reviewed",
+    "privacy_review_clear",
+    "public_export_safe"
+  ],
+  "topic_claim_focus": [
+    "narrative_ready",
+    "needs_caveat",
+    "source_gap",
+    "privacy_blocker",
+    "contradiction_blocker",
+    "independence_gap",
+    "unsupported_script_point"
+  ],
+  "claim_placeholder_examples": [
+    {
+      "claim_id": "",
+      "claim": "",
+      "assertion_type": "source_stated_fact",
+      "claim_type": "background",
+      "status": "single_source",
+      "confidence": 0,
+      "source_ids": [],
+      "source_span_ids": [],
+      "privacy_review": "needs_review",
+      "public_export": false,
+      "notes": "Use for a narrative-readiness finding only when the cited source or review artifact supports it."
+    }
+  ],
+  "entities": [],
+  "places": [],
+  "artifacts": [],
+  "claims": [],
+  "events": [],
+  "event_links": [],
+  "relationships": [],
+  "quotes": [],
+  "redactions": []
+}

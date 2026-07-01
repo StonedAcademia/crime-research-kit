@@ -1,0 +1,79 @@
+{
+  "source_id": "",
+  "extraction_notes": "Identity-resolution packet. Extract aliases, public-record identity anchors, entity-match evidence, conflicts, and unresolved ambiguity. Do not merge identities or identify private people without source review.",
+  "source_spans": [],
+  "source_span_guidance": {
+    "field": "source_spans",
+    "instruction": "Use source_spans for exact anchors tying names, aliases, roles, dates, organizations, jurisdictions, or identifiers to the candidate identity.",
+    "placeholder": {
+      "source_span_id": "",
+      "source_id": "",
+      "locator_type": "paragraph",
+      "locator": {
+        "page": null,
+        "paragraph": null,
+        "section": null,
+        "quote_hint": null
+      },
+      "exact_text": null,
+      "summary": null,
+      "public_export": false,
+      "notes": ""
+    }
+  },
+  "topic_claim_focus": [
+    "same_person_or_entity_claim",
+    "alias_or_name_variant",
+    "public_role_match",
+    "jurisdiction_or_date_match",
+    "conflicting_identity_signal",
+    "insufficient_identity_evidence"
+  ],
+  "claim_placeholder_examples": [
+    {
+      "claim_id": "",
+      "claim": "",
+      "assertion_type": "source_stated_fact",
+      "claim_type": "identity",
+      "status": "unverified",
+      "confidence": 0,
+      "source_ids": [],
+      "source_span_ids": [],
+      "privacy_review": "needs_review",
+      "public_export": false,
+      "notes": "Identity claim requires human review before merge or public export."
+    }
+  ],
+  "entity_focus": [
+    "candidate_person",
+    "candidate_organization",
+    "alias",
+    "public_role",
+    "jurisdiction",
+    "institution",
+    "court_or_agency",
+    "source_document"
+  ],
+  "relationship_focus": [
+    "alias_of",
+    "possibly_same_as",
+    "not_same_as",
+    "held_role_at",
+    "named_in_record",
+    "associated_with_identifier"
+  ],
+  "review_defaults": {
+    "status": "unverified",
+    "public_export": false,
+    "recommendation": "human_review_required_before_merge"
+  },
+  "entities": [],
+  "places": [],
+  "artifacts": [],
+  "claims": [],
+  "events": [],
+  "event_links": [],
+  "relationships": [],
+  "quotes": [],
+  "redactions": []
+}

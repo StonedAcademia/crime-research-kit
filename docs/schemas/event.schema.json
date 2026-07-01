@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Event",
+  "type": "object",
+  "required": [
+    "event_id",
+    "title",
+    "event_type",
+    "source_ids"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "event_type": {
+      "type": "string",
+      "description": "Controlled event tag when possible, but intentionally not a strict enum because case work uses source- and graph-specific event types such as founding, official_report_context, graph_category_bridge, and court_record_context."
+    },
+    "start_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "end_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "date_precision": {
+      "type": "string",
+      "enum": [
+        "exact",
+        "day",
+        "month",
+        "year",
+        "decade",
+        "approximate",
+        "unknown"
+      ]
+    },
+    "place_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "entity_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "artifact_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "claim_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_span_ids": {
+      "type": "array",
+      "description": "Optional precise citation span IDs supporting this event.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "description": "Numeric confidence from 0 to 1. This is intentionally a score, not a categorical enum.",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "verified",
+        "corroborated",
+        "single_source",
+        "disputed",
+        "unverified",
+        "excluded"
+      ]
+    },
+    "public_export": {
+      "type": "boolean"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

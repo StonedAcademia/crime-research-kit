@@ -1,0 +1,4 @@
+interface:
+  display_name: "Privacy Redaction Audit"
+  short_description: "Find public-export privacy blockers"
+  default_prompt: "Use $privacy-redaction-audit to find private-person, minor, address, contact, and weak-allegation blockers in a TRCR case."

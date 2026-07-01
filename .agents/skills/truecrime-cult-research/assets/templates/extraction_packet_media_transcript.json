@@ -1,0 +1,62 @@
+{
+  "source_id": "",
+  "extraction_notes": "Media/transcript packet. Extract timestamped speaker claims, quotes, interview context, transcript provenance, corrections, and media artifacts. Treat transcripts as sources for what was said, not automatic proof that the statement is true.",
+  "source_spans": [],
+  "source_span_guidance": {
+    "field": "source_spans",
+    "instruction": "Use source_spans for timestamps, speaker turns, line numbers, caption offsets, clip URLs, episode sections, and quote offsets.",
+    "placeholder": {
+      "source_span_id": "",
+      "source_id": "",
+      "locator_type": "timestamp",
+      "locator": {
+        "timestamp": null,
+        "line": null,
+        "speaker": null,
+        "episode": null,
+        "clip_url": null,
+        "quote_hint": null
+      },
+      "exact_text": null,
+      "summary": null,
+      "public_export": true,
+      "notes": ""
+    }
+  },
+  "topic_claim_focus": [
+    "speaker_statement",
+    "firsthand_account",
+    "secondhand_account",
+    "interviewer_context",
+    "caption_or_transcript_note",
+    "media_provenance",
+    "correction_or_followup"
+  ],
+  "entity_focus": [
+    "speaker",
+    "interviewer",
+    "subject",
+    "producer",
+    "publisher",
+    "media_platform",
+    "transcript_provider"
+  ],
+  "relationship_focus": [
+    "interviewed_by",
+    "interviewed",
+    "said_in_interview",
+    "appeared_in",
+    "published_by",
+    "transcribed_by"
+  ],
+  "quote_guidance": "Keep quotes short and source-bound. Store exact quote text only when needed; otherwise use source_spans and summarized claims.",
+  "entities": [],
+  "places": [],
+  "artifacts": [],
+  "claims": [],
+  "events": [],
+  "event_links": [],
+  "relationships": [],
+  "quotes": [],
+  "redactions": []
+}

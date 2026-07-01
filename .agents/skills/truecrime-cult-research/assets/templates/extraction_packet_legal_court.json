@@ -1,0 +1,128 @@
+{
+  "source_id": "",
+  "extraction_notes": "Legal/court-focused packet. Extract only public, source-stated docket, filing, hearing, order, opinion, allegation, denial, finding, party, attorney, judge, and case-status facts. Do not infer guilt, liability, motive, membership, or credibility from proximity to a proceeding.",
+  "source_spans": [],
+  "source_span_guidance": {
+    "field": "source_spans",
+    "instruction": "Use source_spans for page, paragraph, line, timestamp, exhibit, docket item, document number, accession, or quote-offset locators.",
+    "placeholder": {
+      "source_span_id": "",
+      "source_id": "",
+      "locator_type": "docket_item",
+      "locator": {
+        "court": null,
+        "case_number": null,
+        "docket_item": null,
+        "document_number": null,
+        "page": null,
+        "paragraph": null,
+        "quote_hint": null
+      },
+      "exact_text": null,
+      "summary": null,
+      "public_export": true,
+      "notes": ""
+    }
+  },
+  "claim_assertion_type_guidance": {
+    "field": "claims[].assertion_type",
+    "instruction": "Use allegation, denial, court_finding, or source_stated_fact to preserve exactly how the legal source frames the statement.",
+    "values": [
+      "source_stated_fact",
+      "allegation",
+      "denial",
+      "court_finding",
+      "self_report",
+      "biography_claim",
+      "lead_only",
+      "expert_context"
+    ]
+  },
+  "topic_claim_focus": [
+    "case_identity",
+    "party_role",
+    "filing_or_docket_entry",
+    "hearing_or_deadline",
+    "allegation",
+    "denial",
+    "court_finding_or_order",
+    "judgment_or_disposition",
+    "appeal_or_posture"
+  ],
+  "claim_placeholder_examples": [
+    {
+      "claim_id": "",
+      "claim": "",
+      "assertion_type": "allegation",
+      "claim_type": "legal",
+      "status": "single_source",
+      "confidence": 0,
+      "source_ids": [],
+      "source_span_ids": [],
+      "privacy_review": "needs_review",
+      "public_export": false,
+      "notes": "Use only when a pleading, filing, or source explicitly frames this as an allegation."
+    },
+    {
+      "claim_id": "",
+      "claim": "",
+      "assertion_type": "court_finding",
+      "claim_type": "legal",
+      "status": "single_source",
+      "confidence": 0,
+      "source_ids": [],
+      "source_span_ids": [],
+      "privacy_review": "clear",
+      "public_export": true,
+      "notes": "Use only for findings, rulings, orders, judgments, or dispositions directly stated by the court record."
+    }
+  ],
+  "entity_focus": [
+    "court",
+    "judge",
+    "plaintiff",
+    "defendant",
+    "petitioner",
+    "respondent",
+    "debtor",
+    "creditor",
+    "attorney",
+    "witness",
+    "expert",
+    "clerk",
+    "agency",
+    "law_firm"
+  ],
+  "relationship_focus": [
+    "party_to",
+    "represented_by",
+    "presided_over_by",
+    "filed_by",
+    "accused_by",
+    "denied_by",
+    "ordered_by",
+    "appealed_by",
+    "witness_for"
+  ],
+  "event_focus": [
+    "case_filed",
+    "docket_entry",
+    "motion_filed",
+    "hearing",
+    "order_entered",
+    "judgment_entered",
+    "charge_filed",
+    "plea_entered",
+    "sentencing",
+    "appeal_filed"
+  ],
+  "entities": [],
+  "places": [],
+  "artifacts": [],
+  "claims": [],
+  "events": [],
+  "event_links": [],
+  "relationships": [],
+  "quotes": [],
+  "redactions": []
+}

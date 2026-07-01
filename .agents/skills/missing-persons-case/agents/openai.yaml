@@ -1,0 +1,4 @@
+interface:
+  display_name: "Missing Persons Case"
+  short_description: "Find and structure missing-person leads"
+  default_prompt: "Use $missing-persons-case to identify source-supported missing-person records and add them to a TRCR case."

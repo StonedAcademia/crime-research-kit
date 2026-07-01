@@ -1,0 +1,79 @@
+{
+  "source_id": "",
+  "extraction_notes": "Claim-contradiction packet. Extract corrections, retractions, denials, court findings, disputed wording, date conflicts, and source-chain caveats. Do not collapse contradictions into a single resolved fact unless the source record supports the resolution.",
+  "source_spans": [],
+  "source_span_guidance": {
+    "field": "source_spans",
+    "instruction": "Use source_spans for exact contradiction anchors: page, paragraph, timestamp, docket item, exhibit, correction notice, quote offset, or retraction section.",
+    "placeholder": {
+      "source_span_id": "",
+      "source_id": "",
+      "locator_type": "paragraph",
+      "locator": {
+        "page": null,
+        "paragraph": null,
+        "timestamp": null,
+        "docket_item": null,
+        "quote_hint": null
+      },
+      "exact_text": null,
+      "summary": null,
+      "public_export": true,
+      "notes": ""
+    }
+  },
+  "topic_claim_focus": [
+    "explicit_contradiction",
+    "correction",
+    "retraction",
+    "denial",
+    "court_finding_conflict",
+    "date_or_timeline_conflict",
+    "source_chain_caveat",
+    "unsupported_public_claim"
+  ],
+  "claim_placeholder_examples": [
+    {
+      "claim_id": "",
+      "claim": "",
+      "assertion_type": "denial",
+      "claim_type": "legal",
+      "status": "single_source",
+      "confidence": 0,
+      "source_ids": [],
+      "source_span_ids": [],
+      "contradicts": [],
+      "privacy_review": "needs_review",
+      "public_export": false,
+      "notes": "List contradicted claim IDs in contradicts when the source directly disputes them."
+    },
+    {
+      "claim_id": "",
+      "claim": "",
+      "assertion_type": "source_stated_fact",
+      "claim_type": "background",
+      "status": "false_or_retracted",
+      "confidence": 0,
+      "source_ids": [],
+      "source_span_ids": [],
+      "contradicts": [],
+      "privacy_review": "clear",
+      "public_export": true,
+      "notes": "Use false_or_retracted only when a correction, retraction, court record, or reliable source directly supports that status."
+    }
+  ],
+  "review_defaults": {
+    "public_export": false,
+    "status": "disputed",
+    "recommendation": "update claim status only after source-backed review"
+  },
+  "entities": [],
+  "places": [],
+  "artifacts": [],
+  "claims": [],
+  "events": [],
+  "event_links": [],
+  "relationships": [],
+  "quotes": [],
+  "redactions": []
+}

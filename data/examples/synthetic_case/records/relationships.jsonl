@@ -1,0 +1,1 @@
+{"claim_ids": ["CDEMO0001"], "confidence": 0.62, "dst_entity_id": "EDEMO_GROUP", "end_date": null, "notes": "Synthetic demonstration relationship.", "public_export": true, "rel_id": "RDEMO0001", "relation_type": "founded", "source_ids": ["SDEMO0001"], "src_entity_id": "EDEMO_LEADER", "start_date": "1978-04-00", "status": "single_source"}

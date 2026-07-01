@@ -1,0 +1,2 @@
+event_id,title,event_type,start_date,end_date,date_precision,place_ids,entity_ids,claim_ids,source_ids,confidence,status,public_export
+EVDEMO0001,Harbor Study Circle begins meeting,founding,1978-04-00,,month,PDEMO_HARBOR,EDEMO_LEADER;EDEMO_GROUP,CDEMO0001,SDEMO0001,0.62,single_source,True

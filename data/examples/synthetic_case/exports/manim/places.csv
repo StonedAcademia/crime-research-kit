@@ -1,0 +1,2 @@
+place_id,name,place_type,admin_area,country,lat,lon,precision,privacy_sensitive,public_export,source_ids
+PDEMO_HARBOR,Demo Harbor,city,Example State,US,,,city_only,False,True,SDEMO0001

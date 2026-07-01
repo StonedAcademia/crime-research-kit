@@ -1,0 +1,76 @@
+{
+  "source_id": "",
+  "extraction_notes": "Licensing/professional-record packet. Extract only public, source-stated license, credential, board, certification, disciplinary, sanction, employer-role, or professional-status facts. Do not infer misconduct or competence from a license lookup alone.",
+  "source_spans": [],
+  "source_span_guidance": {
+    "field": "source_spans",
+    "instruction": "Use source_spans for board name, license number, credential ID, disciplinary docket, order number, status date, page, paragraph, or screenshot/HTML section locators.",
+    "placeholder": {
+      "source_span_id": "",
+      "source_id": "",
+      "locator_type": "section",
+      "locator": {
+        "agency": null,
+        "license_number": null,
+        "disciplinary_docket": null,
+        "page": null,
+        "paragraph": null,
+        "quote_hint": null
+      },
+      "exact_text": null,
+      "summary": null,
+      "public_export": true,
+      "notes": ""
+    }
+  },
+  "claim_assertion_type_guidance": {
+    "field": "claims[].assertion_type",
+    "instruction": "Use source_stated_fact for status/credential facts, allegation for board allegations, denial for responses, court_finding for adjudicated findings or orders, and lead_only for unresolved lookup hits.",
+    "values": [
+      "source_stated_fact",
+      "allegation",
+      "denial",
+      "court_finding",
+      "self_report",
+      "biography_claim",
+      "lead_only",
+      "expert_context"
+    ]
+  },
+  "topic_claim_focus": [
+    "license_status",
+    "credential_awarded",
+    "board_certification",
+    "disciplinary_action",
+    "sanction_or_restriction",
+    "revocation_or_suspension",
+    "professional_role",
+    "credential_dispute"
+  ],
+  "entity_focus": [
+    "licensed_person",
+    "licensing_board",
+    "certifying_body",
+    "professional_employer",
+    "disciplinary_agency",
+    "court_or_regulator"
+  ],
+  "relationship_focus": [
+    "licensed_by",
+    "certified_by",
+    "disciplined_by",
+    "sanctioned_by",
+    "employed_as",
+    "credential_claimed_by",
+    "credential_disputed_by"
+  ],
+  "entities": [],
+  "places": [],
+  "artifacts": [],
+  "claims": [],
+  "events": [],
+  "event_links": [],
+  "relationships": [],
+  "quotes": [],
+  "redactions": []
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Identity Resolution"
+  short_description: "Review aliases and duplicate identities"
+  default_prompt: "Use $identity-resolution to review aliases, duplicate entities, and ambiguous public-record identities in a TRCR case without auto-merging evidence."
