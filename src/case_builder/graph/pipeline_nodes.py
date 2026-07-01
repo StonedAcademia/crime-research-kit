@@ -91,3 +91,66 @@ def draft_packets_node(runner: TrcrRunner):
         return merged
 
     return node
+
+
+def import_and_validate_node(runner: TrcrRunner):
+    def node(state: GraphState) -> GraphState:
+        approved = state.get("approved_packets") or []
+        if not approved:
+            return {"status": "import_skipped_no_approved_packets"}
+        case_dir = required_case_dir(state)
+        results = [
+            extraction_ops.import_extraction(
+                runner,
+                case_dir,
+                f"{case_dir.rstrip('/')}/staging/extractions/{name}",
+                confirm=True,
+            )
+            for name in approved
+        ]
+        results.append(case_ops.validate(runner, case_dir))
+        return merge_results(state, results, "imported_and_validated")
+
+    return node
+
+
+def index_case_node(runner: TrcrRunner):
+    def node(state: GraphState) -> GraphState:
+        if not state.get("index_enabled") or runner.dry_run:
+            return {"status": "index_skipped"}
+        case_dir = required_case_dir(state)
+        try:
+            result = query_ops.index_case(case_dir)
+        except Exception as exc:  # optional retrieval deps or Qdrant may be absent
+            return {
+                "status": "index_failed",
+                "errors": [*(state.get("errors") or []), f"index_case: {exc}"],
+            }
+        return merge_results(state, [result], "case_indexed")
+
+    return node
+
+
+def readiness_audit_node(runner: TrcrRunner):
+    def node(state: GraphState) -> GraphState:
+        case_dir = required_case_dir(state)
+        results = [
+            review_ops.audit_contradictions(runner, case_dir),
+            review_ops.review_narrative_readiness(runner, case_dir),
+            review_ops.audit_privacy_redactions(runner, case_dir),
+            review_ops.audit_source_independence(runner, case_dir),
+        ]
+        return merge_results(state, results, "readiness_audited")
+
+    return node
+
+
+def export_bundle_node(runner: TrcrRunner):
+    def node(state: GraphState) -> GraphState:
+        case_dir = required_case_dir(state)
+        results = [export_ops.export_manim(runner, case_dir), case_ops.report(runner, case_dir)]
+        merged = merge_results(state, results, "bundle_exported")
+        merged["review_required"] = False
+        return merged
+
+    return node
