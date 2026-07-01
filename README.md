@@ -1,18 +1,149 @@
-# True Crime / Cult-Origin Research Kit for Codex
+<p align="center">
+  <img src="docs/assets/trcr-banner.svg" alt="TRCR Kit banner" width="100%">
+</p>
 
-A reusable Codex skill and project scaffold for building a data-first, evidence-informed research system around true crime, high-control groups, cult origins, related people, places, events, objects, sources, claims, and contradictions.
+<h1 align="center">True Crime / Cult-Origin Research Kit</h1>
 
-This kit is designed for public-interest research and documentary-style educational work. It is **not** designed for harassment, doxxing, vigilante investigation, private-person targeting, or making unsourced accusations.
+<p align="center">
+  <strong>Turn public sources into source-traceable case files, timelines, relationship graphs, contradiction audits, and video-ready evidence boards.</strong>
+</p>
 
-## What this gives you
+<p align="center">
+  <a href="#quick-start">Quick start</a> |
+  <a href="#what-you-can-build">What you can build</a> |
+  <a href="#example-workflows">Examples</a> |
+  <a href="#local-document-retrieval-and-memory-stack">Local stack</a> |
+  <a href="#public-interest-boundaries">Safety</a>
+</p>
 
-- A Codex skill at `.agents/skills/truecrime-cult-research/SKILL.md`
-- A repository-level `AGENTS.md` with persistent project rules for Codex
-- JSON schemas under `docs/schemas/` for sources, entities, claims, events, event links, relationships, places, artifacts, and quotes
-- A Python CLI tool for creating case folders, ingesting URLs, staging extractions, importing structured data, validating records, and exporting Manim-ready CSVs
-- Templates for case briefs, source notes, extraction packets, redaction logs, and evidence boards
-- A repeatable workflow for using news articles, eyewitness accounts, court/public records, archives, and disconfirming sources
-- Skill-facing references for controlled vocabularies, citation locators, topic extraction templates, source independence, and public-export auditing
+TRCR is a local-first research kit for public-interest, documentary-style work
+around true crime, high-control groups, cult-origin networks, missing-person
+leads, public records, timelines, and source provenance. It helps an agent or
+researcher move from a pile of articles, transcripts, PDFs, and archive links
+into a structured case ledger where every claim can point back to sources,
+reliability grades, confidence/status, privacy review, and export decisions.
+
+This is not a rumor engine. AI can help organize, search, OCR, index, and draft
+extraction packets, but **AI-generated summaries are never evidence**. Claims
+only become public-facing material after source support, validation,
+contradiction review, source-independence review, and privacy review.
+
+## What You Can Build
+
+| Goal | TRCR output |
+| --- | --- |
+| Source ledger | `records/sources.jsonl` with URL/path, source type, reliability grade, hashes, archive context, and public/private flags. |
+| Claim matrix | One assertion per row in `records/claims.jsonl`, tied to source IDs, confidence, status, contradictions, and privacy review. |
+| Timeline | Events with date precision, source support, related entities, and Manim-ready CSV export. |
+| Relationship graph | Source-stated entity relationships and event links without inferring guilt, membership, motive, or hidden control from proximity. |
+| Contradiction audit | Reports for corrections, denials, retractions, court findings, disputed dates, and unsupported public claims. |
+| Source independence review | Detection of repeated wire copy, press-release reuse, shared publishers, and same-source chains. |
+| Privacy audit | Redaction blockers for living private people, minors, addresses, contact info, medical details, and weak allegations. |
+| Local RAG/context retrieval | Optional local-first parsing, OCR, Qdrant/LlamaIndex retrieval, and workflow memory without hosted vector services. |
+| Public/video exports | Evidence boards, Manim CSVs, charts, timelines, and public-safe bundle exports. |
+
+## Public-Interest Boundaries
+
+TRCR is designed for lawful, public-source research. It is not designed for
+harassment, doxxing, private-person targeting, vigilante investigation, or
+making unsourced accusations.
+
+Core guardrails:
+
+- Treat every claim as unverified until it has traceable source support.
+- Do not label anyone a suspect, perpetrator, accomplice, cult member, or
+  person of interest unless a cited official/legal/news source uses that label.
+- Do not infer guilt, motive, membership, or hidden control from proximity.
+- Keep private addresses, contact details, minor-sensitive details, medical
+  details, and weak allegations out of public exports.
+- Search for contradictions, corrections, retractions, denials, and
+  disconfirming evidence before marking claims as corroborated.
+
+## What This Gives You
+
+- A Codex skill at `.agents/skills/truecrime-cult-research/SKILL.md`.
+- A repository-level `AGENTS.md` with persistent project rules for Codex.
+- JSON schemas under `docs/schemas/` for sources, entities, claims, events,
+  event links, relationships, places, artifacts, quotes, source spans, and
+  redactions.
+- A Python CLI for creating case folders, ingesting URLs, staging extraction
+  packets, importing structured records, validating ledgers, auditing public
+  readiness, and exporting Manim-ready CSVs.
+- Local-first case-builder helpers for SearXNG discovery, Docling parsing,
+  OCRmyPDF OCR, LlamaIndex/Qdrant retrieval, and Mem0 OSS workflow memory.
+- Templates for case briefs, source notes, extraction packets, redaction logs,
+  public-record plans, source-independence reviews, and evidence boards.
+- Repeatable workflows for news articles, eyewitness accounts, court/public
+  records, transcripts, archives, property/location records, FOIA planning,
+  contradictions, and disconfirming sources.
+
+## Example Workflows
+
+### Build a source-backed case workspace
+
+```bash
+python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case data/cases/harbor_study_circle \
+  --title "Harbor Study Circle"
+
+python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url data/cases/harbor_study_circle \
+  "https://example.com/local-report" \
+  --source-type news_article \
+  --reliability-grade B
+
+python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction data/cases/harbor_study_circle SOURCE_ID
+```
+
+Fill the staged extraction packet with only what the source directly supports,
+then import and validate it:
+
+```bash
+python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction \
+  data/cases/harbor_study_circle \
+  data/cases/harbor_study_circle/staging/extractions/SOURCE_ID_extraction.json
+
+python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/cases/harbor_study_circle
+python .agents/skills/truecrime-cult-research/scripts/tcr.py report data/cases/harbor_study_circle
+```
+
+A public-ready claim stays machine-readable and source-bound:
+
+```json
+{
+  "claim_id": "CDEMO0001",
+  "claim": "The source states that the Harbor Study Circle began meeting in 1978.",
+  "claim_type": "timeline",
+  "assertion_type": "source_stated_fact",
+  "status": "single_source",
+  "confidence": 0.62,
+  "source_ids": ["SDEMO0001"],
+  "privacy_review": "clear",
+  "public_export": true
+}
+```
+
+### Plan public-record lanes before collecting sources
+
+```bash
+PYTHONPATH=src python -m case_builder.cli plan data/cases/example_case \
+  --title "Example Case" \
+  --subject "Jane Doe missing person last seen near Riverside Park map"
+```
+
+The planner infers source lanes such as missing-person, geographical-location,
+legal/court, media/transcript, property/location, licensing, or source-capture.
+Route suggestions are leads, not evidence.
+
+### Parse, OCR, index, and query local documents
+
+```bash
+trcr-case-builder parse-source data/cases/example_case SOURCE_ID
+trcr-case-builder ocr-source data/cases/example_case SOURCE_ID
+trcr-case-builder index-case data/cases/example_case
+trcr-case-builder query-case data/cases/example_case "Which timeline claims lack source spans?"
+```
+
+The local stack can help retrieve context and draft extraction candidates, but
+the canonical ledger remains `records/*.jsonl`.
 
 ## Recommended install
 
