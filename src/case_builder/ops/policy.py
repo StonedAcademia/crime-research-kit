@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Iterable
 
-from ..casefile import ensure_case
+from ..casefile import ensure_case, log_action
 
 ALLOWED_WRITE_DIRS: tuple[str, ...] = ("staging", "exports")
 GUILT_LABELS: tuple[str, ...] = (
@@ -60,6 +60,15 @@ def apply_automation_defaults(record: dict[str, Any]) -> dict[str, Any]:
     except (TypeError, ValueError):
         capped = DEFAULT_AUTOMATION_CONFIDENCE
     return {**record, "status": "unverified", "confidence": capped, "public_export": False}
+
+
+def record_llm_egress(case_dir: str | Path, provider: str, context: str) -> None:
+    """Audit-log that source text was sent to a non-local LLM provider."""
+    log_action(
+        ensure_case(case_dir),
+        "llm_egress",
+        {"provider": provider, "context": context, "note": "source text left the machine"},
+    )
 
 
 def lint_guilt_labels(packet: Any, path: str = "$") -> list[str]:
