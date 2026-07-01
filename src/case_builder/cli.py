@@ -30,6 +30,7 @@ def build_parser() -> argparse.ArgumentParser:
     plan.add_argument("--index", action="store_true", help="Build the local evidence index after import (execute mode).")
     plan.add_argument("--checkpoint", action="store_true", help="Persist run state to <case>/.runs/checkpoints.db (langgraph only).")
     plan.add_argument("--thread", default=None, help="Thread ID for checkpointed runs. Defaults to the run ID.")
+    plan.add_argument("--llm", action="store_true", help="Enable LLM agent nodes (TRCR_MODEL, default ollama:llama3.1).")
     plan.set_defaults(handler=run_plan_command)
 
     discover = sub.add_parser("discover-sources", help="Search local SearXNG and write lead-only source candidates.")
@@ -91,6 +92,7 @@ def build_parser() -> argparse.ArgumentParser:
     resume.add_argument("--reason", default=None, help="Reason recorded for rejected packets.")
     resume.add_argument("--approve-export", action="store_true", help="Approve the public export gate.")
     resume.add_argument("--execute", action="store_true", help="Run TRCR commands instead of dry-running them.")
+    resume.add_argument("--llm", action="store_true", help="Enable LLM agent nodes on the resumed run.")
     resume.set_defaults(handler=run_resume_command)
     return parser
 
@@ -119,6 +121,7 @@ def run_plan_command(args: argparse.Namespace) -> dict[str, object]:
         source_ids=args.source_id,
         index_enabled=args.index,
         thread_id=args.thread,
+        llm_enabled=args.llm,
     )
     return run_case_builder(state, execute=args.execute, runner=args.runner, checkpoint=args.checkpoint)
 
@@ -132,6 +135,7 @@ def run_resume_command(args: argparse.Namespace) -> dict[str, object]:
         rejected_packets=rejected,
         export_approved=args.approve_export,
         execute=args.execute,
+        llm=args.llm,
     )
 
 
