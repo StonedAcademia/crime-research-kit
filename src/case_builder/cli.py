@@ -6,7 +6,7 @@ import argparse
 import json
 from typing import Sequence
 
-from .app.service import run_case_builder
+from .app.service import resume_case_builder, run_case_builder
 from .memory import remember_research_actions
 from .models.state import CaseBuilderState
 from .ops import query as query_ops
@@ -25,6 +25,11 @@ def build_parser() -> argparse.ArgumentParser:
     plan.add_argument("--lane", action="append", default=[], help="Force a public-record lane. Repeatable.")
     plan.add_argument("--execute", action="store_true", help="Run TRCR commands instead of dry-running them.")
     plan.add_argument("--runner", choices=["auto", "langgraph", "sequential"], default="auto")
+    plan.add_argument("--source-url", action="append", default=[], help="Public URL to capture. Repeatable.")
+    plan.add_argument("--source-id", action="append", default=[], help="Existing source ID to draft a packet for. Repeatable.")
+    plan.add_argument("--index", action="store_true", help="Build the local evidence index after import (execute mode).")
+    plan.add_argument("--checkpoint", action="store_true", help="Persist run state to <case>/.runs/checkpoints.db (langgraph only).")
+    plan.add_argument("--thread", default=None, help="Thread ID for checkpointed runs. Defaults to the run ID.")
     plan.set_defaults(handler=run_plan_command)
 
     discover = sub.add_parser("discover-sources", help="Search local SearXNG and write lead-only source candidates.")
@@ -77,6 +82,16 @@ def build_parser() -> argparse.ArgumentParser:
     remember.add_argument("--embedder-provider", default="huggingface")
     remember.add_argument("--embedder-model", default="BAAI/bge-small-en-v1.5")
     remember.set_defaults(handler=run_remember_command)
+
+    resume = sub.add_parser("resume", help="Resume a checkpointed case-builder run with review decisions.")
+    resume.add_argument("case_dir")
+    resume.add_argument("--thread", required=True, help="Thread ID printed by the checkpointed plan run.")
+    resume.add_argument("--approve-packet", action="append", default=[], help="Staged packet filename to approve. Repeatable.")
+    resume.add_argument("--reject-packet", action="append", default=[], help="Staged packet filename to reject. Repeatable.")
+    resume.add_argument("--reason", default=None, help="Reason recorded for rejected packets.")
+    resume.add_argument("--approve-export", action="store_true", help="Approve the public export gate.")
+    resume.add_argument("--execute", action="store_true", help="Run TRCR commands instead of dry-running them.")
+    resume.set_defaults(handler=run_resume_command)
     return parser
 
 
@@ -100,8 +115,24 @@ def run_plan_command(args: argparse.Namespace) -> dict[str, object]:
         title=args.title,
         subject=args.subject,
         lanes=args.lane,
+        source_urls=args.source_url,
+        source_ids=args.source_id,
+        index_enabled=args.index,
+        thread_id=args.thread,
     )
-    return run_case_builder(state, execute=args.execute, runner=args.runner)
+    return run_case_builder(state, execute=args.execute, runner=args.runner, checkpoint=args.checkpoint)
+
+
+def run_resume_command(args: argparse.Namespace) -> dict[str, object]:
+    rejected = [{"packet": name, "reason": args.reason} for name in args.reject_packet]
+    return resume_case_builder(
+        args.case_dir,
+        thread_id=args.thread,
+        approved_packets=args.approve_packet,
+        rejected_packets=rejected,
+        export_approved=args.approve_export,
+        execute=args.execute,
+    )
 
 
 def run_discover_command(args: argparse.Namespace) -> dict[str, object]:
