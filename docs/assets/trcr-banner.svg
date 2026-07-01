@@ -37,7 +37,6 @@
     <path d="M104 82 L198 132" stroke="#d6dce7" stroke-width="5" stroke-linecap="round"/>
     <path d="M78 110 L78 138" stroke="#d6dce7" stroke-width="5" stroke-linecap="round"/>
     <circle cx="224" cy="146" r="42" fill="#e78284"/>
-    <text x="18" y="246" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700" fill="#d6dce7">entities + events + claims</text>
   </g>
   <g transform="translate(720 68)" filter="url(#shadow)">
     <rect x="0" y="0" width="420" height="236" rx="20" fill="#101820" opacity="0.94"/>
