@@ -128,6 +128,7 @@ from adapters.ops.evidence.reports.analysis.command.builders.facets.boundary imp
     build_boundary_rows,
     build_readiness_products,
 )
+from adapters.ops.evidence.reports.analysis.command.builders.facets.timelines import build_swimlanes  # noqa: E402
 from adapters.ops.evidence.reports.analysis.command.builders.layered import build_layered_graphs  # noqa: E402
 from adapters.ops.evidence.reports.analysis.command.builders.paths import build_path_atlas  # noqa: E402
 from adapters.ops.evidence.reports.analysis.command.context import load_analysis_context  # noqa: E402
@@ -225,72 +226,7 @@ def export_analysis_charts(args: argparse.Namespace) -> None:
 
     boundary_rows = build_boundary_rows(ctx)
 
-    swimlanes: list[dict[str, Any]] = []
-    event_by_id = {str(event.get("event_id")): event for event in events}
-    seen_swimlane_keys: set[tuple[str, str, str]] = set()
-    for link in event_links:
-        event_id = str(link.get("event_id", ""))
-        event = event_by_id.get(event_id, {})
-        entity_id = str(link.get("entity_id", ""))
-        cluster_id = cluster_by_person.get(entity_id, "unclustered")
-        key = (cluster_id, event_id, str(link.get("event_link_id", "")))
-        seen_swimlane_keys.add(key)
-        swimlanes.append({
-            "cluster_id": cluster_id,
-            "cluster_label": cluster_labels.get(cluster_id, cluster_id),
-            "entity_id": entity_id,
-            "name": entity_display(entity_by_id.get(entity_id)),
-            "start_date": event.get("start_date", ""),
-            "end_date": event.get("end_date", ""),
-            "date_precision": event.get("date_precision", ""),
-            "event_id": event_id,
-            "event_title": event.get("title", ""),
-            "event_type": event.get("event_type", ""),
-            "status": event.get("status", ""),
-            "confidence": event.get("confidence", ""),
-            "event_link_id": link.get("event_link_id", ""),
-            "relation_type": link.get("relation_type", ""),
-            "relationship_class": relationship_class(link, "event_link"),
-            "event_link_status": link.get("status", ""),
-            "event_link_confidence": link.get("confidence", ""),
-            "source_count": len(set(parse_cell_list(event.get("source_ids"))) | set(parse_cell_list(link.get("source_ids")))),
-            "claim_ids": sorted(set(parse_cell_list(event.get("claim_ids"))) | set(parse_cell_list(link.get("claim_ids")))),
-            "source_ids": sorted(set(parse_cell_list(event.get("source_ids"))) | set(parse_cell_list(link.get("source_ids")))),
-            "is_public_safe": public_ready_record(event) and public_ready_record(link),
-            "caveat": "co-mention/context link" if "co_mentioned" in str(link.get("relation_type", "")) else "",
-        })
-    for event in events:
-        event_id = str(event.get("event_id", ""))
-        for entity_id in parse_cell_list(event.get("entity_ids")) or [""]:
-            cluster_id = cluster_by_person.get(entity_id, "unclustered")
-            key = (cluster_id, event_id, "")
-            if key in seen_swimlane_keys:
-                continue
-            swimlanes.append({
-                "cluster_id": cluster_id,
-                "cluster_label": cluster_labels.get(cluster_id, cluster_id),
-                "entity_id": entity_id,
-                "name": entity_display(entity_by_id.get(entity_id)),
-                "start_date": event.get("start_date", ""),
-                "end_date": event.get("end_date", ""),
-                "date_precision": event.get("date_precision", ""),
-                "event_id": event_id,
-                "event_title": event.get("title", ""),
-                "event_type": event.get("event_type", ""),
-                "status": event.get("status", ""),
-                "confidence": event.get("confidence", ""),
-                "event_link_id": "",
-                "relation_type": "event_entity",
-                "relationship_class": "personnel_bridge",
-                "event_link_status": "",
-                "event_link_confidence": "",
-                "source_count": len(parse_cell_list(event.get("source_ids"))),
-                "claim_ids": event.get("claim_ids", []),
-                "source_ids": event.get("source_ids", []),
-                "is_public_safe": public_ready_record(event),
-                "caveat": "",
-            })
-    swimlanes.sort(key=lambda row: (str(row["cluster_id"]), date_sort_key(row.get("start_date")), str(row["event_id"])))
+    swimlanes = build_swimlanes(ctx)
 
     relation_counts: dict[tuple[str, str, str, str], dict[str, Any]] = {}
     for rel in relationships:
