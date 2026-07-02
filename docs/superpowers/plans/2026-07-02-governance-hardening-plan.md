@@ -4,7 +4,7 @@
 
 **Goal:** Enforce the full governance program (structure, boundaries, security/local-only, data safety, docs drift, packaging, CI/release) as locally runnable pytest gates plus a pinned external-tool audit lane and thin CI mirrors.
 
-**Architecture:** Extend the existing `tests/governance/` stdlib-pytest suite for everything statically decidable; acquire and pin external tools (gitleaks, lychee, pip-audit, pip-licenses, cyclonedx-bom) behind `make`/moon targets in an isolated audit lane; add GitHub Actions workflows that only call those targets, mirroring the existing moon `branch_gate.py`.
+**Architecture:** Extend the existing `tests/quality/governance/` stdlib-pytest suite for everything statically decidable; acquire and pin external tools (gitleaks, lychee, pip-audit, pip-licenses, cyclonedx-bom) behind `make`/moon targets in an isolated audit lane; add GitHub Actions workflows that only call those targets, mirroring the existing moon `branch_gate.py`.
 
 **Tech Stack:** Python stdlib (`ast`, `tokenize`, `json`, `re`, `subprocess`), pytest, moonrepo tasks, GitHub Actions, gitleaks v8.30.1, lychee 0.23.0, pip-audit 2.10.1, pip-licenses 5.5.5, cyclonedx-bom 7.3.0.
 
@@ -12,8 +12,8 @@ Spec: `docs/superpowers/specs/2026-07-02-governance-hardening-spec.md` (policies
 
 ## Global Constraints
 
-- Repo-shape governance applies to everything you add outside `.agents/`, `data/`, `docs/superpowers/`: 1-4 direct files and 0-3 child dirs per governed dir; every governed file < 200 non-comment LOC (`tests/governance/test_repository_shape.py`). `.github/` IS governed. `src/` and `tests/` are exempt from dir counts but NOT from LOC.
-- Every new `src/case_builder/` package dir needs `README.md` + `__init__.py` (test_case_builder_structure.py).
+- Repo-shape governance applies to everything you add outside `.agents/`, `data/`, `docs/superpowers/`: 1-4 direct files and 0-3 child dirs per governed dir; every governed file < 200 non-comment LOC (`tests/quality/governance/test_repository_shape.py`). `.github/`, `src/case_builder/`, and `tests/` are all governed by the same shape rule.
+- Every new `src/case_builder/` package dir with `__init__.py` needs `README.md` (enforced by `tests/quality/governance/test_repository_shape.py`).
 - No new required dependencies: core stays stdlib. New tooling goes in the `governance` optional extra or as fetched pinned binaries.
 - Governance tests must not use the network. Audit-lane targets may; they must degrade with a clear skip message offline.
 - Every CI job step must be expressible as a `make <target>` (which delegates to `moon run crk:<task>`).
@@ -33,9 +33,9 @@ Spec: `docs/superpowers/specs/2026-07-02-governance-hardening-spec.md` (policies
 
 **Steps:**
 
-- [ ] **Step 0.1:** Run `.venv/bin/python -m pytest tests/governance -x -q` on the dirty tree. Record result.
+- [ ] **Step 0.1:** Run `.venv/bin/python -m pytest tests/quality/governance -x -q` on the dirty tree. Record result.
 - [ ] **Step 0.2:** If `criminal-research` is not in the registry template shard, add it to `docs/registry/templates/extraction.json` following the existing entry format (id `criminal-research`, template file path under the skill's assets — mirror an existing entry, confirm the referenced template file exists; if the skill has no template file yet, add the skill dir WITHOUT registry changes and verify `test_skill_docs_only_reference_known_template_and_lane_ids` still passes since the doc references template `criminal-research`).
-- [ ] **Step 0.3:** `git add -A && .venv/bin/python -m pytest tests/governance -q` — must be green before committing.
+- [ ] **Step 0.3:** `git add -A && .venv/bin/python -m pytest tests/quality/governance -q` — must be green before committing.
 - [ ] **Step 0.4:** Commit: `chore: land criminal-research skill WIP and doc edits`
 - [ ] **Step 0.5:** Commit spec + this plan: `docs: add governance hardening spec and plan`
 
@@ -46,7 +46,7 @@ Spec: `docs/superpowers/specs/2026-07-02-governance-hardening-spec.md` (policies
 - Create: `deployment/scripts/tools/fetch_governance_tools.py` (stdlib fetch+sha256-verify → gitignored `deployment/tooling/bin/`)
 - Create: `.gitleaks.toml`, `LICENSE` (MIT), 
 - Modify: `pyproject.toml` (add `governance` extra), `moon.yml` + `Makefile` (targets: `audit-secrets`, `audit-deps`, `audit-licenses`, `audit-links`, `sbom`, `build-dist`), `.gitignore` (`deployment/tooling/bin/`)
-- Test: `tests/governance/test_tooling_manifest.py`
+- Test: `tests/quality/governance/test_tooling_manifest.py`
 
 **Interfaces (later phases consume):**
 - `make audit-secrets` → runs gitleaks via fetched binary; exit 0 clean.
@@ -55,7 +55,7 @@ Spec: `docs/superpowers/specs/2026-07-02-governance-hardening-spec.md` (policies
 
 **Steps:**
 
-- [ ] **Step 1.1:** Write failing test `tests/governance/test_tooling_manifest.py`:
+- [ ] **Step 1.1:** Write failing test `tests/quality/governance/test_tooling_manifest.py`:
 
 ```python
 """Governance: pinned tooling manifest stays consistent with pyproject and make targets."""
@@ -87,19 +87,19 @@ def test_make_exposes_audit_lane_targets():
         assert f"\n{target}:" in makefile, f"make target {target} missing"
 ```
 
-- [ ] **Step 1.2:** Run `pytest tests/governance/test_tooling_manifest.py -q` — expect FAIL (no manifest).
+- [ ] **Step 1.2:** Run `pytest tests/quality/governance/test_tooling_manifest.py -q` — expect FAIL (no manifest).
 - [ ] **Step 1.3:** Create `manifest.json` with real upstream sha256 checksums (fetch release checksums for gitleaks v8.30.1 and lychee 0.23.0 from their GitHub releases — network step, do it now), `governance` extra in pyproject (`pip-audit==2.10.1`, `pip-licenses==5.5.5`, `cyclonedx-bom==7.3.0`, `build>=1.2`), Makefile+moon targets delegating per existing pattern (`moon run crk:<task>`; moon tasks call `deployment/scripts/tools/venv_exec.py` or the fetcher).
 - [ ] **Step 1.4:** Write `fetch_governance_tools.py`: reads manifest, downloads each tool for the host platform into `deployment/tooling/bin/`, verifies sha256, `chmod +x`; idempotent; `--offline` flag exits 0 with a notice when binaries already present. Keep < 200 non-comment LOC.
 - [ ] **Step 1.5:** Run the fetcher for real: `python deployment/scripts/tools/fetch_governance_tools.py` — binaries verified present. Then `pip install -e '.[governance]'` into `.venv`. **This is the resource-acquisition gate: do not proceed to later phases until both succeed.**
 - [ ] **Step 1.6:** `.gitleaks.toml`: default ruleset + `[allowlist]` paths for `data/cases/`, `data/exports/` (gitignored anyway), synthetic fixture pseudo-data. Run `make audit-secrets` on the repo — triage any hits (expected: none; fixtures are synthetic).
 - [ ] **Step 1.7:** Add `LICENSE` (MIT, copyright 2026 StonedAcademia contributors).
-- [ ] **Step 1.8:** Full check: `pytest tests/governance -q && make check` — green.
+- [ ] **Step 1.8:** Full check: `pytest tests/quality/governance -q && make check` — green.
 - [ ] **Step 1.9:** Commits (split logically): `feat(tooling): add pinned governance tool manifest and fetcher`, `chore: add gitleaks config and MIT license`, `feat(tooling): add audit-lane make and moon targets`.
 
 ## Phase 2 — Branch `gov/repo-shape-naming`
 
 **Files:**
-- Create: `tests/governance/test_path_policies.py`
+- Create: `tests/quality/governance/test_path_policies.py`
 
 **Steps:**
 
@@ -153,14 +153,14 @@ def test_workflow_dirs_have_readmes():
 
 - [ ] **Step 2.2:** Prove enforcement: `mkdir docs/misc && touch docs/misc/x.md && git add docs/misc` → run test → expect FAIL naming `docs/misc`; then `git rm -r --cached docs/misc && rm -rf docs/misc` → PASS. Do the same spot-check for a doc containing `/home/tester/`.
 - [ ] **Step 2.3:** Fix any real offenders the new tests catch (add READMEs where missing — one-line purpose/ownership note per spec §7.4).
-- [ ] **Step 2.4:** `pytest tests/governance -q` green. Commit: `test(governance): enforce path naming, doc path genericity, and README coverage`
+- [ ] **Step 2.4:** `pytest tests/quality/governance -q` green. Commit: `test(governance): enforce path naming, doc path genericity, and README coverage`
 
 ## Phase 3 — Branch `gov/import-boundaries`
 
 **Files:**
-- Create: `tests/governance/test_import_boundaries.py`
+- Create: `tests/quality/governance/test_import_boundaries.py`
 
-**Interfaces:** policy constants exactly as spec §5 (frontend roots: `src/case_builder/cli.py`, `src/case_builder/mcp/`, `src/case_builder/graph/`, `src/case_builder/app/`; forbidden: `case_builder.casefile`, direct `tcr.py` refs outside `ops/runner.py`; optional packages list; network modules list with allowed roots `src/case_builder/acquisition/`).
+**Interfaces:** policy constants exactly as spec §5 (frontend roots: `src/case_builder/cli.py`, `src/case_builder/adapters/interfaces/mcp/`, `src/case_builder/pipeline/graph/`, `src/case_builder/pipeline/app/`; forbidden: `case_builder.core.casefile`, direct `tcr.py` refs outside `ops/runner.py`; optional packages list; network modules list with allowed roots `src/case_builder/adapters/io/acquisition/`).
 
 **Steps:**
 
@@ -174,7 +174,7 @@ from tests.helpers import KIT_ROOT
 
 SRC = KIT_ROOT / "src" / "case_builder"
 FRONTEND_ROOTS = [SRC / "cli.py", SRC / "mcp", SRC / "graph", SRC / "app"]
-FORBIDDEN_FOR_FRONTENDS = {"case_builder.casefile"}
+FORBIDDEN_FOR_FRONTENDS = {"case_builder.core.casefile"}
 OPTIONAL_PACKAGES = {"langgraph", "langchain", "langchain_ollama", "llama_index",
                      "qdrant_client", "mem0", "docling", "ocrmypdf", "fitz",
                      "playwright", "scrapy", "trafilatura", "mcp",
@@ -249,20 +249,20 @@ def test_network_modules_confined_to_acquisition():
     assert not offenders, offenders
 ```
 
-- [ ] **Step 3.2:** Run it. Expect surprises (e.g., `mcp` package imports at top level inside `src/case_builder/mcp/` — that is the *frontend for* the extra, so refine: allow an optional package at top level inside the subsystem dir that exists only for it: `mcp/` may import `mcp`, `graph/` may import `langgraph` ONLY inside `try/except ImportError` — detect by checking the import's enclosing `Try` node; parsing note: walk `tree.body` `ast.Try` handlers too). Iterate until the rules encode reality without weakening the boundary; every exemption gets a comment.
-- [ ] **Step 3.3:** Prove each test can fail (temporarily add `import case_builder.casefile` to `cli.py`, a top-level `import langgraph` to `ops/case.py`, `import requests` to `models/state.py` → each test fails → revert).
+- [ ] **Step 3.2:** Run it. Expect surprises (e.g., `mcp` package imports at top level inside `src/case_builder/adapters/interfaces/mcp/` — that is the *frontend for* the extra, so refine: allow an optional package at top level inside the subsystem dir that exists only for it: `mcp/` may import `mcp`, `graph/` may import `langgraph` ONLY inside `try/except ImportError` — detect by checking the import's enclosing `Try` node; parsing note: walk `tree.body` `ast.Try` handlers too). Iterate until the rules encode reality without weakening the boundary; every exemption gets a comment.
+- [ ] **Step 3.3:** Prove each test can fail (temporarily add `import case_builder.core.casefile` to `cli.py`, a top-level `import langgraph` to `ops/case.py`, `import requests` to `models/state.py` → each test fails → revert).
 - [ ] **Step 3.4:** Full suite green; commit: `test(governance): enforce ops boundary, lazy optional imports, and network confinement`
 
 ## Phase 4 — Branch `gov/env-provider-policy`
 
 **Files:**
-- Create: `docs/registry/env_vars.json`, `tests/governance/test_env_and_providers.py`
+- Create: `docs/registry/env_vars.json`, `tests/quality/governance/test_env_and_providers.py`
 
 **Interfaces:** registry entry shape `{"name": "CRK_MODEL", "purpose": "...", "scope": "runtime|deployment|ci", "default": "...", "prefix_class": "CRK_"}`; approved prefixes and SaaS denylist verbatim from spec §5.
 
 **Steps:**
 
-- [ ] **Step 4.1:** Build `docs/registry/env_vars.json` from the survey's inventory: `CRK_CASES_ROOT, CRK_SKILL_ROOT, CRK_MODEL, CRK_SEARXNG_URL, CRK_QDRANT_URL, CRK_QDRANT_HOST, CRK_QDRANT_PORT, CRK_EMBED_MODEL, CRK_MEM0_LLM_PROVIDER, CRK_MEM0_LLM_MODEL, CRK_EMBEDDER_PROVIDER, CRK_HOOK_BRANCH, CRK_REPO_ROOT, OLLAMA_HOST, SEARXNG_BASE_URL, HF_HOME, TRANSFORMERS_CACHE` — each with real purpose/default read from the code (`src/case_builder/config.py`, `deployment/`).
+- [ ] **Step 4.1:** Build `docs/registry/env_vars.json` from the survey's inventory: `CRK_CASES_ROOT, CRK_SKILL_ROOT, CRK_MODEL, CRK_SEARXNG_URL, CRK_QDRANT_URL, CRK_QDRANT_HOST, CRK_QDRANT_PORT, CRK_EMBED_MODEL, CRK_MEM0_LLM_PROVIDER, CRK_MEM0_LLM_MODEL, CRK_EMBEDDER_PROVIDER, CRK_HOOK_BRANCH, CRK_REPO_ROOT, OLLAMA_HOST, SEARXNG_BASE_URL, HF_HOME, TRANSFORMERS_CACHE` — each with real purpose/default read from the code (`src/case_builder/core/config.py`, `deployment/`).
 - [ ] **Step 4.2:** Write the test: AST scan of `src/**/*.py` + `.agents/skills/*/scripts/*.py` for `os.environ[...]`/`os.environ.get(...)`/`os.getenv(...)`; regex scan of `deployment/**` shell/yaml/compose for `${VAR}`/`environment:` keys. Assert (a) every discovered literal key is registered, (b) non-literal env keys are absent, (c) every registered key matches an approved prefix or is an approved singleton, (d) every registered `runtime`-scope key is actually read somewhere (no dead registry entries).
 - [ ] **Step 4.3:** Same file, SaaS denylist test: case-insensitive substring scan of tracked files under `src/`, `deployment/`, `.agents/skills/`, plus `pyproject.toml` for the spec §5 denylist terms; exempt paths: this test file, the spec/plan docs. Prove it fails on a planted `import langsmith`.
 - [ ] **Step 4.4:** Green; commits: `feat(registry): add canonical env var registry`, `test(governance): enforce env var registry and local-only provider policy`
@@ -270,7 +270,7 @@ def test_network_modules_confined_to_acquisition():
 ## Phase 5 — Branch `gov/security-scans` (after Phase 1 merges)
 
 **Files:**
-- Create: `tests/governance/test_secret_floor.py`
+- Create: `tests/quality/governance/test_secret_floor.py`
 
 **Steps:**
 
@@ -282,8 +282,8 @@ def test_network_modules_confined_to_acquisition():
 ## Phase 6 — Branch `gov/data-safety-gates`
 
 **Files:**
-- Create: `tests/governance/test_data_safety.py` (schema validation of fixtures — stdlib json + `jsonschema` if dev extra present, else structural checks)
-- Create: `tests/integration/test_export_safety.py` (round-trips; integration because it shells out to tcr.py)
+- Create: `tests/quality/governance/test_data_safety.py` (schema validation of fixtures — stdlib json + `jsonschema` if dev extra present, else structural checks)
+- Create: `tests/runtime/integration/operations/exports/test_safety.py` (round-trips; integration because it shells out to tcr.py)
 - Create: `data/examples/unsafe_case_fixture/` (negative fixture: a claim with `public_export: false`, a private address, a minor's name, a claim with no `source_ids`, an automation co-mention with high confidence — each individually unsafe)
 - Modify: `.agents/skills/truecrime-cult-research/scripts/tcr.py` — aggregate gate: public-output commands (`export-*` without `--include-private`) run `audit-public-export` + `audit-privacy-redactions` + blocker-grade contradiction/independence checks first; refuse with actionable message on blockers. **Delegate this edit to Codex** (it has already mapped tcr.py's audit internals); keep the diff minimal and stdlib-only.
 
@@ -298,7 +298,7 @@ def test_network_modules_confined_to_acquisition():
 ## Phase 7 — Branch `gov/docs-drift`
 
 **Files:**
-- Create: `tests/governance/test_docs_links.py`, `tests/governance/test_runbook_coverage.py`
+- Create: `tests/quality/governance/test_docs_links.py`, `tests/quality/governance/test_runbook_coverage.py`
 
 **Steps:**
 
@@ -310,7 +310,7 @@ def test_network_modules_confined_to_acquisition():
 ## Phase 8 — Branch `gov/packaging-policy` (after Phase 1 merges)
 
 **Files:**
-- Create: `tests/governance/test_packaging_policy.py`, `deployment/scripts/checks/license_policy.py` (reads `pip-licenses` JSON, applies spec §5 allow/deny), `deployment/scripts/checks/fresh_build.py` (temp venv, `pip install build`, `python -m build` from `git archive` of HEAD, import-check the wheel)
+- Create: `tests/quality/governance/test_packaging_policy.py`, `deployment/scripts/checks/license_policy.py` (reads `pip-licenses` JSON, applies spec §5 allow/deny), `deployment/scripts/checks/fresh_build.py` (temp venv, `pip install build`, `python -m build` from `git archive` of HEAD, import-check the wheel)
 
 **Steps:**
 
@@ -323,7 +323,7 @@ def test_network_modules_confined_to_acquisition():
 **Files:**
 - Create: `.github/workflows/ci.yml`, `.github/workflows/audit.yml`, `.github/workflows/release.yml` (3 files in `workflows/`; `.github/` gets ≤1 more direct file — budget per repo-shape)
 - Modify: `deployment/scripts/checks/branch_gate.py` (extend `BRANCH_TARGETS` with prefix rules: `docs/*` → check+governance; `gov/* test/* chore/*` → check+governance+smoke; `feat/* fix/* ci/*` → check+governance+smoke+test-integration; unknown prefix → full suite)
-- Create: `tests/governance/test_ci_parity.py`
+- Create: `tests/quality/governance/test_ci_parity.py`
 
 **Steps:**
 
@@ -337,7 +337,7 @@ def test_network_modules_confined_to_acquisition():
 **Files:**
 - Create: `CHANGELOG.md` (Keep-a-Changelog format, `## [Unreleased]` + backfilled `## [0.1.0]` from git history), `deployment/scripts/checks/release_readiness.py` (asserts: tag matches `pyproject.toml` version, CHANGELOG has a dated section for it, reproducible double-build per spec §5 definition with `SOURCE_DATE_EPOCH`, SBOM emitted per extra + aggregate via cyclonedx-bom)
 - Modify: `.github/workflows/release.yml` (call it), `Makefile`/`moon.yml` (`release-check` target)
-- Test: `tests/governance/test_release_readiness.py` (CHANGELOG format parses; unreleased section exists; script's tag/version/changelog logic unit-tested with tmp fixtures)
+- Test: `tests/quality/governance/test_release_readiness.py` (CHANGELOG format parses; unreleased section exists; script's tag/version/changelog logic unit-tested with tmp fixtures)
 
 **Steps:**
 
@@ -359,4 +359,4 @@ def test_network_modules_confined_to_acquisition():
 | 9 | deep-reasoner (workflow/gate design) + fast-worker (yaml) |
 | 10 | Codex (reproducible-build subtleties) |
 
-Every phase: implementing agent works on the named branch in a worktree, commits at each step, runs `pytest tests/governance -q` + touched suites before each commit; orchestrator reviews the diff, merges `--no-ff` to main, deletes the branch. Phases 2/3/4/6/7 may run in parallel worktrees.
+Every phase: implementing agent works on the named branch in a worktree, commits at each step, runs `pytest tests/quality/governance -q` + touched suites before each commit; orchestrator reviews the diff, merges `--no-ff` to main, deletes the branch. Phases 2/3/4/6/7 may run in parallel worktrees.

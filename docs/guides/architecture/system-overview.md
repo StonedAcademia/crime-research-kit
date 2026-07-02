@@ -116,7 +116,7 @@ The full loop is the [Case Workflow runbook](../runbooks/cases/case-workflow.md)
 - Lane and template vocabulary is registry-first: `docs/registry/` is
   canonical, reference tables are generated, and governance tests catch drift.
 - Governance tests bound module size and repository shape
-  (`tests/governance/`).
+  (`tests/quality/governance/`).
 
 ## Where to go next
 

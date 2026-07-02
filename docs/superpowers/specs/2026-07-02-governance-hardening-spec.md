@@ -14,7 +14,7 @@ needs the network.
 
 ## 2. Current state (survey findings this spec builds on)
 
-- Governance suite exists: `tests/governance/` (repo shape 1-4 files / 0-3 dirs,
+- Governance suite exists: `tests/quality/governance/` (repo shape 1-4 files / 0-3 dirs,
   200 non-comment LOC, schemas, lane-registry drift, skill docs). Extend, never
   duplicate.
 - CI is **moonrepo**, not GitHub Actions: `moon.yml` tasks, `.moon` pre-push hook
@@ -26,9 +26,9 @@ needs the network.
 - `tcr.py` already ships the data-safety audits: `audit-public-export`,
   `audit-privacy-redactions`, `audit-contradictions`,
   `audit-source-independence`, `review-narrative-readiness`.
-- Exactly two network call sites exist: `src/case_builder/acquisition/search.py`
+- Exactly two network call sites exist: `src/case_builder/adapters/io/acquisition/search.py`
   and `tcr.py` URL ingestion. Env reads are centralized in
-  `src/case_builder/config.py`; ~16 distinct env vars across code + deployment.
+  `src/case_builder/core/config.py`; ~16 distinct env vars across code + deployment.
 - No LICENSE, no CHANGELOG, no lockfile, no secret scanning, no SBOM/license
   tooling, no import-boundary tests, no link checker.
 - Working tree is dirty: doc/skill edits plus untracked
@@ -73,7 +73,7 @@ Binaries land in a gitignored `deployment/tooling/bin/`.
   `C:\Users`, or this machine's repo root; use `<repo-root>`, `~`, or relative
   paths.
 - **Import boundary**: modules under `cli.py`, `mcp/`, `graph/`, `app/` must not
-  import `case_builder.casefile` and must not reference `tcr.py` except via
+  import `case_builder.core.casefile` and must not reference `tcr.py` except via
   `ops.runner`. Ledger access goes through `ops/` only.
 - **Lazy optional imports**: optional-extra packages (`langgraph`, `langchain*`,
   `llama_index*`, `qdrant_client`, `mem0*`, `docling`, `ocrmypdf`, `fitz`,
@@ -82,7 +82,7 @@ Binaries land in a gitignored `deployment/tooling/bin/`.
   subprocess check: importing `case_builder.cli` leaves them out of
   `sys.modules`.
 - **Network ban**: `socket`, `urllib.request`, `http.client`, `requests`,
-  `httpx`, `aiohttp` allowed only in `src/case_builder/acquisition/`,
+  `httpx`, `aiohttp` allowed only in `src/case_builder/adapters/io/acquisition/`,
   `deployment/`, and the documented `tcr.py` ingest path.
 - **Env vars**: registry at `docs/registry/env_vars.json` (name, purpose,
   prefix-class, default, scope). Approved prefixes: `CRK_`, `OLLAMA_`,

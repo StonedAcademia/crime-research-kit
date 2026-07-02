@@ -19,18 +19,14 @@ the existing CRK import and validation commands.
 
 | Directory | Responsibility |
 | --- | --- |
-| `src/case_builder/app/` | Use-case boundary and runner selection. |
-| `src/case_builder/agents/` | Deterministic agent policy such as source-lane routing. |
-| `src/case_builder/graph/` | LangGraph state, nodes, graph builder, and sequential fallback. |
-| `src/case_builder/models/` | Serializable state models shared by CLI, graph, and tests. |
-| `src/case_builder/ops/` | Typed operations core and safety policy shared by CLI, graph nodes, and future MCP frontends. |
-| `src/case_builder/acquisition/` | Local source discovery helpers, currently SearXNG candidate reports. |
-| `src/case_builder/parsing/` | Local Docling and OCRmyPDF wrappers for registered source artifacts. |
-| `src/case_builder/retrieval/` | Rebuildable LlamaIndex/Qdrant evidence indexing over records and source text. |
-| `src/case_builder/memory/` | Local workflow memory providers for decisions, dead ends, and unresolved questions. |
+| `src/case_builder/core/` | Case ledger helpers, configuration, lane registry, state models, and workflow memory. |
+| `src/case_builder/pipeline/` | Deterministic agents, service boundary, and LangGraph/sequential workflow execution. |
+| `src/case_builder/adapters/io/` | Local source discovery, parsing/OCR, and rebuildable evidence retrieval indexes. |
+| `src/case_builder/adapters/ops/` | Typed operations, runner/result contracts, and safety policy shared by frontends. |
+| `src/case_builder/adapters/interfaces/` | LLM and MCP interface adapters that call ops instead of touching ledger internals. |
 
 Each package directory has a local `README.md`. Python modules are kept under
-200 non-comment LOC and checked by `tests/test_case_builder_structure.py`.
+200 non-comment LOC by `tests/quality/governance/test_repository_shape.py`.
 
 ## Pipeline Workflow
 
