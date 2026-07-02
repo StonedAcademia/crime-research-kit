@@ -10,7 +10,6 @@ from __future__ import annotations
 import argparse
 import csv
 import datetime as dt
-import hashlib
 import html
 import json
 import math
@@ -18,7 +17,6 @@ import re
 import sys
 import textwrap
 import urllib.parse
-import urllib.request
 from itertools import combinations
 from pathlib import Path
 from typing import Any, Iterable
@@ -47,7 +45,6 @@ from core.casefile import (  # noqa: E402
 )
 from adapters.ops.casework.records.workspace import (  # noqa: E402
     add_source,
-    add_source_record,
     find_source,
     init_case,
     load_sources,
@@ -57,6 +54,8 @@ from adapters.ops.casework.records.extractions import (  # noqa: E402
     draft_extraction,
     import_extraction,
 )
+from adapters.ops.casework.records.intake.suggestions import ner_suggest  # noqa: E402
+from adapters.ops.casework.records.intake.web import ingest_url  # noqa: E402
 from adapters.ops.casework.records.validation import validate  # noqa: E402
 
 def lane_registry_path() -> Path:
@@ -144,8 +143,6 @@ PRESS_RELEASE_TERMS = {
     "official statement",
 }
 
-DATE_RE = re.compile(r"\b(?:\d{4}-\d{2}-\d{2}|\d{1,2}/\d{1,2}/\d{2,4}|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2},?\s+\d{4})\b", re.I)
-CAP_PHRASE_RE = re.compile(r"\b(?:[A-Z][a-zA-Z'\-.]+(?:\s+|$)){2,5}")
 TIMESTAMP_RE = re.compile(r"(?<!\d)(?:(?P<hours>\d{1,2}):)?(?P<minutes>\d{1,2}):(?P<seconds>\d{2})(?:[.,]\d{1,3})?(?!\d)")
 SPEAKER_LINE_RE = re.compile(r"^\s*(?P<speaker>[A-Z][A-Za-z0-9 .'\-]{1,48}):\s*(?P<text>.+?)\s*$")
 
@@ -153,196 +150,6 @@ def ensure_case(case_dir: str | Path) -> None:
     cdir = case_path(case_dir)
     if not (cdir / "case.json").exists():
         raise SystemExit(f"Not a case workspace: {cdir}. Run init-case first.")
-
-
-def safe_filename_from_url(url: str) -> str:
-    parsed = urllib.parse.urlparse(url)
-    domain = slugify(parsed.netloc)
-    path = slugify(parsed.path or "index")[:48]
-    digest = hashlib.sha1(url.encode("utf-8")).hexdigest()[:8]
-    return f"{domain}_{path}_{digest}"
-
-
-def fetch_url(url: str, timeout: int = 25) -> tuple[str, bytes, dict[str, str]]:
-    req = urllib.request.Request(
-        url,
-        headers={
-            "User-Agent": "truecrime-research-kit/0.1 (+public-interest research; contact: local-user)",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        },
-    )
-    with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310 - user-requested URL ingestion
-        content_type = resp.headers.get("Content-Type", "")
-        data = resp.read()
-        return content_type, data, dict(resp.headers.items())
-
-
-def extract_html_text(raw: bytes, content_type: str) -> tuple[str, dict[str, Any]]:
-    # Decode
-    charset = "utf-8"
-    m = re.search(r"charset=([^;]+)", content_type or "", flags=re.I)
-    if m:
-        charset = m.group(1).strip()
-    try:
-        html_text = raw.decode(charset, errors="replace")
-    except LookupError:
-        html_text = raw.decode("utf-8", errors="replace")
-
-    meta: dict[str, Any] = {"title": None, "author": None, "date_published": None}
-
-    # Best extraction if available.
-    try:
-        import trafilatura  # type: ignore
-        extracted = trafilatura.extract(html_text, include_comments=False, include_tables=True)
-        meta_obj = trafilatura.extract_metadata(html_text)
-        if meta_obj:
-            meta["title"] = getattr(meta_obj, "title", None)
-            meta["author"] = getattr(meta_obj, "author", None)
-            meta["date_published"] = getattr(meta_obj, "date", None)
-        if extracted:
-            return extracted.strip(), meta
-    except Exception:
-        pass
-
-    # BeautifulSoup if available.
-    try:
-        from bs4 import BeautifulSoup  # type: ignore
-        soup = BeautifulSoup(html_text, "html.parser")
-        if soup.title and soup.title.string:
-            meta["title"] = soup.title.string.strip()
-        for key in ["article:published_time", "date", "pubdate", "publishdate", "timestamp"]:
-            tag = soup.find("meta", attrs={"property": key}) or soup.find("meta", attrs={"name": key})
-            if tag and tag.get("content"):
-                meta["date_published"] = tag.get("content")
-                break
-        for key in ["author", "article:author"]:
-            tag = soup.find("meta", attrs={"name": key}) or soup.find("meta", attrs={"property": key})
-            if tag and tag.get("content"):
-                meta["author"] = tag.get("content")
-                break
-        for bad in soup(["script", "style", "noscript", "svg"]):
-            bad.decompose()
-        text = soup.get_text("\n")
-        text = re.sub(r"\n{3,}", "\n\n", text)
-        text = re.sub(r"[ \t]{2,}", " ", text)
-        return text.strip(), meta
-    except Exception:
-        pass
-
-    # Crude fallback.
-    title_match = re.search(r"<title[^>]*>(.*?)</title>", html_text, flags=re.I | re.S)
-    if title_match:
-        meta["title"] = html.unescape(re.sub(r"\s+", " ", title_match.group(1)).strip())
-    text = re.sub(r"<script\b.*?</script>", "", html_text, flags=re.I | re.S)
-    text = re.sub(r"<style\b.*?</style>", "", text, flags=re.I | re.S)
-    text = re.sub(r"<[^>]+>", " ", text)
-    text = html.unescape(text)
-    text = re.sub(r"\s+", " ", text)
-    return text.strip(), meta
-
-
-def ingest_url(args: argparse.Namespace) -> None:
-    ensure_case(args.case_dir)
-    cdir = case_path(args.case_dir)
-    url = args.url
-    filename = safe_filename_from_url(url)
-    raw_path = cdir / "raw" / "downloads" / f"{filename}.html"
-    text_path = cdir / "raw" / "sources" / f"{filename}.txt"
-    try:
-        content_type, raw, headers = fetch_url(url, timeout=args.timeout)
-    except Exception as exc:
-        raise SystemExit(f"Failed to fetch {url}: {exc}") from exc
-
-    raw_path.write_bytes(raw)
-    text, meta = extract_html_text(raw, content_type)
-    text_path.write_text(text, encoding="utf-8")
-    raw_sha256 = file_sha256(raw_path)
-    text_sha256 = file_sha256(text_path)
-    parsed = urllib.parse.urlparse(url)
-    publisher = args.publisher or parsed.netloc
-    title = args.title or meta.get("title") or url
-    rec = add_source_record(
-        args.case_dir,
-        title=title,
-        source_type=args.source_type,
-        reliability_grade=args.reliability_grade,
-        url=url,
-        author=args.author or meta.get("author"),
-        publisher=publisher,
-        date_published=args.date_published or meta.get("date_published"),
-        archive_url=args.archive_url,
-        raw_path=str(raw_path.relative_to(cdir)),
-        text_path=str(text_path.relative_to(cdir)),
-        content_type=content_type,
-        capture_method="ingest_url",
-        capture_timestamp=now_utc(),
-        raw_sha256=raw_sha256,
-        text_sha256=text_sha256,
-        preservation_status="captured",
-        notes=args.notes or f"Fetched content-type={content_type}; bytes={len(raw)}; raw_sha256={raw_sha256}; text_sha256={text_sha256}",
-        public_export=not args.no_public_export,
-    )
-    log_action(
-        args.case_dir,
-        "ingest_url",
-        {
-            "source_id": rec["source_id"],
-            "url": url,
-            "headers": headers,
-            "raw_sha256": raw_sha256,
-            "text_sha256": text_sha256,
-            "content_type": content_type,
-        },
-    )
-    print(f"Ingested {url}")
-    print(json.dumps(rec, indent=2, ensure_ascii=False))
-
-
-def make_candidate_id(prefix: str, name: str, source_id: str) -> str:
-    return stable_id(prefix, name, source_id, length=8)
-
-
-def ner_suggest(args: argparse.Namespace) -> None:
-    ensure_case(args.case_dir)
-    cdir = case_path(args.case_dir)
-    sources = load_sources(args.case_dir)
-    selected = [s for s in sources if not args.source_id or s.get("source_id") == args.source_id]
-    candidates: list[dict[str, Any]] = []
-    for src in selected:
-        text_rel = src.get("text_path")
-        if not text_rel:
-            continue
-        p = cdir / text_rel
-        if not p.exists():
-            continue
-        text = p.read_text(encoding="utf-8", errors="replace")
-        names = sorted(set(
-            re.sub(r"\s+", " ", m.group(0)).strip()
-            for m in CAP_PHRASE_RE.finditer(text)
-            if len(m.group(0).strip()) >= 5
-        ))
-        # Keep this small. It is a lead generator, not a truth engine.
-        for name in names[: args.limit]:
-            if name.lower() in {"new york", "los angeles", "united states", "associated press"}:
-                continue
-            candidates.append({
-                "candidate_id": make_candidate_id("N", name, src["source_id"]),
-                "name": name,
-                "candidate_type": "unknown_named_entity",
-                "source_id": src["source_id"],
-                "status": "needs_human_or_agent_review",
-            })
-        for date in sorted(set(m.group(0) for m in DATE_RE.finditer(text)))[: args.limit]:
-            candidates.append({
-                "candidate_id": make_candidate_id("D", date, src["source_id"]),
-                "name": date,
-                "candidate_type": "date_or_time_expression",
-                "source_id": src["source_id"],
-                "status": "needs_human_or_agent_review",
-            })
-    out = cdir / "staging" / "candidates" / f"ner_suggestions_{today()}.json"
-    write_json(out, {"candidates": candidates})
-    print(f"Wrote {len(candidates)} candidates: {out}")
 
 
 def normalize_lookup(value: str | None) -> set[str]:
