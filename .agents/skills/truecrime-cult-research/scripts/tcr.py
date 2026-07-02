@@ -45,6 +45,13 @@ from core.casefile import (  # noqa: E402
     write_json,
     write_jsonl,
 )
+from adapters.ops.casework.records.workspace import (  # noqa: E402
+    add_source,
+    add_source_record,
+    find_source,
+    init_case,
+    load_sources,
+)
 from adapters.ops.casework.records.validation import validate  # noqa: E402
 
 DEFAULT_EXTRACTION = {
@@ -197,117 +204,6 @@ def load_extraction_template(template_name: str) -> dict[str, Any]:
     packet["extraction_template"] = template_name
     packet["template_focus"] = EXTRACTION_TEMPLATE_NOTES[template_name]
     return packet
-
-
-def load_sources(case_dir: str | Path) -> list[dict[str, Any]]:
-    return read_jsonl(record_path(case_dir, "sources"))
-
-
-def find_source(case_dir: str | Path, source_id: str) -> dict[str, Any] | None:
-    for src in load_sources(case_dir):
-        if src.get("source_id") == source_id:
-            return src
-    return None
-
-
-def init_case(args: argparse.Namespace) -> None:
-    cdir = case_path(args.case_dir)
-    cdir.mkdir(parents=True, exist_ok=True)
-    for sub in [
-        "raw/downloads",
-        "raw/sources",
-        "records",
-        "staging/extractions",
-        "staging/candidates",
-        "exports/manim",
-        "notes",
-    ]:
-        (cdir / sub).mkdir(parents=True, exist_ok=True)
-    case_meta = {
-        "case_id": slugify(args.title or cdir.name),
-        "title": args.title or cdir.name,
-        "created_at": dt.datetime.now(dt.timezone.utc).isoformat(),
-        "research_scope": args.scope or "",
-        "public_interest": args.public_interest or "educational/documentary research",
-    }
-    write_json(cdir / "case.json", case_meta)
-    for fname in RECORD_FILES.values():
-        p = cdir / "records" / fname
-        p.touch(exist_ok=True)
-    (cdir / "notes" / "case_brief.md").write_text(f"# Case brief: {case_meta['title']}\n\n", encoding="utf-8")
-    print(f"Initialized case workspace: {cdir}")
-
-
-def add_source_record(
-    case_dir: str | Path,
-    *,
-    title: str,
-    source_type: str,
-    reliability_grade: str,
-    url: str | None = None,
-    author: str | None = None,
-    publisher: str | None = None,
-    date_published: str | None = None,
-    archive_url: str | None = None,
-    raw_path: str | None = None,
-    text_path: str | None = None,
-    content_type: str | None = None,
-    capture_method: str | None = None,
-    capture_timestamp: str | None = None,
-    raw_sha256: str | None = None,
-    text_sha256: str | None = None,
-    preservation_status: str | None = None,
-    notes: str = "",
-    public_export: bool = True,
-) -> dict[str, Any]:
-    ensure_case(case_dir)
-    source_id = stable_id("S", url or title, date_published or "", publisher or "")
-    existing = find_source(case_dir, source_id)
-    if existing:
-        return existing
-    rec = {
-        "source_id": source_id,
-        "title": title or "Untitled source",
-        "source_type": source_type,
-        "author": author,
-        "publisher": publisher,
-        "date_published": date_published,
-        "date_accessed": today(),
-        "url": url,
-        "archive_url": archive_url,
-        "raw_path": raw_path,
-        "text_path": text_path,
-        "content_type": content_type,
-        "capture_method": capture_method,
-        "capture_timestamp": capture_timestamp,
-        "raw_sha256": raw_sha256,
-        "text_sha256": text_sha256,
-        "preservation_status": preservation_status,
-        "reliability_grade": reliability_grade,
-        "independence_group": None,
-        "notes": notes,
-        "public_export": public_export,
-    }
-    append_jsonl(record_path(case_dir, "sources"), rec)
-    log_action(case_dir, "add_source", {"source_id": source_id, "title": title, "url": url})
-    return rec
-
-
-def add_source(args: argparse.Namespace) -> None:
-    rec = add_source_record(
-        args.case_dir,
-        title=args.title,
-        source_type=args.source_type,
-        reliability_grade=args.reliability_grade,
-        url=args.url,
-        author=args.author,
-        publisher=args.publisher,
-        date_published=args.date_published,
-        archive_url=args.archive_url,
-        notes=args.notes or "",
-        public_export=not args.no_public_export,
-    )
-    print(json.dumps(rec, indent=2, ensure_ascii=False))
 
 
 def safe_filename_from_url(url: str) -> str:
