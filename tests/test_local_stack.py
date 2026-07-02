@@ -3,6 +3,7 @@ import shutil
 from pathlib import Path
 
 from case_builder.cli import build_parser
+from case_builder import config
 from case_builder.memory import remember_research_actions
 from case_builder.retrieval import build_evidence_documents
 
@@ -90,6 +91,20 @@ def test_local_stack_cli_commands_parse():
     assert parser.parse_args(["index-case", "data/cases/x"]).command == "index-case"
     assert parser.parse_args(["query-case", "data/cases/x", "question"]).command == "query-case"
     assert parser.parse_args(["remember-research-actions", "data/cases/x"]).command == "remember-research-actions"
+
+
+def test_self_hosted_service_defaults_read_env(monkeypatch):
+    monkeypatch.setenv("TRCR_SEARXNG_URL", "http://searxng:8080")
+    monkeypatch.setenv("TRCR_QDRANT_URL", "http://qdrant:6333")
+    monkeypatch.setenv("TRCR_QDRANT_HOST", "qdrant")
+    monkeypatch.setenv("TRCR_QDRANT_PORT", "6333")
+    monkeypatch.setenv("TRCR_EMBED_MODEL", "local-embed")
+
+    assert config.searxng_url() == "http://searxng:8080"
+    assert config.qdrant_url() == "http://qdrant:6333"
+    assert config.qdrant_host() == "qdrant"
+    assert config.qdrant_port() == 6333
+    assert config.embed_model() == "local-embed"
 
 
 def test_cli_parse_source_reports_clean_error_for_non_case(tmp_path, capsys):

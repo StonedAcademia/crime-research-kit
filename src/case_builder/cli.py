@@ -6,6 +6,7 @@ import argparse
 import json
 from typing import Sequence
 
+from . import config
 from .app.service import resume_case_builder, run_case_builder
 from .memory import remember_research_actions
 from .models.state import CaseBuilderState
@@ -36,7 +37,7 @@ def build_parser() -> argparse.ArgumentParser:
     discover = sub.add_parser("discover-sources", help="Search local SearXNG and write lead-only source candidates.")
     discover.add_argument("case_dir")
     discover.add_argument("--query", required=True)
-    discover.add_argument("--searxng-url", default="http://localhost:8080")
+    discover.add_argument("--searxng-url", default=None)
     discover.add_argument("--limit", type=int, default=10)
     discover.add_argument("--out", default=None)
     discover.set_defaults(handler=run_discover_command)
@@ -57,18 +58,18 @@ def build_parser() -> argparse.ArgumentParser:
     index = sub.add_parser("index-case", help="Build a local Qdrant/LlamaIndex evidence index.")
     index.add_argument("case_dir")
     index.add_argument("--include-private", action="store_true")
-    index.add_argument("--qdrant-url", default="http://localhost:6333")
+    index.add_argument("--qdrant-url", default=None)
     index.add_argument("--collection", default=None)
-    index.add_argument("--embed-model", default="BAAI/bge-small-en-v1.5")
+    index.add_argument("--embed-model", default=None)
     index.set_defaults(handler=run_index_command)
 
     query = sub.add_parser("query-case", help="Query the local Qdrant/LlamaIndex evidence index.")
     query.add_argument("case_dir")
     query.add_argument("query")
     query.add_argument("--include-private", action="store_true")
-    query.add_argument("--qdrant-url", default="http://localhost:6333")
+    query.add_argument("--qdrant-url", default=None)
     query.add_argument("--collection", default=None)
-    query.add_argument("--embed-model", default="BAAI/bge-small-en-v1.5")
+    query.add_argument("--embed-model", default=None)
     query.add_argument("--top-k", type=int, default=8)
     query.set_defaults(handler=run_query_command)
 
@@ -76,12 +77,12 @@ def build_parser() -> argparse.ArgumentParser:
     remember.add_argument("case_dir")
     remember.add_argument("--provider", choices=["local", "mem0"], default="local")
     remember.add_argument("--limit", type=int, default=50)
-    remember.add_argument("--qdrant-host", default="localhost")
-    remember.add_argument("--qdrant-port", type=int, default=6333)
-    remember.add_argument("--llm-provider", default="ollama")
-    remember.add_argument("--llm-model", default="llama3.1")
-    remember.add_argument("--embedder-provider", default="huggingface")
-    remember.add_argument("--embedder-model", default="BAAI/bge-small-en-v1.5")
+    remember.add_argument("--qdrant-host", default=None)
+    remember.add_argument("--qdrant-port", type=int, default=None)
+    remember.add_argument("--llm-provider", default=None)
+    remember.add_argument("--llm-model", default=None)
+    remember.add_argument("--embedder-provider", default=None)
+    remember.add_argument("--embedder-model", default=None)
     remember.set_defaults(handler=run_remember_command)
 
     resume = sub.add_parser("resume", help="Resume a checkpointed case-builder run with review decisions.")
@@ -144,7 +145,7 @@ def run_discover_command(args: argparse.Namespace) -> dict[str, object]:
         source_ops.discover_sources(
             args.case_dir,
             query=args.query,
-            searxng_url=args.searxng_url,
+            searxng_url=config.searxng_url(args.searxng_url),
             limit=args.limit,
             out=args.out,
         )
@@ -164,9 +165,9 @@ def run_index_command(args: argparse.Namespace) -> dict[str, object]:
         query_ops.index_case(
             args.case_dir,
             include_private=args.include_private,
-            qdrant_url=args.qdrant_url,
+            qdrant_url=config.qdrant_url(args.qdrant_url),
             collection=args.collection,
-            embed_model=args.embed_model,
+            embed_model=config.embed_model(args.embed_model),
         )
     )
 
@@ -177,9 +178,9 @@ def run_query_command(args: argparse.Namespace) -> dict[str, object]:
             args.case_dir,
             args.query,
             include_private=args.include_private,
-            qdrant_url=args.qdrant_url,
+            qdrant_url=config.qdrant_url(args.qdrant_url),
             collection=args.collection,
-            embed_model=args.embed_model,
+            embed_model=config.embed_model(args.embed_model),
             top_k=args.top_k,
         )
     )
@@ -190,12 +191,12 @@ def run_remember_command(args: argparse.Namespace) -> dict[str, object]:
         args.case_dir,
         provider=args.provider,
         limit=args.limit,
-        qdrant_host=args.qdrant_host,
-        qdrant_port=args.qdrant_port,
-        llm_provider=args.llm_provider,
-        llm_model=args.llm_model,
-        embedder_provider=args.embedder_provider,
-        embedder_model=args.embedder_model,
+        qdrant_host=config.qdrant_host(args.qdrant_host),
+        qdrant_port=config.qdrant_port(args.qdrant_port),
+        llm_provider=config.mem0_llm_provider(args.llm_provider),
+        llm_model=config.mem0_llm_model(args.llm_model),
+        embedder_provider=config.embedder_provider(args.embedder_provider),
+        embedder_model=config.embed_model(args.embedder_model),
     )
 
 

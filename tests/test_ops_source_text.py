@@ -58,12 +58,12 @@ def test_get_source_text_missing_source_fails(synthetic_case_copy):
 
 
 def test_record_llm_egress_appends_audit_row(synthetic_case_copy):
-    record_llm_egress(synthetic_case_copy, "anthropic", "fill_packets")
+    record_llm_egress(synthetic_case_copy, "external-lab-gateway", "fill_packets")
 
     actions = (synthetic_case_copy / "records" / "research_actions.jsonl").read_text(
         encoding="utf-8"
     )
     last = json.loads(actions.splitlines()[-1])
     assert last["action"] == "llm_egress"
-    assert last["details"]["provider"] == "anthropic"
+    assert last["details"]["provider"] == "external-lab-gateway"
     assert last["details"]["context"] == "fill_packets"

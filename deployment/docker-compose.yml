@@ -1,0 +1,88 @@
+name: tc-c-kit
+
+services:
+  trcr:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    image: tc-c-kit:local
+    environment:
+      TRCR_CASES_ROOT: /app/data/cases
+      TRCR_MODEL: ${TRCR_MODEL:-ollama:llama3.1}
+      TRCR_SEARXNG_URL: http://searxng:8080
+      TRCR_QDRANT_URL: http://qdrant:6333
+      TRCR_QDRANT_HOST: qdrant
+      TRCR_QDRANT_PORT: 6333
+      OLLAMA_HOST: http://ollama:11434
+      TRCR_EMBED_MODEL: ${TRCR_EMBED_MODEL:-BAAI/bge-small-en-v1.5}
+      HF_HOME: /app/.cache/huggingface
+      TRANSFORMERS_CACHE: /app/.cache/huggingface
+    depends_on:
+      - searxng
+      - qdrant
+      - ollama
+    networks:
+      - trcr-local
+    volumes:
+      - ${TRCR_REPO_ROOT:-..}/data/cases:/app/data/cases
+      - ${TRCR_REPO_ROOT:-..}/data/exports:/app/data/exports
+      - trcr-hf-cache:/app/.cache/huggingface
+    init: true
+
+  searxng:
+    image: docker.io/searxng/searxng:latest
+    environment:
+      SEARXNG_BASE_URL: ${SEARXNG_BASE_URL:-http://127.0.0.1:8080/}
+      FORCE_OWNERSHIP: "false"
+    networks:
+      - trcr-local
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - ${TRCR_REPO_ROOT:-..}/deployment/searxng/settings.yml:/etc/searxng/settings.yml:ro
+      - ${TRCR_REPO_ROOT:-..}/deployment/searxng/limiter.toml:/etc/searxng/limiter.toml:ro
+      - searxng-cache:/var/cache/searxng
+    depends_on:
+      - searxng-valkey
+    restart: unless-stopped
+
+  searxng-valkey:
+    image: docker.io/valkey/valkey:8-alpine
+    command: valkey-server --save 30 1 --loglevel warning
+    networks:
+      - trcr-local
+    volumes:
+      - searxng-valkey-data:/data
+    restart: unless-stopped
+
+  qdrant:
+    image: docker.io/qdrant/qdrant:latest
+    networks:
+      - trcr-local
+    ports:
+      - "127.0.0.1:6333:6333"
+      - "127.0.0.1:6334:6334"
+    volumes:
+      - qdrant-storage:/qdrant/storage
+    restart: unless-stopped
+
+  ollama:
+    image: docker.io/ollama/ollama:latest
+    networks:
+      - trcr-local
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    restart: unless-stopped
+
+networks:
+  trcr-local:
+    driver: bridge
+
+volumes:
+  trcr-hf-cache:
+  searxng-cache:
+  searxng-valkey-data:
+  qdrant-storage:
+  ollama-models:

@@ -7,10 +7,8 @@ from typing import Any, Callable
 from ..llm.audit_brief import write_readiness_brief
 from ..llm.lane_suggest import suggest_lanes
 from ..llm.packet_agent import PacketAgentError, fill_packet
-from ..llm.provider import active_model_spec, is_local_provider
 from ..ops import extraction as extraction_ops
 from ..ops import query as query_ops
-from ..ops.policy import record_llm_egress
 from .nodes import required_case_dir
 from .state import GraphState
 
@@ -25,12 +23,6 @@ AUDIT_NAMES = {
 
 def llm_active(state: GraphState, runner, model_factory: ModelFactory | None) -> bool:
     return bool(state.get("llm_enabled")) and model_factory is not None and not runner.dry_run
-
-
-def note_egress(case_dir: str, context: str) -> None:
-    provider, _model = active_model_spec()
-    if not is_local_provider(provider):
-        record_llm_egress(case_dir, provider, context)
 
 
 def suggest_lanes_node(runner, model_factory: ModelFactory | None):
@@ -66,7 +58,6 @@ def fill_packets_node(runner, model_factory: ModelFactory | None):
             if not text_result.ok:
                 errors.extend(text_result.errors)
                 continue
-            note_egress(case_dir, f"fill_packets:{source_id}")
             try:
                 filled = fill_packet(model, packet, text_result.data["text"], source_id=source_id)
             except PacketAgentError as exc:
@@ -93,7 +84,6 @@ def readiness_brief_node(runner, model_factory: ModelFactory | None):
         audit_results = [
             item for item in (state.get("tool_results") or []) if item.get("name") in AUDIT_NAMES
         ]
-        note_egress(case_dir, "readiness_brief")
         path = write_readiness_brief(model_factory(), case_dir, audit_results)
         return {
             "tool_results": [

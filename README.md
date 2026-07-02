@@ -12,6 +12,7 @@
   <a href="#quick-start">Quick start</a> |
   <a href="#what-you-can-build">What you can build</a> |
   <a href="#example-workflows">Examples</a> |
+  <a href="#self-hosted-container-stack">Containers</a> |
   <a href="#local-document-retrieval-and-memory-stack">Local stack</a> |
   <a href="#public-interest-boundaries">Safety</a>
 </p>
@@ -160,6 +161,24 @@ The core CLI mostly uses the Python standard library. Optional packages improve 
 ```bash
 pip install beautifulsoup4 trafilatura jsonschema pandas networkx
 ```
+
+## Self-Hosted Container Stack
+
+The full local deployment lives under `deployment/`. It runs the TRCR app,
+SearXNG, Valkey, Qdrant, Ollama, OCR tooling, retrieval, memory, LangGraph, and
+MCP without managed SaaS runtime services.
+
+```bash
+cp deployment/.env.example deployment/.env
+make docker-build
+make docker-up
+make docker-pull-model
+make docker-smoke
+```
+
+Codex and Claude Code can operate the stack through CLI or MCP. They are agent
+hosts, not TRCR runtime model providers. The runtime model provider defaults to
+self-hosted Ollama. See `deployment/README.md`.
 
 ## Quick start
 
@@ -326,8 +345,8 @@ artifacts, and notes back into the same TRCR case structure.
 
 The optional `case_builder` app under `src/case_builder/` provides a small
 LangGraph-compatible bootstrap workflow around the existing TRCR CLI. It keeps
-the TRCR case ledger canonical, stops at a human review gate, and can be traced
-with LangSmith when `LANGSMITH_TRACING=true`.
+the TRCR case ledger canonical, stops at a human review gate, and records local
+workflow actions in the case ledger.
 
 ```bash
 PYTHONPATH=src python -m case_builder.cli plan data/cases/example_case \

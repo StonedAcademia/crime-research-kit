@@ -10,13 +10,18 @@ from case_builder.llm.provider import (
 
 def test_parse_model_spec_splits_provider_and_model():
     assert parse_model_spec("ollama:llama3.1") == ("ollama", "llama3.1")
-    assert parse_model_spec("anthropic:claude-sonnet-5") == ("anthropic", "claude-sonnet-5")
 
 
 def test_parse_model_spec_rejects_malformed_specs():
     for bad in ("", "ollama", ":model", "provider:"):
         with pytest.raises(ValueError):
             parse_model_spec(bad)
+
+
+def test_parse_model_spec_rejects_managed_providers():
+    for spec in ("anthropic:claude-sonnet-5", "openai:gpt-5"):
+        with pytest.raises(ValueError, match="self-hosted"):
+            parse_model_spec(spec)
 
 
 def test_active_model_spec_defaults_local(monkeypatch):
@@ -26,13 +31,14 @@ def test_active_model_spec_defaults_local(monkeypatch):
     assert is_local_provider(active_model_spec()[0]) is True
 
 
-def test_active_model_spec_reads_env(monkeypatch):
-    monkeypatch.setenv("TRCR_MODEL", "anthropic:claude-sonnet-5")
+def test_active_model_spec_reads_self_hosted_env(monkeypatch):
+    monkeypatch.setenv("TRCR_MODEL", "ollama:qwen2.5")
 
     provider, model = active_model_spec()
 
-    assert provider == "anthropic"
-    assert is_local_provider(provider) is False
+    assert provider == "ollama"
+    assert model == "qwen2.5"
+    assert is_local_provider(provider) is True
 
 
 def test_get_chat_model_hints_at_llm_extra_when_langchain_missing(monkeypatch):

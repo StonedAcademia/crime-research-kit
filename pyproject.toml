@@ -21,7 +21,6 @@ dev = [
 agentic = [
   "langgraph",
   "langgraph-checkpoint-sqlite",
-  "langsmith",
 ]
 llm = [
   "langchain>=0.3",
