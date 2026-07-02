@@ -49,6 +49,8 @@ Lane/template vocabulary is canonical in `docs/registry/`; the tables in `.agent
 
 ## Repo constraints
 
+- Most work should start on `dev` or a focused sub-branch such as `feat/*`, `fix/*`, `docs/*`, `gov/*`, `test/*`, `chore/*`, or `ci/*`. Treat `canary` and `hotfix/*` as stabilization lanes for tidy-up, release polish, gate fixes, small regressions, and last-mile corrections. Keep `main` for primary deployments, release integration, and mainline maintenance unless the user explicitly directs otherwise.
+- Keep branch and commit hygiene visible: check `git status --short --branch` before work and before staging, branch before substantial edits, stage only intended paths, and commit frequently in cohesive reviewable slices after relevant checks pass. Do not include unrelated dirty files or revert work you did not create.
 - Every Python module in `src/` stays under 200 non-comment LOC, and every Python-bearing directory keeps a `README.md` — both enforced by `tests/quality/governance/test_repository_shape.py`.
 - Repository shape is governed by `tests/governance/test_repository_shape.py`: each governed directory has 1-4 direct files and 0-3 direct child directories, and governed files stay under 200 non-comment LOC. Only `data/` and `docs/superpowers/` are skipped.
 - Name files and directories by intent. Use domain/workflow names such as `schemas/evidence`, `runbooks/setup`, or `scripts/checks`; do not create vague catch-all folders to pass the counts. Check the governance output for every target directory before and after restructuring.

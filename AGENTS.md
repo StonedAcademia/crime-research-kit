@@ -31,6 +31,18 @@ Optional when dev dependencies are installed:
 pytest
 ```
 
+## Branch workflow
+
+- Check `git status --short --branch` before starting work and again before staging, committing, pushing, or switching branches.
+- Most implementation work should happen on `dev` or a focused sub-branch, not directly on `main`.
+- Use typed sub-branches such as `feat/*`, `fix/*`, `docs/*`, `gov/*`, `test/*`, `chore/*`, or `ci/*` for scoped work that can be reviewed, tested, and merged cleanly.
+- Use `canary` and `hotfix/*` for stabilization work: tidy-up, release polish, gate fixes, small regressions, and last-mile corrections.
+- Reserve `main` for primary deployments, release integration, and mainline maintenance work.
+- For multi-file or long-running work, stage and commit frequently in cohesive slices after the relevant checks pass. Prefer several reviewable commits over one broad mixed snapshot.
+- Stage paths explicitly for the intended change. Do not sweep unrelated dirty files into a commit, and do not revert user or generated work you did not create.
+- Keep branch hygiene tight: branch before substantial edits, keep commit messages specific, and run the applicable branch gate before pushing or merging.
+- Explicit user direction can override this workflow, but note the branch choice and keep the commit scope clear.
+
 ## Directory routing
 
 - Skill instructions live in `.agents/skills/truecrime-cult-research/SKILL.md`.
