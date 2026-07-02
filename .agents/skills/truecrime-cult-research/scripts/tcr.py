@@ -73,6 +73,20 @@ from adapters.ops.casework.records.names.parsing import (  # noqa: E402
     parse_name_entries,
 )
 from adapters.ops.casework.records.names.reports.brief import write_name_link_research_brief  # noqa: E402
+from adapters.ops.casework.records.planning.open_records import plan_open_records  # noqa: E402
+from adapters.ops.casework.records.planning.public_records import (  # noqa: E402
+    PUBLIC_RECORD_LANES,
+    infer_public_record_lanes,
+    plan_public_records,
+    public_record_lane_plan,
+)
+from adapters.ops.casework.records.planning.transcripts import (  # noqa: E402
+    SPEAKER_LINE_RE,
+    TIMESTAMP_RE,
+    index_transcript,
+    timestamp_to_seconds,
+    transcript_segment_from_line,
+)
 from adapters.ops.casework.records.validation import validate  # noqa: E402
 from adapters.ops.evidence.shared.records import (  # noqa: E402
     compact_record,
@@ -104,52 +118,6 @@ from adapters.ops.evidence.quality.contradictions import (  # noqa: E402
     make_contradiction_flag,
 )
 
-def lane_registry_path() -> Path:
-    script = Path(__file__).resolve()
-    candidates = [
-        script.parents[4] / "docs" / "registry",
-        Path.cwd() / "docs" / "registry",
-        Path.cwd() / "tc-c-kit" / "docs" / "registry",
-    ]
-    for candidate in candidates:
-        if (candidate / "index.json").exists():
-            return candidate
-    searched = ", ".join(str(candidate) for candidate in candidates)
-    raise SystemExit(f"Missing docs/registry lane shards. Searched: {searched}")
-
-
-def load_lanes_registry() -> dict[str, Any]:
-    root = lane_registry_path()
-    index = json.loads((root / "index.json").read_text(encoding="utf-8"))
-    lanes: dict[str, Any] = {}
-    templates: dict[str, Any] = {}
-    for shard in index["lane_shards"]:
-        lanes.update(json.loads((root / shard).read_text(encoding="utf-8")))
-    for shard in index["template_shards"]:
-        templates.update(json.loads((root / shard).read_text(encoding="utf-8")))
-    return {
-        "version": index["version"],
-        "fallback_source_lanes": index["fallback_source_lanes"],
-        "fallback_public_record_lanes": index["fallback_public_record_lanes"],
-        "lanes": lanes,
-        "templates": templates,
-    }
-
-
-LANE_REGISTRY = load_lanes_registry()
-PUBLIC_RECORD_LANES = {
-    lane: {
-        "skill": row["skill"],
-        "triggers": row["triggers"],
-        "source_types": row["source_types"],
-        "template": row["template"],
-        "notes": row["notes"],
-    }
-    for lane, row in LANE_REGISTRY["lanes"].items()
-    if row.get("public_record_plan")
-}
-FALLBACK_PUBLIC_RECORD_LANES = list(LANE_REGISTRY["fallback_public_record_lanes"])
-
 PUBLIC_CONTACT_RE = re.compile(
     r"(?i)(?:\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b|\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}\b|\b\d{3}-\d{2}-\d{4}\b)"
 )
@@ -173,9 +141,6 @@ PRESS_RELEASE_TERMS = {
     "marketwired",
     "official statement",
 }
-
-TIMESTAMP_RE = re.compile(r"(?<!\d)(?:(?P<hours>\d{1,2}):)?(?P<minutes>\d{1,2}):(?P<seconds>\d{2})(?:[.,]\d{1,3})?(?!\d)")
-SPEAKER_LINE_RE = re.compile(r"^\s*(?P<speaker>[A-Z][A-Za-z0-9 .'\-]{1,48}):\s*(?P<text>.+?)\s*$")
 
 def ensure_case(case_dir: str | Path) -> None:
     cdir = case_path(case_dir)
@@ -233,239 +198,6 @@ def enforce_public_output_gate(target: str | Path, command_name: str, include_pr
         for blocker in blockers:
             print(f"- {blocker}", file=sys.stderr)
         raise SystemExit(1)
-
-
-def infer_public_record_lanes(subject: str, requested_lanes: list[str]) -> list[str]:
-    if requested_lanes:
-        return sorted(dict.fromkeys(requested_lanes))
-    text = subject.casefold()
-    matches = [
-        lane
-        for lane, config in PUBLIC_RECORD_LANES.items()
-        if any(trigger in text for trigger in config["triggers"])
-    ]
-    if matches:
-        return sorted(dict.fromkeys(matches))
-    return list(FALLBACK_PUBLIC_RECORD_LANES)
-
-
-def public_record_lane_plan(lane: str, subject: str) -> dict[str, Any]:
-    config = PUBLIC_RECORD_LANES[lane]
-    source_queries = [
-        f'"{subject}" {term}'
-        for term in config["triggers"][:5]
-    ]
-    return {
-        "lane": lane,
-        "skill": config["skill"],
-        "template": config["template"],
-        "source_types": config["source_types"],
-        "notes": config["notes"],
-        "suggested_queries": source_queries,
-        "recommended_next_commands": [
-            "add-source or ingest-url each public source before extraction",
-            f"draft-extraction --template {config['template']} for lane-specific packets",
-            "validate after imports",
-        ],
-    }
-
-
-def plan_public_records(args: argparse.Namespace) -> None:
-    ensure_case(args.case_dir)
-    subject = args.subject.strip()
-    if not subject:
-        raise SystemExit("--subject is required")
-    lanes = infer_public_record_lanes(subject, args.lane or [])
-    plans = [public_record_lane_plan(lane, subject) for lane in lanes]
-    report = {
-        "generated_at": now_utc(),
-        "case_dir": str(case_path(args.case_dir)),
-        "subject": subject,
-        "research_question": args.question or "",
-        "lanes": plans,
-        "policy": (
-            "This source plan is a lead map. It does not create evidence, infer misconduct, "
-            "or make identity/relationship claims."
-        ),
-    }
-    default_name = f"staging/candidates/public_records_plan_{slugify(subject, max_len=32)}_{today()}.json"
-    out = report_out_path(args.case_dir, getattr(args, "out", None), default_name)
-    write_json(out, report)
-    log_action(
-        args.case_dir,
-        "plan_public_records",
-        {
-            "subject": subject,
-            "lanes": lanes,
-            "report": str(out),
-        },
-    )
-    print(json.dumps({"lane_count": len(lanes), "lanes": lanes, "report": str(out)}, indent=2, ensure_ascii=False))
-
-
-def timestamp_to_seconds(match: re.Match[str]) -> int:
-    hours = int(match.group("hours") or 0)
-    minutes = int(match.group("minutes") or 0)
-    seconds = int(match.group("seconds") or 0)
-    return hours * 3600 + minutes * 60 + seconds
-
-
-def transcript_segment_from_line(source_id: str, line: str, line_no: int) -> dict[str, Any] | None:
-    timestamp_match = TIMESTAMP_RE.search(line)
-    speaker_match = SPEAKER_LINE_RE.match(line)
-    speaker = speaker_match.group("speaker").strip() if speaker_match else None
-    text = speaker_match.group("text").strip() if speaker_match else line.strip()
-    if timestamp_match:
-        text = (line[:timestamp_match.start()] + line[timestamp_match.end():]).strip(" -\t")
-        speaker_match_after_timestamp = SPEAKER_LINE_RE.match(text)
-        if speaker_match_after_timestamp:
-            speaker = speaker_match_after_timestamp.group("speaker").strip()
-            text = speaker_match_after_timestamp.group("text").strip()
-    if not timestamp_match and not speaker_match:
-        return None
-    return {
-        "segment_id": stable_id("TS", source_id, str(line_no), line, length=10),
-        "source_id": source_id,
-        "line": line_no,
-        "timestamp": timestamp_match.group(0) if timestamp_match else None,
-        "timestamp_seconds": timestamp_to_seconds(timestamp_match) if timestamp_match else None,
-        "speaker": speaker,
-        "text": text,
-        "quote_candidate": text[:280],
-        "source_span_placeholder": {
-            "locator_type": "timestamp" if timestamp_match else "line",
-            "locator": {
-                "line": line_no,
-                "timestamp": timestamp_match.group(0) if timestamp_match else None,
-                "speaker": speaker,
-            },
-        },
-    }
-
-
-def index_transcript(args: argparse.Namespace) -> None:
-    ensure_case(args.case_dir)
-    source = find_source(args.case_dir, args.source_id)
-    if not source:
-        raise SystemExit(f"Source not found: {args.source_id}")
-    if source.get("public_export") is False and not args.include_private:
-        raise SystemExit("Source is public_export=false. Use --include-private for internal transcript indexing.")
-    text_rel = source.get("text_path")
-    if not text_rel:
-        raise SystemExit(f"Source has no text_path: {args.source_id}")
-    text_path = case_relative_path(args.case_dir, str(text_rel))
-    if not text_path or not text_path.exists():
-        raise SystemExit(f"Source text_path does not exist: {text_rel}")
-
-    segments: list[dict[str, Any]] = []
-    for line_no, line in enumerate(text_path.read_text(encoding="utf-8", errors="replace").splitlines(), start=1):
-        segment = transcript_segment_from_line(args.source_id, line, line_no)
-        if not segment:
-            continue
-        segments.append(segment)
-        if len(segments) >= args.max_segments:
-            break
-
-    speakers = sorted({str(segment["speaker"]) for segment in segments if segment.get("speaker")})
-    report = {
-        "generated_at": now_utc(),
-        "case_dir": str(case_path(args.case_dir)),
-        "source_id": args.source_id,
-        "source_title": source.get("title"),
-        "segment_count": len(segments),
-        "speakers": speakers,
-        "segments": segments,
-        "policy": (
-            "Transcript segments are candidate locators. Import claims or quotes only after "
-            "reviewing the source text and preserving source_spans."
-        ),
-    }
-    out = report_out_path(args.case_dir, getattr(args, "out", None), f"staging/candidates/transcript_index_{args.source_id}_{today()}.json")
-    write_json(out, report)
-    log_action(
-        args.case_dir,
-        "index_transcript",
-        {
-            "source_id": args.source_id,
-            "segment_count": len(segments),
-            "speakers": speakers,
-            "report": str(out),
-            "include_private": getattr(args, "include_private", False),
-        },
-    )
-    print(json.dumps({"segment_count": len(segments), "speakers": speakers, "report": str(out)}, indent=2, ensure_ascii=False))
-
-
-def plan_open_records(args: argparse.Namespace) -> None:
-    ensure_case(args.case_dir)
-    subject = args.subject.strip()
-    agency = args.agency.strip()
-    if not subject or not agency:
-        raise SystemExit("--subject and --agency are required")
-    requested_records = [item.strip() for item in (args.record or []) if item.strip()]
-    if not requested_records:
-        requested_records = [
-            f"public records concerning {subject}",
-            "record indexes, logs, correspondence metadata, reports, policies, and responsive attachments where public",
-        ]
-    date_range = args.date_range or "date range to be narrowed before submission"
-    jurisdiction = args.jurisdiction or "jurisdiction to confirm"
-    law = args.law or "applicable FOIA/open-records law to confirm"
-    exclusions = [
-        "home addresses, personal phone/email, financial identifiers, medical details, and private-person contact details",
-        "records about minors unless already central to a public-interest record and legally releasable",
-        "non-responsive private material and privileged/exempt content",
-    ]
-    request_text = "\n".join([
-        f"To: {agency}",
-        "",
-        f"Under {law}, I request public records concerning {subject}.",
-        f"Jurisdiction/scope: {jurisdiction}.",
-        f"Date range: {date_range}.",
-        "",
-        "Requested record categories:",
-        *[f"- {record}" for record in requested_records],
-        "",
-        "Please provide records electronically where available. Please segregate and release non-exempt portions of responsive records.",
-        "Please exclude or redact private-person contact details, medical details, financial identifiers, and information about minors unless legally required and clearly responsive.",
-        "If fees are expected, please provide an estimate before processing.",
-    ])
-    report = {
-        "generated_at": now_utc(),
-        "case_dir": str(case_path(args.case_dir)),
-        "subject": subject,
-        "agency": agency,
-        "jurisdiction": jurisdiction,
-        "law": law,
-        "date_range": date_range,
-        "requested_records": requested_records,
-        "privacy_exclusions": exclusions,
-        "request_text": request_text,
-        "appeal_tracker": {
-            "submitted_at": None,
-            "tracking_number": None,
-            "statutory_due_date": None,
-            "response_status": "not_submitted",
-            "appeal_due_date": None,
-            "notes": "",
-        },
-        "policy": "This is a planning artifact. It does not create evidence claims or establish that records exist.",
-    }
-    default_name = f"staging/candidates/open_records_plan_{slugify(subject, max_len=32)}_{today()}.json"
-    out = report_out_path(args.case_dir, getattr(args, "out", None), default_name)
-    write_json(out, report)
-    log_action(
-        args.case_dir,
-        "plan_open_records",
-        {
-            "subject": subject,
-            "agency": agency,
-            "jurisdiction": jurisdiction,
-            "record_count": len(requested_records),
-            "report": str(out),
-        },
-    )
-    print(json.dumps({"subject": subject, "agency": agency, "record_count": len(requested_records), "report": str(out)}, indent=2, ensure_ascii=False))
 
 
 def add_review_issue(
