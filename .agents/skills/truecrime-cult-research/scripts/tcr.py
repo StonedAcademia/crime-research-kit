@@ -117,6 +117,7 @@ from adapters.ops.evidence.quality.contradictions import (  # noqa: E402
     contradiction_severity,
     make_contradiction_flag,
 )
+from adapters.ops.evidence.quality.dedupe import append_duplicate_candidate, dedupe  # noqa: E402
 
 PUBLIC_CONTACT_RE = re.compile(
     r"(?i)(?:\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b|\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}\b|\b\d{3}-\d{2}-\d{4}\b)"
@@ -391,100 +392,6 @@ def audit_privacy_redactions(args: argparse.Namespace) -> None:
     print(json.dumps({"issue_count": len(issues), "summary": summary, "severity_summary": severity_summary, "report": str(out)}, indent=2, ensure_ascii=False))
     if issues and not getattr(args, "warn_only", False):
         raise SystemExit(1)
-
-
-def append_duplicate_candidate(
-    candidates: list[dict[str, Any]],
-    *,
-    record_type: str,
-    reason: str,
-    key: str,
-    rows: list[tuple[int, dict[str, Any]]],
-) -> None:
-    if len(rows) < 2:
-        return
-    candidates.append({
-        "record_type": record_type,
-        "reason": reason,
-        "match_key": key,
-        "records": [compact_record(record_type, row, idx) for idx, row in rows],
-    })
-
-
-def dedupe(args: argparse.Namespace) -> None:
-    ensure_case(args.case_dir)
-    cdir = case_path(args.case_dir)
-    candidates: list[dict[str, Any]] = []
-    record_types = ["entities", "sources", "claims"] if getattr(args, "record_type", "all") == "all" else [args.record_type]
-
-    if "entities" in record_types:
-        entities = read_jsonl(record_path(args.case_dir, "entities"))
-        entity_groups: dict[str, list[tuple[int, dict[str, Any]]]] = {}
-        for idx, entity in enumerate(entities, start=1):
-            values = [entity.get("name"), entity.get("display_name")]
-            values.extend(entity.get("aliases", []) or [])
-            for value in values:
-                key = normalize_match_text(value)
-                if len(key) >= args.min_key_chars:
-                    entity_groups.setdefault(key, []).append((idx, entity))
-        for key, rows in sorted(entity_groups.items()):
-            append_duplicate_candidate(candidates, record_type="entities", reason="same_normalized_name_or_alias", key=key, rows=rows)
-
-    if "sources" in record_types:
-        sources = read_jsonl(record_path(args.case_dir, "sources"))
-        source_groups: dict[tuple[str, str], list[tuple[int, dict[str, Any]]]] = {}
-        for idx, source in enumerate(sources, start=1):
-            for field in ("url", "archive_url"):
-                key = normalize_url(source.get(field))
-                if key:
-                    source_groups.setdefault((f"same_{field}", key), []).append((idx, source))
-            title_key = normalize_match_text(source.get("title"))
-            publisher_key = normalize_match_text(source.get("publisher"))
-            date_key = normalize_match_text(source.get("date_published"))
-            if len(title_key) >= args.min_key_chars:
-                source_groups.setdefault(("same_title_publisher_date", "|".join([title_key, publisher_key, date_key])), []).append((idx, source))
-            for field in ("raw_path", "text_path"):
-                key = str(source.get(field) or "").strip()
-                if key:
-                    source_groups.setdefault((f"same_{field}", key), []).append((idx, source))
-        for (reason, key), rows in sorted(source_groups.items()):
-            append_duplicate_candidate(candidates, record_type="sources", reason=reason, key=key, rows=rows)
-
-    if "claims" in record_types:
-        claims = read_jsonl(record_path(args.case_dir, "claims"))
-        claim_groups: dict[str, list[tuple[int, dict[str, Any]]]] = {}
-        for idx, claim in enumerate(claims, start=1):
-            key = normalize_match_text(claim.get("claim"))
-            if len(key) >= args.min_key_chars:
-                claim_groups.setdefault(key, []).append((idx, claim))
-        for key, rows in sorted(claim_groups.items()):
-            append_duplicate_candidate(candidates, record_type="claims", reason="same_normalized_claim_text", key=key, rows=rows)
-
-    summary: dict[str, int] = {}
-    for candidate in candidates:
-        kind = str(candidate["record_type"])
-        summary[kind] = summary.get(kind, 0) + 1
-    report = {
-        "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
-        "case_dir": str(cdir),
-        "policy": "This report does not merge or delete evidence rows.",
-        "candidate_count": len(candidates),
-        "summary": summary,
-        "candidates": candidates,
-    }
-    out = report_out_path(args.case_dir, getattr(args, "out", None), f"staging/candidates/dedupe_report_{today()}.json")
-    write_json(out, report)
-    log_action(
-        args.case_dir,
-        "dedupe",
-        {
-            "record_types": record_types,
-            "candidate_count": len(candidates),
-            "summary": summary,
-            "report": str(out),
-        },
-    )
-    print(json.dumps({"candidate_count": len(candidates), "summary": summary, "report": str(out)}, indent=2, ensure_ascii=False))
 
 
 def public_export_enabled(row: dict[str, Any]) -> bool:
