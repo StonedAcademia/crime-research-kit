@@ -1,0 +1,7 @@
+projects:
+  trcr: "."
+
+defaultProject: trcr
+
+pipeline:
+  logRunningCommand: true

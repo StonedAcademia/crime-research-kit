@@ -156,14 +156,38 @@ the canonical ledger remains `records/*.jsonl`.
 - A local checkout of this repository, with commands run from the `tc-c-kit`
   repository root.
 
-The core CLI mostly uses the Python standard library. Docker, Bun, Ollama,
-SearXNG, Qdrant, Tesseract, Ghostscript, and optional Python extras are only
-needed for the container stack, UFB exports, local retrieval, OCR, memory, or
-development workflows.
+For the preferred task workflow, install `proto`; this repository pins `moon`,
+Python, and Bun in `.prototools`. Docker, Ollama, SearXNG, Qdrant, Tesseract,
+Ghostscript, and optional Python extras are only needed for the container
+stack, UFB exports, local retrieval, OCR, memory, or development workflows.
 
 ## Recommended install
 
-From this repo root:
+Install proto, then install the pinned toolchain and create the development
+virtualenv:
+
+```bash
+curl -fsSL https://moonrepo.dev/install/proto.sh | bash
+```
+
+Windows PowerShell:
+
+```powershell
+irm https://moonrepo.dev/install/proto.ps1 | iex
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
+
+```bash
+proto install
+moon run trcr:install-dev
+moon run trcr:check
+```
+
+Windows users run the same `proto install` and `moon run ...` commands from
+PowerShell after proto is available on `PATH`. The local `.venv` is created by
+a cross-platform Python installer under `deployment/scripts/install.py`.
+
+Manual fallback without moon:
 
 ```bash
 python3 -m venv .venv
@@ -171,11 +195,8 @@ source .venv/bin/activate
 pip install -e '.[dev]'
 ```
 
-The core CLI mostly uses the Python standard library. Optional packages improve extraction and validation:
-
-```bash
-pip install beautifulsoup4 trafilatura jsonschema pandas networkx
-```
+The core CLI mostly uses the Python standard library. Optional packages improve
+extraction and validation.
 
 ## Self-Hosted Container Stack
 
@@ -185,10 +206,10 @@ MCP without managed SaaS runtime services.
 
 ```bash
 cp deployment/.env.example deployment/.env
-make docker-build
-make docker-up
-make docker-pull-model
-make docker-smoke
+moon run trcr:docker-build
+moon run trcr:docker-up
+moon run trcr:docker-pull-model
+moon run trcr:docker-smoke
 ```
 
 Codex and Claude Code can operate the stack through CLI or MCP. They are agent

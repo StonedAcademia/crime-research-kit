@@ -36,21 +36,21 @@ cp deployment/.env.example deployment/.env
 Validate the composed configuration:
 
 ```bash
-make docker-config
+moon run trcr:docker-config
 ```
 
 Build and start the stack:
 
 ```bash
-make docker-build
-make docker-up
+moon run trcr:docker-build
+moon run trcr:docker-up
 ```
 
 Pull the default Ollama model and run the app smoke check:
 
 ```bash
-make docker-pull-model
-make docker-smoke
+moon run trcr:docker-pull-model
+moon run trcr:docker-smoke
 ```
 
 The first image build and model pull require network access. Model files,
@@ -62,14 +62,14 @@ volumes after the first run.
 Start or refresh the stack:
 
 ```bash
-make docker-up
-make docker-smoke
+moon run trcr:docker-up
+moon run trcr:docker-smoke
 ```
 
 Open a shell in the app container:
 
 ```bash
-make docker-shell
+moon run trcr:docker-shell
 ```
 
 Inside the container, case work lives under `/app/data/cases`:
@@ -83,13 +83,13 @@ trcr-case-builder plan /app/data/cases/example_case \
 Follow logs when investigating startup or service failures:
 
 ```bash
-make docker-logs
+moon run trcr:docker-logs
 ```
 
 Stop containers without deleting volumes:
 
 ```bash
-make docker-down
+moon run trcr:docker-down
 ```
 
 ## Environment Defaults
@@ -128,9 +128,9 @@ self-hosted local APIs.
 Use these checks before relying on the stack for case work:
 
 ```bash
-make docker-config
-make docker-up
-make docker-smoke
+moon run trcr:docker-config
+moon run trcr:docker-up
+moon run trcr:docker-smoke
 ```
 
 If SearXNG is exposed beyond localhost, change `server.secret_key` in

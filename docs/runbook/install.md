@@ -15,6 +15,8 @@ That keeps the repo-local skill path at
 
 - Python 3.10 or newer.
 - A shell with `python3` and `pip`.
+- `proto` for the preferred cross-platform task workflow. `moon`, Python, and
+  Bun are pinned in `.prototools` and installed through proto.
 - Optional: `bun` for Phanestead UFB bundle exports.
 - Optional local services: SearXNG for source discovery and Qdrant for local
   retrieval or memory.
@@ -23,24 +25,51 @@ That keeps the repo-local skill path at
 
 ## Install the Core Kit
 
-For the minimum local app install, use the Makefile from the repository root:
+Install proto first.
+
+Linux, macOS, or WSL:
+
+```bash
+curl -fsSL https://moonrepo.dev/install/proto.sh | bash
+```
+
+Windows PowerShell:
+
+```powershell
+irm https://moonrepo.dev/install/proto.ps1 | iex
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
+
+Then install the pinned proto toolchain and run the moon install task from the
+repository root:
+
+```bash
+proto install
+moon run trcr:install-dev
+```
+
+`moon run trcr:install-dev` uses `deployment/scripts/install.py` to create
+`.venv`, upgrade pip, and install the package in editable mode with the `dev`
+extra.
+
+For a minimum runtime install without dev dependencies:
+
+```bash
+moon run trcr:install
+```
+
+The Makefile remains as a compatibility wrapper:
 
 ```bash
 make install
-```
-
-`make install` detects Linux or Windows, verifies Python 3.10 or newer, creates
-`.venv`, upgrades pip, and installs the core package in editable mode.
-
-To run the OS-specific target directly:
-
-```bash
-make install-linux
+make install-dev
 make install-windows
 ```
 
-To do the same setup manually, create a virtual environment in the repository
-root and install the package in editable mode:
+All three route through moon; `install-windows` is an alias for the same
+cross-platform installer rather than a separate PowerShell implementation.
+
+Manual fallback without moon:
 
 ```bash
 python3 -m venv .venv
@@ -82,10 +111,10 @@ retrieval, memory, LangGraph, and MCP.
 
 ```bash
 cp deployment/.env.example deployment/.env
-make docker-build
-make docker-up
-make docker-pull-model
-make docker-smoke
+moon run trcr:docker-build
+moon run trcr:docker-up
+moon run trcr:docker-pull-model
+moon run trcr:docker-smoke
 ```
 
 Codex and Claude Code can operate the self-hosted stack through CLI or MCP.
@@ -287,10 +316,10 @@ local workspace:
 
 | Symptom | Check |
 | --- | --- |
-| `ModuleNotFoundError: case_builder` | Activate `.venv`, install `-e '.[dev]'`, or run with `PYTHONPATH=src`. |
+| `ModuleNotFoundError: case_builder` | Run `moon run trcr:install-dev`, activate `.venv`, or run with `PYTHONPATH=src`. |
 | `.agents/.../tcr.py` not found | Run from the `tc-c-kit` repository root. |
 | Case files appear in the wrong directory | Use `data/cases/<case_slug>` from the repository root. |
-| LangGraph imports fail | Install `python -m pip install -e '.[agentic]'`. |
-| LLM node imports fail | Install `python -m pip install -e '.[llm]'` and set `TRCR_MODEL`. |
+| LangGraph imports fail | Install `python -m pip install -e '.[agentic]'` inside `.venv`. |
+| LLM node imports fail | Install `python -m pip install -e '.[llm]'` inside `.venv` and set `TRCR_MODEL`. |
 | Parse, OCR, retrieval, or memory commands fail | Install the matching optional extra and start any required local services. |
 | A claim is blocked from public export | Keep it internal until source support, contradiction review, source-independence review, and privacy review are complete. |

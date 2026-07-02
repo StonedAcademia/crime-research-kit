@@ -24,10 +24,10 @@ From the repo root:
 
 ```bash
 cp deployment/.env.example deployment/.env
-make docker-build
-make docker-up
-make docker-pull-model
-make docker-smoke
+moon run trcr:docker-build
+moon run trcr:docker-up
+moon run trcr:docker-pull-model
+moon run trcr:docker-smoke
 ```
 
 The first image build and model pull require network access. After that, model
@@ -38,13 +38,13 @@ files, Qdrant data, and Hugging Face embedding cache persist in Docker volumes.
 Open a shell in the app container:
 
 ```bash
-make docker-shell
+moon run trcr:docker-shell
 ```
 
 Run case-builder commands:
 
 ```bash
-make docker-shell
+moon run trcr:docker-shell
 ```
 
 Inside the container shell:
@@ -96,11 +96,12 @@ change `server.secret_key` in `deployment/searxng/settings.yml` first.
 ## Operations
 
 ```bash
-make docker-config
-make docker-up
-make docker-logs
-make docker-smoke
-make docker-down
+moon run trcr:docker-config
+moon run trcr:docker-up
+moon run trcr:docker-logs
+moon run trcr:docker-smoke
+moon run trcr:docker-down
 ```
 
-`make docker-down` stops containers without deleting volumes.
+`moon run trcr:docker-down` stops containers without deleting volumes. The
+Makefile still provides compatibility wrappers such as `make docker-up`.
