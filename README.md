@@ -25,7 +25,7 @@ articles, transcripts, PDFs, and archive links into a structured case ledger
 where every claim points back to its sources, reliability grade,
 confidence/status, privacy review, and export decision.
 
-**This is not a rumor engine.** AI can organize, search, OCR, index, and draft
+**This is neither a rumor engine nor a way for you to dox people.** AI can organize, search, OCR, index, and draft
 extraction packets, but **AI-generated summaries are never evidence.** A claim
 becomes public-facing only after source support, validation, contradiction
 review, source-independence review, and privacy review.
@@ -60,7 +60,7 @@ The record-level contract behind this chain is documented in
 | **Developer / agent integrator** | The MCP server, the `src/case_builder/` app boundary and typed ops core, the skill API contract, and the skill invocation model. | [System Overview](docs/guides/architecture/system-overview.md) · [Case Builder & LangGraph](docs/guides/architecture/case-builder-langgraph.md) · [MCP Server](docs/guides/integrations/mcp-server.md) · [Skill API Spec](docs/guides/skill-api-spec.md) |
 
 New to the kit? Read [the evidence chain](#the-evidence-chain) and
-[public-interest boundaries](#public-interest-boundaries) first — they define
+[public-interest boundaries](#public-interest-boundaries) first as they define
 what TRCR will and will not produce.
 
 ## Quick start
@@ -111,8 +111,8 @@ flowchart LR
   AUD --> EXP["Public-safe exports<br/>boards · timelines · Manim CSVs · bundles"]
 ```
 
-The full write-up — layer boundaries, optional subsystems, data flow, and
-design invariants — is in
+The full write-up including layer boundaries, optional subsystems, data flow, and
+design invariants, is in
 [System Overview](docs/guides/architecture/system-overview.md).
 
 ## What you can build
