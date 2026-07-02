@@ -4,11 +4,27 @@ title = "CRK gitleaks config"
 useDefault = true
 
 [allowlist]
-description = "Local case workspaces and synthetic fixtures are governed by CRK privacy tests."
+description = "Generated/local paths are ignored by git; synthetic fixtures and case workspaces are governed by CRK privacy tests."
 paths = [
+  '''^\.uv-cache/''',
+  '''^\.venv(?:/|$)''',
+  '''(^|/)\.eggs/''',
+  '''(^|/)\.hypothesis/''',
+  '''(^|/)\.mypy_cache/''',
+  '''(^|/)\.pytest_cache/''',
+  '''(^|/)\.ruff_cache/''',
+  '''(^|/)\.pyright/''',
+  '''(^|/)__pycache__/''',
+  '''(^|/)build/''',
+  '''(^|/)htmlcov/''',
+  '''(^|/)pip-wheel-metadata/''',
+  '''(^|/)[^/]+\.egg-info/''',
   '''^\.moon/cache/''',
   '''^\.worktrees/''',
   '''^data/cases/''',
   '''^data/exports/''',
   '''^data/examples/''',
+  '''^deployment/tooling/bin/''',
+  '''^dist/''',
+  '''^uv\.lock$''',
 ]
