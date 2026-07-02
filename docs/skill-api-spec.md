@@ -20,6 +20,12 @@ same case ledger for domain-specific source packets. Phase 3 review skills
 `privacy-redaction-audit`, and `source-independence-audit` add request planning
 and public-output review workflows over the same ledger.
 
+Lane and template vocabulary is canonical in `docs/lanes.json`. Generated
+human reference tables live in
+`.agents/skills/truecrime-cult-research/references/lane_registry.md` and
+`.agents/skills/public-records-router/references/routing_matrix.md`; public
+docs should point to those sources instead of duplicating the full lane table.
+
 ## Safety Contract
 
 Every operation must preserve these invariants:
@@ -108,25 +114,9 @@ packets to `corporate-financial-records`; route education-path packets to
 `privacy-redaction-audit`; route source-chain review to
 `source-independence-audit`.
 
-CLI `draft-extraction --template` supports:
-
-- `generic`
-- `corporate`
-- `education`
-- `legal-court`
-- `identity-resolution`
-- `source-capture`
-- `claim-contradiction`
-- `public-records-router`
-- `licensing-professional`
-- `media-transcript`
-- `property-location`
-- `missing-persons`
-- `geographical-location`
-- `foia-open-records`
-- `narrative-readiness`
-- `privacy-redaction`
-- `source-independence`
+`draft-extraction --template <template>` accepts template IDs from
+`docs/lanes.json` (`templates` keys). The generated human index is
+`.agents/skills/truecrime-cult-research/references/lane_registry.md`.
 
 ### Source preservation metadata
 
@@ -762,10 +752,9 @@ Payload:
 }
 ```
 
-Supported `lane` values are `legal-court`, `corporate`, `education`,
-`licensing-professional`, `media-transcript`, `property-location`,
-`missing-persons`, `geographical-location`, `source-capture`,
-`identity-resolution`, and `contradiction`.
+Supported `lane` values are lane IDs from `docs/lanes.json` where
+`public_record_plan` is defined. The generated routing table is
+`.agents/skills/public-records-router/references/routing_matrix.md`.
 
 Expected outputs:
 

@@ -314,6 +314,11 @@ domain-heavy packets to adjacent skills when appropriate:
 - `geographical-location-intelligence`: evidence-item geography, event maps, routes, sightings, map/exhibit locators, and locations of interest.
 - `foia-open-records-planning`, `narrative-readiness-review`, `privacy-redaction-audit`, and `source-independence-audit`: open-records planning and public-output readiness review.
 
+Canonical lane/template metadata lives in `docs/lanes.json`. Generated
+reference tables live in
+`.agents/skills/truecrime-cult-research/references/lane_registry.md` and
+`.agents/skills/public-records-router/references/routing_matrix.md`.
+
 Adjacent skills write source-traceable entities, claims, events, relationships,
 artifacts, and notes back into the same TRCR case structure.
 
