@@ -23,20 +23,28 @@ from itertools import combinations
 from pathlib import Path
 from typing import Any, Iterable
 
-RECORD_FILES = {
-    "sources": "sources.jsonl",
-    "entities": "entities.jsonl",
-    "places": "places.jsonl",
-    "artifacts": "artifacts.jsonl",
-    "claims": "claims.jsonl",
-    "events": "events.jsonl",
-    "event_links": "event_links.jsonl",
-    "relationships": "relationships.jsonl",
-    "source_spans": "source_spans.jsonl",
-    "quotes": "quotes.jsonl",
-    "research_actions": "research_actions.jsonl",
-    "redactions": "redactions.jsonl",
-}
+SRC_ROOT = Path(__file__).resolve().parents[4] / "src"
+if SRC_ROOT.exists() and str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
+
+from core.casefile import (  # noqa: E402
+    CasefileError,
+    RECORD_FILES,
+    append_jsonl,
+    case_path,
+    file_sha256,
+    log_action,
+    now_utc,
+    read_jsonl,
+    records_dir,
+    record_path,
+    resolve_case_path as case_relative_path,
+    slugify,
+    stable_id,
+    today,
+    write_json,
+    write_jsonl,
+)
 
 SCHEMA_BY_RECORD = {
     "sources": "source.schema.json",
@@ -164,91 +172,10 @@ CAP_PHRASE_RE = re.compile(r"\b(?:[A-Z][a-zA-Z'\-.]+(?:\s+|$)){2,5}")
 TIMESTAMP_RE = re.compile(r"(?<!\d)(?:(?P<hours>\d{1,2}):)?(?P<minutes>\d{1,2}):(?P<seconds>\d{2})(?:[.,]\d{1,3})?(?!\d)")
 SPEAKER_LINE_RE = re.compile(r"^\s*(?P<speaker>[A-Z][A-Za-z0-9 .'\-]{1,48}):\s*(?P<text>.+?)\s*$")
 
-def today() -> str:
-    return dt.date.today().isoformat()
-
-
-def now_utc() -> str:
-    return dt.datetime.now(dt.timezone.utc).isoformat()
-
-
-def slugify(value: str, max_len: int = 64) -> str:
-    value = re.sub(r"[^a-zA-Z0-9]+", "_", value.strip().lower()).strip("_")
-    return (value[:max_len] or "item").strip("_")
-
-
-def stable_id(prefix: str, *parts: str, length: int = 10) -> str:
-    raw = "|".join(p or "" for p in parts)
-    digest = hashlib.sha1(raw.encode("utf-8", errors="replace")).hexdigest()[:length].upper()
-    return f"{prefix}{digest}"
-
-
-def case_path(case_dir: str | Path) -> Path:
-    return Path(case_dir).expanduser().resolve()
-
-
-def records_dir(case_dir: str | Path) -> Path:
-    return case_path(case_dir) / "records"
-
-
-def record_path(case_dir: str | Path, record_name: str) -> Path:
-    return records_dir(case_dir) / RECORD_FILES[record_name]
-
-
 def ensure_case(case_dir: str | Path) -> None:
     cdir = case_path(case_dir)
     if not (cdir / "case.json").exists():
         raise SystemExit(f"Not a case workspace: {cdir}. Run init-case first.")
-
-
-def append_jsonl(path: Path, obj: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a", encoding="utf-8") as f:
-        f.write(json.dumps(obj, ensure_ascii=False, sort_keys=True) + "\n")
-
-
-def write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8") as f:
-        for row in rows:
-            f.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
-
-
-def read_jsonl(path: Path) -> list[dict[str, Any]]:
-    if not path.exists():
-        return []
-    rows = []
-    with path.open("r", encoding="utf-8") as f:
-        for lineno, line in enumerate(f, start=1):
-            if not line.strip():
-                continue
-            try:
-                rows.append(json.loads(line))
-            except json.JSONDecodeError as exc:
-                raise SystemExit(f"Invalid JSON in {path}:{lineno}: {exc}") from exc
-    return rows
-
-
-def write_json(path: Path, data: Any) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-
-
-def file_sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as f:
-        for chunk in iter(lambda: f.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
-def case_relative_path(case_dir: str | Path, value: str | None) -> Path | None:
-    if not value:
-        return None
-    p = Path(value).expanduser()
-    if p.is_absolute():
-        return p
-    return case_path(case_dir) / p
 
 
 def skill_dir() -> Path:
@@ -295,14 +222,6 @@ def find_source(case_dir: str | Path, source_id: str) -> dict[str, Any] | None:
         if src.get("source_id") == source_id:
             return src
     return None
-
-
-def log_action(case_dir: str | Path, action: str, details: dict[str, Any]) -> None:
-    append_jsonl(record_path(case_dir, "research_actions"), {
-        "timestamp": now_utc(),
-        "action": action,
-        "details": details,
-    })
 
 
 def init_case(args: argparse.Namespace) -> None:
@@ -7312,7 +7231,10 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
-    args.func(args)
+    try:
+        args.func(args)
+    except CasefileError as exc:
+        raise SystemExit(str(exc)) from exc
     return 0
 
 
