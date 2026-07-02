@@ -21,6 +21,7 @@ Lane and extraction-template metadata shared by CLI, MCP, and skills.
 
 | Lane | Skill | Template | Public plan | Use For |
 | --- | --- | --- | --- | --- |
+| `criminal-research` | `criminal-research` | `criminal-research` | yes | Use for source-backed M.O., victimology, offense-pattern, behavioral-signature, escalation, and non-diagnostic forensic personality analysis. |
 | `identity-resolution` | `identity-resolution` | `identity-resolution` | yes | Use for aliases, duplicate entities, ambiguous public-record identities, entity match evidence, and non-mutating merge-review packets. |
 | `public-records-router` | `public-records-router` | `public-records-router` | no | Use for routing a subject or question across court, corporate, education, licensing, property, media, archive, and other public-record lanes. |
 | `source-capture` | `source-capture-preservation` | `source-capture` | yes | Use for source preservation, archive URLs, hashes, provenance gaps, and capture metadata. |
@@ -41,6 +42,7 @@ Lane and extraction-template metadata shared by CLI, MCP, and skills.
 | --- | --- | --- |
 | `claim-contradiction` | `extraction_packet_claim_contradiction.json` | Use for contradictions, denials, corrections, retractions, disputed claims, and court-finding-versus-allegation reviews. |
 | `corporate` | `extraction_packet_corporate.json` | Use for corporations, nonprofits, investments, bankruptcies, officers, directors, board members, ownership, contracts, and securities or court filings. |
+| `criminal-research` | `extraction_packet_criminal_research.json` | Use for source-backed M.O., victimology, offense-pattern, behavioral-signature, escalation, and academic forensic context packets. |
 | `education` | `extraction_packet_education.json` | Use for schools attended, degrees, credentials, academic appointments, training, student-era events, alumni claims, and institution affiliations. |
 | `foia-open-records` | `extraction_packet_foia_open_records.json` | Use for FOIA, open-records, sunshine-law, public-records request planning, agency scope, request wording, exemptions, fee waivers, and appeal trackers. |
 | `generic` | `extraction_packet.json` | Use for general case/source extraction. |

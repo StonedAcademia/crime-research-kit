@@ -29,6 +29,7 @@ domain:
 - Use `property-location-records` for property, parcel, deed, permit, zoning, map, facility, campus, and address-sensitive location records.
 - Use `missing-persons-case` for missing-person, unidentified-person, last-seen, reported-missing, located/recovered, public bulletin, status-update, and candidate-match research.
 - Use `geographical-location-intelligence` for evidence-item geography, event maps, routes, sightings, map/exhibit locators, locations of interest, and public-safe map packets.
+- Use `criminal-research` for source-backed M.O., victimology, offense-pattern, behavioral-signature, escalation, and non-diagnostic forensic personality analysis.
 - Use `foia-open-records-planning` for FOIA, open-records, sunshine-law, agency-records request wording, response tracking, exemptions, fee waivers, and appeal planning.
 - Use `narrative-readiness-review` before public scripts, reports, timelines, Manim exports, bundles, or evidence boards.
 - Use `privacy-redaction-audit` for private-person, minor, address/contact, medical, financial, weak allegation, and public-export redaction blockers.
@@ -106,7 +107,7 @@ Prioritize primary/official and strong secondary sources over repeat coverage.
 If the plan is primarily corporate/financial, education-path, legal/court,
 identity-resolution, source-preservation, contradiction-audit, licensing,
 media/transcript, property/location, missing-persons, geographical-location,
-public-record routing, open-records
+criminal-research, public-record routing, open-records
 planning, narrative-readiness, privacy-redaction, or source-independence
 research, load the routed skill named above and use its source lanes and
 extraction mapping.
@@ -204,7 +205,7 @@ Default grades:
 - `references/privacy_safety_rules.md`: redaction and public-output rules.
 - Phase 1 adjacent skills: `legal-court-records`, `identity-resolution`, `source-capture-preservation`, and `claim-contradiction-audit`.
 - Phase 2 adjacent skills: `public-records-router`, `licensing-professional-records`, `media-transcript-intelligence`, and `property-location-records`.
-- Additional investigation skills: `missing-persons-case` and `geographical-location-intelligence`.
+- Additional investigation skills: `missing-persons-case`, `geographical-location-intelligence`, and `criminal-research`.
 - Phase 3 adjacent skills: `foia-open-records-planning`, `narrative-readiness-review`, `privacy-redaction-audit`, and `source-independence-audit`.
 
 ## Prompt patterns for Codex

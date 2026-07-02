@@ -1,0 +1,63 @@
+{
+  "source_id": "",
+  "extraction_notes": "Criminal-research packet. Extract source-backed M.O., victimology, offense-pattern, behavioral, escalation, and academic forensic context. Treat behavioral analysis as interpretation, not proof of guilt, motive, diagnosis, or identity.",
+  "source_spans": [],
+  "source_span_guidance": {
+    "field": "source_spans",
+    "instruction": "Use source_spans for paragraph, page, timestamp, exhibit, filing, interview, or quote locators supporting each behavior or analytical claim.",
+    "placeholder": {
+      "source_span_id": "",
+      "source_id": "",
+      "locator_type": "paragraph",
+      "locator": {
+        "page": null,
+        "paragraph": null,
+        "timestamp": null,
+        "exhibit": null,
+        "quote_hint": null
+      },
+      "exact_text": null,
+      "summary": null,
+      "public_export": true,
+      "notes": ""
+    }
+  },
+  "analysis_lenses": [
+    "modus_operandi",
+    "victimology",
+    "offense_script",
+    "signature_like_behavior",
+    "staging_or_concealment",
+    "escalation_or_deescalation",
+    "expert_context",
+    "alternative_explanation"
+  ],
+  "topic_claim_focus": [
+    "source_observed_behavior",
+    "expert_context",
+    "behavioral_hypothesis",
+    "pattern_comparison",
+    "victimology_context",
+    "uncertainty_or_caveat",
+    "public_export_blocker"
+  ],
+  "relationship_focus": [
+    "accused_by",
+    "charged_with",
+    "convicted_of",
+    "reported_by",
+    "cited_by",
+    "pattern_compared_to",
+    "expert_analysis_of"
+  ],
+  "diagnostic_warning": "Do not diagnose or label personality disorders, psychopathy, sadism, narcissism, delusion, or mental illness unless a cited qualified source or court record states it. Preserve source wording and context.",
+  "entities": [],
+  "places": [],
+  "artifacts": [],
+  "claims": [],
+  "events": [],
+  "event_links": [],
+  "relationships": [],
+  "quotes": [],
+  "redactions": []
+}

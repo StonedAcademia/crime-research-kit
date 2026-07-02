@@ -1,6 +1,6 @@
 ---
 name: public-records-router
-description: Public-record source-planning workflow for routing a TRCR case subject across legal, corporate, education, licensing, media/transcript, missing-person, geographical-location, property/location, source-preservation, identity-resolution, and contradiction-review lanes. Use when Codex needs to decide which public records to seek, in what order, and with what safety constraints before extraction.
+description: Public-record source-planning workflow for routing a TRCR case subject across legal, corporate, education, licensing, media/transcript, missing-person, geographical-location, criminal-research, property/location, source-preservation, identity-resolution, and contradiction-review lanes. Use when Codex needs to decide which public records to seek, in what order, and with what safety constraints before extraction.
 ---
 
 # Public Records Router
@@ -57,6 +57,7 @@ Use `--lane licensing-professional`, `--lane media-transcript`, or another lane 
 - Route videos, hearings, podcasts, and interviews through `media-transcript-intelligence`; timestamped claims still need review.
 - Route missing-person, last-seen, located/recovered, and unidentified-person candidate work through `missing-persons-case`; candidate matches are lead-only until sourced.
 - Route evidence-item geography, event maps, routes, sightings, and locations of interest through `geographical-location-intelligence`; exact private or weak-lead locations default to non-public.
+- Route M.O., victimology, offense-pattern, behavioral-signature, escalation, and forensic personality analysis through `criminal-research`; diagnostic or weak profile claims default to non-public.
 - Route parcels, deeds, permits, maps, and addresses through `property-location-records`; private addresses default to non-public.
 - Use `source-capture-preservation` for archive, hash, and provenance questions.
 

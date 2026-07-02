@@ -3,6 +3,10 @@
     "notes": "Use for contradictions, denials, corrections, retractions, disputed claims, and court-finding-versus-allegation reviews.",
     "template_file": "extraction_packet_claim_contradiction.json"
   },
+  "criminal-research": {
+    "notes": "Use for source-backed M.O., victimology, offense-pattern, behavioral-signature, escalation, and academic forensic context packets.",
+    "template_file": "extraction_packet_criminal_research.json"
+  },
   "corporate": {
     "notes": "Use for corporations, nonprofits, investments, bankruptcies, officers, directors, board members, ownership, contracts, and securities or court filings.",
     "template_file": "extraction_packet_corporate.json"

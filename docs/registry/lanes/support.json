@@ -1,4 +1,44 @@
 {
+  "criminal-research": {
+    "category": "support",
+    "label": "Criminal research and behavioral analysis",
+    "notes": "Use for source-backed M.O., victimology, offense-pattern, behavioral-signature, escalation, and non-diagnostic forensic personality analysis.",
+    "public_record_plan": true,
+    "skill": "criminal-research",
+    "source_lane_inference": true,
+    "source_types": [
+      "academic",
+      "court_record",
+      "official_report",
+      "news_article",
+      "interview",
+      "memoir",
+      "book",
+      "documentary",
+      "other"
+    ],
+    "template": "criminal-research",
+    "tool_ops": {
+      "draft_packet": "draft_extraction",
+      "plan_records": "plan_public_records"
+    },
+    "triggers": [
+      "criminal research",
+      "modus operandi",
+      "m.o.",
+      "offender behavior",
+      "behavioral analysis",
+      "forensic psychology",
+      "criminology",
+      "victimology",
+      "signature behavior",
+      "criminal personality",
+      "crime pattern",
+      "offense pattern",
+      "staging",
+      "escalation"
+    ]
+  },
   "identity-resolution": {
     "category": "support",
     "label": "Identity resolution",

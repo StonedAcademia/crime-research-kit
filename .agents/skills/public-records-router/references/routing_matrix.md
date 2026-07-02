@@ -8,6 +8,7 @@ Use this matrix to choose the next skill and extraction template.
 | --- | --- | --- | --- | --- |
 | `contradiction` | `claim-contradiction-audit` | `claim-contradiction` | yes | Use for corrections, denials, retractions, court-finding conflicts, and claim-status review. |
 | `corporate` | `corporate-financial-records` | `corporate` | yes | Use for corporate registries, securities filings, bankruptcy, ownership, finance, boards, and officers. |
+| `criminal-research` | `criminal-research` | `criminal-research` | yes | Use for source-backed M.O., victimology, offense-pattern, behavioral-signature, escalation, and non-diagnostic forensic personality analysis. |
 | `education` | `educational-path-records` | `education` | yes | Use for education paths, degrees, attendance, credentials, and academic appointments. |
 | `foia-open-records` | `foia-open-records-planning` | `foia-open-records` | yes | Use for open-records request planning, agency scope, request wording, exemptions, fee waivers, and appeals. |
 | `geographical-location` | `geographical-location-intelligence` | `geographical-location` | yes | Use for evidence-item locations, event maps, routes, sightings, map/exhibit locators, and locations-of-interest clusters. |

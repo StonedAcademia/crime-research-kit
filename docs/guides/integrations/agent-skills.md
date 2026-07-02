@@ -24,6 +24,9 @@ domain-heavy packets to adjacent skills only when their lane applies.
 
 Adjacent skills write source-traceable entities, claims, events, relationships,
 artifacts, and notes back into the same TRCR case structure.
+Use `criminal-research` when the packet is mainly source-backed M.O.,
+victimology, offense-pattern, behavioral-signature, escalation, criminological
+context, or non-diagnostic forensic personality analysis.
 
 ## Registry is canonical
 
