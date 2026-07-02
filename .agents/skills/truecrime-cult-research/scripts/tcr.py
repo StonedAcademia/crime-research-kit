@@ -28,7 +28,6 @@ from core.casefile import (  # noqa: E402
     RECORD_FILES,
     append_jsonl,
     case_path,
-    file_sha256,
     log_action,
     now_utc,
     read_jsonl,
@@ -86,6 +85,11 @@ from adapters.ops.evidence.shared.records import (  # noqa: E402
     report_out_path,
     source_independence_key,
     write_csv,
+)
+from adapters.ops.evidence.quality.preservation import (  # noqa: E402
+    preservation_artifact,
+    preserve_source,
+    source_preservation_report,
 )
 
 def lane_registry_path() -> Path:
@@ -217,113 +221,6 @@ def enforce_public_output_gate(target: str | Path, command_name: str, include_pr
         for blocker in blockers:
             print(f"- {blocker}", file=sys.stderr)
         raise SystemExit(1)
-
-
-def preservation_artifact(case_dir: str | Path, source: dict[str, Any], path_field: str) -> dict[str, Any]:
-    rel_value = source.get(path_field)
-    artifact = {
-        "field": path_field,
-        "path": rel_value,
-        "exists": False,
-        "size_bytes": None,
-        "sha256": None,
-        "issue": None,
-    }
-    path = case_relative_path(case_dir, str(rel_value)) if rel_value else None
-    if not path:
-        artifact["issue"] = f"{path_field} is not set"
-        return artifact
-    if not path.exists():
-        artifact["issue"] = f"{path_field} does not exist on disk"
-        return artifact
-    if not path.is_file():
-        artifact["issue"] = f"{path_field} is not a file"
-        return artifact
-    artifact.update({
-        "exists": True,
-        "size_bytes": path.stat().st_size,
-        "sha256": file_sha256(path),
-    })
-    return artifact
-
-
-def source_preservation_report(case_dir: str | Path, source: dict[str, Any]) -> dict[str, Any]:
-    artifacts = [
-        preservation_artifact(case_dir, source, "raw_path"),
-        preservation_artifact(case_dir, source, "text_path"),
-    ]
-    existing_artifacts = [item for item in artifacts if item["exists"]]
-    configured_missing = [
-        item for item in artifacts
-        if item.get("path") and not item["exists"]
-    ]
-    if configured_missing:
-        status = "missing_artifacts"
-    elif existing_artifacts:
-        status = "captured"
-    elif source.get("archive_url"):
-        status = "registered_with_archive"
-    else:
-        status = "metadata_only"
-
-    return {
-        "generated_at": now_utc(),
-        "source_id": source.get("source_id"),
-        "title": source.get("title"),
-        "url": source.get("url"),
-        "archive_url": source.get("archive_url"),
-        "content_type": source.get("content_type"),
-        "capture_method": source.get("capture_method"),
-        "capture_timestamp": source.get("capture_timestamp"),
-        "preservation_status": status,
-        "artifacts": artifacts,
-        "warnings": [str(item["issue"]) for item in artifacts if item.get("issue")],
-    }
-
-
-def preserve_source(args: argparse.Namespace) -> None:
-    ensure_case(args.case_dir)
-    sources = read_jsonl(record_path(args.case_dir, "sources"))
-    source = None
-    for row in sources:
-        if row.get("source_id") == args.source_id:
-            source = row
-            break
-    if not source:
-        raise SystemExit(f"Source not found: {args.source_id}")
-
-    if args.archive_url:
-        source["archive_url"] = args.archive_url
-    if args.content_type:
-        source["content_type"] = args.content_type
-    source.setdefault("capture_method", "registered_source")
-    source["preservation_checked_at"] = now_utc()
-
-    report = source_preservation_report(args.case_dir, source)
-    source["preservation_status"] = report["preservation_status"]
-    for artifact in report["artifacts"]:
-        if artifact["field"] == "raw_path" and artifact.get("sha256"):
-            source["raw_sha256"] = artifact["sha256"]
-            source["raw_size_bytes"] = artifact["size_bytes"]
-        if artifact["field"] == "text_path" and artifact.get("sha256"):
-            source["text_sha256"] = artifact["sha256"]
-            source["text_size_bytes"] = artifact["size_bytes"]
-    source["preservation_warnings"] = report["warnings"]
-
-    write_jsonl(record_path(args.case_dir, "sources"), sources)
-    out = report_out_path(args.case_dir, getattr(args, "out", None), f"exports/source_preservation/{args.source_id}.json")
-    write_json(out, report)
-    log_action(
-        args.case_dir,
-        "preserve_source",
-        {
-            "source_id": args.source_id,
-            "report": str(out),
-            "preservation_status": report["preservation_status"],
-            "warnings": report["warnings"],
-        },
-    )
-    print(json.dumps({"source_id": args.source_id, "preservation_status": report["preservation_status"], "report": str(out)}, indent=2, ensure_ascii=False))
 
 
 def entity_resolution_context(
