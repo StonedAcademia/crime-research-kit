@@ -7,7 +7,7 @@ description: TRCR workflow for finding and documenting conflicting claims, denia
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `claim-contradiction` for this lane; CLI fallback: `tcr.py draft-extraction ... --template claim-contradiction`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `claim-contradiction` for this lane; CLI fallback: `tcr.py draft-extraction ... --template claim-contradiction`.
 
 
 ## Purpose

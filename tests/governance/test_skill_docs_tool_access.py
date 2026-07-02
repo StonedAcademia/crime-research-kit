@@ -1,7 +1,6 @@
-import json
 import re
-from pathlib import Path
 
+from case_builder.lanes.registry import load_lanes
 from tests.helpers import KIT_ROOT as ROOT
 
 SKILLS_ROOT = ROOT / ".agents" / "skills"
@@ -9,7 +8,7 @@ MAIN_SKILL = SKILLS_ROOT / "truecrime-cult-research" / "SKILL.md"
 
 
 def load_registry() -> dict:
-    return json.loads((ROOT / "docs" / "registry" / "lanes.json").read_text(encoding="utf-8"))
+    return load_lanes(ROOT / "docs" / "registry")
 
 
 def test_main_skill_documents_tool_access():
@@ -18,7 +17,7 @@ def test_main_skill_documents_tool_access():
     assert "## Tool access" in text
     assert "trcr-mcp" in text
     assert "import_extraction(confirm=true)" in text
-    assert "docs/registry/lanes.json" in text
+    assert "docs/registry/" in text
 
 
 def test_lane_skill_docs_reference_registry_and_templates():
@@ -29,7 +28,7 @@ def test_lane_skill_docs_reference_registry_and_templates():
         if not skill_doc.exists():
             continue
         text = skill_doc.read_text(encoding="utf-8")
-        assert "docs/registry/lanes.json" in text, lane_id
+        assert "docs/registry/" in text, lane_id
         assert f"template `{lane['template']}`" in text or f"--template {lane['template']}" in text, lane_id
 
 

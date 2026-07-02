@@ -45,7 +45,7 @@ Two implementation layers share that ledger:
 1. **Skill scripts** — `.agents/skills/truecrime-cult-research/scripts/tcr.py` is a large stdlib-only single-file CLI implementing the full ledger contract (init, ingest, extraction staging/import, validate, audits, exports). `docs/guides/skill-api-spec.md` is the machine-facing contract for its operations and payload shapes. Sixteen adjacent skills under `.agents/skills/` (legal-court-records, missing-persons-case, privacy-redaction-audit, …) extend the same case ledger for domain-specific packets.
 2. **`src/case_builder/`** — the agent app. Frontends (CLI in `cli.py`, LangGraph workflow in `graph/`, MCP server in `mcp/`) never touch `tcr.py` or the ledger directly; they go through the typed ops core in `ops/` (`OpResult`, `TrcrRunner`, safety `policy`). `graph/` has a LangGraph build plus a sequential fallback and stops at a human review gate. Optional-dependency subsystems: `parsing/` (Docling/OCRmyPDF), `retrieval/` (LlamaIndex/Qdrant), `memory/` (Mem0/local), `acquisition/` (SearXNG discovery).
 
-Lane/template vocabulary is canonical in `docs/registry/lanes.json`; the tables in `.agents/skills/truecrime-cult-research/references/lane_registry.md` and `.agents/skills/public-records-router/references/routing_matrix.md` are generated from it, and governance tests catch drift between them — update `lanes.json` first.
+Lane/template vocabulary is canonical in `docs/registry/`; the tables in `.agents/skills/truecrime-cult-research/references/lane_registry.md` and `.agents/skills/public-records-router/references/routing_matrix.md` are generated from it, and governance tests catch drift between them. Update the registry shards first.
 
 ## Repo constraints
 
@@ -71,4 +71,4 @@ You (Fable) are the orchestrator. Plan, decompose, synthesize.
 Reasoning-heavy phases → deep-reasoner  
 Mechanical work → fast-worker  
 Codex (/codex:rescue --background) is a cracked engineer on par with deep-reasoner, from a different perspective. Treat as a peer, not a reviewer.  
-High-stakes decisions: task Opus + Codex on the same problem in parallel, synthesize the best of both, without showing either the other's answer. Keep your own context lean.   
+High-stakes decisions: task Opus + Codex on the same problem in parallel, synthesize the best of both, without showing either the other's answer. Keep your own context lean.

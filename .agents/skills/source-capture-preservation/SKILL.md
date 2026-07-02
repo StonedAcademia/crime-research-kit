@@ -7,7 +7,7 @@ description: Public-source preservation workflow for TRCR cases. Capture or regi
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `source-capture` for this lane; CLI fallback: `tcr.py draft-extraction ... --template source-capture`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `source-capture` for this lane; CLI fallback: `tcr.py draft-extraction ... --template source-capture`.
 
 
 ## Purpose

@@ -1,6 +1,3 @@
-import json
-from pathlib import Path
-
 import pytest
 
 from case_builder.lanes import registry as lanes_registry
@@ -10,11 +7,11 @@ ROOT = KIT_ROOT
 
 
 def load_json() -> dict:
-    return json.loads((ROOT / "docs" / "registry" / "lanes.json").read_text(encoding="utf-8"))
+    return lanes_registry.load_lanes(ROOT / "docs" / "registry")
 
 
 def test_default_lanes_path_resolves_from_repo_root():
-    assert lanes_registry.default_lanes_path(ROOT) == ROOT / "docs" / "registry" / "lanes.json"
+    assert lanes_registry.default_lanes_path(ROOT) == ROOT / "docs" / "registry"
 
 
 def test_fallback_lists_match_registry():

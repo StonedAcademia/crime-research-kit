@@ -29,7 +29,7 @@ Optional environment:
 | Staged write | `discover_sources`, `ingest_url`, `add_source`, `parse_source`, `ocr_source`, `draft_extraction`, `save_extraction_packet`, `link_names`, `plan_public_records` | `staging/`, `raw/`, and source registry. |
 | Gated | `import_extraction`, `export_manim`, `export_case_charts`, `export_analysis_charts` | Canonical records or exports. `import_extraction` requires `confirm=true` after explicit user approval. Exports are public-safe by default. |
 
-`plan_public_records` accepts public-record lane IDs from `docs/registry/lanes.json`.
+`plan_public_records` accepts public-record lane IDs from `docs/registry/`.
 `draft_extraction` accepts template IDs from the same registry. Generated human
 references live in
 `.agents/skills/truecrime-cult-research/references/lane_registry.md` and

@@ -1,6 +1,6 @@
 # lanes
 
-The lanes package loads `docs/registry/lanes.json`, the canonical registry for public
+The lanes package loads `docs/registry/`, the canonical registry for public
 record lanes, extraction templates, trigger terms, adjacent skill routing, and
 source-type hints.
 

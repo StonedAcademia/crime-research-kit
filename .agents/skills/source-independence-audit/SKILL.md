@@ -7,7 +7,7 @@ description: Source-chain and corroboration workflow for detecting repeated wire
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `source-independence` for this lane; CLI fallback: `tcr.py draft-extraction ... --template source-independence`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `source-independence` for this lane; CLI fallback: `tcr.py draft-extraction ... --template source-independence`.
 
 
 ## Purpose

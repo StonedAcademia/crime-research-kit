@@ -1,4 +1,4 @@
-"""Generate lane reference markdown from docs/registry/lanes.json."""
+"""Generate lane reference markdown from docs/registry shards."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from pathlib import Path
 
 from .registry import load_lanes
 
-MARKER = "<!-- Generated from docs/registry/lanes.json; edit the registry, not this table. -->"
+MARKER = "<!-- Generated from docs/registry/; edit the registry shards, not this table. -->"
 CATEGORIES = ("public_record", "support", "review")
 
 
@@ -74,7 +74,7 @@ def _cell(value: str) -> str:
 
 def generated_paths(repo_root: Path | None = None) -> dict[Path, str]:
     root = repo_root or Path(__file__).resolve().parents[3]
-    registry = load_lanes(root / "docs" / "registry" / "lanes.json")
+    registry = load_lanes(root / "docs" / "registry")
     return {
         root / ".agents" / "skills" / "truecrime-cult-research" / "references" / "lane_registry.md": render_lane_registry_markdown(registry) + "\n",
         root / ".agents" / "skills" / "public-records-router" / "references" / "routing_matrix.md": render_routing_matrix_markdown(registry) + "\n",

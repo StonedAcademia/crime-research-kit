@@ -71,19 +71,33 @@ DEFAULT_EXTRACTION = {
 def lane_registry_path() -> Path:
     script = Path(__file__).resolve()
     candidates = [
-        script.parents[4] / "docs" / "registry" / "lanes.json",
-        Path.cwd() / "docs" / "registry" / "lanes.json",
-        Path.cwd() / "tc-c-kit" / "docs" / "registry" / "lanes.json",
+        script.parents[4] / "docs" / "registry",
+        Path.cwd() / "docs" / "registry",
+        Path.cwd() / "tc-c-kit" / "docs" / "registry",
     ]
     for candidate in candidates:
-        if candidate.exists():
+        if (candidate / "index.json").exists():
             return candidate
     searched = ", ".join(str(candidate) for candidate in candidates)
-    raise SystemExit(f"Missing docs/registry/lanes.json lane registry. Searched: {searched}")
+    raise SystemExit(f"Missing docs/registry lane shards. Searched: {searched}")
 
 
 def load_lanes_registry() -> dict[str, Any]:
-    return json.loads(lane_registry_path().read_text(encoding="utf-8"))
+    root = lane_registry_path()
+    index = json.loads((root / "index.json").read_text(encoding="utf-8"))
+    lanes: dict[str, Any] = {}
+    templates: dict[str, Any] = {}
+    for shard in index["lane_shards"]:
+        lanes.update(json.loads((root / shard).read_text(encoding="utf-8")))
+    for shard in index["template_shards"]:
+        templates.update(json.loads((root / shard).read_text(encoding="utf-8")))
+    return {
+        "version": index["version"],
+        "fallback_source_lanes": index["fallback_source_lanes"],
+        "fallback_public_record_lanes": index["fallback_public_record_lanes"],
+        "lanes": lanes,
+        "templates": templates,
+    }
 
 
 LANE_REGISTRY = load_lanes_registry()

@@ -7,7 +7,7 @@ description: Public-record workflow for researching court cases, dockets, filing
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `legal-court` for this lane; CLI fallback: `tcr.py draft-extraction ... --template legal-court`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `legal-court` for this lane; CLI fallback: `tcr.py draft-extraction ... --template legal-court`.
 
 
 ## Purpose

@@ -1,24 +1,25 @@
-import json
 import re
 import subprocess
 import sys
-from pathlib import Path
 
+from case_builder.lanes.registry import load_lanes
 from tests.helpers import KIT_ROOT
 
 ROOT = KIT_ROOT
-LANES_PATH = ROOT / "docs" / "registry" / "lanes.json"
+REGISTRY_ROOT = ROOT / "docs" / "registry"
 TEMPLATES_ROOT = ROOT / ".agents" / "skills" / "truecrime-cult-research" / "assets" / "templates"
 SLUG_RE = re.compile(r"[a-z0-9][a-z0-9-]*")
 
 
 def load_registry() -> dict:
-    return json.loads(LANES_PATH.read_text(encoding="utf-8"))
+    return load_lanes(REGISTRY_ROOT)
 
 
 def test_lanes_json_exists_and_has_version():
     registry = load_registry()
 
+    assert (REGISTRY_ROOT / "index.json").exists()
+    assert not (REGISTRY_ROOT / "lanes.json").exists()
     assert registry["version"] == 1
     assert isinstance(registry["lanes"], dict)
     assert isinstance(registry["templates"], dict)

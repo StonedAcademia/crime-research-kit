@@ -7,7 +7,7 @@ description: Public-record workflow for researching corporations, nonprofits, ba
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `corporate` for this lane; CLI fallback: `tcr.py draft-extraction ... --template corporate`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `corporate` for this lane; CLI fallback: `tcr.py draft-extraction ... --template corporate`.
 
 
 ## Purpose

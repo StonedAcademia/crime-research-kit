@@ -1,0 +1,26 @@
+{
+  "fallback_public_record_lanes": [
+    "source-capture",
+    "legal-court",
+    "corporate",
+    "licensing-professional",
+    "media-transcript",
+    "missing-persons",
+    "geographical-location",
+    "property-location"
+  ],
+  "fallback_source_lanes": [
+    "source-capture",
+    "contradiction"
+  ],
+  "lane_shards": [
+    "lanes/public_records_core.json",
+    "lanes/public_records_media.json",
+    "lanes/support.json",
+    "lanes/review.json"
+  ],
+  "template_shards": [
+    "templates/extraction.json"
+  ],
+  "version": 1
+}

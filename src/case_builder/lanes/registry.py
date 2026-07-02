@@ -11,7 +11,7 @@ from typing import Any, Sequence
 
 def default_lanes_path(repo_root: Path | None = None) -> Path:
     root = repo_root or Path(__file__).resolve().parents[3]
-    return root / "docs" / "registry" / "lanes.json"
+    return root / "docs" / "registry"
 
 
 def load_lanes(path: Path | None = None) -> dict[str, Any]:
@@ -26,7 +26,26 @@ def _load_default_lanes() -> dict[str, Any]:
 
 
 def _read_lanes(path: Path) -> dict[str, Any]:
+    if path.is_dir():
+        return _read_sharded_lanes(path)
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _read_sharded_lanes(path: Path) -> dict[str, Any]:
+    index = json.loads((path / "index.json").read_text(encoding="utf-8"))
+    lanes: dict[str, Any] = {}
+    templates: dict[str, Any] = {}
+    for shard in index["lane_shards"]:
+        lanes.update(json.loads((path / shard).read_text(encoding="utf-8")))
+    for shard in index["template_shards"]:
+        templates.update(json.loads((path / shard).read_text(encoding="utf-8")))
+    return {
+        "version": index["version"],
+        "fallback_source_lanes": index["fallback_source_lanes"],
+        "fallback_public_record_lanes": index["fallback_public_record_lanes"],
+        "lanes": lanes,
+        "templates": templates,
+    }
 
 
 def lane_records(

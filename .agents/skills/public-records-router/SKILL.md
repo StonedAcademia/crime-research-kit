@@ -7,7 +7,7 @@ description: Public-record source-planning workflow for routing a TRCR case subj
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `public-records-router` for this lane; CLI fallback: `tcr.py draft-extraction ... --template public-records-router`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `public-records-router` for this lane; CLI fallback: `tcr.py draft-extraction ... --template public-records-router`.
 
 
 ## Purpose
