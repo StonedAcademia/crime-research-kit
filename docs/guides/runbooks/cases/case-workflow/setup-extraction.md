@@ -76,6 +76,16 @@ Expected first output:
 - No claims treated as established before sources are registered.
 - A plan for which adjacent skills should handle specialized packets.
 
+Write source plans before treating route suggestions as evidence:
+
+```bash
+python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-public-records data/cases/harbor_study_circle \
+  --subject "Harbor Study Circle"
+python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-open-records data/cases/harbor_study_circle \
+  --agency "Harbor City Council" \
+  --subject "Harbor Study Circle"
+```
+
 ## Use Agent Flows By Lane
 
 | Research need | Ask for this skill or flow | Expected output |
@@ -122,6 +132,13 @@ For each source in data/cases/harbor_study_circle/records/sources.jsonl, check w
 Do not extract claims yet. Report missing metadata and suggest source IDs that need preservation or manual review.
 ```
 
+Preserve local source files and hashes before extraction when the source is not
+already archived:
+
+```bash
+python .agents/skills/truecrime-cult-research/scripts/tcr.py preserve-source data/cases/harbor_study_circle <SOURCE_ID>
+```
+
 ## Draft And Fill Extraction Packets
 
 Draft a generic packet:
@@ -155,4 +172,11 @@ assertion framing, and conservative status/confidence before importing.
 ```bash
 python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction data/cases/harbor_study_circle \
   data/cases/harbor_study_circle/staging/extractions/<SOURCE_ID>_extraction.json
+```
+
+Use local suggestions only as review aids, not as canonical records:
+
+```bash
+python .agents/skills/truecrime-cult-research/scripts/tcr.py ner-suggest data/cases/harbor_study_circle <SOURCE_ID>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py index-transcript data/cases/harbor_study_circle <SOURCE_ID>
 ```

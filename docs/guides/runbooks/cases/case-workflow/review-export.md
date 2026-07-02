@@ -9,9 +9,17 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/cases
 python .agents/skills/truecrime-cult-research/scripts/tcr.py report data/cases/harbor_study_circle
 ```
 
+Review duplicate and ambiguous identity candidates before export:
+
+```bash
+python .agents/skills/truecrime-cult-research/scripts/tcr.py dedupe data/cases/harbor_study_circle
+python .agents/skills/truecrime-cult-research/scripts/tcr.py resolve-identities data/cases/harbor_study_circle
+```
+
 Run public-output audits:
 
 ```bash
+python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-contradictions data/cases/harbor_study_circle
 python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export data/cases/harbor_study_circle
 python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-privacy-redactions data/cases/harbor_study_circle
 python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-source-independence data/cases/harbor_study_circle
