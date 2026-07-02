@@ -19,7 +19,7 @@ PYTHONPATH=src python -m case_builder.cli plan data/cases/install_smoke \
 If the package entry point is installed, the same app is available as:
 
 ```bash
-trcr-case-builder plan data/cases/install_smoke \
+cr-kit plan data/cases/install_smoke \
   --title "Install Smoke Test" \
   --subject "Synthetic public-source smoke test for setup verification"
 ```
@@ -80,7 +80,7 @@ The ledger under `records/*.jsonl` remains the source of truth.
 Dry run:
 
 ```bash
-trcr-case-builder plan data/cases/<case_slug> \
+cr-kit plan data/cases/<case_slug> \
   --title "<Case Title>" \
   --subject "<case subject, source question, names, dates, and places>"
 ```
@@ -88,7 +88,7 @@ trcr-case-builder plan data/cases/<case_slug> \
 Execute deterministic commands:
 
 ```bash
-trcr-case-builder plan data/cases/<case_slug> \
+cr-kit plan data/cases/<case_slug> \
   --title "<Case Title>" \
   --subject "<case subject, source question, names, dates, and places>" \
   --execute
@@ -97,7 +97,7 @@ trcr-case-builder plan data/cases/<case_slug> \
 Run with LangGraph checkpoints:
 
 ```bash
-trcr-case-builder plan data/cases/<case_slug> \
+cr-kit plan data/cases/<case_slug> \
   --title "<Case Title>" \
   --subject "<case subject, source question, names, dates, and places>" \
   --runner langgraph \
@@ -108,7 +108,7 @@ trcr-case-builder plan data/cases/<case_slug> \
 Resume after human packet review:
 
 ```bash
-trcr-case-builder resume data/cases/<case_slug> \
+cr-kit resume data/cases/<case_slug> \
   --thread <thread_id> \
   --approve-packet <SOURCE_ID>_extraction.json \
   --execute
@@ -117,7 +117,7 @@ trcr-case-builder resume data/cases/<case_slug> \
 Resume after public-export review:
 
 ```bash
-trcr-case-builder resume data/cases/<case_slug> \
+cr-kit resume data/cases/<case_slug> \
   --thread <thread_id> \
   --approve-export \
   --execute

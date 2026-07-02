@@ -54,15 +54,15 @@ non-checkpointed graphs) an unapproved gate ends the run with
 Checkpointed run and resume:
 
 ```bash
-trcr-case-builder plan data/cases/example_case \
+cr-kit plan data/cases/example_case \
   --title "Example Case" --subject "Jane Doe missing person" \
   --source-url "https://example.com/story" \
   --runner langgraph --checkpoint --execute
 
-trcr-case-builder resume data/cases/example_case --thread <thread_id> \
+cr-kit resume data/cases/example_case --thread <thread_id> \
   --approve-packet S0001_extraction.json --execute
 
-trcr-case-builder resume data/cases/example_case --thread <thread_id> \
+cr-kit resume data/cases/example_case --thread <thread_id> \
   --approve-export --execute
 ```
 
@@ -91,7 +91,7 @@ Use LangGraph explicitly:
 
 ```bash
 pip install -e '.[agentic]'
-trcr-case-builder plan data/cases/example_case \
+cr-kit plan data/cases/example_case \
   --title "Example Case" \
   --subject "Jane Doe missing person last seen near Riverside Park map" \
   --runner langgraph

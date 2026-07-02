@@ -48,7 +48,7 @@ Prefer MCP tools when `trcr-mcp` is registered:
 | Workflow need | MCP operation | CLI fallback |
 | --- | --- | --- |
 | List/open cases | `list_cases`, `case_info` | inspect `data/cases/<case>/case.json` only when tooling is unavailable |
-| Read records/source text | `get_records`, `get_source_text` | use `trcr-case-builder query-case` or the source files through repo tooling |
+| Read records/source text | `get_records`, `get_source_text` | use `cr-kit query-case` or the source files through repo tooling |
 | Register sources | `ingest_url`, `add_source` | `tcr.py ingest-url`, `tcr.py add-source` |
 | Draft packets | `draft_extraction` | `tcr.py draft-extraction --template <template>` |
 | Save staged packets | `save_extraction_packet` | write reviewed JSON under `staging/extractions/` through repo tooling |

@@ -75,7 +75,7 @@ moon run trcr:docker-shell
 Inside the container, case work lives under `/app/data/cases`:
 
 ```bash
-trcr-case-builder plan /app/data/cases/example_case \
+cr-kit plan /app/data/cases/example_case \
   --title "Example Case" \
   --subject "public-source case question"
 ```

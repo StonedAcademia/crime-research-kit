@@ -31,7 +31,7 @@ The two CLIs:
 python .agents/skills/truecrime-cult-research/scripts/tcr.py <init-case|ingest-url|draft-extraction|import-extraction|validate|report|export-manim|...> data/cases/<case_slug>
 
 # Case-builder agent app (installed entry point, or PYTHONPATH=src python -m case_builder.cli)
-trcr-case-builder <plan|parse-source|ocr-source|index-case|query-case|discover-sources|...> data/cases/<case_slug>
+cr-kit <plan|parse-source|ocr-source|index-case|query-case|discover-sources|...> data/cases/<case_slug>
 ```
 
 Self-hosted container stack (SearXNG, Qdrant, Ollama, MCP, …): `make docker-build`, `make docker-up`, `make docker-pull-model`, `make docker-smoke`. See `deployment/README.md`.

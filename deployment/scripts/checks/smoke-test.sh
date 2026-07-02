@@ -5,7 +5,7 @@ SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 "$SCRIPT_DIR/wait-for-local-stack.sh"
 
 python -m case_builder.cli --help >/dev/null
-trcr-case-builder plan /tmp/trcr_install_smoke \
+cr-kit plan /tmp/trcr_install_smoke \
   --title "TRCR Container Smoke" \
   --subject "self-hosted deployment smoke test" >/tmp/trcr-plan.json
 

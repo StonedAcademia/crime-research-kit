@@ -25,7 +25,7 @@ def create_server(ctx: ServerContext | None = None):
             "`uv pip install -p .venv/bin/python -e '.[mcp]'`."
         ) from exc
     context = ctx or default_context()
-    mcp = FastMCP("trcr-case-builder", instructions=SERVER_INSTRUCTIONS)
+    mcp = FastMCP("cr-kit", instructions=SERVER_INSTRUCTIONS)
     tools_read.register(mcp, context)
     tools_write.register(mcp, context)
     tools_gated.register(mcp, context)

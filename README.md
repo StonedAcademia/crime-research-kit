@@ -2,11 +2,10 @@
   <img src="docs/trcr-banner.svg" alt="TRCR Kit banner" width="100%">
 </p>
 
-<h1 align="center">True Crime / Cult-Origin Research Kit</h1>
+<h1 align="center">Crime Research Kit</h1>
 
 <p align="center">
-  <strong>Turn public sources into a source-traceable case ledger — timelines,
-  relationship graphs, contradiction audits, and public-ready evidence boards.</strong>
+  Use LLMs as research assistants for historical criminal research.
 </p>
 
 <p align="center">
@@ -25,7 +24,7 @@ articles, transcripts, PDFs, and archive links into a structured case ledger
 where every claim points back to its sources, reliability grade,
 confidence/status, privacy review, and export decision.
 
-**This is neither a rumor engine nor a way for you to dox people.** AI can organize, search, OCR, index, and draft
+**This is neither a rumor engine nor a way for individuals to dox people.** AI can organize, search, OCR, index, and draft
 extraction packets, but **AI-generated summaries are never evidence.** A claim
 becomes public-facing only after source support, validation, contradiction
 review, source-independence review, and privacy review.
@@ -53,11 +52,11 @@ The record-level contract behind this chain is documented in
 
 ## Choose your path
 
-| I am a… | What you get | Start here |
-| --- | --- | --- |
-| **Researcher** | A local case workspace, the `tcr.py` ledger CLI, repo-local skills, staged extraction packets, audits, and public-safe exports. | [Case Workflow](docs/guides/runbooks/cases/case-workflow.md) · [Agent Skills](docs/guides/integrations/agent-skills.md) · [Export Artifacts](docs/guides/runbooks/outputs/export-artifacts.md) · [Public Output Readiness](docs/guides/runbooks/cases/public-output-readiness.md) |
-| **Operator** | A self-hosted local stack: SearXNG discovery, Qdrant retrieval, Ollama runtime, OCR, MCP, and the case-builder app. | [Initial App Install](docs/guides/runbooks/setup/install.md) · [Self-Hosted Deployment](docs/guides/runbooks/setup/self-hosted-deployment.md) |
-| **Developer / agent integrator** | The MCP server, the `src/case_builder/` app boundary and typed ops core, the skill API contract, and the skill invocation model. | [System Overview](docs/guides/architecture/system-overview.md) · [Case Builder & LangGraph](docs/guides/architecture/case-builder-langgraph.md) · [MCP Server](docs/guides/integrations/mcp-server.md) · [Skill API Spec](docs/guides/skill-api-spec.md) |
+| I am a…                          | What you get                                                                                                                     | Start here                                                                                                                                                                                                                                                                        |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Researcher**                   | A local case workspace, the `tcr.py` ledger CLI, repo-local skills, staged extraction packets, audits, and public-safe exports.  | [Case Workflow](docs/guides/runbooks/cases/case-workflow.md) · [Agent Skills](docs/guides/integrations/agent-skills.md) · [Export Artifacts](docs/guides/runbooks/outputs/export-artifacts.md) · [Public Output Readiness](docs/guides/runbooks/cases/public-output-readiness.md) |
+| **Operator**                     | A self-hosted local stack: SearXNG discovery, Qdrant retrieval, Ollama runtime, OCR, MCP, and the case-builder app.              | [Initial App Install](docs/guides/runbooks/setup/install.md) · [Self-Hosted Deployment](docs/guides/runbooks/setup/self-hosted-deployment.md)                                                                                                                                     |
+| **Developer / agent integrator** | The MCP server, the `src/case_builder/` app boundary and typed ops core, the skill API contract, and the skill invocation model. | [System Overview](docs/guides/architecture/system-overview.md) · [Case Builder & LangGraph](docs/guides/architecture/case-builder-langgraph.md) · [MCP Server](docs/guides/integrations/mcp-server.md) · [Skill API Spec](docs/guides/skill-api-spec.md)                          |
 
 New to the kit? Read [the evidence chain](#the-evidence-chain) and
 [public-interest boundaries](#public-interest-boundaries) first as they define
@@ -117,16 +116,16 @@ design invariants, is in
 
 ## What you can build
 
-| Goal | TRCR output |
-| --- | --- |
-| Source ledger | `records/sources.jsonl` with URL/path, source type, reliability grade, hashes, archive context, and public/private flags. |
-| Claim matrix | One assertion per row in `records/claims.jsonl`, tied to source IDs, confidence, status, contradictions, and privacy review. |
-| Timeline | Events with date precision, source support, related entities, and Manim-ready CSV export. |
-| Relationship graph | Source-stated entity relationships and event links without inferring guilt, membership, motive, or hidden control from proximity. |
-| Contradiction audit | Reports for corrections, denials, retractions, court findings, disputed dates, and unsupported public claims. |
-| Source independence review | Detection of repeated wire copy, press-release reuse, shared publishers, and same-source chains. |
-| Privacy audit | Redaction blockers for living private people, minors, addresses, contact info, medical details, and weak allegations. |
-| Public-safe exports | Evidence boards, Manim CSVs, charts, timelines, and public-safe bundle exports. |
+| Goal                       | TRCR output                                                                                                                       |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Source ledger              | `records/sources.jsonl` with URL/path, source type, reliability grade, hashes, archive context, and public/private flags.         |
+| Claim matrix               | One assertion per row in `records/claims.jsonl`, tied to source IDs, confidence, status, contradictions, and privacy review.      |
+| Timeline                   | Events with date precision, source support, related entities, and Manim-ready CSV export.                                         |
+| Relationship graph         | Source-stated entity relationships and event links without inferring guilt, membership, motive, or hidden control from proximity. |
+| Contradiction audit        | Reports for corrections, denials, retractions, court findings, disputed dates, and unsupported public claims.                     |
+| Source independence review | Detection of repeated wire copy, press-release reuse, shared publishers, and same-source chains.                                  |
+| Privacy audit              | Redaction blockers for living private people, minors, addresses, contact info, medical details, and weak allegations.             |
+| Public-safe exports        | Evidence boards, Manim CSVs, charts, timelines, and public-safe bundle exports.                                                   |
 
 ## Public-Interest Boundaries
 

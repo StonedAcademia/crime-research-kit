@@ -54,7 +54,7 @@ memory-local = [
 ]
 
 [project.scripts]
-trcr-case-builder = "case_builder.cli:main"
+cr-kit = "case_builder.cli:main"
 trcr-mcp = "case_builder.mcp.server:main"
 
 [tool.setuptools.packages.find]

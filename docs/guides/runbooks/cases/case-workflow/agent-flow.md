@@ -20,7 +20,7 @@ participation claims from proximity.
 Use the app for a planned, resumable workflow around the same ledger:
 
 ```bash
-trcr-case-builder plan data/cases/harbor_study_circle \
+cr-kit plan data/cases/harbor_study_circle \
   --title "Harbor Study Circle Source Map" \
   --subject "formation, public leaders, meeting locations, disputes, corrections" \
   --source-url "https://example.com/harbor-local-report-1978" \
@@ -43,7 +43,7 @@ The packet review gate exists so an agent cannot silently promote a draft into
 canonical records. Resume with approvals after packet review:
 
 ```bash
-trcr-case-builder resume data/cases/harbor_study_circle \
+cr-kit resume data/cases/harbor_study_circle \
   --thread <thread_id> \
   --approve-packet <SOURCE_ID>_extraction.json \
   --execute
@@ -53,7 +53,7 @@ Resume with public-export approval only after validation, contradiction review,
 source-independence review, and privacy review:
 
 ```bash
-trcr-case-builder resume data/cases/harbor_study_circle \
+cr-kit resume data/cases/harbor_study_circle \
   --thread <thread_id> \
   --approve-export \
   --execute

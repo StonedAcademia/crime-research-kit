@@ -18,7 +18,7 @@ source support, packet review, validation, and privacy review.
 SearXNG source discovery:
 
 ```bash
-trcr-case-builder discover-sources data/cases/<case_slug> \
+cr-kit discover-sources data/cases/<case_slug> \
   --query "<public source search query>" \
   --searxng-url http://localhost:8080
 ```
@@ -26,24 +26,24 @@ trcr-case-builder discover-sources data/cases/<case_slug> \
 Docling parse and OCR:
 
 ```bash
-trcr-case-builder parse-source data/cases/<case_slug> <SOURCE_ID>
-trcr-case-builder ocr-source data/cases/<case_slug> <SOURCE_ID>
+cr-kit parse-source data/cases/<case_slug> <SOURCE_ID>
+cr-kit ocr-source data/cases/<case_slug> <SOURCE_ID>
 ```
 
 Qdrant-backed local retrieval:
 
 ```bash
-trcr-case-builder index-case data/cases/<case_slug> \
+cr-kit index-case data/cases/<case_slug> \
   --qdrant-url http://localhost:6333
 
-trcr-case-builder query-case data/cases/<case_slug> \
+cr-kit query-case data/cases/<case_slug> \
   "Which claims lack source spans?"
 ```
 
 Workflow memory:
 
 ```bash
-trcr-case-builder remember-research-actions data/cases/<case_slug> --provider local
+cr-kit remember-research-actions data/cases/<case_slug> --provider local
 ```
 
 Memory and retrieval results are operational context only. They are not

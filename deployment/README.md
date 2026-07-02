@@ -50,7 +50,7 @@ moon run trcr:docker-shell
 Inside the container shell:
 
 ```bash
-trcr-case-builder plan /app/data/cases/example_case \
+cr-kit plan /app/data/cases/example_case \
   --title "Example Case" \
   --subject "public-source case question"
 ```
