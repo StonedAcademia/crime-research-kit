@@ -1,20 +1,23 @@
+<!-- Generated from docs/lanes.json; edit the registry, not this table. -->
+
 # Public Records Routing Matrix
 
 Use this matrix to choose the next skill and extraction template.
 
-| Lane | Skill | Template | Use For |
-|---|---|---|---|
-| legal-court | `legal-court-records` | `legal-court` | Dockets, filings, orders, hearings, allegations, denials, findings |
-| corporate | `corporate-financial-records` | `corporate` | Companies, nonprofits, bankruptcy, ownership, investments, boards, officers |
-| education | `educational-path-records` | `education` | Schools, degrees, training, academic appointments, credential disputes |
-| licensing-professional | `licensing-professional-records` | `licensing-professional` | Licenses, certifications, professional boards, discipline, sanctions |
-| media-transcript | `media-transcript-intelligence` | `media-transcript` | Interviews, hearings, videos, podcasts, documentaries, timestamped claims |
-| missing-persons | `missing-persons-case` | `missing-persons` | Missing-person candidates, last-seen/time-location matching, status updates, unidentified-person comparisons |
-| geographical-location | `geographical-location-intelligence` | `geographical-location` | Evidence-item locations, event maps, routes, sightings, map/exhibit locators, locations of interest |
-| property-location | `property-location-records` | `property-location` | Parcels, deeds, permits, maps, facilities, location-sensitive records |
-| source-capture | `source-capture-preservation` | `source-capture` | Archive URLs, hashes, raw/text artifacts, source provenance |
-| identity-resolution | `identity-resolution` | `identity-resolution` | Aliases, duplicate entities, ambiguous identities, merge candidates |
-| contradiction | `claim-contradiction-audit` | `claim-contradiction` | Corrections, retractions, denials, conflicting claims, findings |
+| Lane | Skill | Template | Public plan | Use For |
+| --- | --- | --- | --- | --- |
+| `contradiction` | `claim-contradiction-audit` | `claim-contradiction` | yes | Use for corrections, denials, retractions, court-finding conflicts, and claim-status review. |
+| `corporate` | `corporate-financial-records` | `corporate` | yes | Use for corporate registries, securities filings, bankruptcy, ownership, finance, boards, and officers. |
+| `education` | `educational-path-records` | `education` | yes | Use for education paths, degrees, attendance, credentials, and academic appointments. |
+| `foia-open-records` | `foia-open-records-planning` | `foia-open-records` | yes | Use for open-records request planning, agency scope, request wording, exemptions, fee waivers, and appeals. |
+| `geographical-location` | `geographical-location-intelligence` | `geographical-location` | yes | Use for evidence-item locations, event maps, routes, sightings, map/exhibit locators, and locations-of-interest clusters. |
+| `identity-resolution` | `identity-resolution` | `identity-resolution` | yes | Use for aliases, duplicate entities, ambiguous public-record identities, entity match evidence, and non-mutating merge-review packets. |
+| `legal-court` | `legal-court-records` | `legal-court` | yes | Use for dockets, filings, orders, hearings, allegations, denials, and court findings. |
+| `licensing-professional` | `licensing-professional-records` | `licensing-professional` | yes | Use for professional licenses, board actions, certifications, discipline, sanctions, and credential status. |
+| `media-transcript` | `media-transcript-intelligence` | `media-transcript` | yes | Use for timestamped media, speaker turns, transcript claims, quote locators, and media provenance. |
+| `missing-persons` | `missing-persons-case` | `missing-persons` | yes | Use for missing-person candidates, last-seen/location-time matching, status updates, unidentified-person comparisons, and privacy-sensitive lead review. |
+| `property-location` | `property-location-records` | `property-location` | yes | Use for parcels, deeds, permits, maps, facility locations, and address-sensitive location records. |
+| `source-capture` | `source-capture-preservation` | `source-capture` | yes | Use for source preservation, archive URLs, hashes, provenance gaps, and capture metadata. |
 
 ## Safety Order
 
