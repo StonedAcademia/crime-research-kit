@@ -131,6 +131,8 @@ def run_plan_command(args: argparse.Namespace) -> dict[str, object]:
         runner=args.runner,
         checkpoint=args.checkpoint,
         model_spec=args.settings.model_spec if args.llm else None,
+        qdrant_url=args.settings.qdrant_url,
+        embed_model=args.settings.embed_model,
     )
 
 
@@ -145,6 +147,8 @@ def run_resume_command(args: argparse.Namespace) -> dict[str, object]:
         execute=args.execute,
         llm=args.llm,
         model_spec=args.settings.model_spec if args.llm else None,
+        qdrant_url=args.settings.qdrant_url,
+        embed_model=args.settings.embed_model,
     )
 
 

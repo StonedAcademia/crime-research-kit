@@ -20,6 +20,8 @@ class GraphState(TypedDict, total=False):
     export_approved: bool
     index_enabled: bool
     llm_enabled: bool
+    qdrant_url: str | None
+    embed_model: str | None
     lane_suggestions: list[dict[str, Any]]
     planned_commands: list[list[str]]
     tool_results: list[dict[str, Any]]

@@ -19,7 +19,7 @@ DEFAULT_EMBEDDER_PROVIDER = "huggingface"
 class CrkSettings(BaseSettings):
     """Environment-backed service configuration. Construct once at CLI/MCP startup."""
 
-    model_config = SettingsConfigDict(protected_namespaces=(), extra="ignore")
+    model_config = SettingsConfigDict(protected_namespaces=(), extra="ignore", populate_by_name=True)
 
     model_spec: str = Field(default=DEFAULT_MODEL_SPEC, validation_alias="CRK_MODEL")
     searxng_url: str = Field(default=DEFAULT_SEARXNG_URL, validation_alias="CRK_SEARXNG_URL")

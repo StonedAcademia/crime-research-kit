@@ -31,6 +31,8 @@ def run_case_builder(
     runner: RunnerName = "auto",
     checkpoint: bool = False,
     model_spec: str | None = None,
+    qdrant_url: str | None = None,
+    embed_model: str | None = None,
 ) -> dict[str, Any]:
     """Run a case-builder plan and return serializable state.
 
@@ -38,6 +40,8 @@ def run_case_builder(
     runs still stop at human review gates before canonical import or export.
     """
     crk = CrkRunner(dry_run=not execute)
+    state.qdrant_url = qdrant_url or state.qdrant_url
+    state.embed_model = embed_model or state.embed_model
     model_factory = _model_factory(state.llm_enabled, model_spec)
     use_langgraph = runner in {"auto", "langgraph"} and langgraph_available()
     if runner == "langgraph" and not langgraph_available():
@@ -75,6 +79,8 @@ def resume_case_builder(
     execute: bool = False,
     llm: bool = False,
     model_spec: str | None = None,
+    qdrant_url: str | None = None,
+    embed_model: str | None = None,
 ) -> dict[str, Any]:
     """Resume a checkpointed run with human review decisions."""
     if not langgraph_available():
@@ -94,7 +100,8 @@ def resume_case_builder(
         "rejected_packets": [dict(item) for item in rejected_packets],
         "export_approved": export_approved,
     }
-    result = dict(graph.invoke(Command(resume=payload), config))
+    state_update = {k: v for k, v in {"qdrant_url": qdrant_url, "embed_model": embed_model}.items() if v is not None}
+    result = dict(graph.invoke(Command(resume=payload, update=state_update or None), config))
     return _annotate(result, graph, config, thread_id)
 
 
