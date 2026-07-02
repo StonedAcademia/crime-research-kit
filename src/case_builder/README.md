@@ -1,21 +1,16 @@
 # case_builder
 
 `case_builder` is a small agent app for bootstrapping CRK case work. It keeps
-the JSONL case ledger canonical and routes case operations through the shared
-ops core. The public API is `CaseBuilderState`, `new_run_id`, and
-`run_case_builder`.
+the JSONL case ledger canonical and routes case operations through grouped
+core, pipeline, and adapter packages. The public API is `CaseBuilderState`,
+`new_run_id`, and `run_case_builder`.
 
 ## Module map
 
 | Package | Responsibility |
 | --- | --- |
-| `agents/` | Deterministic routing policy such as source-lane inference. |
-| `app/` | Service boundary and runner selection. |
-| `graph/` | LangGraph state, nodes, graph builder, and sequential fallback. |
-| `lanes/` | Canonical lane/template registry loader over `docs/registry/`. |
-| `models/` | Serializable state models shared by CLI, graph, and tests. |
-| `ops/` | Typed operations core: `OpResult`, `CrkRunner`, safety `policy`, and per-domain op modules. Frontends call ops instead of `tcr.py` or the ledger. |
-| `acquisition/` | Local source discovery helpers. |
-| `parsing/` | Local Docling and OCRmyPDF wrappers for registered source artifacts. |
-| `retrieval/` | Rebuildable LlamaIndex/Qdrant evidence indexing over records and source text. |
-| `memory/` | Workflow memory providers for decisions, dead ends, and unresolved questions. |
+| `core/` | Case ledger helpers, configuration, lane registry, state models, and workflow memory. |
+| `pipeline/` | Deterministic agents, service boundary, and LangGraph/sequential workflow execution. |
+| `adapters/io/` | Local source discovery, parsing/OCR, and rebuildable evidence retrieval indexes. |
+| `adapters/ops/` | Typed operations, runner/result contracts, and safety policy shared by frontends. |
+| `adapters/interfaces/` | LLM and MCP interface adapters that call ops instead of touching ledger internals. |

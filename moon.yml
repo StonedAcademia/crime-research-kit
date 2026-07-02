@@ -50,7 +50,7 @@ tasks:
   test-unit:
     description: "Run unit tests."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/unit", "-q"]
+    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/runtime/unit", "-q"]
     inputs: ["@group(python)", "@group(tests)", "pyproject.toml"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
@@ -58,7 +58,7 @@ tasks:
   test-integration:
     description: "Run integration tests."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/integration", "-q"]
+    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/runtime/integration", "-q"]
     inputs: ["@group(python)", "@group(tests)", "pyproject.toml"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
@@ -66,7 +66,7 @@ tasks:
   test-e2e:
     description: "Run end-to-end tests."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/e2e", "-q"]
+    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/runtime/e2e", "-q"]
     inputs: ["@group(python)", "@group(tests)", "pyproject.toml"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
@@ -74,7 +74,7 @@ tasks:
   test-governance:
     description: "Run governance tests."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/governance", "-q"]
+    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/quality/governance", "-q"]
     inputs: ["@group(python)", "@group(tests)", "pyproject.toml"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
@@ -82,7 +82,7 @@ tasks:
   test-smoke:
     description: "Run smoke tests."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/smoke", "-q"]
+    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/quality/smoke", "-q"]
     inputs: ["@group(python)", "@group(tests)", "pyproject.toml"]
     options: { cache: false, outputStyle: stream }
     toolchains: system

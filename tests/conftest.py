@@ -19,8 +19,9 @@ def pytest_collection_modifyitems(config, items):
     for item in items:
         path = Path(str(item.fspath)).resolve()
         try:
-            category = path.relative_to(KIT_ROOT / "tests").parts[0]
+            parts = path.relative_to(KIT_ROOT / "tests").parts
         except ValueError:
             continue
+        category = next((part for part in parts if part in TEST_CATEGORIES), None)
         if category in TEST_CATEGORIES:
             item.add_marker(category)

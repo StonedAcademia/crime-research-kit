@@ -6,13 +6,13 @@ import argparse
 import json
 from typing import Sequence
 
-from . import config
-from .app.service import resume_case_builder, run_case_builder
-from .memory import remember_research_actions
-from .models.state import CaseBuilderState
-from .ops import query as query_ops
-from .ops import sources as source_ops
-from .ops.result import OpResult
+from .adapters.ops.casework import sources as source_ops
+from .adapters.ops.evidence import query as query_ops
+from .adapters.ops.result import OpResult
+from .core import config
+from .core.memory import remember_research_actions
+from .core.models.state import CaseBuilderState
+from .pipeline.app.service import resume_case_builder, run_case_builder
 
 
 def build_parser() -> argparse.ArgumentParser:
