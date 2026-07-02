@@ -35,7 +35,7 @@ Every operation must preserve these invariants:
 - Do not label someone as suspect, perpetrator, cult member, accomplice, or person of interest unless a cited source uses that wording.
 - Co-mention records created by automation must use `status: unverified`, low confidence, and `public_export: false`.
 - Public exports must exclude records with `public_export: false` unless `include_private` is explicitly requested.
-- Every public/video-ready claim must trace through `claim_id -> source_ids -> reliability_grade -> confidence/status -> privacy_review`.
+- Every public-facing claim must trace through `claim_id -> source_ids -> reliability_grade -> confidence/status -> privacy_review`.
 
 ## Data Model
 
@@ -589,7 +589,7 @@ Creates:
 
 ### `auditPublicExport`
 
-Audits whether a case is ready for public/script/video/export use.
+Audits whether a case is ready for public script, report, artifact, or export use.
 
 CLI:
 

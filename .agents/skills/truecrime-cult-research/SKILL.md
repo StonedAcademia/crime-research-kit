@@ -30,7 +30,7 @@ domain:
 - Use `missing-persons-case` for missing-person, unidentified-person, last-seen, reported-missing, located/recovered, public bulletin, status-update, and candidate-match research.
 - Use `geographical-location-intelligence` for evidence-item geography, event maps, routes, sightings, map/exhibit locators, locations of interest, and public-safe map packets.
 - Use `foia-open-records-planning` for FOIA, open-records, sunshine-law, agency-records request wording, response tracking, exemptions, fee waivers, and appeal planning.
-- Use `narrative-readiness-review` before public scripts, reports, videos, timelines, Manim exports, or evidence boards.
+- Use `narrative-readiness-review` before public scripts, reports, timelines, Manim exports, bundles, or evidence boards.
 - Use `privacy-redaction-audit` for private-person, minor, address/contact, medical, financial, weak allegation, and public-export redaction blockers.
 - Use `source-independence-audit` for same-source chains, wire copy, press-release repetition, shared provenance, and overstated corroboration.
 
@@ -71,7 +71,7 @@ live in `references/lane_registry.md` and
 
 ## Required evidence chain
 
-Every public/video-ready point must trace through this chain:
+Every public-facing point must trace through this chain:
 
 ```text
 claim_id → claim text → source_ids → source grade → confidence/status → privacy review → export

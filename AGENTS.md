@@ -38,7 +38,7 @@ pytest
 - Source and entity schemas live in `docs/schemas/`.
 - Case workspaces live in `data/cases/`, which is ignored except for `data/cases/.gitkeep`.
 - Staged extraction JSON goes in `data/cases/<case>/staging/extractions/`.
-- Public/video-ready exports go in `data/cases/<case>/exports/`; cross-case generated exports go in `data/exports/`. Both are local/generated artifacts.
+- Public-safe exports go in `data/cases/<case>/exports/`; cross-case generated exports go in `data/exports/`. Both are local/generated artifacts.
 
 ## Definition of done for research tasks
 

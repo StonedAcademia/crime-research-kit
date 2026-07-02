@@ -39,7 +39,7 @@ What are we trying to establish?
 
 - TBD
 
-## Video angle
+## Public-output angle
 
 - Origin story:
 - Network story:

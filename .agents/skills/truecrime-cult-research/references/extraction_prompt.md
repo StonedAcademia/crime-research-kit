@@ -23,7 +23,7 @@ Add people, organizations, groups, publications, objects, documents, vehicles, a
 
 ### Claims
 
-A claim is any assertion the video might repeat. Break compound claims into smaller claims.
+A claim is any assertion a public output might repeat. Break compound claims into smaller claims.
 Use `assertion_type` to preserve how the source frames the statement, such as
 `source_stated_fact`, `allegation`, `denial`, `court_finding`, `self_report`,
 `biography_claim`, `lead_only`, or `expert_context`.

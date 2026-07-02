@@ -57,7 +57,7 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-source-indepe
   --fail-on-flags
 ```
 
-Run narrative readiness with source-span checks for script, video, timeline, or
+Run narrative readiness with source-span checks for script, report, timeline, or
 bundle use:
 
 ```bash

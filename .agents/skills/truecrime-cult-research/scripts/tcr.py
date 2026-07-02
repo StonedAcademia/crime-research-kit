@@ -2084,7 +2084,7 @@ def review_narrative_readiness(args: argparse.Namespace) -> None:
         "summary": summary,
         "severity_summary": severity_summary,
         "issues": issues,
-        "policy": "Narrative readiness is advisory. Resolve blocker issues before public script, video, or report use.",
+        "policy": "Narrative readiness is advisory. Resolve blocker issues before public script, report, or artifact use.",
     }
     out = report_out_path(args.case_dir, getattr(args, "out", None), "exports/narrative_readiness_review.json")
     write_json(out, report)

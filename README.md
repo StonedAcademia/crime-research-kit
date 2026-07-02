@@ -5,7 +5,7 @@
 <h1 align="center">True Crime / Cult-Origin Research Kit</h1>
 
 <p align="center">
-  <strong>Turn public sources into source-traceable case files, timelines, relationship graphs, contradiction audits, and video-ready evidence boards.</strong>
+  <strong>Turn public sources into source-traceable case files, timelines, relationship graphs, contradiction audits, and public-ready evidence boards.</strong>
 </p>
 
 <p align="center">
@@ -42,7 +42,7 @@ contradiction review, source-independence review, and privacy review.
 | Source independence review | Detection of repeated wire copy, press-release reuse, shared publishers, and same-source chains. |
 | Privacy audit | Redaction blockers for living private people, minors, addresses, contact info, medical details, and weak allegations. |
 | Local RAG/context retrieval | Optional local-first parsing, OCR, Qdrant/LlamaIndex retrieval, and workflow memory without hosted vector services. |
-| Public/video exports | Evidence boards, Manim CSVs, charts, timelines, and public-safe bundle exports. |
+| Public-safe exports | Evidence boards, Manim CSVs, charts, timelines, and public-safe bundle exports. |
 
 ## Public-Interest Boundaries
 
@@ -491,7 +491,7 @@ See `docs/skill-api-spec.md` for the machine-facing CLI and JSONL contract.
 
 ## Key principle
 
-Every video-ready sentence should reduce to:
+Every public-facing claim should reduce to:
 
 ```text
 Claim → source(s) → reliability grade → confidence → privacy review → visualization output

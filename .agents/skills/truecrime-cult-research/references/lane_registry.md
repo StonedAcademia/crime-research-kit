@@ -31,7 +31,7 @@ Lane and extraction-template metadata shared by CLI, MCP, and skills.
 | --- | --- | --- | --- | --- |
 | `contradiction` | `claim-contradiction-audit` | `claim-contradiction` | yes | Use for corrections, denials, retractions, court-finding conflicts, and claim-status review. |
 | `foia-open-records` | `foia-open-records-planning` | `foia-open-records` | yes | Use for open-records request planning, agency scope, request wording, exemptions, fee waivers, and appeals. |
-| `narrative-readiness` | `narrative-readiness-review` | `narrative-readiness` | no | Use for public script, episode, report, timeline, or video readiness review before narrative use. |
+| `narrative-readiness` | `narrative-readiness-review` | `narrative-readiness` | no | Use for public script, report, timeline, evidence-board, or bundle readiness review before public use. |
 | `privacy-redaction` | `privacy-redaction-audit` | `privacy-redaction` | no | Use for redaction logs, private-person review, minors, addresses, contact details, weak allegations, and public-export blockers. |
 | `source-independence` | `source-independence-audit` | `source-independence` | no | Use for source-chain, wire-copy, press-release repetition, same-source-chain, and corroboration independence review. |
 
@@ -50,7 +50,7 @@ Lane and extraction-template metadata shared by CLI, MCP, and skills.
 | `licensing-professional` | `extraction_packet_licensing_professional.json` | Use for professional licenses, board certifications, disciplinary records, sanctions, employment eligibility, and credential-status public records. |
 | `media-transcript` | `extraction_packet_media_transcript.json` | Use for interviews, videos, podcasts, hearings, documentaries, broadcast transcripts, speaker turns, timestamps, quotes, and media provenance. |
 | `missing-persons` | `extraction_packet_missing_persons.json` | Use for missing-person, unidentified-person, last-seen, reported-missing, located, recovered, candidate-match, and status-update records. |
-| `narrative-readiness` | `extraction_packet_narrative_readiness.json` | Use for public script, episode, report, timeline, or video readiness review before narrative use. |
+| `narrative-readiness` | `extraction_packet_narrative_readiness.json` | Use for public script, report, timeline, evidence-board, or bundle readiness review before public use. |
 | `privacy-redaction` | `extraction_packet_privacy_redaction.json` | Use for redaction logs, private-person review, minors, addresses, contact details, weak allegations, and public-export blockers. |
 | `property-location` | `extraction_packet_property_location.json` | Use for property records, parcels, deeds, land records, permits, maps, facility locations, and address-sensitive public-location records. |
 | `public-records-router` | `extraction_packet_public_records_router.json` | Use for routing a subject or question across court, corporate, education, licensing, property, media, archive, and other public-record lanes. |

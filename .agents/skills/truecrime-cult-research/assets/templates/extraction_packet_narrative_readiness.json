@@ -1,6 +1,6 @@
 {
   "source_id": "",
-  "extraction_notes": "Narrative-readiness packet. Use to review whether claims, events, relationships, and quotes are ready for public scripts, reports, videos, timelines, or evidence boards. Preserve uncertainty, caveats, source gaps, contradictions, and privacy blockers.",
+  "extraction_notes": "Narrative-readiness packet. Use to review whether claims, events, relationships, and quotes are ready for public scripts, reports, timelines, evidence boards, or bundles. Preserve uncertainty, caveats, source gaps, contradictions, and privacy blockers.",
   "source_spans": [],
   "readiness_checks": [
     "source_ids_present",

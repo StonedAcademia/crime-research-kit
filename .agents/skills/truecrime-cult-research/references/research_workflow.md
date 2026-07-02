@@ -39,7 +39,7 @@ packets to adjacent skills:
 - `missing-persons-case`: missing-person candidates, last-seen/time-location matching, public bulletins, status updates, and unidentified-person comparisons.
 - `geographical-location-intelligence`: evidence-item geography, event maps, routes, sightings, map/exhibit locators, and locations of interest.
 - `foia-open-records-planning`: public-records request scope, agency wording, exemptions, fee/appeal tracking, and released-record intake.
-- `narrative-readiness-review`: public-output readiness for scripts, reports, videos, Manim exports, and evidence boards.
+- `narrative-readiness-review`: public-output readiness for scripts, reports, Manim exports, bundles, and evidence boards.
 - `privacy-redaction-audit`: private-person, minor, address/contact, medical, financial, weak allegation, and redaction blockers.
 - `source-independence-audit`: same-source chains, wire copy, press-release repetition, and overstated corroboration.
 
@@ -85,7 +85,7 @@ events, event links, relationships, exports, or notes.
 
 ## Public export audit
 
-Before script, video, Manim, or public bundle output:
+Before script, report, Manim, or public bundle output:
 
 1. Run `validate` and fix broken references.
 2. Review `privacy_review`, `privacy_level`, `living_status`, and `public_export`.

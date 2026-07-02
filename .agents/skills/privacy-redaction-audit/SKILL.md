@@ -12,7 +12,7 @@ Lane/template metadata is generated from `docs/lanes.json`; do not invent new la
 
 ## Purpose
 
-Use this skill before any public export, script, report, video, bundle, or shared case review. It identifies privacy and redaction blockers; it does not make sensitive content safe by itself.
+Use this skill before any public export, script, report, bundle, evidence board, or shared case review. It identifies privacy and redaction blockers; it does not make sensitive content safe by itself.
 
 ## Workflow
 

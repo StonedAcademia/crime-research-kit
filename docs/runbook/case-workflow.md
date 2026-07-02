@@ -80,7 +80,7 @@ Expected first output:
 | Corrections, denials, conflicting accounts | `claim-contradiction-audit` | Claim conflict report and status recommendations. |
 | Same-source chains and repeated wire copy | `source-independence-audit` | Independence groups and corroboration warnings. |
 | Privacy and redactions | `privacy-redaction-audit` | Private-person, minor, address, contact, medical, financial, and weak-allegation blockers. |
-| Public scripts, reports, videos, Manim output | `narrative-readiness-review` | Readiness blockers, caveats, unsupported narrative points. |
+| Public scripts, reports, Manim output, evidence boards | `narrative-readiness-review` | Readiness blockers, caveats, unsupported narrative points. |
 
 ## Register Sources Before Extracting Claims
 

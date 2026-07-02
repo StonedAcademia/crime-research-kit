@@ -12,7 +12,7 @@ Lane/template metadata is generated from `docs/lanes.json`; do not invent new la
 
 ## Purpose
 
-Use this skill before turning a TRCR case ledger into a public script, report, video, timeline, or evidence board. The review identifies blockers and caveats; it does not rewrite claims automatically.
+Use this skill before turning a TRCR case ledger into a public script, report, timeline, evidence board, or bundle. The review identifies blockers and caveats; it does not rewrite claims automatically.
 
 ## Workflow
 

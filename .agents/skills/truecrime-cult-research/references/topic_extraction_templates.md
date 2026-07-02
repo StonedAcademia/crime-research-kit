@@ -184,7 +184,7 @@ tracking, appeals, or released-record intake.
 ## Narrative-readiness review packet
 
 Route this lane to `narrative-readiness-review` before public scripts, reports,
-videos, timelines, Manim exports, or evidence boards.
+timelines, Manim exports, bundles, or evidence boards.
 
 - Sources: readiness reports, public-export audits, contradiction reports, source-independence reports, redaction audits, and source-ledger records.
 - Claims: narrative-ready, needs caveat, source gap, privacy blocker, contradiction blocker, independence gap, or unsupported script point.
