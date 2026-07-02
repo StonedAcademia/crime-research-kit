@@ -133,8 +133,7 @@ Branches 2, 3, 4, 6, 7 are independent and parallelizable across agents.
 
 ## 7. Owner decisions (defaults applied unless overridden)
 
-1. **LICENSE**: none exists; program adds MIT (default recommendation) —
-   swap file content if you prefer Apache-2.0.
+1. **LICENSE**: project uses AGPL-3.0-only.
 2. **External link checking**: non-blocking scheduled job only (PRs never gated
    on third-party uptime).
 3. **pip-audit**: accepted as the one network-dependent check; skips with a

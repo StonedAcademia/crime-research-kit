@@ -19,6 +19,7 @@ MAX_DIRS_PER_DIR = 3
 MAX_NON_COMMENT_LOC = 200
 SKIPPED_ROOTS = (Path(".agents"), Path("data"), Path("docs/superpowers"))
 SRC_ROOT = Path("src")
+SIZE_EXEMPT_NAMES = {"LICENSE"}
 DIR_LIMIT_OVERRIDES = {
     Path("docs/guides"): {"max_dirs": 4},
 }
@@ -162,7 +163,7 @@ def test_governed_files_stay_under_200_non_comment_loc():
     offenders = [
         f"{path.as_posix()} loc={non_comment_loc(path)}"
         for path in governed_paths()
-        if non_comment_loc(path) > MAX_NON_COMMENT_LOC
+        if path.name not in SIZE_EXEMPT_NAMES and non_comment_loc(path) > MAX_NON_COMMENT_LOC
     ]
 
     assert offenders == []

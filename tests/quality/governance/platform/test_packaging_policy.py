@@ -56,7 +56,7 @@ def test_core_package_has_no_runtime_dependencies_and_declares_license():
     project = load_pyproject()["project"]
 
     assert project["dependencies"] == []
-    assert project["license"]["text"] == "MIT"
+    assert project["license"]["text"] == "AGPL-3.0-only"
     assert (KIT_ROOT / "LICENSE").exists()
 
 

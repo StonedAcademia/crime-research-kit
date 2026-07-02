@@ -9,12 +9,25 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/StonedAcademia/crime-research-kit/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/StonedAcademia/crime-research-kit/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/StonedAcademia/crime-research-kit/actions/workflows/audit.yml"><img alt="Audit" src="https://github.com/StonedAcademia/crime-research-kit/actions/workflows/audit.yml/badge.svg"></a>
+  <a href="https://github.com/StonedAcademia/crime-research-kit/actions/workflows/release.yml"><img alt="Release" src="https://github.com/StonedAcademia/crime-research-kit/actions/workflows/release.yml/badge.svg"></a>
+  <a href="LICENSE"><img alt="License: AGPL-3.0-only" src="https://img.shields.io/badge/license-AGPL--3.0--only-green.svg"></a>
+  <a href="pyproject.toml"><img alt="Python 3.10 and 3.12" src="https://img.shields.io/badge/python-3.10%20%7C%203.12-blue.svg"></a>
+  <a href="https://github.com/StonedAcademia/crime-research-kit/releases"><img alt="Latest release" src="https://img.shields.io/github/v/release/StonedAcademia/crime-research-kit?sort=semver"></a>
+  <a href="https://github.com/StonedAcademia/crime-research-kit/issues"><img alt="Open issues" src="https://img.shields.io/github/issues/StonedAcademia/crime-research-kit"></a>
+  <a href="https://github.com/StonedAcademia/crime-research-kit/pulls"><img alt="Open pull requests" src="https://img.shields.io/github/issues-pr/StonedAcademia/crime-research-kit"></a>
+</p>
+
+<p align="center">
   <a href="#the-evidence-chain">Evidence chain</a> |
   <a href="#choose-your-path">Choose your path</a> |
   <a href="#quick-start">Quick start</a> |
   <a href="#architecture-at-a-glance">Architecture</a> |
   <a href="#public-interest-boundaries">Safety</a> |
-  <a href="#documentation-and-development">Docs</a>
+  <a href="#documentation-and-development">Docs</a> |
+  <a href="#contributing">Contributing</a> |
+  <a href="#contributors">Contributors</a>
 </p>
 
 CRK is a **local-first** research kit for public-interest, documentary-style
@@ -158,3 +171,19 @@ Validate changes with `moon run crk:check` (compile + ledger validation) and
 `moon run crk:test` (unit, integration, e2e, governance, smoke). For ad hoc
 test paths, use
 `uv run --cache-dir .uv-cache --no-project --with-editable '.[dev]' -- python -m pytest <path>`.
+
+## Contributing
+
+Contributions are welcome when they preserve CRK's public-interest safety
+model. Start with [CONTRIBUTING.md](CONTRIBUTING.md) for branch workflow,
+validation, PR hygiene, and agent-specific standards. Good first issues and
+maintenance work are tracked in
+[GitHub Issues](https://github.com/StonedAcademia/crime-research-kit/issues).
+
+## Contributors
+
+Thanks to everyone who helps keep CRK source-backed, privacy-aware, and useful
+for careful public-interest research.
+
+- View the [contributors graph](https://github.com/StonedAcademia/crime-research-kit/graphs/contributors).
+- Open a [pull request](https://github.com/StonedAcademia/crime-research-kit/pulls) when a focused change is ready for review.

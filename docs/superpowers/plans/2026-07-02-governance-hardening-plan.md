@@ -44,7 +44,7 @@ Spec: `docs/superpowers/specs/2026-07-02-governance-hardening-spec.md` (policies
 **Files:**
 - Create: `deployment/tooling/manifest.json`, `deployment/tooling/README.md`
 - Create: `deployment/scripts/tools/fetch_governance_tools.py` (stdlib fetch+sha256-verify → gitignored `deployment/tooling/bin/`)
-- Create: `.gitleaks.toml`, `LICENSE` (MIT), 
+- Create: `.gitleaks.toml`, `LICENSE` (AGPL-3.0-only),
 - Modify: `pyproject.toml` (add `governance` extra), `moon.yml` (targets: `audit-secrets`, `audit-deps`, `audit-licenses`, `audit-links`, `sbom`, `build-dist`), `.gitignore` (`deployment/tooling/bin/`)
 - Test: `tests/quality/governance/test_tooling_manifest.py`
 
@@ -94,9 +94,9 @@ def test_moon_exposes_audit_lane_targets():
 - [ ] **Step 1.4:** Write `fetch_governance_tools.py`: reads manifest, downloads each tool for the host platform into `deployment/tooling/bin/`, verifies sha256, `chmod +x`; idempotent; `--offline` flag exits 0 with a notice when binaries already present. Keep < 200 non-comment LOC.
 - [ ] **Step 1.5:** Run the fetcher for real: `python deployment/scripts/tools/fetch_governance_tools.py` — binaries verified present. Then `pip install -e '.[governance]'` into `.venv`. **This is the resource-acquisition gate: do not proceed to later phases until both succeed.**
 - [ ] **Step 1.6:** `.gitleaks.toml`: default ruleset + `[allowlist]` paths for `data/cases/`, `data/exports/` (gitignored anyway), synthetic fixture pseudo-data. Run `moon run crk:audit-secrets` on the repo — triage any hits (expected: none; fixtures are synthetic).
-- [ ] **Step 1.7:** Add `LICENSE` (MIT, copyright 2026 StonedAcademia contributors).
+- [ ] **Step 1.7:** Add `LICENSE` (AGPL-3.0-only).
 - [ ] **Step 1.8:** Full check: `pytest tests/quality/governance -q && moon run crk:check` — green.
-- [ ] **Step 1.9:** Commits (split logically): `feat(tooling): add pinned governance tool manifest and fetcher`, `chore: add gitleaks config and MIT license`, `feat(tooling): add audit-lane moon targets`.
+- [ ] **Step 1.9:** Commits (split logically): `feat(tooling): add pinned governance tool manifest and fetcher`, `chore: add gitleaks config and AGPL license`, `feat(tooling): add audit-lane moon targets`.
 
 ## Phase 2 — Branch `gov/repo-shape-naming`
 
