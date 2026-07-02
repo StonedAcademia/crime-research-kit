@@ -39,7 +39,7 @@ class Mem0LocalProvider:
                 "config": {
                     "host": default_qdrant_host(qdrant_host),
                     "port": default_qdrant_port(qdrant_port),
-                    "collection_name": f"trcr_memory_{self.user_id}",
+                    "collection_name": f"crk_memory_{self.user_id}",
                 },
             },
             "llm": {

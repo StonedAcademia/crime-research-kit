@@ -1,4 +1,4 @@
-"""Runtime defaults for self-hosted TRCR services."""
+"""Runtime defaults for self-hosted CRK services."""
 
 from __future__ import annotations
 
@@ -25,36 +25,36 @@ def env_int(name: str, default: int) -> int:
 
 
 def model_spec(value: str | None = None) -> str:
-    return value or env_str("TRCR_MODEL", DEFAULT_MODEL_SPEC)
+    return value or env_str("CRK_MODEL", DEFAULT_MODEL_SPEC)
 
 
 def searxng_url(value: str | None = None) -> str:
-    return value or env_str("TRCR_SEARXNG_URL", DEFAULT_SEARXNG_URL)
+    return value or env_str("CRK_SEARXNG_URL", DEFAULT_SEARXNG_URL)
 
 
 def qdrant_url(value: str | None = None) -> str:
-    return value or env_str("TRCR_QDRANT_URL", DEFAULT_QDRANT_URL)
+    return value or env_str("CRK_QDRANT_URL", DEFAULT_QDRANT_URL)
 
 
 def qdrant_host(value: str | None = None) -> str:
-    return value or env_str("TRCR_QDRANT_HOST", DEFAULT_QDRANT_HOST)
+    return value or env_str("CRK_QDRANT_HOST", DEFAULT_QDRANT_HOST)
 
 
 def qdrant_port(value: int | None = None) -> int:
-    return value if value is not None else env_int("TRCR_QDRANT_PORT", DEFAULT_QDRANT_PORT)
+    return value if value is not None else env_int("CRK_QDRANT_PORT", DEFAULT_QDRANT_PORT)
 
 
 def embed_model(value: str | None = None) -> str:
-    return value or env_str("TRCR_EMBED_MODEL", DEFAULT_EMBED_MODEL)
+    return value or env_str("CRK_EMBED_MODEL", DEFAULT_EMBED_MODEL)
 
 
 def mem0_llm_provider(value: str | None = None) -> str:
-    return value or env_str("TRCR_MEM0_LLM_PROVIDER", DEFAULT_MEM0_LLM_PROVIDER)
+    return value or env_str("CRK_MEM0_LLM_PROVIDER", DEFAULT_MEM0_LLM_PROVIDER)
 
 
 def mem0_llm_model(value: str | None = None) -> str:
-    return value or env_str("TRCR_MEM0_LLM_MODEL", DEFAULT_MEM0_LLM_MODEL)
+    return value or env_str("CRK_MEM0_LLM_MODEL", DEFAULT_MEM0_LLM_MODEL)
 
 
 def embedder_provider(value: str | None = None) -> str:
-    return value or env_str("TRCR_EMBEDDER_PROVIDER", DEFAULT_EMBEDDER_PROVIDER)
+    return value or env_str("CRK_EMBEDDER_PROVIDER", DEFAULT_EMBEDDER_PROVIDER)

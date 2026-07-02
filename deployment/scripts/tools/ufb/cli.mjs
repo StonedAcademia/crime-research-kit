@@ -2,12 +2,12 @@ const DEFAULT_PHANESTEAD_ROOT = "../../phanestead-full";
 
 function usage() {
   return `Usage:
-  bun deployment/scripts/tools/export_trcr_ufb.mjs <case_dir> --out <bundle.ufb_v2> [options]
+  bun deployment/scripts/tools/export_crk_ufb.mjs <case_dir> --out <bundle.ufb_v2> [options]
 
 Options:
   --include-private           Include records marked non-public/private. Default is public-safe.
   --exported-at <iso>         Use a stable export timestamp.
-  --phanestead-root <dir>     Path to phanestead-full. Default: ${DEFAULT_PHANESTEAD_ROOT}
+  --phanestead-root <dir>     Path to phanestead. Default: ${DEFAULT_PHANESTEAD_ROOT}
   --model-out <file>          Also write the intermediate Scavenge model JSON.
   --summary-out <file>        Write export summary JSON. Default: <out>.summary.json
   --no-verify                 Skip Phanestead round-trip import verification.

@@ -53,7 +53,7 @@ def import_check_wheel(python: Path, wheel: Path) -> None:
 def main() -> int:
     out_dir = ROOT / "dist"
     out_dir.mkdir(exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix="trcr-build-") as tmp_name:
+    with tempfile.TemporaryDirectory(prefix="crk-build-") as tmp_name:
         tmp = Path(tmp_name)
         source = create_archive_checkout(tmp)
         build_env = tmp / "venv"

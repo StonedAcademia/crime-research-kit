@@ -13,7 +13,7 @@ from tests.helpers import KIT_ROOT
 
 # Policy source: docs/superpowers/specs/2026-07-02-governance-hardening-spec.md §5.
 REGISTRY = KIT_ROOT / "docs" / "registry" / "env_vars.json"
-APPROVED_PREFIXES = ("TRCR_", "OLLAMA_", "SEARXNG_")
+APPROVED_PREFIXES = ("CRK_", "OLLAMA_", "SEARXNG_")
 APPROVED_SINGLETONS = {"HF_HOME", "TRANSFORMERS_CACHE", "SOURCE_DATE_EPOCH"}
 RUNTIME_SCOPES = {"runtime"}
 IGNORED_DEPLOYMENT_ENV = {"PYTHONDONTWRITEBYTECODE", "PYTHONUNBUFFERED", "PIP_NO_CACHE_DIR", "FORCE_OWNERSHIP"}

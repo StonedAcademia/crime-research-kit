@@ -96,7 +96,7 @@ def append_source(
         "text_path": text_path,
         "reliability_grade": "B",
         "independence_group": independence_group,
-        "notes": "Synthetic source for TRCR improvement coverage.",
+        "notes": "Synthetic source for CRK improvement coverage.",
         "public_export": public_export,
     })
 

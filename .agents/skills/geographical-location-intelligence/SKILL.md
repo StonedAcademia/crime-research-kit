@@ -1,6 +1,6 @@
 ---
 name: geographical-location-intelligence
-description: "TRCR workflow for identifying, reconciling, and mapping locations tied to evidence items, events, sightings, routes, facilities, media timestamps, exhibits, and locations of interest, then adding source-traceable places, events, event links, artifacts, source spans, map packets, and privacy flags to a case file. Use when Codex needs geospatial case analysis, event maps, evidence-item location pairing, route/location-of-interest clustering, or map-ready exports distinct from parcel/deed/property-record research."
+description: "CRK workflow for identifying, reconciling, and mapping locations tied to evidence items, events, sightings, routes, facilities, media timestamps, exhibits, and locations of interest, then adding source-traceable places, events, event links, artifacts, source spans, map packets, and privacy flags to a case file. Use when Codex needs geospatial case analysis, event maps, evidence-item location pairing, route/location-of-interest clustering, or map-ready exports distinct from parcel/deed/property-record research."
 ---
 
 # Geographical Location Intelligence
@@ -14,7 +14,7 @@ Lane/template metadata is generated from `docs/registry/`; do not invent new lan
 
 Use this skill to turn source-supported location references into a defensible case map. The focus is evidence geography: where events happened, where evidence items were found or referenced, how locations of interest relate to each other, and which map layers or place aliases are supported by sources.
 
-This skill extends the TRCR case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries. Route parcel ownership, deeds, permits, zoning, and address records to `property-location-records`.
+This skill extends the CRK case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries. Route parcel ownership, deeds, permits, zoning, and address records to `property-location-records`.
 
 ## Required Inputs
 
@@ -40,7 +40,7 @@ If a location is a current private residence, minor-related place, shelter/safe 
 
 ## Commands
 
-Use the wrapper-local TRCR tool path and prefix case paths with `tc-c-kit/`:
+Use the wrapper-local CRK tool path and prefix case paths with `tc-c-kit/`:
 
 ```bash
 python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-public-records tc-c-kit/data/cases/<case_slug> \

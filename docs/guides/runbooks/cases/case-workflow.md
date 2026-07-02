@@ -1,6 +1,6 @@
 # Case Workflow Runbook
 
-This runbook shows how to ask Codex or another agent to use the TRCR skills and
+This runbook shows how to ask Codex or another agent to use the CRK skills and
 agent flows without turning lead discovery into unsourced claims. The full
 workflow is split into small reference files.
 

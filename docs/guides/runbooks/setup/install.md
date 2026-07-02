@@ -1,6 +1,6 @@
 # Initial App Install
 
-This runbook sets up the TRCR kit and the optional case-builder app for local
+This runbook sets up the CRK kit and the optional case-builder app for local
 case work. Commands assume you are running from the `tc-c-kit` repository root.
 
 That keeps the repo-local skill path at

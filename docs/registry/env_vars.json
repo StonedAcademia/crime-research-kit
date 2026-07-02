@@ -1,95 +1,95 @@
 {
   "env_vars": [
     {
-      "name": "TRCR_CASES_ROOT",
+      "name": "CRK_CASES_ROOT",
       "purpose": "Root directory for case workspaces served by MCP and deployment containers.",
       "scope": "runtime",
       "default": "<repo-root>/data/cases or /app/data/cases in containers",
-      "prefix_class": "TRCR_"
+      "prefix_class": "CRK_"
     },
     {
-      "name": "TRCR_SKILL_ROOT",
+      "name": "CRK_SKILL_ROOT",
       "purpose": "Override path for the repo-local truecrime-cult-research skill copy.",
       "scope": "runtime",
       "default": "<repo-root>/.agents/skills/truecrime-cult-research",
-      "prefix_class": "TRCR_"
+      "prefix_class": "CRK_"
     },
     {
-      "name": "TRCR_MODEL",
+      "name": "CRK_MODEL",
       "purpose": "Self-hosted model spec in provider:model form.",
       "scope": "runtime",
       "default": "ollama:llama3.1",
-      "prefix_class": "TRCR_"
+      "prefix_class": "CRK_"
     },
     {
-      "name": "TRCR_SEARXNG_URL",
+      "name": "CRK_SEARXNG_URL",
       "purpose": "Local SearXNG endpoint used for source discovery.",
       "scope": "runtime",
       "default": "http://localhost:8080 or http://searxng:8080 in containers",
-      "prefix_class": "TRCR_"
+      "prefix_class": "CRK_"
     },
     {
-      "name": "TRCR_QDRANT_URL",
+      "name": "CRK_QDRANT_URL",
       "purpose": "Local Qdrant HTTP endpoint for retrieval indexes.",
       "scope": "runtime",
       "default": "http://localhost:6333 or http://qdrant:6333 in containers",
-      "prefix_class": "TRCR_"
+      "prefix_class": "CRK_"
     },
     {
-      "name": "TRCR_QDRANT_HOST",
+      "name": "CRK_QDRANT_HOST",
       "purpose": "Qdrant host used by the local memory provider.",
       "scope": "runtime",
       "default": "localhost or qdrant in containers",
-      "prefix_class": "TRCR_"
+      "prefix_class": "CRK_"
     },
     {
-      "name": "TRCR_QDRANT_PORT",
+      "name": "CRK_QDRANT_PORT",
       "purpose": "Qdrant port used by the local memory provider.",
       "scope": "runtime",
       "default": "6333",
-      "prefix_class": "TRCR_"
+      "prefix_class": "CRK_"
     },
     {
-      "name": "TRCR_EMBED_MODEL",
+      "name": "CRK_EMBED_MODEL",
       "purpose": "Local embedding model for retrieval and memory.",
       "scope": "runtime",
       "default": "BAAI/bge-small-en-v1.5",
-      "prefix_class": "TRCR_"
+      "prefix_class": "CRK_"
     },
     {
-      "name": "TRCR_MEM0_LLM_PROVIDER",
+      "name": "CRK_MEM0_LLM_PROVIDER",
       "purpose": "Self-hosted LLM provider for local Mem0 workflows.",
       "scope": "runtime",
       "default": "ollama",
-      "prefix_class": "TRCR_"
+      "prefix_class": "CRK_"
     },
     {
-      "name": "TRCR_MEM0_LLM_MODEL",
+      "name": "CRK_MEM0_LLM_MODEL",
       "purpose": "Model name for local Mem0 workflows.",
       "scope": "runtime",
       "default": "llama3.1",
-      "prefix_class": "TRCR_"
+      "prefix_class": "CRK_"
     },
     {
-      "name": "TRCR_EMBEDDER_PROVIDER",
+      "name": "CRK_EMBEDDER_PROVIDER",
       "purpose": "Local embedder provider for memory workflows.",
       "scope": "runtime",
       "default": "huggingface",
-      "prefix_class": "TRCR_"
+      "prefix_class": "CRK_"
     },
     {
-      "name": "TRCR_HOOK_BRANCH",
+      "name": "CRK_HOOK_BRANCH",
       "purpose": "Branch-gate override used by local hook tests and CI dry runs.",
       "scope": "ci",
       "default": "",
-      "prefix_class": "TRCR_"
+      "prefix_class": "CRK_"
     },
     {
-      "name": "TRCR_REPO_ROOT",
+      "name": "CRK_REPO_ROOT",
       "purpose": "Deployment compose root override for mounted repo paths.",
       "scope": "deployment",
       "default": "..",
-      "prefix_class": "TRCR_"
+      "prefix_class": "CRK_"
     },
     {
       "name": "OLLAMA_HOST",

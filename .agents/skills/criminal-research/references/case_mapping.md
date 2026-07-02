@@ -1,6 +1,6 @@
-# TRCR Case Mapping For Criminal Research
+# CRK Case Mapping For Criminal Research
 
-Use existing TRCR ledgers. Criminal-research packets are interpretation layers over cited sources, not proof of identity, guilt, motive, or diagnosis.
+Use existing CRK ledgers. Criminal-research packets are interpretation layers over cited sources, not proof of identity, guilt, motive, or diagnosis.
 
 ## Sources
 

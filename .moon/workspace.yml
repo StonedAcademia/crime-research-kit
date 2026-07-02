@@ -1,7 +1,7 @@
 projects:
-  trcr: "."
+  crk: "."
 
-defaultProject: trcr
+defaultProject: crk
 
 pipeline:
   logRunningCommand: true
@@ -10,7 +10,7 @@ vcs:
   defaultBranch: main
   hooks:
     pre-push:
-      - "moon run trcr:branch-gate"
+      - "moon run crk:branch-gate"
   remoteCandidates:
     - origin
   sync: true

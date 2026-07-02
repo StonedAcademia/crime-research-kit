@@ -1,6 +1,6 @@
 import json
 
-from tests.integration.trcr_improvements.helpers import (
+from tests.integration.crk_improvements.helpers import (
     append_source,
     init_case,
     load_tcr,

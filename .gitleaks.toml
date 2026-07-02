@@ -1,10 +1,10 @@
-title = "TRCR gitleaks config"
+title = "CRK gitleaks config"
 
 [extend]
 useDefault = true
 
 [allowlist]
-description = "Local case workspaces and synthetic fixtures are governed by TRCR privacy tests."
+description = "Local case workspaces and synthetic fixtures are governed by CRK privacy tests."
 paths = [
   '''^data/cases/''',
   '''^data/exports/''',

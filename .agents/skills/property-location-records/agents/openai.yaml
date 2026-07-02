@@ -1,4 +1,4 @@
 interface:
   display_name: "Property Location Records"
   short_description: "Handle property, parcel, and place records"
-  default_prompt: "Use $property-location-records to map public property, parcel, permit, and location records into a TRCR case safely."
+  default_prompt: "Use $property-location-records to map public property, parcel, permit, and location records into a CRK case safely."

@@ -15,7 +15,7 @@ def copy_synthetic_case(tmp_path: Path) -> Path:
     return case_dir
 
 
-def test_build_evidence_documents_from_trcr_records(tmp_path):
+def test_build_evidence_documents_from_crk_records(tmp_path):
     case_dir = copy_synthetic_case(tmp_path)
 
     documents = build_evidence_documents(case_dir)
@@ -92,11 +92,11 @@ def test_local_stack_cli_commands_parse():
 
 
 def test_self_hosted_service_defaults_read_env(monkeypatch):
-    monkeypatch.setenv("TRCR_SEARXNG_URL", "http://searxng:8080")
-    monkeypatch.setenv("TRCR_QDRANT_URL", "http://qdrant:6333")
-    monkeypatch.setenv("TRCR_QDRANT_HOST", "qdrant")
-    monkeypatch.setenv("TRCR_QDRANT_PORT", "6333")
-    monkeypatch.setenv("TRCR_EMBED_MODEL", "local-embed")
+    monkeypatch.setenv("CRK_SEARXNG_URL", "http://searxng:8080")
+    monkeypatch.setenv("CRK_QDRANT_URL", "http://qdrant:6333")
+    monkeypatch.setenv("CRK_QDRANT_HOST", "qdrant")
+    monkeypatch.setenv("CRK_QDRANT_PORT", "6333")
+    monkeypatch.setenv("CRK_EMBED_MODEL", "local-embed")
 
     assert config.searxng_url() == "http://searxng:8080"
     assert config.qdrant_url() == "http://qdrant:6333"

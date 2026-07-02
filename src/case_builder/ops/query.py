@@ -11,7 +11,7 @@ from ..retrieval import index_case as _index_case
 from ..retrieval import query_case as _query_case
 from .policy import filter_public
 from .result import OpResult, local_op
-from .runner import TrcrRunner
+from .runner import CrkRunner
 
 
 def get_records(case_dir: str, record_type: str, *, include_private: bool = False) -> OpResult:
@@ -110,7 +110,7 @@ def query_case(
 
 
 def link_names(
-    runner: TrcrRunner,
+    runner: CrkRunner,
     case_dir: str,
     *,
     names: Sequence[str] = (),

@@ -1,6 +1,6 @@
 ---
 name: claim-contradiction-audit
-description: TRCR workflow for finding and documenting conflicting claims, denials, corrections, retractions, disputed facts, court findings, timeline conflicts, and source-chain caveats. Use when Codex needs to audit claims before public export or update a case file without smoothing uncertainty into certainty.
+description: CRK workflow for finding and documenting conflicting claims, denials, corrections, retractions, disputed facts, court findings, timeline conflicts, and source-chain caveats. Use when Codex needs to audit claims before public export or update a case file without smoothing uncertainty into certainty.
 ---
 
 # Claim Contradiction Audit
@@ -12,9 +12,9 @@ Lane/template metadata is generated from `docs/registry/`; do not invent new lan
 
 ## Purpose
 
-Use this skill to identify and document conflicts in a TRCR case file. The output is a review packet that preserves uncertainty and points to source-backed next actions; it does not automatically resolve disputes or rewrite claim statuses.
+Use this skill to identify and document conflicts in a CRK case file. The output is a review packet that preserves uncertainty and points to source-backed next actions; it does not automatically resolve disputes or rewrite claim statuses.
 
-This skill extends the TRCR case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries.
+This skill extends the CRK case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries.
 
 ## Required Inputs
 
@@ -37,7 +37,7 @@ If a contradiction involves private people, minors, addresses, weak allegations,
 
 ## Commands
 
-Use the wrapper-local TRCR tool path and prefix case paths with `tc-c-kit/`:
+Use the wrapper-local CRK tool path and prefix case paths with `tc-c-kit/`:
 
 ```bash
 python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-contradictions tc-c-kit/data/cases/<case_slug>

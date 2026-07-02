@@ -1,4 +1,4 @@
-# TRCR Governance & CI Hardening — Program Spec
+# CRK Governance & CI Hardening — Program Spec
 
 Date: 2026-07-02. Status: approved for execution.
 Companion plan: `docs/superpowers/plans/2026-07-02-governance-hardening-plan.md`.
@@ -85,7 +85,7 @@ Binaries land in a gitignored `deployment/tooling/bin/`.
   `httpx`, `aiohttp` allowed only in `src/case_builder/acquisition/`,
   `deployment/`, and the documented `tcr.py` ingest path.
 - **Env vars**: registry at `docs/registry/env_vars.json` (name, purpose,
-  prefix-class, default, scope). Approved prefixes: `TRCR_`, `OLLAMA_`,
+  prefix-class, default, scope). Approved prefixes: `CRK_`, `OLLAMA_`,
   `SEARXNG_`, plus documented singletons (`HF_HOME`, `TRANSFORMERS_CACHE`).
   Discovered-but-undocumented or dynamic (non-literal) keys fail.
 - **SaaS/provider denylist**: `langsmith`, `LANGCHAIN_TRACING`,

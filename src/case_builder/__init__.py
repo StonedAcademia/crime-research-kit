@@ -1,6 +1,6 @@
-"""Public API for the TRCR case-builder agent app.
+"""Public API for the CRK case-builder agent app.
 
-The package keeps TRCR JSONL records as the canonical ledger. Import from this
+The package keeps CRK JSONL records as the canonical ledger. Import from this
 module when callers need the stable app surface instead of internal graph,
 agent, or tool modules.
 """

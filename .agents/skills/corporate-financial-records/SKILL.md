@@ -1,6 +1,6 @@
 ---
 name: corporate-financial-records
-description: Public-record workflow for researching corporations, nonprofits, banks, shell companies, bankruptcies, investments, ownership, directors, officers, and board members, then adding source-traceable entities, claims, relationships, events, artifacts, and sources to a TRCR case file. Use when Codex needs to pull public financial/corporate records, SEC or state filings, bankruptcy dockets, investment disclosures, beneficial ownership leads, or board rosters without inferring misconduct from proximity.
+description: Public-record workflow for researching corporations, nonprofits, banks, shell companies, bankruptcies, investments, ownership, directors, officers, and board members, then adding source-traceable entities, claims, relationships, events, artifacts, and sources to a CRK case file. Use when Codex needs to pull public financial/corporate records, SEC or state filings, bankruptcy dockets, investment disclosures, beneficial ownership leads, or board rosters without inferring misconduct from proximity.
 ---
 
 # Corporate Financial Records
@@ -12,9 +12,9 @@ Lane/template metadata is generated from `docs/registry/`; do not invent new lan
 
 ## Purpose
 
-Use this skill to build a public, source-traceable corporate record packet for a TRCR case. Prioritize official filings and court/government records, preserve uncertainty, and add only source-supported corporate facts to the case ledgers.
+Use this skill to build a public, source-traceable corporate record packet for a CRK case. Prioritize official filings and court/government records, preserve uncertainty, and add only source-supported corporate facts to the case ledgers.
 
-This skill extends the TRCR case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, claims, and public export boundaries.
+This skill extends the CRK case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, claims, and public export boundaries.
 
 ## Required Inputs
 
@@ -32,13 +32,13 @@ If the company identity is ambiguous, create candidate entities and mark claims 
 2. **Collect official source packets.** Use source lanes from [source_lanes.md](references/source_lanes.md). Register each filing, docket, annual report, or registry page as a source before extracting facts.
 3. **Extract only direct facts.** Use the filing's wording for claims. Do not infer fraud, control, membership, motive, shell-company purpose, or hidden ownership unless the source says it.
 4. **Add people and organizations.** Board members, directors, officers, investors, creditors, debtors, subsidiaries, auditors, trustees, and committees are entities only when named in public filings or strong reporting.
-5. **Add relationships and events.** Map records to TRCR ledgers using [case_mapping.md](references/case_mapping.md). Directors/officers/investors become relationships; bankruptcy filings, financings, mergers, delistings, and appointments become events.
+5. **Add relationships and events.** Map records to CRK ledgers using [case_mapping.md](references/case_mapping.md). Directors/officers/investors become relationships; bankruptcy filings, financings, mergers, delistings, and appointments become events.
 6. **Run contradiction and currency checks.** Compare board rosters and financial facts across filing dates. Mark stale or superseded facts in notes; avoid merging old and current boards.
-7. **Validate the case.** Run TRCR validation and report commands after import.
+7. **Validate the case.** Run CRK validation and report commands after import.
 
 ## Commands
 
-Use the wrapper-local TRCR tool path and prefix case paths with `tc-c-kit/`:
+Use the wrapper-local CRK tool path and prefix case paths with `tc-c-kit/`:
 
 ```bash
 python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source tc-c-kit/data/cases/<case_slug> \

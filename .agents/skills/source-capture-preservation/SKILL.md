@@ -1,6 +1,6 @@
 ---
 name: source-capture-preservation
-description: Public-source preservation workflow for TRCR cases. Capture or register URLs/files, record archive URLs, hash raw and extracted text artifacts, document provenance gaps, and prepare sources for extraction. Use when Codex needs to preserve evidence-chain metadata before claims are imported or exported.
+description: Public-source preservation workflow for CRK cases. Capture or register URLs/files, record archive URLs, hash raw and extracted text artifacts, document provenance gaps, and prepare sources for extraction. Use when Codex needs to preserve evidence-chain metadata before claims are imported or exported.
 ---
 
 # Source Capture Preservation
@@ -14,7 +14,7 @@ Lane/template metadata is generated from `docs/registry/`; do not invent new lan
 
 Use this skill to make source records reproducible and auditable before extracting facts. Preservation metadata supports the evidence chain; it does not make a source substantively reliable by itself.
 
-This skill extends the TRCR case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries.
+This skill extends the CRK case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries.
 
 ## Required Inputs
 
@@ -37,7 +37,7 @@ If a source cannot be captured, register metadata and explain the gap in notes. 
 
 ## Commands
 
-Use the wrapper-local TRCR tool path and prefix case paths with `tc-c-kit/`:
+Use the wrapper-local CRK tool path and prefix case paths with `tc-c-kit/`:
 
 ```bash
 python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url tc-c-kit/data/cases/<case_slug> "<URL>" \

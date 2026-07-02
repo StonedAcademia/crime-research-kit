@@ -29,7 +29,7 @@ EXPECTED_EXTRAS = {
 }
 EXPECTED_SCRIPTS = {
     "cr-kit": "case_builder.cli:main",
-    "trcr-mcp": "case_builder.mcp.server:main",
+    "crk-mcp": "case_builder.mcp.server:main",
 }
 REGISTRY_SHARDS = (
     "index.json",

@@ -9,10 +9,10 @@ from ..config import searxng_url as default_searxng_url
 from ..parsing import ocr_source as _ocr_source
 from ..parsing import parse_source as _parse_source
 from .result import OpResult, local_op
-from .runner import TrcrRunner
+from .runner import CrkRunner
 
 
-def plan_public_records(runner: TrcrRunner, case_dir: str, subject: str, lanes: Sequence[str]) -> OpResult:
+def plan_public_records(runner: CrkRunner, case_dir: str, subject: str, lanes: Sequence[str]) -> OpResult:
     args = ["plan-public-records", case_dir, "--subject", subject]
     for lane in lanes:
         args.extend(["--lane", lane])
@@ -20,7 +20,7 @@ def plan_public_records(runner: TrcrRunner, case_dir: str, subject: str, lanes: 
 
 
 def add_source(
-    runner: TrcrRunner,
+    runner: CrkRunner,
     case_dir: str,
     *,
     title: str,
@@ -51,7 +51,7 @@ def add_source(
 
 
 def ingest_url(
-    runner: TrcrRunner,
+    runner: CrkRunner,
     case_dir: str,
     url: str,
     *,
@@ -74,7 +74,7 @@ def ingest_url(
 
 
 def preserve_source(
-    runner: TrcrRunner,
+    runner: CrkRunner,
     case_dir: str,
     source_id: str,
     *,

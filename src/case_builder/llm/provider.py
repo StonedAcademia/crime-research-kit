@@ -12,13 +12,13 @@ def parse_model_spec(spec: str, *, validate_provider: bool = True) -> tuple[str,
     provider, separator, model = (spec or "").partition(":")
     if not separator or not provider.strip() or not model.strip():
         raise ValueError(
-            "TRCR_MODEL must look like 'provider:model' "
+            "CRK_MODEL must look like 'provider:model' "
             f"(e.g. '{DEFAULT_MODEL_SPEC}'), got: {spec!r}"
         )
     provider = provider.strip()
     if validate_provider and provider not in SUPPORTED_PROVIDERS:
         allowed = ", ".join(sorted(SUPPORTED_PROVIDERS))
-        raise ValueError(f"TRCR_MODEL provider must be self-hosted. Supported providers: {allowed}.")
+        raise ValueError(f"CRK_MODEL provider must be self-hosted. Supported providers: {allowed}.")
     return provider, model.strip()
 
 

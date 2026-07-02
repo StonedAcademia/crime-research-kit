@@ -17,7 +17,7 @@
   <a href="#documentation-and-development">Docs</a>
 </p>
 
-TRCR is a **local-first** research kit for public-interest, documentary-style
+CRK is a **local-first** research kit for public-interest, documentary-style
 work on true crime, high-control groups, cult-origin networks, missing-person
 leads, and public records. It moves an agent or researcher from a pile of
 articles, transcripts, PDFs, and archive links into a structured case ledger
@@ -60,7 +60,7 @@ The record-level contract behind this chain is documented in
 
 New to the kit? Read [the evidence chain](#the-evidence-chain) and
 [public-interest boundaries](#public-interest-boundaries) first as they define
-what TRCR will and will not produce.
+what CRK will and will not produce.
 
 ## Quick start
 
@@ -68,7 +68,7 @@ Install the dev environment, verify against the tracked synthetic case, and
 create your first case:
 
 ```bash
-moon run trcr:install-dev
+moon run crk:install-dev
 python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/examples/synthetic_case
 python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case data/cases/sample_case --title "Sample Case"
 ```
@@ -116,7 +116,7 @@ design invariants, is in
 
 ## What you can build
 
-| Goal                       | TRCR output                                                                                                                       |
+| Goal                       | CRK output                                                                                                                       |
 | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | Source ledger              | `records/sources.jsonl` with URL/path, source type, reliability grade, hashes, archive context, and public/private flags.         |
 | Claim matrix               | One assertion per row in `records/claims.jsonl`, tied to source IDs, confidence, status, contradictions, and privacy review.      |
@@ -129,7 +129,7 @@ design invariants, is in
 
 ## Public-Interest Boundaries
 
-TRCR is designed for lawful, public-source research. It is not designed for
+CRK is designed for lawful, public-source research. It is not designed for
 harassment, doxxing, private-person targeting, vigilante investigation, or
 making unsourced accusations.
 

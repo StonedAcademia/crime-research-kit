@@ -5,11 +5,11 @@
 LLM nodes are disabled unless `--llm` is passed. Configure the model with:
 
 ```bash
-export TRCR_MODEL=ollama:llama3.1
+export CRK_MODEL=ollama:llama3.1
 ```
 
 The self-hosted runtime supports Ollama. Codex and Claude Code can operate the
-local stack through CLI or MCP, but they are agent hosts rather than TRCR
+local stack through CLI or MCP, but they are agent hosts rather than CRK
 runtime model providers. LLM output is never evidence; it must still pass
 source support, packet review, validation, and privacy review.
 
@@ -71,10 +71,10 @@ local workspace:
 
 | Symptom | Check |
 |---|---|
-| `ModuleNotFoundError: case_builder` | Run `moon run trcr:install-dev`, activate `.venv`, or run with `PYTHONPATH=src`. |
+| `ModuleNotFoundError: case_builder` | Run `moon run crk:install-dev`, activate `.venv`, or run with `PYTHONPATH=src`. |
 | `.agents/.../tcr.py` not found | Run from the `tc-c-kit` repository root. |
 | Case files appear in the wrong directory | Use `data/cases/<case_slug>` from the repository root. |
 | LangGraph imports fail | Install `python -m pip install -e '.[agentic]'` inside `.venv`. |
-| LLM node imports fail | Install `python -m pip install -e '.[llm]'` inside `.venv` and set `TRCR_MODEL`. |
+| LLM node imports fail | Install `python -m pip install -e '.[llm]'` inside `.venv` and set `CRK_MODEL`. |
 | Parse, OCR, retrieval, or memory commands fail | Install the matching optional extra and start any required local services. |
 | A claim is blocked from public export | Keep it internal until source support, contradiction review, source-independence review, and privacy review are complete. |

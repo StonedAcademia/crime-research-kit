@@ -11,7 +11,7 @@ LangSmith and managed SaaS model-provider guidance from the deployment path
 while keeping Codex and Claude Code as supported user-facing operators over
 CLI/MCP.
 
-**Architecture:** A full-featured `trcr` toolbox image runs the CLI, graph, and
+**Architecture:** A full-featured `crk` toolbox image runs the CLI, graph, and
 MCP surfaces. Compose starts the complete local service set by default. Operators
 use Make targets to build, start, bootstrap models, run smoke tests, and shell
 into the app container.
@@ -22,7 +22,7 @@ Valkey, Qdrant, Ollama, OCRmyPDF, Tesseract, Ghostscript, Make, pytest.
 ## Global Constraints
 
 - Repo root: `<project_root>/`.
-- Preserve the existing TRCR safety model: canonical records are still written
+- Preserve the existing CRK safety model: canonical records are still written
   only through reviewed extraction import paths.
 - Treat all runtime extras as mandatory in the deployment image:
   `agentic`, `llm`, `mcp`, `web-local`, `documents`, `retrieval`,
@@ -30,7 +30,7 @@ Valkey, Qdrant, Ollama, OCRmyPDF, Tesseract, Ghostscript, Make, pytest.
 - Do not include LangSmith, managed vector stores, or managed model APIs in
   deployment defaults or docs.
 - Codex and Claude Code may be documented as agent hosts that operate the local
-  CLI/MCP surface. They are not TRCR runtime model providers unless backed by a
+  CLI/MCP surface. They are not CRK runtime model providers unless backed by a
   self-hosted local model API.
 - Bind service ports to `127.0.0.1` only.
 - Do not rely on Compose profiles for required capabilities; all local services
@@ -86,19 +86,19 @@ src/case_builder/ops/query.py
 
 **Requirements:**
 
-- `TRCR_MODEL` must accept only `ollama:<model>` in this phase.
+- `CRK_MODEL` must accept only `ollama:<model>` in this phase.
 - Default model remains `ollama:llama3.1`.
 - Remove runtime messaging that suggests managed SaaS model provider packages.
-- Do not add Codex or Claude Code as `TRCR_MODEL` providers. If they need to
+- Do not add Codex or Claude Code as `CRK_MODEL` providers. If they need to
   trigger local workflows later, model them as explicit agent-host bridges
   outside the LLM completion-provider layer.
-- Discovery default should read `TRCR_SEARXNG_URL` before falling back to
+- Discovery default should read `CRK_SEARXNG_URL` before falling back to
   `http://localhost:8080`.
-- Retrieval default should read `TRCR_QDRANT_URL` before falling back to
+- Retrieval default should read `CRK_QDRANT_URL` before falling back to
   `http://localhost:6333`.
-- Mem0 defaults should read `TRCR_QDRANT_HOST`, `TRCR_QDRANT_PORT`,
-  `TRCR_MEM0_LLM_PROVIDER`, `TRCR_MEM0_LLM_MODEL`, `TRCR_EMBEDDER_PROVIDER`,
-  and `TRCR_EMBED_MODEL`, with local defaults only.
+- Mem0 defaults should read `CRK_QDRANT_HOST`, `CRK_QDRANT_PORT`,
+  `CRK_MEM0_LLM_PROVIDER`, `CRK_MEM0_LLM_MODEL`, `CRK_EMBEDDER_PROVIDER`,
+  and `CRK_EMBED_MODEL`, with local defaults only.
 - CLI defaults should mirror env-aware operation defaults instead of baking
   only `localhost`.
 
@@ -136,7 +136,7 @@ git commit -m "feat(deploy): enforce local runtime defaults"
   wording. `ollama` is the initial supported provider; future providers must be
   local/self-hosted APIs.
 - Keep Codex and Claude Code references when they describe user-facing CLI/MCP
-  operation rather than TRCR runtime model configuration.
+  operation rather than CRK runtime model configuration.
 - Explicitly state that Codex/Claude Code are agent hosts, not app runtime model
   providers, unless a self-hosted local API exists for them.
 - Keep warnings that LLM output is never evidence.
@@ -186,7 +186,7 @@ git commit -m "docs(deploy): remove hosted runtime guidance"
 - Install all mandatory runtime extras:
   `pip install -e '.[agentic,llm,mcp,web-local,documents,retrieval,memory-local]'`.
 - Create `/app/data/cases`, `/app/data/exports`, and cache directories.
-- Use a non-root `trcr` user.
+- Use a non-root `crk` user.
 - Default command keeps the toolbox container alive for `docker compose exec`
   or prints help if we choose one-shot mode. Prefer a durable toolbox command
   for Compose.
@@ -220,28 +220,28 @@ git commit -m "feat(deploy): add full local app image"
 
 **Requirements:**
 
-- Services: `trcr`, `searxng`, `searxng-valkey`, `qdrant`, `ollama`.
+- Services: `crk`, `searxng`, `searxng-valkey`, `qdrant`, `ollama`.
 - No profiles for required services.
 - Host port bindings use `127.0.0.1`.
 - Use a named network.
 - Add volumes:
   - bind `../data/cases:/app/data/cases`
   - bind or named volume for `../data/exports:/app/data/exports`
-  - `trcr-hf-cache:/app/.cache/huggingface`
+  - `crk-hf-cache:/app/.cache/huggingface`
   - `qdrant-storage:/qdrant/storage`
   - `ollama-models:/root/.ollama`
   - `searxng-config:/etc/searxng` if config is volume-managed, or bind the
     tracked config read-only
   - `searxng-cache:/var/cache/searxng`
 - Set container env:
-  - `TRCR_CASES_ROOT=/app/data/cases`
-  - `TRCR_MODEL=${TRCR_MODEL:-ollama:llama3.1}`
-  - `TRCR_SEARXNG_URL=http://searxng:8080`
-  - `TRCR_QDRANT_URL=http://qdrant:6333`
-  - `TRCR_QDRANT_HOST=qdrant`
-  - `TRCR_QDRANT_PORT=6333`
+  - `CRK_CASES_ROOT=/app/data/cases`
+  - `CRK_MODEL=${CRK_MODEL:-ollama:llama3.1}`
+  - `CRK_SEARXNG_URL=http://searxng:8080`
+  - `CRK_QDRANT_URL=http://qdrant:6333`
+  - `CRK_QDRANT_HOST=qdrant`
+  - `CRK_QDRANT_PORT=6333`
   - `OLLAMA_HOST=http://ollama:11434`
-  - `TRCR_EMBED_MODEL=${TRCR_EMBED_MODEL:-BAAI/bge-small-en-v1.5}`
+  - `CRK_EMBED_MODEL=${CRK_EMBED_MODEL:-BAAI/bge-small-en-v1.5}`
 - SearXNG settings should point Valkey/Redis config at the Compose service
   hostname.
 - Add healthchecks where the images have shell/curl support; otherwise handle
@@ -276,7 +276,7 @@ git commit -m "feat(deploy): add local compose stack"
 
 - `bootstrap-ollama.sh`:
   - waits for Ollama
-  - pulls the configured model from `TRCR_MODEL`
+  - pulls the configured model from `CRK_MODEL`
   - lists local models
   - rejects non-ollama model specs
 - `wait-for-local-stack.sh`:
@@ -286,8 +286,8 @@ git commit -m "feat(deploy): add local compose stack"
   - exits with clear diagnostics
 - `smoke-test.sh`:
   - validates `data/examples/synthetic_case`
-  - runs `trcr-case-builder plan ...` dry
-  - verifies `trcr-mcp` import or startup help
+  - runs `cr-kit plan ...` dry
+  - verifies `crk-mcp` import or startup help
   - verifies OCR binaries and `ocrmypdf`
   - verifies Qdrant/SearXNG/Ollama connectivity through Compose hostnames
   - avoids writing canonical case records
@@ -332,8 +332,8 @@ git commit -m "feat(deploy): add local stack bootstrap checks"
   `COMPOSE_FILE ?= deployment/docker-compose.yml`
 - All targets use `docker compose -f $(COMPOSE_FILE)`.
 - `docker-smoke` depends on the stack being up and runs the app smoke script
-  inside the `trcr` service.
-- `docker-pull-model` runs the bootstrap script inside the `trcr` service.
+  inside the `crk` service.
+- `docker-pull-model` runs the bootstrap script inside the `crk` service.
 
 **Validation:**
 
@@ -379,13 +379,13 @@ make docker-smoke
 
 ```bash
 make docker-shell
-docker compose -f deployment/docker-compose.yml exec trcr trcr-case-builder --help
+docker compose -f deployment/docker-compose.yml exec crk cr-kit --help
 ```
 
 - Document port bindings, volumes, and how to stop the stack.
 - Document that no LangSmith or managed SaaS model provider is configured.
 - Document that Codex and Claude Code can operate the local stack through CLI
-  or MCP without changing TRCR's self-hosted runtime provider boundary.
+  or MCP without changing CRK's self-hosted runtime provider boundary.
 - Document that SearXNG performs explicit public-source discovery and should
   not be treated as evidence.
 - Document that model/package/image downloads are setup-time network activity;

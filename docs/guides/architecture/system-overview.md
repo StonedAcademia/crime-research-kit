@@ -7,7 +7,7 @@ output.
 
 ## The two-layer model
 
-TRCR has two implementation layers. Both read and write the same JSONL case
+CRK has two implementation layers. Both read and write the same JSONL case
 ledger, and neither is allowed to bypass its contract:
 
 1. **Skill scripts** — `.agents/skills/truecrime-cult-research/scripts/tcr.py`
@@ -19,7 +19,7 @@ ledger, and neither is allowed to bypass its contract:
    domain-specific packets. See [Agent Skills](../integrations/agent-skills.md).
 2. **`src/case_builder/`** — the agent app. Its frontends (CLI, LangGraph
    workflow, MCP server) never touch `tcr.py` or the ledger directly; they go
-   through the typed ops core in `ops/` (`OpResult`, `TrcrRunner`, and the
+   through the typed ops core in `ops/` (`OpResult`, `CrkRunner`, and the
    safety `policy`). The graph runner stops at a human review gate. See
    [Case Builder & LangGraph](case-builder-langgraph.md).
 
@@ -38,7 +38,7 @@ flowchart TB
     CLI2["CLI"]
     GRAPH["LangGraph graph<br/>+ sequential fallback"]
     MCP["MCP server"]
-    OPS["Typed ops core<br/>OpResult · TrcrRunner · safety policy"]
+    OPS["Typed ops core<br/>OpResult · CrkRunner · safety policy"]
     CLI2 --> OPS
     GRAPH --> OPS
     MCP --> OPS

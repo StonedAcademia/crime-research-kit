@@ -2,14 +2,14 @@ from pathlib import Path
 
 from case_builder.graph.runner import run_sequential
 from case_builder.models.state import CaseBuilderState
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT
 
 REPO_ROOT = KIT_ROOT
 
 
-def dry_runner() -> TrcrRunner:
-    return TrcrRunner(repo_root=REPO_ROOT, dry_run=True)
+def dry_runner() -> CrkRunner:
+    return CrkRunner(repo_root=REPO_ROOT, dry_run=True)
 
 
 def test_sequential_dry_run_stops_at_packet_gate():

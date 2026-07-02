@@ -6,7 +6,7 @@ from ..agents.source_lanes import infer_source_lanes
 from ..ops import case as case_ops
 from ..ops import sources as source_ops
 from ..ops.result import OpResult
-from ..ops.runner import TrcrRunner
+from ..ops.runner import CrkRunner
 from .state import GraphState
 
 
@@ -15,7 +15,7 @@ def infer_lanes_node(state: GraphState) -> GraphState:
     return {"lanes": lanes, "status": "lanes_inferred"}
 
 
-def init_case_node(runner: TrcrRunner):
+def init_case_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         result = case_ops.init_case(runner, required_case_dir(state), state.get("title"))
         return merge_result(state, result, "case_initialized")
@@ -23,7 +23,7 @@ def init_case_node(runner: TrcrRunner):
     return node
 
 
-def plan_public_records_node(runner: TrcrRunner):
+def plan_public_records_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         subject = state.get("subject")
         if not subject:

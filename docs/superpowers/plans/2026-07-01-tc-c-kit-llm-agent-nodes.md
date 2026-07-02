@@ -4,7 +4,7 @@
 
 **Goal:** Add a provider-pluggable LLM layer (local Ollama default) and three bounded agent capabilities — extraction-packet filling, readiness-audit reviewer briefs, and lane suggestions — wired into the Phase 2 pipeline as skippable nodes.
 
-**Architecture:** A `case_builder/llm/` package holds provider resolution (`TRCR_MODEL` env, `provider:model` spec) and three pure agent functions that accept any object with `.invoke(prompt) -> obj-with-.content` — so tests inject fakes and never import langchain. Three new graph nodes (`suggest_lanes`, `fill_packets`, `readiness_brief`) run only when `llm_enabled` is set, a model factory is provided, and the runner is not in dry-run; otherwise they skip, preserving all Phase 2 behavior. Safety: filled packets pass the guilt-label lint and automation defaults before staged save; non-local providers are recorded in the audit log via a new `ops.policy.record_llm_egress`.
+**Architecture:** A `case_builder/llm/` package holds provider resolution (`CRK_MODEL` env, `provider:model` spec) and three pure agent functions that accept any object with `.invoke(prompt) -> obj-with-.content` — so tests inject fakes and never import langchain. Three new graph nodes (`suggest_lanes`, `fill_packets`, `readiness_brief`) run only when `llm_enabled` is set, a model factory is provided, and the runner is not in dry-run; otherwise they skip, preserving all Phase 2 behavior. Safety: filled packets pass the guilt-label lint and automation defaults before staged save; non-local providers are recorded in the audit log via a new `ops.policy.record_llm_egress`.
 
 **Tech Stack:** Python ≥3.10; `langchain` + `langchain-ollama` behind a new `[llm]` extra (only imported inside `get_chat_model`); pytest with fake models (no network, no LLM in CI).
 
@@ -16,7 +16,7 @@
 - Agent functions are **bounded, single-purpose calls with structured output** — no tool use, no loops beyond one retry-with-feedback (spec: "not free-roaming agents").
 - Agent output invariants (spec): schema-conform structure, `status: unverified` + capped confidence + `public_export: false` on assertion records, never invent source IDs, guilt-label lint must pass, LLM readiness output *flags, never decides*.
 - Behavior preservation: `tests/test_case_builder.py` and `tests/test_pipeline_runner.py` pass unmodified — LLM nodes skip by default.
-- Existing interfaces consumed (Phase 1–2, already landed): `OpResult`, `TrcrRunner`, `ops.policy.apply_automation_defaults / lint_guilt_labels / ensure_staged_write / PolicyError`, `ops.extraction.read_packet / save_packet / list_packets`, `ops.query.get_records`, `casefile.find_source / resolve_case_path / log_action / ensure_case / CasefileError`, `graph.runner.pipeline_nodes_list / run_sequential / build_case_builder_graph`, `models.state.CaseBuilderState`, `agents.source_lanes.LANE_TRIGGERS`.
+- Existing interfaces consumed (Phase 1–2, already landed): `OpResult`, `CrkRunner`, `ops.policy.apply_automation_defaults / lint_guilt_labels / ensure_staged_write / PolicyError`, `ops.extraction.read_packet / save_packet / list_packets`, `ops.query.get_records`, `casefile.find_source / resolve_case_path / log_action / ensure_case / CasefileError`, `graph.runner.pipeline_nodes_list / run_sequential / build_case_builder_graph`, `models.state.CaseBuilderState`, `agents.source_lanes.LANE_TRIGGERS`.
 - Commit per task, conventional-commit style, ending with:
 
   ```
@@ -29,7 +29,7 @@
 src/case_builder/llm/
   __init__.py       # re-exports get_chat_model, active_model_spec, is_local_provider
   README.md
-  provider.py       # TRCR_MODEL parsing, get_chat_model(), locality check
+  provider.py       # CRK_MODEL parsing, get_chat_model(), locality check
   packet_agent.py   # fill_packet() with parse/validate/retry, bounded context
   audit_brief.py    # write_readiness_brief()
   lane_suggest.py   # suggest_lanes()
@@ -42,7 +42,7 @@ src/case_builder/models/state.py      # MODIFIED: same fields
 src/case_builder/app/service.py       # MODIFIED: model factory selection
 src/case_builder/cli.py               # MODIFIED: plan --llm flag
 pyproject.toml                        # MODIFIED: [llm] extra
-docs/case-builder-langgraph.md        # MODIFIED: LLM nodes + TRCR_MODEL docs
+docs/case-builder-langgraph.md        # MODIFIED: LLM nodes + CRK_MODEL docs
 
 New tests:
 tests/test_ops_source_text.py
@@ -224,7 +224,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 - Consumes: nothing internal.
 - Produces:
   - `parse_model_spec(spec: str) -> tuple[str, str]` — `"ollama:llama3.1"` → `("ollama", "llama3.1")`; raises `ValueError` on missing colon/provider/model.
-  - `active_model_spec() -> tuple[str, str]` — parses `TRCR_MODEL` env var, defaulting to `DEFAULT_MODEL_SPEC = "ollama:llama3.1"`.
+  - `active_model_spec() -> tuple[str, str]` — parses `CRK_MODEL` env var, defaulting to `DEFAULT_MODEL_SPEC = "ollama:llama3.1"`.
   - `is_local_provider(provider: str) -> bool` — `True` only for `"ollama"`.
   - `get_chat_model(spec: str | None = None)` — resolves the spec (arg > env > default) and returns `init_chat_model(model, model_provider=provider)` from langchain; raises `RuntimeError` with an install hint when langchain is missing.
 
@@ -255,14 +255,14 @@ def test_parse_model_spec_rejects_malformed_specs():
 
 
 def test_active_model_spec_defaults_local(monkeypatch):
-    monkeypatch.delenv("TRCR_MODEL", raising=False)
+    monkeypatch.delenv("CRK_MODEL", raising=False)
 
     assert active_model_spec() == parse_model_spec(DEFAULT_MODEL_SPEC)
     assert is_local_provider(active_model_spec()[0]) is True
 
 
 def test_active_model_spec_reads_env(monkeypatch):
-    monkeypatch.setenv("TRCR_MODEL", "anthropic:claude-sonnet-5")
+    monkeypatch.setenv("CRK_MODEL", "anthropic:claude-sonnet-5")
 
     provider, model = active_model_spec()
 
@@ -312,12 +312,12 @@ def parse_model_spec(spec: str) -> tuple[str, str]:
     """Split 'provider:model' into its parts, validating both are present."""
     provider, separator, model = (spec or "").partition(":")
     if not separator or not provider.strip() or not model.strip():
-        raise ValueError(f"TRCR_MODEL must look like 'provider:model' (e.g. '{DEFAULT_MODEL_SPEC}'), got: {spec!r}")
+        raise ValueError(f"CRK_MODEL must look like 'provider:model' (e.g. '{DEFAULT_MODEL_SPEC}'), got: {spec!r}")
     return provider.strip(), model.strip()
 
 
 def active_model_spec() -> tuple[str, str]:
-    return parse_model_spec(os.environ.get("TRCR_MODEL") or DEFAULT_MODEL_SPEC)
+    return parse_model_spec(os.environ.get("CRK_MODEL") or DEFAULT_MODEL_SPEC)
 
 
 def is_local_provider(provider: str) -> bool:
@@ -360,12 +360,12 @@ inject fakes and never require langchain or a running model.
 
 | Module | Responsibility |
 | --- | --- |
-| `provider.py` | `TRCR_MODEL` spec parsing (`provider:model`), local-provider check, `get_chat_model()` via langchain `init_chat_model`. |
+| `provider.py` | `CRK_MODEL` spec parsing (`provider:model`), local-provider check, `get_chat_model()` via langchain `init_chat_model`. |
 | `packet_agent.py` | Fill a CLI-drafted extraction packet from source text: JSON-only output, one retry with error feedback, guilt-label lint, automation defaults, no invented source IDs. |
 | `audit_brief.py` | Summarize deterministic audit outputs into a reviewer brief under `staging/candidates/`. Flags, never decides. |
 | `lane_suggest.py` | Suggest additional source lanes with rationale; suggestions are recorded, never silently applied. |
 
-Configuration: `TRCR_MODEL=provider:model` (default `ollama:llama3.1`).
+Configuration: `CRK_MODEL=provider:model` (default `ollama:llama3.1`).
 Non-local providers trigger an `llm_egress` audit row via `ops.policy`.
 LLM output is never evidence: agent-written records stay `status: unverified`,
 low confidence, `public_export: false`, and go through the packet review gate.
@@ -910,7 +910,7 @@ from case_builder.graph.llm_nodes import (
     readiness_brief_node,
     suggest_lanes_node,
 )
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 
 KIT_ROOT = Path(__file__).resolve().parents[1]
 
@@ -926,12 +926,12 @@ class FakeModel:
         return Reply()
 
 
-def execute_runner() -> TrcrRunner:
-    return TrcrRunner(repo_root=KIT_ROOT, dry_run=False)
+def execute_runner() -> CrkRunner:
+    return CrkRunner(repo_root=KIT_ROOT, dry_run=False)
 
 
 def test_llm_nodes_skip_without_flag_factory_or_execute():
-    dry = TrcrRunner(repo_root=KIT_ROOT, dry_run=True)
+    dry = CrkRunner(repo_root=KIT_ROOT, dry_run=True)
     factory = lambda: FakeModel("[]")
 
     assert suggest_lanes_node(execute_runner(), None)({"llm_enabled": True})["status"] == "lane_suggestions_skipped"
@@ -952,7 +952,7 @@ def test_suggest_lanes_node_records_suggestions():
 
 
 def test_fill_packets_node_fills_and_saves_staged_packet(synthetic_case_copy, monkeypatch):
-    monkeypatch.delenv("TRCR_MODEL", raising=False)
+    monkeypatch.delenv("CRK_MODEL", raising=False)
     # Stage a template packet and a text source it refers to.
     source_id = "SDEMO0001"
     text_file = synthetic_case_copy / "raw" / "sources" / f"{source_id}.txt"
@@ -1174,7 +1174,7 @@ from .llm_nodes import fill_packets_node, readiness_brief_node, suggest_lanes_no
 2. Replace `pipeline_nodes_list` with:
 
 ```python
-def pipeline_nodes_list(runner: TrcrRunner, *, use_interrupt: bool, model_factory=None):
+def pipeline_nodes_list(runner: CrkRunner, *, use_interrupt: bool, model_factory=None):
     return [
         ("infer_lanes", infer_lanes_node),
         ("suggest_lanes", suggest_lanes_node(runner, model_factory)),
@@ -1197,7 +1197,7 @@ def pipeline_nodes_list(runner: TrcrRunner, *, use_interrupt: bool, model_factor
 3. Update the two callers to accept and forward the factory:
 
 ```python
-def run_sequential(state: CaseBuilderState, runner: TrcrRunner, *, model_factory=None) -> dict[str, object]:
+def run_sequential(state: CaseBuilderState, runner: CrkRunner, *, model_factory=None) -> dict[str, object]:
     current: GraphState = state.to_dict()
     for _name, node in pipeline_nodes_list(runner, use_interrupt=False, model_factory=model_factory):
         current.update(node(current))
@@ -1207,7 +1207,7 @@ def run_sequential(state: CaseBuilderState, runner: TrcrRunner, *, model_factory
     return dict(current)
 
 
-def build_case_builder_graph(runner: TrcrRunner, *, checkpointer=None, use_interrupt: bool = False, model_factory=None):
+def build_case_builder_graph(runner: CrkRunner, *, checkpointer=None, use_interrupt: bool = False, model_factory=None):
 ```
 
 (and inside `build_case_builder_graph`, pass `model_factory=model_factory` to `pipeline_nodes_list`).
@@ -1289,7 +1289,7 @@ def _model_factory(llm_enabled: bool):
     return get_chat_model
 ```
 
-2. In `run_case_builder`, after `trcr = TrcrRunner(...)`, add:
+2. In `run_case_builder`, after `crk = CrkRunner(...)`, add:
 
 ```python
     model_factory = _model_factory(state.llm_enabled)
@@ -1298,12 +1298,12 @@ def _model_factory(llm_enabled: bool):
 and forward it in all three call sites:
 
 ```python
-        return run_sequential(state, trcr, model_factory=model_factory)
+        return run_sequential(state, crk, model_factory=model_factory)
 ...
-        graph = build_case_builder_graph(trcr, model_factory=model_factory)
+        graph = build_case_builder_graph(crk, model_factory=model_factory)
 ...
     graph = build_case_builder_graph(
-        trcr, checkpointer=case_checkpointer(state.case_dir), use_interrupt=True, model_factory=model_factory
+        crk, checkpointer=case_checkpointer(state.case_dir), use_interrupt=True, model_factory=model_factory
     )
 ```
 
@@ -1311,7 +1311,7 @@ and forward it in all three call sites:
 
 ```python
     graph = build_case_builder_graph(
-        trcr, checkpointer=case_checkpointer(case_dir), use_interrupt=True, model_factory=_model_factory(llm)
+        crk, checkpointer=case_checkpointer(case_dir), use_interrupt=True, model_factory=_model_factory(llm)
     )
 ```
 
@@ -1320,7 +1320,7 @@ In `src/case_builder/cli.py`:
 1. Add to the `plan` subparser (after `--thread`):
 
 ```python
-    plan.add_argument("--llm", action="store_true", help="Enable LLM agent nodes (TRCR_MODEL, default ollama:llama3.1).")
+    plan.add_argument("--llm", action="store_true", help="Enable LLM agent nodes (CRK_MODEL, default ollama:llama3.1).")
 ```
 
 2. Add to the `resume` subparser (after `--execute`):
@@ -1338,7 +1338,7 @@ In `docs/case-builder-langgraph.md`, replace the "Next Nodes (Phase 3)" section 
 ```markdown
 ## LLM Agent Nodes
 
-Optional nodes activate with `--llm` (plus `--execute`) and the `TRCR_MODEL`
+Optional nodes activate with `--llm` (plus `--execute`) and the `CRK_MODEL`
 environment variable (`provider:model`, default `ollama:llama3.1`; install
 `pip install -e '.[llm]'` plus the provider package):
 
@@ -1388,6 +1388,6 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 
 ## Self-Review Notes
 
-- **Spec coverage (Phase 3 bullets):** `llm/` provider with `TRCR_MODEL` and local default → Task 2; egress tagging in ops.policy → Task 1 (recorded by nodes in Task 5); `draft_extraction` agent with schema-shaped output, unverified status, no invented source IDs, one retry → Task 3 + `fill_packets` node in Task 5; `readiness_audit` LLM brief that flags-never-decides → Task 4 + Task 5; `lane_router` suggestions with rationale, never silently applied → Task 4 + Task 5. Spec's "chunked via the retrieval index when long" is downgraded to bounded head+tail context with the retrieval upgrade documented in the module docstring (Task 3) — deliberate YAGNI deviation, noted here.
+- **Spec coverage (Phase 3 bullets):** `llm/` provider with `CRK_MODEL` and local default → Task 2; egress tagging in ops.policy → Task 1 (recorded by nodes in Task 5); `draft_extraction` agent with schema-shaped output, unverified status, no invented source IDs, one retry → Task 3 + `fill_packets` node in Task 5; `readiness_audit` LLM brief that flags-never-decides → Task 4 + Task 5; `lane_router` suggestions with rationale, never silently applied → Task 4 + Task 5. Spec's "chunked via the retrieval index when long" is downgraded to bounded head+tail context with the retrieval upgrade documented in the module docstring (Task 3) — deliberate YAGNI deviation, noted here.
 - **Type consistency:** the model contract (`.invoke(str)` → `.content`) is identical across Tasks 3, 4, 5; `model_factory` is a zero-arg callable everywhere; skip-status names in Task 5's tests match the node implementations; `get_source_text` signature in Task 1 matches its use in Task 5.
 - **Safety:** filled packets are saved via `ops.extraction.save_packet`, which re-runs the guilt-label lint and staged-write policy from Phase 1 — the agent cannot bypass ops enforcement even if `harden_records` regressed.

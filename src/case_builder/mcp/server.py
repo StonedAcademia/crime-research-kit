@@ -5,7 +5,7 @@ from __future__ import annotations
 from . import prompts, resources, tools_gated, tools_read, tools_write
 from .context import ServerContext, default_context
 
-SERVER_INSTRUCTIONS = """TRCR case-builder MCP server for public-interest true-crime research.
+SERVER_INSTRUCTIONS = """CRK case-builder MCP server for public-interest true-crime research.
 
 Tool tiers: read/query tools are always safe; write tools stage drafts under
 staging/ only; import_extraction is GATED: it writes canonical records and

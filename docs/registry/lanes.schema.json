@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "TRCR lane registry",
+  "title": "CRK lane registry",
   "type": "object",
   "required": ["version", "fallback_source_lanes", "fallback_public_record_lanes", "lanes", "templates"],
   "properties": {

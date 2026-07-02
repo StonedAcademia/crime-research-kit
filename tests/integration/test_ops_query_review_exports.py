@@ -4,14 +4,14 @@ from pathlib import Path
 from case_builder.ops import exports as export_ops
 from case_builder.ops import query as query_ops
 from case_builder.ops import review as review_ops
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT
 
 REPO_ROOT = KIT_ROOT
 
 
-def dry_runner() -> TrcrRunner:
-    return TrcrRunner(repo_root=REPO_ROOT, dry_run=True)
+def dry_runner() -> CrkRunner:
+    return CrkRunner(repo_root=REPO_ROOT, dry_run=True)
 
 
 def add_private_claim(case_dir: Path) -> None:

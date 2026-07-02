@@ -1,4 +1,4 @@
-"""Small helpers for reading and updating TRCR case folders."""
+"""Small helpers for reading and updating CRK case folders."""
 
 from __future__ import annotations
 
@@ -36,7 +36,7 @@ def case_path(case_dir: str | Path) -> Path:
 def ensure_case(case_dir: str | Path) -> Path:
     path = case_path(case_dir)
     if not (path / "case.json").exists():
-        raise CasefileError(f"Not a TRCR case workspace: {path}")
+        raise CasefileError(f"Not a CRK case workspace: {path}")
     return path
 
 

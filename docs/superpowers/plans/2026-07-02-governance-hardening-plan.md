@@ -16,7 +16,7 @@ Spec: `docs/superpowers/specs/2026-07-02-governance-hardening-spec.md` (policies
 - Every new `src/case_builder/` package dir needs `README.md` + `__init__.py` (test_case_builder_structure.py).
 - No new required dependencies: core stays stdlib. New tooling goes in the `governance` optional extra or as fetched pinned binaries.
 - Governance tests must not use the network. Audit-lane targets may; they must degrade with a clear skip message offline.
-- Every CI job step must be expressible as a `make <target>` (which delegates to `moon run trcr:<task>`).
+- Every CI job step must be expressible as a `make <target>` (which delegates to `moon run crk:<task>`).
 - Test files follow existing conventions: `tests/helpers.py` `KIT_ROOT`/`TCR_PATH`, markers auto-applied by directory, `git ls-files` for tracked-file enumeration.
 - Conventional commit messages (`test:`, `feat:`, `chore:`, `ci:`, `docs:`); commit after every green step; end commits with the Claude Code trailer.
 - New policy constants (denylists, allowlists) live at module top of their test file with a comment pointing at the spec.
@@ -88,7 +88,7 @@ def test_make_exposes_audit_lane_targets():
 ```
 
 - [ ] **Step 1.2:** Run `pytest tests/governance/test_tooling_manifest.py -q` — expect FAIL (no manifest).
-- [ ] **Step 1.3:** Create `manifest.json` with real upstream sha256 checksums (fetch release checksums for gitleaks v8.30.1 and lychee 0.23.0 from their GitHub releases — network step, do it now), `governance` extra in pyproject (`pip-audit==2.10.1`, `pip-licenses==5.5.5`, `cyclonedx-bom==7.3.0`, `build>=1.2`), Makefile+moon targets delegating per existing pattern (`moon run trcr:<task>`; moon tasks call `deployment/scripts/tools/venv_exec.py` or the fetcher).
+- [ ] **Step 1.3:** Create `manifest.json` with real upstream sha256 checksums (fetch release checksums for gitleaks v8.30.1 and lychee 0.23.0 from their GitHub releases — network step, do it now), `governance` extra in pyproject (`pip-audit==2.10.1`, `pip-licenses==5.5.5`, `cyclonedx-bom==7.3.0`, `build>=1.2`), Makefile+moon targets delegating per existing pattern (`moon run crk:<task>`; moon tasks call `deployment/scripts/tools/venv_exec.py` or the fetcher).
 - [ ] **Step 1.4:** Write `fetch_governance_tools.py`: reads manifest, downloads each tool for the host platform into `deployment/tooling/bin/`, verifies sha256, `chmod +x`; idempotent; `--offline` flag exits 0 with a notice when binaries already present. Keep < 200 non-comment LOC.
 - [ ] **Step 1.5:** Run the fetcher for real: `python deployment/scripts/tools/fetch_governance_tools.py` — binaries verified present. Then `pip install -e '.[governance]'` into `.venv`. **This is the resource-acquisition gate: do not proceed to later phases until both succeed.**
 - [ ] **Step 1.6:** `.gitleaks.toml`: default ruleset + `[allowlist]` paths for `data/cases/`, `data/exports/` (gitignored anyway), synthetic fixture pseudo-data. Run `make audit-secrets` on the repo — triage any hits (expected: none; fixtures are synthetic).
@@ -258,11 +258,11 @@ def test_network_modules_confined_to_acquisition():
 **Files:**
 - Create: `docs/registry/env_vars.json`, `tests/governance/test_env_and_providers.py`
 
-**Interfaces:** registry entry shape `{"name": "TRCR_MODEL", "purpose": "...", "scope": "runtime|deployment|ci", "default": "...", "prefix_class": "TRCR_"}`; approved prefixes and SaaS denylist verbatim from spec §5.
+**Interfaces:** registry entry shape `{"name": "CRK_MODEL", "purpose": "...", "scope": "runtime|deployment|ci", "default": "...", "prefix_class": "CRK_"}`; approved prefixes and SaaS denylist verbatim from spec §5.
 
 **Steps:**
 
-- [ ] **Step 4.1:** Build `docs/registry/env_vars.json` from the survey's inventory: `TRCR_CASES_ROOT, TRCR_SKILL_ROOT, TRCR_MODEL, TRCR_SEARXNG_URL, TRCR_QDRANT_URL, TRCR_QDRANT_HOST, TRCR_QDRANT_PORT, TRCR_EMBED_MODEL, TRCR_MEM0_LLM_PROVIDER, TRCR_MEM0_LLM_MODEL, TRCR_EMBEDDER_PROVIDER, TRCR_HOOK_BRANCH, TRCR_REPO_ROOT, OLLAMA_HOST, SEARXNG_BASE_URL, HF_HOME, TRANSFORMERS_CACHE` — each with real purpose/default read from the code (`src/case_builder/config.py`, `deployment/`).
+- [ ] **Step 4.1:** Build `docs/registry/env_vars.json` from the survey's inventory: `CRK_CASES_ROOT, CRK_SKILL_ROOT, CRK_MODEL, CRK_SEARXNG_URL, CRK_QDRANT_URL, CRK_QDRANT_HOST, CRK_QDRANT_PORT, CRK_EMBED_MODEL, CRK_MEM0_LLM_PROVIDER, CRK_MEM0_LLM_MODEL, CRK_EMBEDDER_PROVIDER, CRK_HOOK_BRANCH, CRK_REPO_ROOT, OLLAMA_HOST, SEARXNG_BASE_URL, HF_HOME, TRANSFORMERS_CACHE` — each with real purpose/default read from the code (`src/case_builder/config.py`, `deployment/`).
 - [ ] **Step 4.2:** Write the test: AST scan of `src/**/*.py` + `.agents/skills/*/scripts/*.py` for `os.environ[...]`/`os.environ.get(...)`/`os.getenv(...)`; regex scan of `deployment/**` shell/yaml/compose for `${VAR}`/`environment:` keys. Assert (a) every discovered literal key is registered, (b) non-literal env keys are absent, (c) every registered key matches an approved prefix or is an approved singleton, (d) every registered `runtime`-scope key is actually read somewhere (no dead registry entries).
 - [ ] **Step 4.3:** Same file, SaaS denylist test: case-insensitive substring scan of tracked files under `src/`, `deployment/`, `.agents/skills/`, plus `pyproject.toml` for the spec §5 denylist terms; exempt paths: this test file, the spec/plan docs. Prove it fails on a planted `import langsmith`.
 - [ ] **Step 4.4:** Green; commits: `feat(registry): add canonical env var registry`, `test(governance): enforce env var registry and local-only provider policy`
@@ -329,7 +329,7 @@ def test_network_modules_confined_to_acquisition():
 
 - [ ] **Step 9.1:** `ci.yml`: on PR + push to dev/canary/main; single job matrix `python: [3.10, 3.12]` for `make check test-governance test-smoke`, full `make test` on main only; every `run:` line is a make target; ~60 LOC. `audit.yml`: weekly cron + manual + dependency-file paths trigger; jobs: `make audit-secrets audit-deps audit-licenses audit-links`; `continue-on-error: true` for links; network-permitted lane. `release.yml`: on `v*` tags; `make test build-dist sbom audit-secrets audit-deps` + changelog gate (Phase 10 adds it).
 - [ ] **Step 9.2:** `test_ci_parity.py`: parse each workflow YAML with a small stdlib parser (line-regex for `run:` steps is acceptable — no pyyaml dep): assert every `run:` invokes `make <target>` and each target exists in the Makefile; assert `.github` stays within shape budget (belt-and-braces with repo-shape test).
-- [ ] **Step 9.3:** Extend `branch_gate.py` + its unit tests (`tests/` has existing coverage of the gate — extend in place). Verify with `TRCR_HOOK_BRANCH=gov/example python deployment/scripts/checks/branch_gate.py --dry-run` style invocation (add `--dry-run` printing resolved targets if absent).
+- [ ] **Step 9.3:** Extend `branch_gate.py` + its unit tests (`tests/` has existing coverage of the gate — extend in place). Verify with `CRK_HOOK_BRANCH=gov/example python deployment/scripts/checks/branch_gate.py --dry-run` style invocation (add `--dry-run` printing resolved targets if absent).
 - [ ] **Step 9.4:** Push branch, confirm the workflows actually run green on GitHub (this is the one step needing the remote). Commits: `ci: add thin make-calling workflows for ci, audit, release lanes`, `feat(checks): branch-type prefixes in branch gate`, `test(governance): ci/make parity`
 
 ## Phase 10 — Branch `ci/release-readiness` (after 9)

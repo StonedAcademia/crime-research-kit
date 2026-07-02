@@ -1,4 +1,4 @@
 interface:
   display_name: "Media Transcript Intelligence"
   short_description: "Index transcripts, timestamps, and quotes"
-  default_prompt: "Use $media-transcript-intelligence to extract timestamped statements and quote locators from public media into a TRCR case."
+  default_prompt: "Use $media-transcript-intelligence to extract timestamped statements and quote locators from public media into a CRK case."

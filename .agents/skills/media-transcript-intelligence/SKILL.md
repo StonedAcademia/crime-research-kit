@@ -1,6 +1,6 @@
 ---
 name: media-transcript-intelligence
-description: Public-source workflow for analyzing interviews, videos, audio, podcasts, hearings, documentaries, broadcasts, captions, and transcripts, then extracting timestamped speaker claims, quotes, source spans, media artifacts, and provenance notes into a TRCR case file. Use when Codex needs transcript intelligence without treating statements as proven facts.
+description: Public-source workflow for analyzing interviews, videos, audio, podcasts, hearings, documentaries, broadcasts, captions, and transcripts, then extracting timestamped speaker claims, quotes, source spans, media artifacts, and provenance notes into a CRK case file. Use when Codex needs transcript intelligence without treating statements as proven facts.
 ---
 
 # Media Transcript Intelligence
@@ -12,9 +12,9 @@ Lane/template metadata is generated from `docs/registry/`; do not invent new lan
 
 ## Purpose
 
-Use this skill to turn public media and transcripts into source-traceable TRCR packets. A transcript supports what a speaker said; it does not prove the statement is true without corroborating records.
+Use this skill to turn public media and transcripts into source-traceable CRK packets. A transcript supports what a speaker said; it does not prove the statement is true without corroborating records.
 
-This skill extends the TRCR case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, quotes, and public export boundaries.
+This skill extends the CRK case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, quotes, and public export boundaries.
 
 ## Required Inputs
 

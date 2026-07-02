@@ -105,7 +105,7 @@ tasks:
     toolchains: system
 
   docker-build:
-    description: "Build the TRCR app image."
+    description: "Build the CRK app image."
     command: "proto"
     args: ["run", "python", "--", "deployment/scripts/local/compose.py", "build"]
     inputs: ["@group(deployment)"]
@@ -137,7 +137,7 @@ tasks:
     toolchains: system
 
   docker-shell:
-    description: "Open a shell in the TRCR app container."
+    description: "Open a shell in the CRK app container."
     command: "proto"
     args: ["run", "python", "--", "deployment/scripts/local/compose.py", "shell"]
     inputs: ["@group(deployment)"]

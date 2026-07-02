@@ -323,8 +323,8 @@ Run:
 ```bash
 cd <project_root>/
 .venv/bin/python -m pytest tests/test_lanes_json.py tests/test_lanes_registry.py tests/test_case_builder.py -v
-.venv/bin/python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction --help >/tmp/trcr-draft-help.txt
-.venv/bin/python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-public-records --help >/tmp/trcr-plan-help.txt
+.venv/bin/python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction --help >/tmp/crk-draft-help.txt
+.venv/bin/python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-public-records --help >/tmp/crk-plan-help.txt
 ```
 
 - [ ] **Step 4: Commit**
@@ -404,12 +404,12 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 ```markdown
 ## Tool access
 
-Prefer MCP tools when `trcr-mcp` is registered:
+Prefer MCP tools when `crk-mcp` is registered:
 
 | Workflow need | MCP operation | CLI fallback |
 | --- | --- | --- |
 | List/open cases | `list_cases`, `case_info` | inspect `data/cases/<case>/case.json` only when tooling is unavailable |
-| Read records/source text | `get_records`, `get_source_text` | use `trcr-case-builder query-case` or the source files through repo tooling |
+| Read records/source text | `get_records`, `get_source_text` | use `cr-kit query-case` or the source files through repo tooling |
 | Register sources | `ingest_url`, `add_source` | `tcr.py ingest-url`, `tcr.py add-source` |
 | Draft packets | `draft_extraction` | `tcr.py draft-extraction --template <template>` |
 | Save staged packets | `save_extraction_packet` | write reviewed JSON under `staging/extractions/` through repo tooling |
@@ -433,7 +433,7 @@ Adjacent skill update pattern:
 Tests should assert:
 
 - Main skill has a `## Tool access` section.
-- Main skill references `trcr-mcp`, `import_extraction(confirm=true)`, and `docs/lanes.json`.
+- Main skill references `crk-mcp`, `import_extraction(confirm=true)`, and `docs/lanes.json`.
 - Every skill named by a lane in `docs/lanes.json` has either a `template <id>` mention or no template because it is a planning-only skill.
 - No skill doc mentions a `--template <id>` that is absent from the registry.
 - No skill doc mentions `--lane <id>` that is absent from the registry.
@@ -515,8 +515,8 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 cd <project_root>/
 .venv/bin/python -m compileall -q src .agents/skills/truecrime-cult-research/scripts
 .venv/bin/python -m pytest -q
-.venv/bin/python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction --help >/tmp/trcr-draft-help.txt
-.venv/bin/python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-public-records --help >/tmp/trcr-plan-help.txt
+.venv/bin/python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction --help >/tmp/crk-draft-help.txt
+.venv/bin/python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-public-records --help >/tmp/crk-plan-help.txt
 rg -n "\"(legal-court|corporate|education|licensing-professional|media-transcript|property-location|missing-persons|geographical-location|foia-open-records|source-capture|contradiction)\"" src/case_builder .agents/skills/truecrime-cult-research/scripts/tcr.py
 ```
 

@@ -1,6 +1,6 @@
-# TRCR Case Mapping For Corporate Financial Records
+# CRK Case Mapping For Corporate Financial Records
 
-Use existing TRCR ledgers. Keep original filing details in `notes` fields when no dedicated field exists.
+Use existing CRK ledgers. Keep original filing details in `notes` fields when no dedicated field exists.
 
 ## Entities
 

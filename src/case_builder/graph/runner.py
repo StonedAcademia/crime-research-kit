@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from ..models.state import CaseBuilderState
-from ..ops.runner import TrcrRunner
+from ..ops.runner import CrkRunner
 from .gates import export_review_gate_node, packet_review_gate_node
 from .llm_nodes import fill_packets_node, readiness_brief_node, suggest_lanes_node
 from .nodes import infer_lanes_node, init_case_node, plan_public_records_node
@@ -22,7 +22,7 @@ GATE_TARGETS = {"packet_review_gate": "import_and_validate", "export_review_gate
 STOP_STATUSES = {"waiting_for_human_review", "packets_rejected"}
 
 
-def pipeline_nodes_list(runner: TrcrRunner, *, use_interrupt: bool, model_factory=None):
+def pipeline_nodes_list(runner: CrkRunner, *, use_interrupt: bool, model_factory=None):
     return [
         ("infer_lanes", infer_lanes_node),
         ("suggest_lanes", suggest_lanes_node(runner, model_factory)),
@@ -42,7 +42,7 @@ def pipeline_nodes_list(runner: TrcrRunner, *, use_interrupt: bool, model_factor
     ]
 
 
-def run_sequential(state: CaseBuilderState, runner: TrcrRunner, *, model_factory=None) -> dict[str, object]:
+def run_sequential(state: CaseBuilderState, runner: CrkRunner, *, model_factory=None) -> dict[str, object]:
     current: GraphState = state.to_dict()
     for _name, node in pipeline_nodes_list(runner, use_interrupt=False, model_factory=model_factory):
         current.update(node(current))
@@ -52,7 +52,7 @@ def run_sequential(state: CaseBuilderState, runner: TrcrRunner, *, model_factory
     return dict(current)
 
 
-def build_case_builder_graph(runner: TrcrRunner, *, checkpointer=None, use_interrupt: bool = False, model_factory=None):
+def build_case_builder_graph(runner: CrkRunner, *, checkpointer=None, use_interrupt: bool = False, model_factory=None):
     try:
         from langgraph.graph import END, START, StateGraph
     except ImportError as exc:

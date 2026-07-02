@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-TRCR is a local-first research kit for public-interest true crime / cult-origin research. It turns public sources into a source-traceable JSONL case ledger (sources, claims, entities, events, relationships, …) with validation, privacy review, and public-safe exports. `AGENTS.md` holds the persistent project rules and applies here too.
+CRK is a local-first research kit for public-interest true crime / cult-origin research. It turns public sources into a source-traceable JSONL case ledger (sources, claims, entities, events, relationships, …) with validation, privacy review, and public-safe exports. `AGENTS.md` holds the persistent project rules and applies here too.
 
 ## Commands
 
@@ -43,7 +43,7 @@ Self-hosted container stack (SearXNG, Qdrant, Ollama, MCP, …): `make docker-bu
 Two implementation layers share that ledger:
 
 1. **Skill scripts** — `.agents/skills/truecrime-cult-research/scripts/tcr.py` is a large stdlib-only single-file CLI implementing the full ledger contract (init, ingest, extraction staging/import, validate, audits, exports). `docs/guides/skill-api-spec.md` is the machine-facing contract for its operations and payload shapes. Sixteen adjacent skills under `.agents/skills/` (legal-court-records, missing-persons-case, privacy-redaction-audit, …) extend the same case ledger for domain-specific packets.
-2. **`src/case_builder/`** — the agent app. Frontends (CLI in `cli.py`, LangGraph workflow in `graph/`, MCP server in `mcp/`) never touch `tcr.py` or the ledger directly; they go through the typed ops core in `ops/` (`OpResult`, `TrcrRunner`, safety `policy`). `graph/` has a LangGraph build plus a sequential fallback and stops at a human review gate. Optional-dependency subsystems: `parsing/` (Docling/OCRmyPDF), `retrieval/` (LlamaIndex/Qdrant), `memory/` (Mem0/local), `acquisition/` (SearXNG discovery).
+2. **`src/case_builder/`** — the agent app. Frontends (CLI in `cli.py`, LangGraph workflow in `graph/`, MCP server in `mcp/`) never touch `tcr.py` or the ledger directly; they go through the typed ops core in `ops/` (`OpResult`, `CrkRunner`, safety `policy`). `graph/` has a LangGraph build plus a sequential fallback and stops at a human review gate. Optional-dependency subsystems: `parsing/` (Docling/OCRmyPDF), `retrieval/` (LlamaIndex/Qdrant), `memory/` (Mem0/local), `acquisition/` (SearXNG discovery).
 
 Lane/template vocabulary is canonical in `docs/registry/`; the tables in `.agents/skills/truecrime-cult-research/references/lane_registry.md` and `.agents/skills/public-records-router/references/routing_matrix.md` are generated from it, and governance tests catch drift between them. Update the registry shards first.
 

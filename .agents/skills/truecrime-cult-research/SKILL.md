@@ -35,7 +35,7 @@ domain:
 - Use `privacy-redaction-audit` for private-person, minor, address/contact, medical, financial, weak allegation, and public-export redaction blockers.
 - Use `source-independence-audit` for same-source chains, wire copy, press-release repetition, shared provenance, and overstated corroboration.
 
-For mixed cases, create or open the TRCR case first, then use the adjacent skill
+For mixed cases, create or open the CRK case first, then use the adjacent skill
 to produce source-traceable entities, claims, events, relationships, artifacts,
 and notes back into the same case. Do not infer misconduct, membership,
 influence, or hidden control from proximity, co-attendance, shared boards, or
@@ -43,7 +43,7 @@ financial structure.
 
 ## Tool access
 
-Prefer MCP tools when `trcr-mcp` is registered:
+Prefer MCP tools when `crk-mcp` is registered:
 
 | Workflow need | MCP operation | CLI fallback |
 | --- | --- | --- |

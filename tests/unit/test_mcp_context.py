@@ -9,7 +9,7 @@ from case_builder.mcp.context import (
     list_case_slugs,
     resolve_case,
 )
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT
 
 
@@ -17,7 +17,7 @@ def make_ctx(cases_root: Path) -> ServerContext:
     return ServerContext(
         repo_root=KIT_ROOT,
         cases_root=cases_root,
-        runner=TrcrRunner(repo_root=KIT_ROOT, dry_run=True),
+        runner=CrkRunner(repo_root=KIT_ROOT, dry_run=True),
     )
 
 

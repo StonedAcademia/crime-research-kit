@@ -1,6 +1,6 @@
 ---
 name: identity-resolution
-description: Public-record workflow for reviewing aliases, duplicate entities, ambiguous people or organizations, possible same-as/not-same-as matches, and entity merge candidates in a TRCR case file. Use when Codex needs to resolve identity evidence without auto-merging records, doxxing private people, or treating name matches as proof.
+description: Public-record workflow for reviewing aliases, duplicate entities, ambiguous people or organizations, possible same-as/not-same-as matches, and entity merge candidates in a CRK case file. Use when Codex needs to resolve identity evidence without auto-merging records, doxxing private people, or treating name matches as proof.
 ---
 
 # Identity Resolution
@@ -12,9 +12,9 @@ Lane/template metadata is generated from `docs/registry/`; do not invent new lan
 
 ## Purpose
 
-Use this skill to review whether multiple TRCR entity records, names, aliases, or public-record references may describe the same person or organization. The output is a source-backed review packet, not an automatic merge.
+Use this skill to review whether multiple CRK entity records, names, aliases, or public-record references may describe the same person or organization. The output is a source-backed review packet, not an automatic merge.
 
-This skill extends the TRCR case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries.
+This skill extends the CRK case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries.
 
 ## Required Inputs
 
@@ -37,7 +37,7 @@ If the identity is ambiguous, keep the entity `status: candidate` or the claim `
 
 ## Commands
 
-Use the wrapper-local TRCR tool path and prefix case paths with `tc-c-kit/`:
+Use the wrapper-local CRK tool path and prefix case paths with `tc-c-kit/`:
 
 ```bash
 python .agents/skills/truecrime-cult-research/scripts/tcr.py resolve-identities tc-c-kit/data/cases/<case_slug>

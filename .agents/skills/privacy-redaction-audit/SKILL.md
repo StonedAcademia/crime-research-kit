@@ -1,6 +1,6 @@
 ---
 name: privacy-redaction-audit
-description: Privacy and redaction workflow for TRCR cases. Use when Codex needs to detect private-person details, minors, addresses, contact information, medical details, financial identifiers, weak allegations, unsupported public claims, open redactions, and public-export blockers before sharing a case.
+description: Privacy and redaction workflow for CRK cases. Use when Codex needs to detect private-person details, minors, addresses, contact information, medical details, financial identifiers, weak allegations, unsupported public claims, open redactions, and public-export blockers before sharing a case.
 ---
 
 # Privacy Redaction Audit

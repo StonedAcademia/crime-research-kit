@@ -2,7 +2,7 @@ from pathlib import Path
 
 from case_builder.mcp import tools_gated, tools_write
 from case_builder.mcp.context import ServerContext
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT
 
 
@@ -10,7 +10,7 @@ def make_ctx(cases_root: Path) -> ServerContext:
     return ServerContext(
         repo_root=KIT_ROOT,
         cases_root=cases_root,
-        runner=TrcrRunner(repo_root=KIT_ROOT, dry_run=True),
+        runner=CrkRunner(repo_root=KIT_ROOT, dry_run=True),
     )
 
 

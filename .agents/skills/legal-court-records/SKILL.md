@@ -1,6 +1,6 @@
 ---
 name: legal-court-records
-description: Public-record workflow for researching court cases, dockets, filings, orders, opinions, judgments, hearings, allegations, denials, court findings, parties, attorneys, judges, and litigation posture, then adding source-traceable legal records to a TRCR case file. Use when Codex needs to pull or organize public legal/court records without overstating allegations or exposing sealed/private details.
+description: Public-record workflow for researching court cases, dockets, filings, orders, opinions, judgments, hearings, allegations, denials, court findings, parties, attorneys, judges, and litigation posture, then adding source-traceable legal records to a CRK case file. Use when Codex needs to pull or organize public legal/court records without overstating allegations or exposing sealed/private details.
 ---
 
 # Legal Court Records
@@ -12,9 +12,9 @@ Lane/template metadata is generated from `docs/registry/`; do not invent new lan
 
 ## Purpose
 
-Use this skill to build a public, source-traceable legal record packet for a TRCR case. Treat court records as evidence for what the record says and when it said it; do not convert allegations into findings or procedural posture into guilt, liability, motive, or credibility.
+Use this skill to build a public, source-traceable legal record packet for a CRK case. Treat court records as evidence for what the record says and when it said it; do not convert allegations into findings or procedural posture into guilt, liability, motive, or credibility.
 
-This skill extends the TRCR case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries.
+This skill extends the CRK case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries.
 
 ## Required Inputs
 
@@ -34,11 +34,11 @@ If the case identity is ambiguous, record candidates and mark claims `unverified
 4. **Extract legal posture precisely.** Use [case_mapping.md](references/case_mapping.md). Separate allegations, denials, findings, orders, judgments, and appeals with `assertion_type`.
 5. **Add parties and roles.** Add named public-role people and organizations only when the public record identifies them.
 6. **Run contradiction checks.** Compare allegations, denials, findings, amendments, reversals, appeals, and later corrections.
-7. **Validate and audit.** Run TRCR validation, contradiction audit, and public-export audit before using legal material in public outputs.
+7. **Validate and audit.** Run CRK validation, contradiction audit, and public-export audit before using legal material in public outputs.
 
 ## Commands
 
-Use the wrapper-local TRCR tool path and prefix case paths with `tc-c-kit/`:
+Use the wrapper-local CRK tool path and prefix case paths with `tc-c-kit/`:
 
 ```bash
 python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source tc-c-kit/data/cases/<case_slug> \

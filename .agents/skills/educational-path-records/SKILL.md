@@ -1,6 +1,6 @@
 ---
 name: educational-path-records
-description: Public-record workflow for researching an individual's education history, schools attended, degrees, training, credentials, academic appointments, alumni claims, student-era events, and institution affiliations, then adding source-traceable entities, claims, relationships, events, artifacts, and sources to a TRCR case file. Use when Codex needs to pull educational paths from public records, official biographies, court records, archival sources, professional licensing records, academic publications, or reputable reporting while avoiding private education records, doxxing, and unsupported credential claims.
+description: Public-record workflow for researching an individual's education history, schools attended, degrees, training, credentials, academic appointments, alumni claims, student-era events, and institution affiliations, then adding source-traceable entities, claims, relationships, events, artifacts, and sources to a CRK case file. Use when Codex needs to pull educational paths from public records, official biographies, court records, archival sources, professional licensing records, academic publications, or reputable reporting while avoiding private education records, doxxing, and unsupported credential claims.
 ---
 
 # Educational Path Records
@@ -12,9 +12,9 @@ Lane/template metadata is generated from `docs/registry/`; do not invent new lan
 
 ## Purpose
 
-Use this skill to build a public, source-traceable educational path packet for an individual in a TRCR case. Capture what sources directly state about education, training, degrees, credentials, institutions, academic roles, and student-era events. Do not infer ideology, affiliation, misconduct, class rank, attendance, or degree completion from proximity or vague biographical wording.
+Use this skill to build a public, source-traceable educational path packet for an individual in a CRK case. Capture what sources directly state about education, training, degrees, credentials, institutions, academic roles, and student-era events. Do not infer ideology, affiliation, misconduct, class rank, attendance, or degree completion from proximity or vague biographical wording.
 
-This skill extends the TRCR case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, claims, and public export boundaries.
+This skill extends the CRK case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, claims, and public export boundaries.
 
 ## Required Inputs
 
@@ -42,11 +42,11 @@ If the person identity is ambiguous, create candidate entities and mark claims `
 4. **Map to case ledgers.** Use [case_mapping.md](references/case_mapping.md) for entities, claims, events, relationships, and artifacts.
 5. **Check contradictions and chronology.** Compare official biographies, resumes, court filings, institutional pages, publication bios, licensing pages, and reporting. Preserve stale/changed claims in notes.
 6. **Run privacy review.** Mark private-person/minor details `public_export: false`; redact addresses and non-public classmates.
-7. **Validate the case.** Run TRCR validation and report commands after import.
+7. **Validate the case.** Run CRK validation and report commands after import.
 
 ## Commands
 
-Use the wrapper-local TRCR tool path and prefix case paths with `tc-c-kit/`:
+Use the wrapper-local CRK tool path and prefix case paths with `tc-c-kit/`:
 
 ```bash
 python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source tc-c-kit/data/cases/<case_slug> \

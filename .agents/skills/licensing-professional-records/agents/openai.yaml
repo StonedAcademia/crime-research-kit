@@ -1,4 +1,4 @@
 interface:
   display_name: "Licensing Professional Records"
   short_description: "Trace licenses and professional discipline"
-  default_prompt: "Use $licensing-professional-records to research public licenses, credentials, and disciplinary records into a TRCR case."
+  default_prompt: "Use $licensing-professional-records to research public licenses, credentials, and disciplinary records into a CRK case."

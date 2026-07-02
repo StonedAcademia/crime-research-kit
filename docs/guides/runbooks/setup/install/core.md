@@ -34,17 +34,17 @@ repository root:
 
 ```bash
 proto install
-moon run trcr:install-dev
+moon run crk:install-dev
 ```
 
-`moon run trcr:install-dev` uses `deployment/scripts/tools/install.py` to create
+`moon run crk:install-dev` uses `deployment/scripts/tools/install.py` to create
 `.venv`, upgrade pip, and install the package in editable mode with the `dev`
 extra.
 
 For a minimum runtime install without dev dependencies:
 
 ```bash
-moon run trcr:install
+moon run crk:install
 ```
 
 The Makefile remains as a compatibility wrapper:
@@ -99,13 +99,13 @@ retrieval, memory, LangGraph, and MCP.
 
 ```bash
 cp deployment/.env.example deployment/.env
-moon run trcr:docker-build
-moon run trcr:docker-up
-moon run trcr:docker-pull-model
-moon run trcr:docker-smoke
+moon run crk:docker-build
+moon run crk:docker-up
+moon run crk:docker-pull-model
+moon run crk:docker-smoke
 ```
 
 Codex and Claude Code can operate the self-hosted stack through CLI or MCP.
-They are agent hosts, not TRCR runtime model providers. No LangSmith, managed
+They are agent hosts, not CRK runtime model providers. No LangSmith, managed
 vector store, or managed model-provider configuration is part of this
 deployment. See `deployment/README.md`.

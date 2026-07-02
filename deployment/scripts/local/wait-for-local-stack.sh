@@ -17,11 +17,11 @@ wait_for_url() {
   return 1
 }
 
-QDRANT_URL="${TRCR_QDRANT_URL:-http://qdrant:6333}"
-SEARXNG_URL="${TRCR_SEARXNG_URL:-http://searxng:8080}"
+QDRANT_URL="${CRK_QDRANT_URL:-http://qdrant:6333}"
+SEARXNG_URL="${CRK_SEARXNG_URL:-http://searxng:8080}"
 OLLAMA_URL="${OLLAMA_HOST:-http://ollama:11434}"
 
 wait_for_url "Qdrant" "$QDRANT_URL/readyz"
-wait_for_url "SearXNG" "$SEARXNG_URL/search?q=trcr&format=json"
+wait_for_url "SearXNG" "$SEARXNG_URL/search?q=crk&format=json"
 wait_for_url "Ollama" "$OLLAMA_URL/api/tags"
 

@@ -5,7 +5,7 @@ Scope: `tc-c-kit/` deployment assets, packaging, runtime config, and docs
 
 ## Goal
 
-Create a self-hosted container deployment for the full TRCR kit. The deployment
+Create a self-hosted container deployment for the full CRK kit. The deployment
 must run the app, source discovery, vector retrieval, local LLM, local memory,
 and document OCR without managed SaaS or hosted runtime services.
 
@@ -16,16 +16,16 @@ container deployment they are mandatory:
 - Valkey for SearXNG state/limiter support.
 - Qdrant for evidence retrieval and Mem0 vector storage.
 - Ollama for all LLM calls.
-- Tesseract and Ghostscript in the TRCR app image for OCRmyPDF.
+- Tesseract and Ghostscript in the CRK app image for OCRmyPDF.
 - Python runtime extras for agentic, LLM, MCP, web-local, documents,
   retrieval, and memory-local surfaces.
 
 LangSmith and managed SaaS model-provider configuration are out of scope and
 should be removed from deployment docs and runtime guidance. Codex and Claude
 Code remain valid operator frontends: they may drive the self-hosted stack
-through the CLI or MCP server, but they are not TRCR app runtime model providers
+through the CLI or MCP server, but they are not CRK app runtime model providers
 unless they expose a self-hosted, non-managed local model API in the future. The
-default TRCR runtime model provider remains local Ollama. The deployment may
+default CRK runtime model provider remains local Ollama. The deployment may
 download container images, Python packages, and model files during install or
 bootstrap, but the running stack must not depend on managed observability,
 managed vector stores, or managed model APIs.
@@ -39,7 +39,7 @@ managed vector stores, or managed model APIs.
   to operate the local CLI/MCP surface.
 - No public exposure by default.
 - No automatic crawling beyond explicit SearXNG discovery commands.
-- No canonical-record writes outside the existing TRCR import and validation
+- No canonical-record writes outside the existing CRK import and validation
   flow.
 
 ## External References
@@ -62,11 +62,11 @@ managed vector stores, or managed model APIs.
 
 | Question | Decision |
 | --- | --- |
-| Runtime service shape | One Compose stack starts every local service by default: `trcr`, `searxng`, `searxng-valkey`, `qdrant`, and `ollama`. |
+| Runtime service shape | One Compose stack starts every local service by default: `crk`, `searxng`, `searxng-valkey`, `qdrant`, and `ollama`. |
 | App image | A single full-featured app image installs all runtime extras and OCR system packages. |
 | Dev dependencies | `dev` remains a test/build extra, not part of the production runtime image. |
 | Self-hosted model providers | `ollama:<model>` is supported now. Future providers must expose self-hosted local APIs, such as an OpenAI-compatible local server; managed APIs are not allowed in this deployment. |
-| Agent hosts | Codex and Claude Code are supported as user-facing operators over CLI/MCP; they are not TRCR runtime model providers unless backed by a self-hosted local API. |
+| Agent hosts | Codex and Claude Code are supported as user-facing operators over CLI/MCP; they are not CRK runtime model providers unless backed by a self-hosted local API. |
 | Observability | Local logs and JSONL research actions only. Remove LangSmith docs/config from this deployment surface. |
 | Public ports | Bind service ports to `127.0.0.1` by default. |
 | Persistence | Bind mount cases for host visibility; named volumes for Qdrant, Ollama models, SearXNG config/cache, and model caches. |
@@ -79,11 +79,11 @@ managed vector stores, or managed model APIs.
               host: docker compose
 ┌─────────────────────────────────────────────────────────┐
 │                                                         │
-│  docker compose run trcr ...                            │
-│  docker compose exec trcr trcr-case-builder ...         │
+│  docker compose run crk ...                            │
+│  docker compose exec crk cr-kit ...         │
 │                                                         │
 │  ┌────────────┐        ┌──────────────┐                 │
-│  │ trcr app   │───────▶│ searxng:8080 │────▶ public web │
+│  │ crk app   │───────▶│ searxng:8080 │────▶ public web │
 │  │ full image │        └──────┬───────┘                 │
 │  │            │               ▼                         │
 │  │            │        ┌──────────────┐                 │
@@ -101,9 +101,9 @@ managed vector stores, or managed model APIs.
 └─────────────────────────────────────────────────────────┘
 ```
 
-The `trcr` service is primarily a durable toolbox container for CLI and MCP
+The `crk` service is primarily a durable toolbox container for CLI and MCP
 workflows. It should keep running so operators can use `docker compose exec`.
-One-off commands should also work through `docker compose run --rm trcr ...`.
+One-off commands should also work through `docker compose run --rm crk ...`.
 
 ## Required Files
 
@@ -140,10 +140,10 @@ The app image must:
 - Install the package with all runtime extras:
   `.[agentic,llm,mcp,web-local,documents,retrieval,memory-local]`.
 - Set local defaults:
-  - `TRCR_CASES_ROOT=/app/data/cases`
-  - `TRCR_MODEL=ollama:llama3.1`
-  - `TRCR_SEARXNG_URL=http://searxng:8080`
-  - `TRCR_QDRANT_URL=http://qdrant:6333`
+  - `CRK_CASES_ROOT=/app/data/cases`
+  - `CRK_MODEL=ollama:llama3.1`
+  - `CRK_SEARXNG_URL=http://searxng:8080`
+  - `CRK_QDRANT_URL=http://qdrant:6333`
   - `OLLAMA_HOST=http://ollama:11434`
   - `HF_HOME=/app/.cache/huggingface`
   - `TRANSFORMERS_CACHE=/app/.cache/huggingface`
@@ -157,7 +157,7 @@ The app image must:
 
 | Service | Image/build | Purpose | Persistence |
 | --- | --- | --- | --- |
-| `trcr` | local build from `deployment/Dockerfile` | CLI/MCP toolbox and case-builder runtime | bind `../data/cases`, `../data/exports`; cache volumes |
+| `crk` | local build from `deployment/Dockerfile` | CLI/MCP toolbox and case-builder runtime | bind `../data/cases`, `../data/exports`; cache volumes |
 | `searxng` | official SearXNG image | lead-only search API at `/search?format=json` | `searxng-config`, `searxng-cache` |
 | `searxng-valkey` | Valkey image | SearXNG limiter/cache backing service | named volume if needed |
 | `qdrant` | `qdrant/qdrant` | vector store for retrieval and Mem0 | `qdrant-storage` |
@@ -180,14 +180,14 @@ CLI, MCP, graph nodes, and docs:
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `TRCR_CASES_ROOT` | `/app/data/cases` | Canonical case workspace root inside the container. |
-| `TRCR_MODEL` | `ollama:llama3.1` | Local model spec. Only `ollama` is accepted. |
-| `TRCR_SEARXNG_URL` | `http://searxng:8080` | Default discovery endpoint. |
-| `TRCR_QDRANT_URL` | `http://qdrant:6333` | Default retrieval endpoint. |
-| `TRCR_QDRANT_HOST` | `qdrant` | Default Mem0 Qdrant host. |
-| `TRCR_QDRANT_PORT` | `6333` | Default Mem0 Qdrant port. |
+| `CRK_CASES_ROOT` | `/app/data/cases` | Canonical case workspace root inside the container. |
+| `CRK_MODEL` | `ollama:llama3.1` | Local model spec. Only `ollama` is accepted. |
+| `CRK_SEARXNG_URL` | `http://searxng:8080` | Default discovery endpoint. |
+| `CRK_QDRANT_URL` | `http://qdrant:6333` | Default retrieval endpoint. |
+| `CRK_QDRANT_HOST` | `qdrant` | Default Mem0 Qdrant host. |
+| `CRK_QDRANT_PORT` | `6333` | Default Mem0 Qdrant port. |
 | `OLLAMA_HOST` | `http://ollama:11434` | Ollama HTTP endpoint for LangChain/Ollama clients. |
-| `TRCR_EMBED_MODEL` | `BAAI/bge-small-en-v1.5` | Local embedding model name. |
+| `CRK_EMBED_MODEL` | `BAAI/bge-small-en-v1.5` | Local embedding model name. |
 
 Any current code path with hard-coded `localhost` defaults should remain usable
 outside containers, but container docs and wrappers should pass the service
@@ -250,8 +250,8 @@ make check
 
 The smoke test should verify:
 
-- `trcr-case-builder` imports and runs.
-- `trcr-mcp` imports or prints help without importing hosted services.
+- `cr-kit` imports and runs.
+- `crk-mcp` imports or prints help without importing hosted services.
 - OCR system binaries exist: `tesseract`, `gs`, `ocrmypdf`.
 - Qdrant responds on the Compose hostname.
 - SearXNG returns JSON from a benign local discovery query.

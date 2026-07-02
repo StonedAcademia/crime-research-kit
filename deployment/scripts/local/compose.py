@@ -16,13 +16,13 @@ ENV_FILE = ROOT / "deployment" / ".env"
 
 COMMANDS: dict[str, list[str]] = {
     "config": ["config"],
-    "build": ["build", "trcr"],
+    "build": ["build", "crk"],
     "up": ["up", "-d"],
     "down": ["down"],
     "logs": ["logs", "-f"],
-    "shell": ["exec", "trcr", "/bin/bash"],
-    "pull-model": ["exec", "trcr", "deployment/scripts/local/bootstrap-ollama.sh"],
-    "smoke": ["exec", "trcr", "deployment/scripts/checks/smoke/smoke-test.sh"],
+    "shell": ["exec", "crk", "/bin/bash"],
+    "pull-model": ["exec", "crk", "deployment/scripts/local/bootstrap-ollama.sh"],
+    "smoke": ["exec", "crk", "deployment/scripts/checks/smoke/smoke-test.sh"],
 }
 
 
@@ -40,7 +40,7 @@ def main() -> int:
     args = parser.parse_args()
 
     env = os.environ.copy()
-    env.setdefault("TRCR_REPO_ROOT", str(ROOT))
+    env.setdefault("CRK_REPO_ROOT", str(ROOT))
     command = [*compose_prefix(), *COMMANDS[args.operation]]
     print("+", " ".join(command))
     return subprocess.run(command, cwd=ROOT, env=env).returncode

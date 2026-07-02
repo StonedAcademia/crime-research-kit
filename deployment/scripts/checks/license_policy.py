@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Apply the TRCR dependency license policy to pip-licenses JSON output."""
+"""Apply the CRK dependency license policy to pip-licenses JSON output."""
 
 from __future__ import annotations
 

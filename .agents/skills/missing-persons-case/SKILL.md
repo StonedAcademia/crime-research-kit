@@ -1,6 +1,6 @@
 ---
 name: missing-persons-case
-description: "TRCR workflow for identifying source-supported missing-person candidates by name, alias, location, date range, last-known event, related people, vehicles, organizations, and public record context, then adding conservative leads, claims, events, places, relationships, source spans, and privacy flags to a case file. Use when Codex needs to compare a subject or event against public missing-person records, bulletins, reporting, NamUs/NCMEC-style listings, law-enforcement releases, unidentified-person records, or found/recovered status updates without doxxing or vigilante contact."
+description: "CRK workflow for identifying source-supported missing-person candidates by name, alias, location, date range, last-known event, related people, vehicles, organizations, and public record context, then adding conservative leads, claims, events, places, relationships, source spans, and privacy flags to a case file. Use when Codex needs to compare a subject or event against public missing-person records, bulletins, reporting, NamUs/NCMEC-style listings, law-enforcement releases, unidentified-person records, or found/recovered status updates without doxxing or vigilante contact."
 ---
 
 # Missing Persons Case
@@ -12,9 +12,9 @@ Lane/template metadata is generated from `docs/registry/`; do not invent new lan
 
 ## Purpose
 
-Use this skill to identify and structure missing-person candidates that may be relevant to a TRCR case. A candidate match is a lead until public sources support identity, date, location, and status. Do not contact relatives, witnesses, law enforcement, schools, employers, or private people.
+Use this skill to identify and structure missing-person candidates that may be relevant to a CRK case. A candidate match is a lead until public sources support identity, date, location, and status. Do not contact relatives, witnesses, law enforcement, schools, employers, or private people.
 
-This skill extends the TRCR case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries.
+This skill extends the CRK case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries.
 
 ## Required Inputs
 
@@ -40,7 +40,7 @@ If the subject is a minor, a living private person, or an ambiguous identity, ke
 
 ## Commands
 
-Use the wrapper-local TRCR tool path and prefix case paths with `tc-c-kit/`:
+Use the wrapper-local CRK tool path and prefix case paths with `tc-c-kit/`:
 
 ```bash
 python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-public-records tc-c-kit/data/cases/<case_slug> \

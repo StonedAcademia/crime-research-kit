@@ -123,7 +123,7 @@ export function addLedgerRelations({
         claimEvidenceIdMap.get(supported),
         "supports",
         [claimEvidenceIdMap.get(claim.claim_id), claimEvidenceIdMap.get(supported)],
-        "TRCR claim support edge.",
+        "CRK claim support edge.",
       );
     }
     for (const contradicted of claim.contradicts || []) {
@@ -133,7 +133,7 @@ export function addLedgerRelations({
         claimEvidenceIdMap.get(contradicted),
         "contradicts",
         [claimEvidenceIdMap.get(claim.claim_id), claimEvidenceIdMap.get(contradicted)],
-        "TRCR claim contradiction edge.",
+        "CRK claim contradiction edge.",
       );
     }
   }

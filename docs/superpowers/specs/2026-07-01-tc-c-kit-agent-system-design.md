@@ -13,9 +13,9 @@ three consumers over one shared, safety-enforcing operations core:
 - **Batch/autonomous**: the `case_builder` LangGraph app completes the full
   case-building loop with durable state, resumable human review gates, and
   bounded LLM agent nodes.
-- **CLI**: the existing `trcr-case-builder` CLI, re-pointed at the same core.
+- **CLI**: the existing `cr-kit` CLI, re-pointed at the same core.
 
-The TRCR case folder (`data/cases/<slug>/records/*.jsonl`) remains the
+The CRK case folder (`data/cases/<slug>/records/*.jsonl`) remains the
 canonical ledger. Nothing in this design changes the data model or the safety
 contract in `docs/skill-api-spec.md`; it moves that contract into code.
 
@@ -48,8 +48,8 @@ contract in `docs/skill-api-spec.md`; it moves that contract into code.
 
 Every case operation is a typed Python function returning a shared `OpResult`
 (`ok: bool`, `data`, `errors`, `warnings`, plus the audit-ready command
-record). The existing `tools/trcr_cli.py` subprocess runner survives as the
-low-level executor inside ops; `TrcrToolResult` folds into `OpResult`. Over
+record). The existing `tools/crk_cli.py` subprocess runner survives as the
+low-level executor inside ops; `CrkToolResult` folds into `OpResult`. Over
 time, subprocess calls may be replaced with direct imports without changing
 the ops API.
 
@@ -70,7 +70,7 @@ Modules (each under the 200 non-comment LOC ceiling, each package with a
 
 - **Write classification**: ops may write freely to `staging/` and `exports/`;
   canonical `records/*.jsonl` writes happen only through `import_extraction`
-  and existing TRCR commands, and `import_extraction` requires `confirm=True`.
+  and existing CRK commands, and `import_extraction` requires `confirm=True`.
 - **Privacy filtering**: `public_export: false` records are excluded from any
   read or export surface unless `include_private` is explicitly passed; when
   it is, the result notes what was included.
@@ -107,7 +107,7 @@ infer_lanes → init_case → plan_public_records
   `data/cases/<case>/.runs/checkpoints.db`. Runs survive restarts.
 - **Real review gates**: `packet_review_gate` and `export_review_gate` use
   LangGraph `interrupt()`. Resume via
-  `trcr-case-builder resume <case> --thread <id> --approve packet:<SOURCE_ID>`
+  `cr-kit resume <case> --thread <id> --approve packet:<SOURCE_ID>`
   (and `--reject` with a reason, which routes back to drafting or ends the
   branch). The sequential fallback runner keeps working for dependency-free
   dry runs by stopping at gates exactly as today.
@@ -117,7 +117,7 @@ infer_lanes → init_case → plan_public_records
 
 ### Component 3: LLM provider layer — `case_builder/llm/`
 
-A single module exposing `get_chat_model()` driven by `TRCR_MODEL` config
+A single module exposing `get_chat_model()` driven by `CRK_MODEL` config
 (env var or config file): `ollama:<model>` (default). The runtime path rejects
 managed model-provider specs; future additions must expose self-hosted local
 APIs. LangGraph nodes and any future callers share this provider layer.
@@ -142,7 +142,7 @@ free-roaming agents:
 ### Component 5: MCP server — `case_builder/mcp/`
 
 Built on the official Python MCP SDK (`FastMCP`), stdio transport, launched
-via a new `trcr-mcp` console script behind a `[mcp]` optional-dependency
+via a new `crk-mcp` console script behind a `[mcp]` optional-dependency
 extra. Tools are thin wrappers over ops; names mirror the ops API.
 
 **Read/query tools (always available)**: `case_info`, `list_cases`,
@@ -158,9 +158,9 @@ unless `confirm=true`, and its tool description instructs the model to obtain
 explicit user approval first. `export_*` tools accept `include_private` but
 default to public-safe and echo what was filtered.
 
-**Resources** (read-only case context): `trcr://cases/<slug>/case.json`,
-`trcr://cases/<slug>/records/<type>`,
-`trcr://cases/<slug>/staging/extractions/<id>`, plus the controlled
+**Resources** (read-only case context): `crk://cases/<slug>/case.json`,
+`crk://cases/<slug>/records/<type>`,
+`crk://cases/<slug>/staging/extractions/<id>`, plus the controlled
 vocabularies and topic extraction templates from the skill references.
 
 **Prompts**: `start_case`, `process_source`, `review_packet`,
@@ -228,7 +228,7 @@ interactive value is wanted sooner.
 3. **LLM layer + agent nodes** — `llm/` provider, `draft_extraction` agent,
    `readiness_audit` brief, `lane_router` suggestions.
 4. **MCP server** — tools/resources/prompts over ops, gating tests,
-   `trcr-mcp` entry point, `[mcp]` extra.
+   `crk-mcp` entry point, `[mcp]` extra.
 5. **Skills + vocabulary consolidation** — `docs/lanes.json`, skill-doc
    updates, MCP registration docs for Claude Code/Codex.
 

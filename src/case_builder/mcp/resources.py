@@ -1,4 +1,4 @@
-"""Read-only trcr:// resources for cheap case context."""
+"""Read-only crk:// resources for cheap case context."""
 
 from __future__ import annotations
 
@@ -41,22 +41,22 @@ def reference_resource(ctx: ServerContext, name: str) -> str:
 
 
 def register(mcp: Any, ctx: ServerContext) -> None:
-    @mcp.resource("trcr://cases/{case}/case.json")
+    @mcp.resource("crk://cases/{case}/case.json")
     def case_json(case: str) -> str:
         """Case metadata JSON."""
         return case_json_resource(ctx, case)
 
-    @mcp.resource("trcr://cases/{case}/records/{record_type}")
+    @mcp.resource("crk://cases/{case}/records/{record_type}")
     def records(case: str, record_type: str) -> str:
         """Public-safe JSONL rows for one record type."""
         return records_resource(ctx, case, record_type)
 
-    @mcp.resource("trcr://cases/{case}/staging/extractions/{name}")
+    @mcp.resource("crk://cases/{case}/staging/extractions/{name}")
     def packet(case: str, name: str) -> str:
         """A staged extraction packet awaiting review."""
         return packet_resource(ctx, case, name)
 
-    @mcp.resource("trcr://references/{name}")
+    @mcp.resource("crk://references/{name}")
     def reference(name: str) -> str:
         """Skill reference documents."""
         return reference_resource(ctx, name)

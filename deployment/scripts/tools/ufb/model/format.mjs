@@ -78,14 +78,14 @@ export function firstSourceFor(record, sourceById) {
 
 export function evidenceBody(label, recordType, record, extra = "") {
   const details = extra ? `\n\n${extra}` : "";
-  return `${label}\n\nTRCR record type: ${recordType}${details}`;
+  return `${label}\n\nCRK record type: ${recordType}${details}`;
 }
 
 export function extractionProvenance(exportedAt, caseLabel) {
   return {
     source: "local-extraction",
     mode: "advanced",
-    model: "trcr-ledger",
+    model: "crk-ledger",
     sourceLabel: caseLabel,
     extractedAt: exportedAt,
   };

@@ -23,7 +23,7 @@ A structured case workspace with:
 
 ## Skill routing
 
-Use TRCR for the case ledger and public-output guardrails. Route domain-heavy
+Use CRK for the case ledger and public-output guardrails. Route domain-heavy
 packets to adjacent skills:
 
 - `corporate-financial-records`: corporate, nonprofit, bank, shell-company, bankruptcy, investment, ownership, board/officer, transaction, or financial-record research.

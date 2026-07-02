@@ -50,7 +50,7 @@ Validation:
 ```bash
 test -f docs/registry/lanes.json
 test ! -f docs/lanes.json
-python -m json.tool docs/registry/lanes.json >/tmp/trcr-lanes.json
+python -m json.tool docs/registry/lanes.json >/tmp/crk-lanes.json
 ```
 
 ### Task 2: Update runtime loaders
@@ -114,9 +114,9 @@ are intentionally updated.
 ### Task 5: Run the normal gates
 
 ```bash
-moon run trcr:check
-moon run trcr:test-governance
-moon run trcr:test-unit
+moon run crk:check
+moon run crk:test-governance
+moon run crk:test-unit
 git diff --check
 ```
 

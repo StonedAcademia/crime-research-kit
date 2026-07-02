@@ -1,6 +1,6 @@
 ---
 name: narrative-readiness-review
-description: Public-output readiness workflow for TRCR scripts, reports, episodes, timelines, Manim exports, and evidence boards. Use when Codex needs to check claim support, source spans, contradictions, source independence, privacy review, caveats, and unsupported narrative points before public use.
+description: Public-output readiness workflow for CRK scripts, reports, episodes, timelines, Manim exports, and evidence boards. Use when Codex needs to check claim support, source spans, contradictions, source independence, privacy review, caveats, and unsupported narrative points before public use.
 ---
 
 # Narrative Readiness Review
@@ -12,7 +12,7 @@ Lane/template metadata is generated from `docs/registry/`; do not invent new lan
 
 ## Purpose
 
-Use this skill before turning a TRCR case ledger into a public script, report, timeline, evidence board, or bundle. The review identifies blockers and caveats; it does not rewrite claims automatically.
+Use this skill before turning a CRK case ledger into a public script, report, timeline, evidence board, or bundle. The review identifies blockers and caveats; it does not rewrite claims automatically.
 
 ## Workflow
 

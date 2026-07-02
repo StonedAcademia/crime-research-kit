@@ -52,4 +52,4 @@ def _provider(case_dir: str | Path, *, provider: str, provider_options: dict[str
 def _action_text(action: dict[str, Any]) -> str:
     details = action.get("details") or {}
     compact = json.dumps(details, ensure_ascii=False, sort_keys=True)
-    return f"TRCR workflow action {action.get('action')} at {action.get('timestamp')}: {compact}"
+    return f"CRK workflow action {action.get('action')} at {action.get('timestamp')}: {compact}"

@@ -1,6 +1,6 @@
 import json
 
-from tests.integration.trcr_improvements.helpers import append_source, init_case, load_tcr
+from tests.integration.crk_improvements.helpers import append_source, init_case, load_tcr
 
 
 def test_plan_public_records_writes_lane_report_without_evidence_rows(tmp_path):

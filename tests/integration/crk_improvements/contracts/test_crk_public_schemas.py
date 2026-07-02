@@ -1,6 +1,6 @@
 import pytest
 
-from tests.integration.trcr_improvements.helpers import load_schema, validate_schema
+from tests.integration.crk_improvements.helpers import load_schema, validate_schema
 
 
 def test_public_schemas_validate_independence_groups_and_bridge_classes():

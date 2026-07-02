@@ -23,7 +23,7 @@ Use `truecrime-cult-research` as the case ledger and safety baseline. Route
 domain-heavy packets to adjacent skills only when their lane applies.
 
 Adjacent skills write source-traceable entities, claims, events, relationships,
-artifacts, and notes back into the same TRCR case structure.
+artifacts, and notes back into the same CRK case structure.
 Use `criminal-research` when the packet is mainly source-backed M.O.,
 victimology, offense-pattern, behavioral-signature, escalation, criminological
 context, or non-diagnostic forensic personality analysis.
@@ -39,7 +39,7 @@ registry shards first, never the generated tables.
 
 ## Safety defaults for agents
 
-All skill work inherits the TRCR safety contract:
+All skill work inherits the CRK safety contract:
 
 - AI-generated summaries are never evidence; extraction packets are staged
   under `staging/extractions/` for human review before import.

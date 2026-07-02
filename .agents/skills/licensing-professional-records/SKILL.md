@@ -1,6 +1,6 @@
 ---
 name: licensing-professional-records
-description: Public-record workflow for researching professional licenses, certifications, board registrations, disciplinary actions, sanctions, suspensions, revocations, professional roles, and credential disputes, then adding source-traceable records to a TRCR case file. Use when Codex needs to handle public licensing or professional-board records without inferring misconduct or competence from lookup data alone.
+description: Public-record workflow for researching professional licenses, certifications, board registrations, disciplinary actions, sanctions, suspensions, revocations, professional roles, and credential disputes, then adding source-traceable records to a CRK case file. Use when Codex needs to handle public licensing or professional-board records without inferring misconduct or competence from lookup data alone.
 ---
 
 # Licensing Professional Records
@@ -12,9 +12,9 @@ Lane/template metadata is generated from `docs/registry/`; do not invent new lan
 
 ## Purpose
 
-Use this skill to build a public, source-traceable licensing and professional-record packet for a TRCR case. A license lookup proves only what the public record states; it does not prove competence, misconduct, employment, or identity without source support.
+Use this skill to build a public, source-traceable licensing and professional-record packet for a CRK case. A license lookup proves only what the public record states; it does not prove competence, misconduct, employment, or identity without source support.
 
-This skill extends the TRCR case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries.
+This skill extends the CRK case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries.
 
 ## Required Inputs
 

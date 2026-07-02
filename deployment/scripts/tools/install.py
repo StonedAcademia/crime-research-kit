@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create the local virtualenv and install TRCR in editable mode."""
+"""Create the local virtualenv and install CRK in editable mode."""
 
 from __future__ import annotations
 
@@ -79,7 +79,7 @@ def main() -> int:
         activate = venv_dir / "Scripts" / "Activate.ps1"
     else:
         activate = venv_dir / "bin" / "activate"
-    print(f"Installed TRCR into {venv_dir}")
+    print(f"Installed CRK into {venv_dir}")
     print(f"Activate with: {activate}")
     return 0
 

@@ -1,4 +1,4 @@
 interface:
   display_name: "Claim Contradiction Audit"
   short_description: "Find conflicting claims and findings"
-  default_prompt: "Use $claim-contradiction-audit to audit TRCR claims for contradictions, denials, court findings, corrections, and public-readiness gaps."
+  default_prompt: "Use $claim-contradiction-audit to audit CRK claims for contradictions, denials, court findings, corrections, and public-readiness gaps."

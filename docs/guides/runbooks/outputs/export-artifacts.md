@@ -1,6 +1,6 @@
 # Export Artifacts Runbook
 
-Use this runbook to generate public-safe TRCR exports from a reviewed case. All
+Use this runbook to generate public-safe CRK exports from a reviewed case. All
 commands assume the `tc-c-kit` repository root.
 
 ## Preflight
@@ -148,7 +148,7 @@ structure as evidence unless the underlying ledger rows are source-supported.
 Export a public-safe Phanestead-readable UFB v2 bundle:
 
 ```bash
-bun deployment/scripts/tools/export_trcr_ufb.mjs data/cases/<case_slug> \
+bun deployment/scripts/tools/export_crk_ufb.mjs data/cases/<case_slug> \
   --out data/cases/<case_slug>/exports/ufb/<case_slug>.ufb_v2
 ```
 
@@ -157,7 +157,7 @@ and interop helper. From the `tc-c-kit` root, the default Phanestead checkout
 path is `../../phanestead-full`. Override it when needed:
 
 ```bash
-bun deployment/scripts/tools/export_trcr_ufb.mjs data/cases/<case_slug> \
+bun deployment/scripts/tools/export_crk_ufb.mjs data/cases/<case_slug> \
   --out data/cases/<case_slug>/exports/ufb/<case_slug>.ufb_v2 \
   --phanestead-root /path/to/phanestead-full
 ```

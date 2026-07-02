@@ -1,6 +1,6 @@
-# TRCR Case Mapping For Legal Court Records
+# CRK Case Mapping For Legal Court Records
 
-Use existing TRCR ledgers. Preserve court, case number, docket item, document number, page, paragraph, and filing date in `source_spans` or `notes`.
+Use existing CRK ledgers. Preserve court, case number, docket item, document number, page, paragraph, and filing date in `source_spans` or `notes`.
 
 ## Sources
 

@@ -1,5 +1,5 @@
 MOON ?= moon
-PROJECT ?= trcr
+PROJECT ?= crk
 
 .PHONY: check-os install install-minimum install-dev install-governance install-linux install-windows \
 	docker-build docker-up docker-down docker-logs docker-shell docker-pull-model \

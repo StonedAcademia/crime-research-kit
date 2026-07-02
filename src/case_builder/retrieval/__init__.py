@@ -1,4 +1,4 @@
-"""TRCR evidence retrieval helpers."""
+"""CRK evidence retrieval helpers."""
 
 from __future__ import annotations
 

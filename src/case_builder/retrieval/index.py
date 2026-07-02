@@ -87,4 +87,4 @@ def _build_index(
 
 
 def _collection_name(case_dir: str | Path, collection: str | None) -> str:
-    return collection or f"trcr_evidence_{case_id(case_dir)}"
+    return collection or f"crk_evidence_{case_id(case_dir)}"

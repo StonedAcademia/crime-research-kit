@@ -1,4 +1,4 @@
-"""Command-line entrypoint for the TRCR case-builder agent app."""
+"""Command-line entrypoint for the CRK case-builder agent app."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ from .ops.result import OpResult
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Bootstrap TRCR case-building workflows.")
+    parser = argparse.ArgumentParser(description="Bootstrap CRK case-building workflows.")
     sub = parser.add_subparsers(dest="command", required=True)
 
     plan = sub.add_parser("plan", help="Plan and optionally execute the initial case-building workflow.")
@@ -24,14 +24,14 @@ def build_parser() -> argparse.ArgumentParser:
     plan.add_argument("--title", help="Case title to use if the case is initialized.")
     plan.add_argument("--subject", help="Seed subject, names, dates, places, or case question.")
     plan.add_argument("--lane", action="append", default=[], help="Force a public-record lane. Repeatable.")
-    plan.add_argument("--execute", action="store_true", help="Run TRCR commands instead of dry-running them.")
+    plan.add_argument("--execute", action="store_true", help="Run CRK commands instead of dry-running them.")
     plan.add_argument("--runner", choices=["auto", "langgraph", "sequential"], default="auto")
     plan.add_argument("--source-url", action="append", default=[], help="Public URL to capture. Repeatable.")
     plan.add_argument("--source-id", action="append", default=[], help="Existing source ID to draft a packet for. Repeatable.")
     plan.add_argument("--index", action="store_true", help="Build the local evidence index after import (execute mode).")
     plan.add_argument("--checkpoint", action="store_true", help="Persist run state to <case>/.runs/checkpoints.db (langgraph only).")
     plan.add_argument("--thread", default=None, help="Thread ID for checkpointed runs. Defaults to the run ID.")
-    plan.add_argument("--llm", action="store_true", help="Enable LLM agent nodes (TRCR_MODEL, default ollama:llama3.1).")
+    plan.add_argument("--llm", action="store_true", help="Enable LLM agent nodes (CRK_MODEL, default ollama:llama3.1).")
     plan.set_defaults(handler=run_plan_command)
 
     discover = sub.add_parser("discover-sources", help="Search local SearXNG and write lead-only source candidates.")
@@ -92,7 +92,7 @@ def build_parser() -> argparse.ArgumentParser:
     resume.add_argument("--reject-packet", action="append", default=[], help="Staged packet filename to reject. Repeatable.")
     resume.add_argument("--reason", default=None, help="Reason recorded for rejected packets.")
     resume.add_argument("--approve-export", action="store_true", help="Approve the public export gate.")
-    resume.add_argument("--execute", action="store_true", help="Run TRCR commands instead of dry-running them.")
+    resume.add_argument("--execute", action="store_true", help="Run CRK commands instead of dry-running them.")
     resume.add_argument("--llm", action="store_true", help="Enable LLM agent nodes on the resumed run.")
     resume.set_defaults(handler=run_resume_command)
     return parser

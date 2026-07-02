@@ -1,4 +1,4 @@
 interface:
   display_name: "Source Independence Audit"
   short_description: "Detect repeated source chains"
-  default_prompt: "Use $source-independence-audit to review TRCR claims for same-source chains, wire copy, and press-release repetition."
+  default_prompt: "Use $source-independence-audit to review CRK claims for same-source chains, wire copy, and press-release repetition."

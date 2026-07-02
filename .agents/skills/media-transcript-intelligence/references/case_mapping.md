@@ -1,6 +1,6 @@
-# TRCR Case Mapping For Media Transcript Intelligence
+# CRK Case Mapping For Media Transcript Intelligence
 
-Use existing TRCR ledgers. Media claims need timestamp or line locators whenever possible.
+Use existing CRK ledgers. Media claims need timestamp or line locators whenever possible.
 
 ## Sources
 

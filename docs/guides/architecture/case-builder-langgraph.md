@@ -1,9 +1,9 @@
 # LangGraph Case Builder
 
-This design keeps the TRCR case folder as the source of truth and uses
+This design keeps the CRK case folder as the source of truth and uses
 LangGraph only as an orchestration runtime. Agents and graph nodes may draft
 plans, extraction packets, and audits, but canonical records are written only by
-the existing TRCR import and validation commands.
+the existing CRK import and validation commands.
 
 ## Ownership
 
@@ -78,7 +78,7 @@ PYTHONPATH=src python -m case_builder.cli plan data/cases/example_case \
   --subject "Jane Doe missing person last seen near Riverside Park map"
 ```
 
-Execute the TRCR commands:
+Execute the CRK commands:
 
 ```bash
 PYTHONPATH=src python -m case_builder.cli plan data/cases/example_case \
@@ -109,7 +109,7 @@ cr-kit plan data/cases/example_case \
 
 ## LLM Agent Nodes
 
-Optional nodes activate with `--llm` (plus `--execute`) and the `TRCR_MODEL`
+Optional nodes activate with `--llm` (plus `--execute`) and the `CRK_MODEL`
 environment variable (`provider:model`, default `ollama:llama3.1`; install
 `pip install -e '.[llm]'`). The self-hosted deployment supports Ollama as the
 runtime provider.

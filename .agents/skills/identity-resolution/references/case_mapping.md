@@ -1,6 +1,6 @@
-# TRCR Case Mapping For Identity Resolution
+# CRK Case Mapping For Identity Resolution
 
-Use existing TRCR ledgers. Do not add private identifiers just to improve matching.
+Use existing CRK ledgers. Do not add private identifiers just to improve matching.
 
 ## Candidate Reports
 

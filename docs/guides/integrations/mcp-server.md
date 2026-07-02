@@ -1,6 +1,6 @@
-# TRCR MCP Server
+# CRK MCP Server
 
-`trcr-mcp` exposes the case-builder ops core to MCP hosts over stdio.
+`crk-mcp` exposes the case-builder ops core to MCP hosts over stdio.
 
 ## Install and Register
 
@@ -8,18 +8,18 @@
 uv pip install -p .venv/bin/python -e '.[mcp]'
 
 # Claude Code:
-claude mcp add trcr -- <project_root>/.venv/bin/trcr-mcp
+claude mcp add crk -- <project_root>/.venv/bin/crk-mcp
 ```
 
 For other hosts, use command
-`<project_root>/.venv/bin/trcr-mcp`
-with stdio transport. If the venv is activated, `trcr-mcp` is equivalent.
+`<project_root>/.venv/bin/crk-mcp`
+with stdio transport. If the venv is activated, `crk-mcp` is equivalent.
 
 Optional environment:
 
-- `TRCR_CASES_ROOT`: defaults to `<repo>/data/cases`.
-- `TRCR_SKILL_ROOT`: defaults to the repo-local `.agents` skill copy.
-- `TRCR_MODEL`, Qdrant, and SearXNG settings come from the environment as usual.
+- `CRK_CASES_ROOT`: defaults to `<repo>/data/cases`.
+- `CRK_SKILL_ROOT`: defaults to the repo-local `.agents` skill copy.
+- `CRK_MODEL`, Qdrant, and SearXNG settings come from the environment as usual.
 
 ## Tool Tiers
 
@@ -39,10 +39,10 @@ references live in
 
 Resources:
 
-- `trcr://cases/{case}/case.json`
-- `trcr://cases/{case}/records/{record_type}`: public-safe JSONL
-- `trcr://cases/{case}/staging/extractions/{name}`
-- `trcr://references/{controlled_vocabularies|topic_extraction_templates}`
+- `crk://cases/{case}/case.json`
+- `crk://cases/{case}/records/{record_type}`: public-safe JSONL
+- `crk://cases/{case}/staging/extractions/{name}`
+- `crk://references/{controlled_vocabularies|topic_extraction_templates}`
 
 Prompts:
 

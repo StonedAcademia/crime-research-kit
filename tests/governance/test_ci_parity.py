@@ -63,19 +63,19 @@ def test_github_workflow_shape_budget():
 def test_branch_prefix_targets_are_resolved():
     gate = load_branch_gate()
 
-    assert gate.targets_for(["docs/readme"]) == ["trcr:check", "trcr:test-governance"]
-    assert gate.targets_for(["gov/example"]) == ["trcr:check", "trcr:test-governance", "trcr:test-smoke"]
+    assert gate.targets_for(["docs/readme"]) == ["crk:check", "crk:test-governance"]
+    assert gate.targets_for(["gov/example"]) == ["crk:check", "crk:test-governance", "crk:test-smoke"]
     assert gate.targets_for(["ci/workflows"]) == [
-        "trcr:check",
-        "trcr:test-governance",
-        "trcr:test-smoke",
-        "trcr:test-integration",
+        "crk:check",
+        "crk:test-governance",
+        "crk:test-smoke",
+        "crk:test-integration",
     ]
-    assert gate.targets_for(["experiment/foo"]) == ["trcr:check", "trcr:test"]
+    assert gate.targets_for(["experiment/foo"]) == ["crk:check", "crk:test"]
 
 
 def test_branch_gate_dry_run_prints_resolved_targets():
-    env = {**os.environ, "TRCR_HOOK_BRANCH": "ci/workflows"}
+    env = {**os.environ, "CRK_HOOK_BRANCH": "ci/workflows"}
     proc = subprocess.run(
         [sys.executable, "deployment/scripts/checks/branch_gate.py", "--dry-run"],
         cwd=KIT_ROOT,
@@ -85,4 +85,4 @@ def test_branch_gate_dry_run_prints_resolved_targets():
         text=True,
     )
 
-    assert "trcr:test-integration" in proc.stdout
+    assert "crk:test-integration" in proc.stdout

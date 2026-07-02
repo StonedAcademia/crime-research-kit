@@ -1,4 +1,4 @@
-"""Convert canonical TRCR records and source text into retrieval documents."""
+"""Convert canonical CRK records and source text into retrieval documents."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
 interface:
   display_name: "Legal Court Records"
-  short_description: "Map public court records into TRCR"
-  default_prompt: "Use $legal-court-records to turn public dockets, filings, orders, and court findings into source-traceable TRCR case records."
+  short_description: "Map public court records into CRK"
+  default_prompt: "Use $legal-court-records to turn public dockets, filings, orders, and court findings into source-traceable CRK case records."

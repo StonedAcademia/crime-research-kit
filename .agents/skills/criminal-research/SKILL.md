@@ -1,6 +1,6 @@
 ---
 name: criminal-research
-description: Source-backed criminal research and academic forensic analysis workflow for M.O., offense patterns, victimology, behavioral signatures, escalation, criminological context, and non-diagnostic personality hypotheses in TRCR case files. Use when Codex needs to analyze criminal behavior, offender narratives, case typologies, or forensic psychology concepts without inferring guilt, diagnosing people, or treating unsourced profile claims as evidence.
+description: Source-backed criminal research and academic forensic analysis workflow for M.O., offense patterns, victimology, behavioral signatures, escalation, criminological context, and non-diagnostic personality hypotheses in CRK case files. Use when Codex needs to analyze criminal behavior, offender narratives, case typologies, or forensic psychology concepts without inferring guilt, diagnosing people, or treating unsourced profile claims as evidence.
 ---
 
 # Criminal Research
@@ -13,7 +13,7 @@ Lane/template metadata is generated from `docs/registry/`; do not invent new lan
 
 Use this skill to turn public, source-backed material into careful criminological and forensic-behavioral analysis. The output should describe observed M.O. elements, victimology, offense scripts, escalation, staging, source-stated behavioral traits, and academic context without presenting a profile as proof.
 
-This skill extends the TRCR case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries.
+This skill extends the CRK case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries.
 
 ## Required Inputs
 

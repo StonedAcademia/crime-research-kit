@@ -93,12 +93,12 @@ def run_report_tool(ctx: ServerContext, case: str) -> dict[str, Any]:
 def register(mcp: Any, ctx: ServerContext) -> None:
     @mcp.tool()
     def case_info(case: str) -> dict:
-        """Case metadata and per-record-type counts for a TRCR case slug."""
+        """Case metadata and per-record-type counts for a CRK case slug."""
         return case_info_tool(ctx, case)
 
     @mcp.tool()
     def list_cases() -> dict:
-        """List available TRCR case slugs."""
+        """List available CRK case slugs."""
         return list_cases_tool(ctx)
 
     @mcp.tool()

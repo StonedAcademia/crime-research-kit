@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Expose the ops core as an MCP server (`trcr-mcp`, stdio) with three tool tiers — read/query, staged writes, and gated canonical import/exports — plus `trcr://` resources and workflow prompts.
+**Goal:** Expose the ops core as an MCP server (`crk-mcp`, stdio) with three tool tiers — read/query, staged writes, and gated canonical import/exports — plus `crk://` resources and workflow prompts.
 
-**Architecture:** A `case_builder/mcp/` package built on the official Python MCP SDK's `FastMCP`. Tool logic lives in plain, directly-testable handler functions taking a `ServerContext` (repo root, cases root, non-dry `TrcrRunner`); `register(mcp, ctx)` functions wrap them in typed closures so FastMCP derives schemas from the type hints. Case access goes through `resolve_case(ctx, slug)` (slug allow-list regex + `case.json` existence), so the server never touches arbitrary paths. Every tool returns JSON-serializable dicts derived from `OpResult.to_dict()`; the safety contract stays enforced in ops (gated import requires `confirm=true`; exports default public-safe).
+**Architecture:** A `case_builder/mcp/` package built on the official Python MCP SDK's `FastMCP`. Tool logic lives in plain, directly-testable handler functions taking a `ServerContext` (repo root, cases root, non-dry `CrkRunner`); `register(mcp, ctx)` functions wrap them in typed closures so FastMCP derives schemas from the type hints. Case access goes through `resolve_case(ctx, slug)` (slug allow-list regex + `case.json` existence), so the server never touches arbitrary paths. Every tool returns JSON-serializable dicts derived from `OpResult.to_dict()`; the safety contract stays enforced in ops (gated import requires `confirm=true`; exports default public-safe).
 
-**Tech Stack:** Python ≥3.10; `mcp>=1.2.0` behind a new `[mcp]` extra; console script `trcr-mcp`; pytest (handlers tested directly without the SDK; one in-memory client-session integration test guarded by `importorskip("mcp")` using `asyncio.run`, no pytest-asyncio needed).
+**Tech Stack:** Python ≥3.10; `mcp>=1.2.0` behind a new `[mcp]` extra; console script `crk-mcp`; pytest (handlers tested directly without the SDK; one in-memory client-session integration test guarded by `importorskip("mcp")` using `asyncio.run`, no pytest-asyncio needed).
 
 ## Global Constraints
 
@@ -16,7 +16,7 @@
 - Spec tool-tier contract: read/query tools never mutate canonical records; `run_report` is treated as safe derived-report generation through `ops.case.report`; staged writes are limited to `staging/`, raw source intake, and source registration; `import_extraction` refuses without `confirm=true` (enforced by `ops.extraction.import_extraction`, already landed); `export_*` accept `include_private` but default public-safe and echo what was filtered.
 - No secrets or endpoint config in tool results; Qdrant/SearXNG endpoints come from env or per-call parameters.
 - This phase depends only on Phase 1 ops plus `ops.query.get_source_text`. **If Phase 3 has not been executed yet**, first implement `get_source_text` and its tests exactly as specified in Task 1 of `docs/superpowers/plans/2026-07-01-tc-c-kit-llm-agent-nodes.md` (the `record_llm_egress` half may be skipped); if it already exists, verify the signature `get_source_text(case_dir, source_id, *, include_private=False, max_chars=None) -> OpResult` and move on.
-- Existing interfaces consumed: `ops.case.case_info / report`, `ops.sources.discover_sources / ingest_url / add_source / parse_source / ocr_source / plan_public_records`, `ops.extraction.draft_extraction / list_packets / read_packet / save_packet / import_extraction`, `ops.query.get_records / query_case / link_names / get_source_text`, `ops.exports.export_manim / export_case_charts / export_analysis_charts`, `ops.runner.TrcrRunner / default_repo_root`, `OpResult`.
+- Existing interfaces consumed: `ops.case.case_info / report`, `ops.sources.discover_sources / ingest_url / add_source / parse_source / ocr_source / plan_public_records`, `ops.extraction.draft_extraction / list_packets / read_packet / save_packet / import_extraction`, `ops.query.get_records / query_case / link_names / get_source_text`, `ops.exports.export_manim / export_case_charts / export_analysis_charts`, `ops.runner.CrkRunner / default_repo_root`, `OpResult`.
 - Commit per task, conventional-commit style, ending with:
 
   ```
@@ -38,10 +38,10 @@ src/case_builder/mcp/
                     # link_names, plan_public_records
   tools_gated.py    # handlers + register(): import_extraction, export_manim,
                     # export_case_charts, export_analysis_charts
-  resources.py      # trcr://cases/{case}/..., trcr://references/{name}
+  resources.py      # crk://cases/{case}/..., crk://references/{name}
   prompts.py        # start_case, process_source, review_packet, public_readiness
   server.py         # create_server(ctx) -> FastMCP, main() stdio entry
-pyproject.toml      # MODIFIED: [mcp] extra + trcr-mcp console script
+pyproject.toml      # MODIFIED: [mcp] extra + crk-mcp console script
 docs/mcp-server.md  # NEW: registration + tool-tier docs
 README.md           # MODIFIED: MCP section pointer
 
@@ -113,10 +113,10 @@ of `tests/test_ops_query_review_exports.py`.
 - Test: `tests/test_mcp_context.py`
 
 **Interfaces:**
-- Consumes: `ops.runner.TrcrRunner`, `ops.runner.default_repo_root`.
+- Consumes: `ops.runner.CrkRunner`, `ops.runner.default_repo_root`.
 - Produces:
-  - `@dataclass ServerContext(repo_root: Path, cases_root: Path, runner: TrcrRunner, skill_root: Path | None = None)`
-  - `default_context() -> ServerContext` — `cases_root` from `TRCR_CASES_ROOT` env else `<repo_root>/data/cases`; `skill_root` from `TRCR_SKILL_ROOT` env else the repo-local `.agents/skills/truecrime-cult-research` copy; runner is `TrcrRunner(repo_root=repo_root, dry_run=False)`.
+  - `@dataclass ServerContext(repo_root: Path, cases_root: Path, runner: CrkRunner, skill_root: Path | None = None)`
+  - `default_context() -> ServerContext` — `cases_root` from `CRK_CASES_ROOT` env else `<repo_root>/data/cases`; `skill_root` from `CRK_SKILL_ROOT` env else the repo-local `.agents/skills/truecrime-cult-research` copy; runner is `CrkRunner(repo_root=repo_root, dry_run=False)`.
   - `default_skill_root(repo_root: Path) -> Path` — prefers `<repo_root>/.agents/skills/truecrime-cult-research`, then the wrapper-level `<repo_root>.parent/.agents/skills/truecrime-cult-research`, so the MCP server and this wrapper checkout both find the installed skill references.
   - `resolve_case(ctx: ServerContext, case: str) -> str` — validates the slug against `CASE_SLUG_RE = re.compile(r"[a-zA-Z0-9][a-zA-Z0-9_\-]{0,80}")`, resolves the final path under `cases_root` (rejecting symlink/root escapes), requires `<cases_root>/<case>/case.json` to exist, returns the absolute path string; raises `ValueError` otherwise.
   - `list_case_slugs(ctx) -> list[str]`
@@ -132,13 +132,13 @@ from pathlib import Path
 import pytest
 
 from case_builder.mcp.context import ServerContext, default_skill_root, error_dict, list_case_slugs, resolve_case
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 
 KIT_ROOT = Path(__file__).resolve().parents[1]
 
 
 def make_ctx(cases_root: Path) -> ServerContext:
-    return ServerContext(repo_root=KIT_ROOT, cases_root=cases_root, runner=TrcrRunner(repo_root=KIT_ROOT, dry_run=True))
+    return ServerContext(repo_root=KIT_ROOT, cases_root=cases_root, runner=CrkRunner(repo_root=KIT_ROOT, dry_run=True))
 
 
 def test_resolve_case_returns_case_path(synthetic_case_copy):
@@ -211,7 +211,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from ..ops.runner import TrcrRunner, default_repo_root
+from ..ops.runner import CrkRunner, default_repo_root
 
 CASE_SLUG_RE = re.compile(r"[a-zA-Z0-9][a-zA-Z0-9_\-]{0,80}")
 
@@ -220,23 +220,23 @@ CASE_SLUG_RE = re.compile(r"[a-zA-Z0-9][a-zA-Z0-9_\-]{0,80}")
 class ServerContext:
     repo_root: Path
     cases_root: Path
-    runner: TrcrRunner
+    runner: CrkRunner
     skill_root: Path | None = None
 
 
 def default_context() -> ServerContext:
     repo_root = default_repo_root()
-    cases_root = Path(os.environ.get("TRCR_CASES_ROOT") or repo_root / "data" / "cases")
+    cases_root = Path(os.environ.get("CRK_CASES_ROOT") or repo_root / "data" / "cases")
     return ServerContext(
         repo_root=repo_root,
         cases_root=cases_root,
-        runner=TrcrRunner(repo_root=repo_root, dry_run=False),
+        runner=CrkRunner(repo_root=repo_root, dry_run=False),
         skill_root=default_skill_root(repo_root),
     )
 
 
 def default_skill_root(repo_root: Path) -> Path:
-    configured = os.environ.get("TRCR_SKILL_ROOT")
+    configured = os.environ.get("CRK_SKILL_ROOT")
     if configured:
         return Path(configured)
     candidates = [
@@ -282,7 +282,7 @@ Create `src/case_builder/mcp/README.md`:
 ```markdown
 # case_builder.mcp
 
-MCP server over the ops core (stdio, `trcr-mcp`). Tool logic lives in plain
+MCP server over the ops core (stdio, `crk-mcp`). Tool logic lives in plain
 handler functions (`*_tool(ctx, ...)`) so tests call them directly; each
 module's `register(mcp, ctx)` wraps them in typed closures for FastMCP schema
 generation.
@@ -293,14 +293,14 @@ generation.
 | `tools_read.py` | Read/query tier: case info, records, source text, retrieval, packets, report. |
 | `tools_write.py` | Staged-write tier: discovery, ingestion, parsing, drafting, packet save, name linking. |
 | `tools_gated.py` | Gated tier: `import_extraction` (requires `confirm=true`), public-safe-by-default exports. |
-| `resources.py` | `trcr://cases/...` and `trcr://references/...` read-only resources. |
+| `resources.py` | `crk://cases/...` and `crk://references/...` read-only resources. |
 | `prompts.py` | Workflow prompts: start_case, process_source, review_packet, public_readiness. |
 | `server.py` | `create_server()` + `main()` stdio entry point. |
 
 The safety contract is enforced in `case_builder.ops` — this package adds no
 second enforcement path and must never call `tcr.py` or the ledger directly.
-Config: `TRCR_CASES_ROOT` (default `<repo>/data/cases`).
-Skill references: `TRCR_SKILL_ROOT` (default repo-local `.agents` skill copy).
+Config: `CRK_CASES_ROOT` (default `<repo>/data/cases`).
+Skill references: `CRK_SKILL_ROOT` (default repo-local `.agents` skill copy).
 ```
 
 Update `pyproject.toml` — add the extra (after `llm` if Phase 3 landed, else after `agentic`) and the script:
@@ -313,8 +313,8 @@ mcp = [
 
 ```toml
 [project.scripts]
-trcr-case-builder = "case_builder.cli:main"
-trcr-mcp = "case_builder.mcp.server:main"
+cr-kit = "case_builder.cli:main"
+crk-mcp = "case_builder.mcp.server:main"
 ```
 
 Then install: `uv pip install -p .venv/bin/python -e '.[mcp]' -q`
@@ -361,13 +361,13 @@ from pathlib import Path
 
 from case_builder.mcp.context import ServerContext
 from case_builder.mcp import tools_read
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 
 KIT_ROOT = Path(__file__).resolve().parents[1]
 
 
 def make_ctx(cases_root: Path, dry_run: bool = True) -> ServerContext:
-    return ServerContext(repo_root=KIT_ROOT, cases_root=cases_root, runner=TrcrRunner(repo_root=KIT_ROOT, dry_run=dry_run))
+    return ServerContext(repo_root=KIT_ROOT, cases_root=cases_root, runner=CrkRunner(repo_root=KIT_ROOT, dry_run=dry_run))
 
 
 def test_case_info_tool_returns_counts(synthetic_case_copy):
@@ -513,12 +513,12 @@ def run_report_tool(ctx: ServerContext, case: str) -> dict[str, Any]:
 def register(mcp: Any, ctx: ServerContext) -> None:
     @mcp.tool()
     def case_info(case: str) -> dict:
-        """Case metadata and per-record-type counts for a TRCR case slug."""
+        """Case metadata and per-record-type counts for a CRK case slug."""
         return case_info_tool(ctx, case)
 
     @mcp.tool()
     def list_cases() -> dict:
-        """List available TRCR case slugs."""
+        """List available CRK case slugs."""
         return list_cases_tool(ctx)
 
     @mcp.tool()
@@ -585,13 +585,13 @@ from pathlib import Path
 
 from case_builder.mcp.context import ServerContext
 from case_builder.mcp import tools_gated, tools_write
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 
 KIT_ROOT = Path(__file__).resolve().parents[1]
 
 
 def make_ctx(cases_root: Path) -> ServerContext:
-    return ServerContext(repo_root=KIT_ROOT, cases_root=cases_root, runner=TrcrRunner(repo_root=KIT_ROOT, dry_run=True))
+    return ServerContext(repo_root=KIT_ROOT, cases_root=cases_root, runner=CrkRunner(repo_root=KIT_ROOT, dry_run=True))
 
 
 def test_save_extraction_packet_stages_json(synthetic_case_copy):
@@ -934,7 +934,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 **Interfaces:**
 - Consumes: `resolve_case`, `ops.query.get_records`, `ops.extraction.read_packet`.
 - Produces:
-  - `resources.py`: handler functions `case_json_resource(ctx, case) -> str`, `records_resource(ctx, case, record_type) -> str` (public-safe JSONL), `packet_resource(ctx, case, name) -> str`, `reference_resource(ctx, name) -> str` (allow-list: `controlled_vocabularies`, `topic_extraction_templates`; reads `<skill_root>/references/<name>.md`); plus `register(mcp, ctx)` binding URI templates `trcr://cases/{case}/case.json`, `trcr://cases/{case}/records/{record_type}`, `trcr://cases/{case}/staging/extractions/{name}`, `trcr://references/{name}`.
+  - `resources.py`: handler functions `case_json_resource(ctx, case) -> str`, `records_resource(ctx, case, record_type) -> str` (public-safe JSONL), `packet_resource(ctx, case, name) -> str`, `reference_resource(ctx, name) -> str` (allow-list: `controlled_vocabularies`, `topic_extraction_templates`; reads `<skill_root>/references/<name>.md`); plus `register(mcp, ctx)` binding URI templates `crk://cases/{case}/case.json`, `crk://cases/{case}/records/{record_type}`, `crk://cases/{case}/staging/extractions/{name}`, `crk://references/{name}`.
   - `prompts.py`: `register(mcp, ctx)` defining four `@mcp.prompt()` functions — `start_case`, `process_source`, `review_packet`, `public_readiness` — each returning a workflow-instruction string; the module exposes the raw strings as constants (`START_CASE`, `PROCESS_SOURCE`, `REVIEW_PACKET`, `PUBLIC_READINESS`) so tests assert content without the SDK.
 
 - [ ] **Step 1: Write the failing test**
@@ -990,7 +990,7 @@ Expected: new tests FAIL with `ImportError`
 Create `src/case_builder/mcp/resources.py`:
 
 ```python
-"""Read-only trcr:// resources for cheap case context."""
+"""Read-only crk:// resources for cheap case context."""
 
 from __future__ import annotations
 
@@ -1032,22 +1032,22 @@ def reference_resource(ctx: ServerContext, name: str) -> str:
 
 
 def register(mcp: Any, ctx: ServerContext) -> None:
-    @mcp.resource("trcr://cases/{case}/case.json")
+    @mcp.resource("crk://cases/{case}/case.json")
     def case_json(case: str) -> str:
         """Case metadata JSON."""
         return case_json_resource(ctx, case)
 
-    @mcp.resource("trcr://cases/{case}/records/{record_type}")
+    @mcp.resource("crk://cases/{case}/records/{record_type}")
     def records(case: str, record_type: str) -> str:
         """Public-safe JSONL rows for one record type."""
         return records_resource(ctx, case, record_type)
 
-    @mcp.resource("trcr://cases/{case}/staging/extractions/{name}")
+    @mcp.resource("crk://cases/{case}/staging/extractions/{name}")
     def packet(case: str, name: str) -> str:
         """A staged extraction packet awaiting review."""
         return packet_resource(ctx, case, name)
 
-    @mcp.resource("trcr://references/{name}")
+    @mcp.resource("crk://references/{name}")
     def reference(name: str) -> str:
         """Skill reference documents (controlled vocabularies, extraction templates)."""
         return reference_resource(ctx, name)
@@ -1068,7 +1068,7 @@ from typing import Any
 
 from .context import ServerContext
 
-START_CASE = """Start a TRCR research case. Steps:
+START_CASE = """Start a CRK research case. Steps:
 1. Confirm the case slug and title with the user, then check list_cases / case_info.
 2. Plan source lanes with plan_public_records for the seed subject.
 3. Capture public sources with ingest_url or add_source; grade reliability honestly.
@@ -1103,7 +1103,7 @@ PUBLIC_READINESS = """Assess public-output readiness:
 def register(mcp: Any, ctx: ServerContext) -> None:
     @mcp.prompt()
     def start_case() -> str:
-        """Start a new TRCR case with safe source planning."""
+        """Start a new CRK case with safe source planning."""
         return START_CASE
 
     @mcp.prompt()
@@ -1131,7 +1131,7 @@ Expected: PASS
 
 ```bash
 git add src/case_builder/mcp/resources.py src/case_builder/mcp/prompts.py tests/test_mcp_tools_read.py
-git commit -m "feat(mcp): add trcr:// resources and workflow prompts
+git commit -m "feat(mcp): add crk:// resources and workflow prompts
 
 Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 ```
@@ -1146,7 +1146,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 
 **Interfaces:**
 - Consumes: all `register(mcp, ctx)` functions from Tasks 2–4, `default_context()`.
-- Produces: `create_server(ctx: ServerContext | None = None) -> FastMCP` and `main() -> int` (stdio `run()`), wired to the `trcr-mcp` console script from Task 1.
+- Produces: `create_server(ctx: ServerContext | None = None) -> FastMCP` and `main() -> int` (stdio `run()`), wired to the `crk-mcp` console script from Task 1.
 
 - [ ] **Step 1: Write the integration test**
 
@@ -1163,13 +1163,13 @@ pytest.importorskip("mcp")
 
 from case_builder.mcp.context import ServerContext
 from case_builder.mcp.server import create_server
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 
 KIT_ROOT = Path(__file__).resolve().parents[1]
 
 
 def make_server(cases_root: Path):
-    ctx = ServerContext(repo_root=KIT_ROOT, cases_root=cases_root, runner=TrcrRunner(repo_root=KIT_ROOT, dry_run=True))
+    ctx = ServerContext(repo_root=KIT_ROOT, cases_root=cases_root, runner=CrkRunner(repo_root=KIT_ROOT, dry_run=True))
     return create_server(ctx)
 
 
@@ -1232,7 +1232,7 @@ from __future__ import annotations
 from . import prompts, resources, tools_gated, tools_read, tools_write
 from .context import ServerContext, default_context
 
-SERVER_INSTRUCTIONS = """TRCR case-builder MCP server for public-interest true-crime research.
+SERVER_INSTRUCTIONS = """CRK case-builder MCP server for public-interest true-crime research.
 
 Tool tiers: read/query tools are always safe; write tools stage drafts under
 staging/ only; import_extraction is GATED — it writes canonical records and
@@ -1252,7 +1252,7 @@ def create_server(ctx: ServerContext | None = None):
             "`uv pip install -p .venv/bin/python -e '.[mcp]'`."
         ) from exc
     context = ctx or default_context()
-    mcp = FastMCP("trcr-case-builder", instructions=SERVER_INSTRUCTIONS)
+    mcp = FastMCP("cr-kit", instructions=SERVER_INSTRUCTIONS)
     tools_read.register(mcp, context)
     tools_write.register(mcp, context)
     tools_gated.register(mcp, context)
@@ -1279,7 +1279,7 @@ Expected: test PASS; `server builds`
 
 ```bash
 git add src/case_builder/mcp/server.py tests/test_mcp_server.py
-git commit -m "feat(mcp): assemble trcr-mcp server with stdio entry point
+git commit -m "feat(mcp): assemble crk-mcp server with stdio entry point
 
 Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 ```
@@ -1295,9 +1295,9 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 - [ ] **Step 1: Write `docs/mcp-server.md`**
 
 ````markdown
-# TRCR MCP Server
+# CRK MCP Server
 
-`trcr-mcp` exposes the case-builder ops core to MCP hosts (Claude Code, Codex,
+`crk-mcp` exposes the case-builder ops core to MCP hosts (Claude Code, Codex,
 Claude Desktop) over stdio.
 
 ## Install and register
@@ -1306,14 +1306,14 @@ Claude Desktop) over stdio.
 uv pip install -p .venv/bin/python -e '.[mcp]'
 
 # Claude Code:
-claude mcp add trcr -- <project_root>/.venv/bin/trcr-mcp
+claude mcp add crk -- <project_root>/.venv/bin/crk-mcp
 
-# Any other host: command `<project_root>/.venv/bin/trcr-mcp`,
+# Any other host: command `<project_root>/.venv/bin/crk-mcp`,
 # transport stdio.
-# If your shell has the venv activated, `trcr-mcp` is equivalent.
-# Optional env: TRCR_CASES_ROOT (default <repo>/data/cases),
-# TRCR_SKILL_ROOT (default repo-local .agents skill copy),
-# TRCR_MODEL / Qdrant / SearXNG settings come from the environment as usual.
+# If your shell has the venv activated, `crk-mcp` is equivalent.
+# Optional env: CRK_CASES_ROOT (default <repo>/data/cases),
+# CRK_SKILL_ROOT (default repo-local .agents skill copy),
+# CRK_MODEL / Qdrant / SearXNG settings come from the environment as usual.
 ```
 
 ## Tool tiers
@@ -1326,9 +1326,9 @@ claude mcp add trcr -- <project_root>/.venv/bin/trcr-mcp
 
 ## Resources and prompts
 
-Resources: `trcr://cases/{case}/case.json`, `trcr://cases/{case}/records/{record_type}`
-(public-safe JSONL), `trcr://cases/{case}/staging/extractions/{name}`,
-`trcr://references/{controlled_vocabularies|topic_extraction_templates}`.
+Resources: `crk://cases/{case}/case.json`, `crk://cases/{case}/records/{record_type}`
+(public-safe JSONL), `crk://cases/{case}/staging/extractions/{name}`,
+`crk://references/{controlled_vocabularies|topic_extraction_templates}`.
 
 Prompts: `start_case`, `process_source`, `review_packet`, `public_readiness` —
 the skill workflow guidance for hosts without repo-local skills.
@@ -1353,7 +1353,7 @@ Expose the same ops surface to Claude Code, Codex, or Claude Desktop:
 
 ```bash
 uv pip install -p .venv/bin/python -e '.[mcp]'
-claude mcp add trcr -- <project_root>/.venv/bin/trcr-mcp
+claude mcp add crk -- <project_root>/.venv/bin/crk-mcp
 ```
 
 Read/query tools are always safe; write tools stage drafts only; canonical
@@ -1385,7 +1385,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 
 ## Self-Review Notes
 
-- **Spec coverage (Phase 4 / Component 5):** FastMCP + stdio + `trcr-mcp` + `[mcp]` extra → Tasks 1, 5; read/query/report tool list → Task 2 (all seven named tools, with `run_report` treated as derived export generation rather than canonical mutation); staged-write tool list → Task 3 (`tools_write`, including `plan_public_records` which the spec's skill routing relies on); gated `import_extraction(confirm)` with instructive description + `export_*` echoing the privacy filter → Task 3; resources incl. vocabularies/templates → Task 4; four prompts → Task 4; audit logging remains owned by ops for operations that write research actions; read-only tools are not forced to synthesize audit rows; "no secrets in tool results" — handlers pass no endpoint config and `OpResult` carries only command/output data.
+- **Spec coverage (Phase 4 / Component 5):** FastMCP + stdio + `crk-mcp` + `[mcp]` extra → Tasks 1, 5; read/query/report tool list → Task 2 (all seven named tools, with `run_report` treated as derived export generation rather than canonical mutation); staged-write tool list → Task 3 (`tools_write`, including `plan_public_records` which the spec's skill routing relies on); gated `import_extraction(confirm)` with instructive description + `export_*` echoing the privacy filter → Task 3; resources incl. vocabularies/templates → Task 4; four prompts → Task 4; audit logging remains owned by ops for operations that write research actions; read-only tools are not forced to synthesize audit rows; "no secrets in tool results" — handlers pass no endpoint config and `OpResult` carries only command/output data.
 - **Deviation noted:** spec's resource list mentions records and packets; this plan serves records public-safe-only through resources (private rows require the `get_records` tool with `include_private=true`), which is the stricter reading and is documented in Task 6.
 - **Type consistency:** `ServerContext` fields and `resolve_case(ctx, case) -> str` match across Tasks 1–5; every handler returns `dict`; `error_dict` shape `{"ok": False, "errors": [...]}` matches `OpResult.to_dict()`'s failure keys so hosts see one error shape; the Task 5 test's tool names match the `register` closures in Tasks 2–3.
 - **Placeholder scan:** no TBDs or intentionally-wrong code variants remain.

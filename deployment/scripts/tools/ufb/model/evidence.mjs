@@ -63,7 +63,7 @@ export function addEvidenceGroups(evidence, caseSlug, exportedAt, provenance) {
       id,
       label,
       groupType,
-      summary: `${memberIds.length} TRCR ${idPart.replace(/_/g, " ")} records exported from ${caseSlug}.`,
+      summary: `${memberIds.length} CRK ${idPart.replace(/_/g, " ")} records exported from ${caseSlug}.`,
       entityIds: [],
       evidenceIds: memberIds,
       createdAt: exportedAt,

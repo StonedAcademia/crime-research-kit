@@ -1,6 +1,6 @@
 import json
 
-from tests.integration.trcr_improvements.helpers import (
+from tests.integration.crk_improvements.helpers import (
     append_claim,
     append_entity,
     append_source,

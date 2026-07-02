@@ -23,7 +23,7 @@ def main(argv: list[str]) -> int:
 
     python = venv_python()
     if not python.exists():
-        raise SystemExit("Virtualenv not found. Run `moon run trcr:install-dev` first.")
+        raise SystemExit("Virtualenv not found. Run `moon run crk:install-dev` first.")
 
     return subprocess.run([str(python), *argv], cwd=ROOT).returncode
 

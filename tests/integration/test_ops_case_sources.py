@@ -2,14 +2,14 @@ from pathlib import Path
 
 from case_builder.ops import case as case_ops
 from case_builder.ops import sources as source_ops
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT
 
 REPO_ROOT = KIT_ROOT
 
 
-def dry_runner() -> TrcrRunner:
-    return TrcrRunner(repo_root=REPO_ROOT, dry_run=True)
+def dry_runner() -> CrkRunner:
+    return CrkRunner(repo_root=REPO_ROOT, dry_run=True)
 
 
 def test_init_case_skips_existing_case(synthetic_case_copy):

@@ -7,10 +7,10 @@ from typing import Any
 
 from ..casefile import RECORD_FILES, ensure_case, load_records
 from .result import OpResult, local_op
-from .runner import TrcrRunner
+from .runner import CrkRunner
 
 
-def init_case(runner: TrcrRunner, case_dir: str, title: str | None = None) -> OpResult:
+def init_case(runner: CrkRunner, case_dir: str, title: str | None = None) -> OpResult:
     case_path = runner.case_path(case_dir)
     args = ["init-case", case_dir, "--title", title or case_path.name.replace("_", " ").title()]
     if (case_path / "case.json").exists():
@@ -22,11 +22,11 @@ def case_info(case_dir: str) -> OpResult:
     return local_op("case_info", _case_info_data, case_dir)
 
 
-def validate(runner: TrcrRunner, case_dir: str) -> OpResult:
+def validate(runner: CrkRunner, case_dir: str) -> OpResult:
     return runner.run("validate", ["validate", case_dir])
 
 
-def report(runner: TrcrRunner, case_dir: str) -> OpResult:
+def report(runner: CrkRunner, case_dir: str) -> OpResult:
     return runner.run("report", ["report", case_dir])
 
 

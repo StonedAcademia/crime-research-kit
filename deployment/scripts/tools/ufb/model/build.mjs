@@ -42,7 +42,7 @@ export function buildModel(caseDir, options) {
       source.title || source.source_id,
       evidenceBody(source.title || source.source_id, "source", source, compactText(source.publisher, source.notes)),
       sourceCitation(source, source.source_id),
-      { trcrRecordType: "source", trcrRecord: source },
+      { crkRecordType: "source", crkRecord: source },
       [],
       safeDate(source.date_published, undefined),
     );
@@ -61,7 +61,7 @@ export function buildModel(caseDir, options) {
       kind: "person",
       label: entity.display_name || entity.name || entity.entity_id,
       aliases: entity.aliases || [],
-      summary: compactText(entity.entity_type ? `TRCR entity type: ${entity.entity_type}.` : "", entity.notes),
+      summary: compactText(entity.entity_type ? `CRK entity type: ${entity.entity_type}.` : "", entity.notes),
       evidenceIds: sortedUnique([...sourceEvidenceIds, ...claimEvidenceIds]),
       createdAt: exportedAt,
       updatedAt: exportedAt,
@@ -81,7 +81,7 @@ export function buildModel(caseDir, options) {
       kind: "event",
       label: event.title || event.event_id,
       aliases: [],
-      summary: compactText(event.event_type ? `TRCR event type: ${event.event_type}.` : "", event.status ? `Status: ${event.status}.` : "", event.notes),
+      summary: compactText(event.event_type ? `CRK event type: ${event.event_type}.` : "", event.status ? `Status: ${event.status}.` : "", event.notes),
       timeRange: {
         start: event.start_date ? safeDate(event.start_date, undefined) : undefined,
         end: event.end_date ? safeDate(event.end_date, undefined) : undefined,
@@ -103,7 +103,7 @@ export function buildModel(caseDir, options) {
       claim.claim_id,
       evidenceBody(claim.claim || claim.claim_id, "claim", claim, compactText(`Status: ${claim.status || "unknown"}.`, claim.notes)),
       sourceCitation(source, sourceId),
-      { trcrRecordType: "claim", trcrRecord: claim },
+      { crkRecordType: "claim", crkRecord: claim },
       entityIds,
     );
     claimEvidenceIdMap.set(claim.claim_id, evidenceId);
@@ -111,26 +111,26 @@ export function buildModel(caseDir, options) {
 
   for (const span of filtered.source_spans) {
     const source = sourceById.get(span.source_id);
-    addEvidence("source_span", span.source_span_id, span.summary || span.source_span_id, evidenceBody(span.summary || span.source_span_id, "source_span", span, compactText(span.exact_text, span.notes)), sourceCitation(source, span.source_id, locatorToString(span.locator)), { trcrRecordType: "source_span", trcrRecord: span });
+    addEvidence("source_span", span.source_span_id, span.summary || span.source_span_id, evidenceBody(span.summary || span.source_span_id, "source_span", span, compactText(span.exact_text, span.notes)), sourceCitation(source, span.source_id, locatorToString(span.locator)), { crkRecordType: "source_span", crkRecord: span });
   }
   for (const artifact of filtered.artifacts) {
     const { source, sourceId } = firstSourceFor(artifact, sourceById);
-    addEvidence("artifact", artifact.artifact_id, artifact.name || artifact.artifact_id, evidenceBody(artifact.description || artifact.name || artifact.artifact_id, "artifact", artifact, compactText(artifact.artifact_type, artifact.notes)), sourceCitation(source, sourceId), { trcrRecordType: "artifact", trcrRecord: artifact });
+    addEvidence("artifact", artifact.artifact_id, artifact.name || artifact.artifact_id, evidenceBody(artifact.description || artifact.name || artifact.artifact_id, "artifact", artifact, compactText(artifact.artifact_type, artifact.notes)), sourceCitation(source, sourceId), { crkRecordType: "artifact", crkRecord: artifact });
   }
   for (const place of filtered.places) {
     const { source, sourceId } = firstSourceFor(place, sourceById);
-    addEvidence("place", place.place_id, place.name || place.place_id, evidenceBody(place.name || place.place_id, "place", place, compactText(place.place_type, place.precision, place.notes)), sourceCitation(source, sourceId), { trcrRecordType: "place", trcrRecord: place });
+    addEvidence("place", place.place_id, place.name || place.place_id, evidenceBody(place.name || place.place_id, "place", place, compactText(place.place_type, place.precision, place.notes)), sourceCitation(source, sourceId), { crkRecordType: "place", crkRecord: place });
   }
   for (const quote of filtered.quotes) {
     const { source, sourceId } = firstSourceFor(quote, sourceById);
-    addEvidence("quote", quote.quote_id, quote.quote || quote.quote_id, evidenceBody(quote.quote || quote.quote_id, "quote", quote, quote.notes), sourceCitation(source, sourceId, locatorToString(quote.locator)), { trcrRecordType: "quote", trcrRecord: quote });
+    addEvidence("quote", quote.quote_id, quote.quote || quote.quote_id, evidenceBody(quote.quote || quote.quote_id, "quote", quote, quote.notes), sourceCitation(source, sourceId, locatorToString(quote.locator)), { crkRecordType: "quote", crkRecord: quote });
   }
   for (const redaction of filtered.redactions) {
     const { source, sourceId } = firstSourceFor(redaction, sourceById);
-    addEvidence("redaction", redaction.redaction_id, redaction.reason || redaction.redaction_id, evidenceBody(redaction.reason || redaction.redaction_id, "redaction", redaction, redaction.notes), sourceCitation(source, sourceId), { trcrRecordType: "redaction", trcrRecord: redaction });
+    addEvidence("redaction", redaction.redaction_id, redaction.reason || redaction.redaction_id, evidenceBody(redaction.reason || redaction.redaction_id, "redaction", redaction, redaction.notes), sourceCitation(source, sourceId), { crkRecordType: "redaction", crkRecord: redaction });
   }
   for (const note of filtered.notes) {
-    addEvidence("note", note.note_id, note.title, note.body, { sourceId: note.path, sourceTitle: note.title, locator: note.path }, { trcrRecordType: "case_note", trcrRecord: note });
+    addEvidence("note", note.note_id, note.title, note.body, { sourceId: note.path, sourceTitle: note.title, locator: note.path }, { crkRecordType: "case_note", crkRecord: note });
   }
 
   const evidenceIds = sanitizeEntityEvidenceIds(entities, evidence);
@@ -141,7 +141,7 @@ export function buildModel(caseDir, options) {
   const canvasNodes = makeCanvasNodes(entities, groups);
   const model = {
     schemaVersion: MODEL_SCHEMA_VERSION,
-    id: modelId("trcr", caseId),
+    id: modelId("crk", caseId),
     title: caseJson.title || caseSlug,
     description: compactText(caseJson.research_scope, caseJson.public_interest),
     createdAt: safeDate(caseJson.created_at, exportedAt),
@@ -157,7 +157,7 @@ export function buildModel(caseDir, options) {
         manual: {
           engine: "manual",
           nodes: canvasNodes,
-          signature: `trcr-export:${caseSlug}:${exportedAt}`,
+          signature: `crk-export:${caseSlug}:${exportedAt}`,
           updatedAt: exportedAt,
         },
       },

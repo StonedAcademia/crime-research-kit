@@ -1,6 +1,6 @@
 ---
 name: public-records-router
-description: Public-record source-planning workflow for routing a TRCR case subject across legal, corporate, education, licensing, media/transcript, missing-person, geographical-location, criminal-research, property/location, source-preservation, identity-resolution, and contradiction-review lanes. Use when Codex needs to decide which public records to seek, in what order, and with what safety constraints before extraction.
+description: Public-record source-planning workflow for routing a CRK case subject across legal, corporate, education, licensing, media/transcript, missing-person, geographical-location, criminal-research, property/location, source-preservation, identity-resolution, and contradiction-review lanes. Use when Codex needs to decide which public records to seek, in what order, and with what safety constraints before extraction.
 ---
 
 # Public Records Router
@@ -12,9 +12,9 @@ Lane/template metadata is generated from `docs/registry/`; do not invent new lan
 
 ## Purpose
 
-Use this skill to turn a subject or research question into a public-record source plan. The router creates leads and lane choices, not evidence. Evidence starts only after sources are registered, preserved, extracted, and imported into the TRCR ledger.
+Use this skill to turn a subject or research question into a public-record source plan. The router creates leads and lane choices, not evidence. Evidence starts only after sources are registered, preserved, extracted, and imported into the CRK ledger.
 
-This skill extends the TRCR case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, claims, and public export boundaries.
+This skill extends the CRK case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, claims, and public export boundaries.
 
 ## Required Inputs
 
@@ -28,7 +28,7 @@ If the subject is ambiguous, route to `identity-resolution` before collecting se
 
 ## Workflow
 
-1. **Create or open the case.** Route plans belong inside a TRCR case, even when no sources have been imported yet.
+1. **Create or open the case.** Route plans belong inside a CRK case, even when no sources have been imported yet.
 2. **Generate the source plan.** Run `plan-public-records` with the subject and optional forced lanes.
 3. **Choose lanes.** Use [routing_matrix.md](references/routing_matrix.md). Load the specific skill named by the selected lane before extraction.
 4. **Register sources first.** Use `ingest-url` or `add-source`, then `preserve-source` when local artifacts or archive URLs matter.
@@ -37,7 +37,7 @@ If the subject is ambiguous, route to `identity-resolution` before collecting se
 
 ## Commands
 
-Use the wrapper-local TRCR tool path and prefix case paths with `tc-c-kit/`:
+Use the wrapper-local CRK tool path and prefix case paths with `tc-c-kit/`:
 
 ```bash
 python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-public-records tc-c-kit/data/cases/<case_slug> \

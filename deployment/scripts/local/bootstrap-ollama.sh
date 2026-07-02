@@ -1,12 +1,12 @@
 #!/usr/bin/env sh
 set -eu
 
-MODEL_SPEC="${TRCR_MODEL:-ollama:llama3.1}"
+MODEL_SPEC="${CRK_MODEL:-ollama:llama3.1}"
 PROVIDER="${MODEL_SPEC%%:*}"
 MODEL="${MODEL_SPEC#*:}"
 
 if [ "$PROVIDER" != "ollama" ] || [ "$MODEL" = "$MODEL_SPEC" ] || [ -z "$MODEL" ]; then
-  echo "TRCR_MODEL must be an ollama model spec like ollama:llama3.1" >&2
+  echo "CRK_MODEL must be an ollama model spec like ollama:llama3.1" >&2
   exit 1
 fi
 

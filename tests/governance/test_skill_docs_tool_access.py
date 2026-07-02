@@ -15,7 +15,7 @@ def test_main_skill_documents_tool_access():
     text = MAIN_SKILL.read_text(encoding="utf-8")
 
     assert "## Tool access" in text
-    assert "trcr-mcp" in text
+    assert "crk-mcp" in text
     assert "import_extraction(confirm=true)" in text
     assert "docs/registry/" in text
 

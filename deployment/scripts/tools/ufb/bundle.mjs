@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
-const CREATED_BY = "trcr-ufb-exporter";
+const CREATED_BY = "crk-ufb-exporter";
 const SCAVENGE_BUNDLE_ARTIFACT_TYPE = "scavenge.bundle";
 const BUNDLE_SCHEMA_V2 = "forensic-bundle-v2";
 const SCAVENGE_OBJECT_GRAPH_SCHEMA_V1 = "scavenge-object-graph-v1";

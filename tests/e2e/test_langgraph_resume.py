@@ -10,7 +10,7 @@ from langgraph.types import Command
 
 from case_builder.graph.runner import build_case_builder_graph
 from case_builder.models.state import CaseBuilderState
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT
 
 REPO_ROOT = KIT_ROOT
@@ -19,7 +19,7 @@ REPO_ROOT = KIT_ROOT
 def make_graph(db_path: Path):
     """Build a fresh graph + saver on the same DB, simulating a process restart."""
     connection = sqlite3.connect(str(db_path), check_same_thread=False)
-    runner = TrcrRunner(repo_root=REPO_ROOT, dry_run=True)
+    runner = CrkRunner(repo_root=REPO_ROOT, dry_run=True)
     return build_case_builder_graph(runner, checkpointer=SqliteSaver(connection), use_interrupt=True)
 
 

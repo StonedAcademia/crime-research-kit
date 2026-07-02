@@ -1,6 +1,6 @@
-# TRCR Case Mapping For Source Capture Preservation
+# CRK Case Mapping For Source Capture Preservation
 
-Use existing TRCR ledgers. Preservation metadata belongs on source rows and preservation reports; source-backed facts belong in claims, events, relationships, and artifacts.
+Use existing CRK ledgers. Preservation metadata belongs on source rows and preservation reports; source-backed facts belong in claims, events, relationships, and artifacts.
 
 ## Sources
 

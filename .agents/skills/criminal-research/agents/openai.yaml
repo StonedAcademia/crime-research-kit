@@ -1,4 +1,4 @@
 interface:
   display_name: "Criminal Research"
   short_description: "Analyze MO patterns with forensic caution"
-  default_prompt: "Use $criminal-research to analyze source-backed criminal behavior, M.O. patterns, and non-diagnostic personality hypotheses in a TRCR case."
+  default_prompt: "Use $criminal-research to analyze source-backed criminal behavior, M.O. patterns, and non-diagnostic personality hypotheses in a CRK case."

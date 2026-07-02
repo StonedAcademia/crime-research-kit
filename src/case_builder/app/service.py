@@ -7,7 +7,7 @@ from typing import Any, Literal, Sequence
 from ..graph.checkpoint import case_checkpointer
 from ..graph.runner import build_case_builder_graph, langgraph_available, run_sequential
 from ..models.state import CaseBuilderState
-from ..ops.runner import TrcrRunner
+from ..ops.runner import CrkRunner
 
 RunnerName = Literal["auto", "langgraph", "sequential"]
 LANGGRAPH_HINT = "LangGraph is not installed. Install with `pip install -e '.[agentic]'`."
@@ -30,10 +30,10 @@ def run_case_builder(
 ) -> dict[str, Any]:
     """Run a case-builder plan and return serializable state.
 
-    Dry runs produce the exact TRCR commands the app would execute. Executed
+    Dry runs produce the exact CRK commands the app would execute. Executed
     runs still stop at human review gates before canonical import or export.
     """
-    trcr = TrcrRunner(dry_run=not execute)
+    crk = CrkRunner(dry_run=not execute)
     model_factory = _model_factory(state.llm_enabled)
     use_langgraph = runner in {"auto", "langgraph"} and langgraph_available()
     if runner == "langgraph" and not langgraph_available():
@@ -41,17 +41,17 @@ def run_case_builder(
     if not use_langgraph:
         if checkpoint:
             raise RuntimeError("Checkpointing requires the langgraph runner.")
-        return run_sequential(state, trcr, model_factory=model_factory)
+        return run_sequential(state, crk, model_factory=model_factory)
 
     payload = state.to_dict()
     if not checkpoint:
-        graph = build_case_builder_graph(trcr, model_factory=model_factory)
+        graph = build_case_builder_graph(crk, model_factory=model_factory)
         result = dict(graph.invoke(payload))
         result["runner"] = "langgraph"
         return result
 
     graph = build_case_builder_graph(
-        trcr,
+        crk,
         checkpointer=case_checkpointer(state.case_dir),
         use_interrupt=True,
         model_factory=model_factory,
@@ -76,9 +76,9 @@ def resume_case_builder(
         raise RuntimeError(LANGGRAPH_HINT)
     from langgraph.types import Command
 
-    trcr = TrcrRunner(dry_run=not execute)
+    crk = CrkRunner(dry_run=not execute)
     graph = build_case_builder_graph(
-        trcr,
+        crk,
         checkpointer=case_checkpointer(case_dir),
         use_interrupt=True,
         model_factory=_model_factory(llm),

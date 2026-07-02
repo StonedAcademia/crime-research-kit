@@ -3,15 +3,15 @@
 from __future__ import annotations
 
 from .result import OpResult
-from .runner import TrcrRunner
+from .runner import CrkRunner
 
 
-def export_manim(runner: TrcrRunner, case_dir: str, *, include_private: bool = False) -> OpResult:
+def export_manim(runner: CrkRunner, case_dir: str, *, include_private: bool = False) -> OpResult:
     return runner.run("export_manim", _args("export-manim", case_dir, include_private))
 
 
 def export_case_charts(
-    runner: TrcrRunner,
+    runner: CrkRunner,
     case_dir: str,
     *,
     include_private: bool = False,
@@ -21,7 +21,7 @@ def export_case_charts(
 
 
 def export_analysis_charts(
-    runner: TrcrRunner,
+    runner: CrkRunner,
     case_dir: str,
     *,
     include_private: bool = False,
@@ -31,7 +31,7 @@ def export_analysis_charts(
 
 
 def export_timeline(
-    runner: TrcrRunner,
+    runner: CrkRunner,
     cases_root: str,
     *,
     include_private: bool = False,

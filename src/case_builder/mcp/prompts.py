@@ -1,4 +1,4 @@
-"""Workflow prompts so MCP hosts receive TRCR guidance in-band."""
+"""Workflow prompts so MCP hosts receive CRK guidance in-band."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from typing import Any
 
 from .context import ServerContext
 
-START_CASE = """Start a TRCR research case. Steps:
+START_CASE = """Start a CRK research case. Steps:
 1. Confirm the case slug and title with the user, then check list_cases / case_info.
 2. Plan source lanes with plan_public_records for the seed subject.
 3. Capture public sources with ingest_url or add_source; grade reliability honestly.
@@ -41,7 +41,7 @@ PUBLIC_READINESS = """Assess public-output readiness:
 def register(mcp: Any, ctx: ServerContext) -> None:
     @mcp.prompt()
     def start_case() -> str:
-        """Start a new TRCR case with safe source planning."""
+        """Start a new CRK case with safe source planning."""
         return START_CASE
 
     @mcp.prompt()

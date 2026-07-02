@@ -1,6 +1,6 @@
 ---
 name: property-location-records
-description: Public-record workflow for researching property, parcel, deed, permit, zoning, map, facility, campus, address-sensitive, and location-history records, then adding source-traceable places, claims, events, artifacts, and relationships to a TRCR case file. Use when Codex needs property/location records while redacting private addresses and avoiding doxxing.
+description: Public-record workflow for researching property, parcel, deed, permit, zoning, map, facility, campus, address-sensitive, and location-history records, then adding source-traceable places, claims, events, artifacts, and relationships to a CRK case file. Use when Codex needs property/location records while redacting private addresses and avoiding doxxing.
 ---
 
 # Property Location Records
@@ -12,9 +12,9 @@ Lane/template metadata is generated from `docs/registry/`; do not invent new lan
 
 ## Purpose
 
-Use this skill to build public, source-traceable property and location packets for a TRCR case. Property records are often public but still privacy-sensitive; do not publish private home addresses, precise locations of private people, or minor-related locations unless central to a widely reported public record and clearly justified.
+Use this skill to build public, source-traceable property and location packets for a CRK case. Property records are often public but still privacy-sensitive; do not publish private home addresses, precise locations of private people, or minor-related locations unless central to a widely reported public record and clearly justified.
 
-This skill extends the TRCR case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries.
+This skill extends the CRK case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries.
 
 ## Required Inputs
 

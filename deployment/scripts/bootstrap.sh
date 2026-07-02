@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Bootstrap the minimum TRCR toolchain: proto, plus the moon and python
+# Bootstrap the minimum CRK toolchain: proto, plus the moon and python
 # versions pinned in .prototools. Run once before the README quick start.
 set -euo pipefail
 
@@ -16,4 +16,4 @@ proto use
 
 echo
 echo "Toolchain ready. Continue with the README quick start:"
-echo "  moon run trcr:install-dev"
+echo "  moon run crk:install-dev"

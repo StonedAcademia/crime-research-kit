@@ -9,7 +9,7 @@ from ..ops import query as query_ops
 from ..ops import review as review_ops
 from ..ops import sources as source_ops
 from ..ops.result import OpResult
-from ..ops.runner import TrcrRunner
+from ..ops.runner import CrkRunner
 from .nodes import required_case_dir
 from .state import GraphState
 
@@ -32,7 +32,7 @@ def merge_results(state: GraphState, results: list[OpResult], success_status: st
     }
 
 
-def source_capture_node(runner: TrcrRunner):
+def source_capture_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         urls = state.get("source_urls") or []
         if not urls:
@@ -44,7 +44,7 @@ def source_capture_node(runner: TrcrRunner):
     return node
 
 
-def parse_or_ocr_node(runner: TrcrRunner):
+def parse_or_ocr_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         if runner.dry_run:
             return {"status": "parse_skipped_dry_run"}
@@ -72,7 +72,7 @@ def parse_or_ocr_node(runner: TrcrRunner):
     return node
 
 
-def draft_packets_node(runner: TrcrRunner):
+def draft_packets_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         case_dir = required_case_dir(state)
         source_ids = list(state.get("source_ids") or [])
@@ -93,7 +93,7 @@ def draft_packets_node(runner: TrcrRunner):
     return node
 
 
-def import_and_validate_node(runner: TrcrRunner):
+def import_and_validate_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         approved = state.get("approved_packets") or []
         if not approved:
@@ -114,7 +114,7 @@ def import_and_validate_node(runner: TrcrRunner):
     return node
 
 
-def index_case_node(runner: TrcrRunner):
+def index_case_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         if not state.get("index_enabled") or runner.dry_run:
             return {"status": "index_skipped"}
@@ -131,7 +131,7 @@ def index_case_node(runner: TrcrRunner):
     return node
 
 
-def readiness_audit_node(runner: TrcrRunner):
+def readiness_audit_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         case_dir = required_case_dir(state)
         results = [
@@ -145,7 +145,7 @@ def readiness_audit_node(runner: TrcrRunner):
     return node
 
 
-def export_bundle_node(runner: TrcrRunner):
+def export_bundle_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         case_dir = required_case_dir(state)
         results = [export_ops.export_manim(runner, case_dir), case_ops.report(runner, case_dir)]

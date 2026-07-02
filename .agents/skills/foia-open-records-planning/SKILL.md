@@ -1,6 +1,6 @@
 ---
 name: foia-open-records-planning
-description: Public-records request planning workflow for FOIA, state open-records, sunshine-law, agency records, request wording, exemptions, fee waivers, response tracking, appeals, and released-record intake into a TRCR case. Use when Codex needs to plan lawful public-record requests without treating the request plan as evidence.
+description: Public-records request planning workflow for FOIA, state open-records, sunshine-law, agency records, request wording, exemptions, fee waivers, response tracking, appeals, and released-record intake into a CRK case. Use when Codex needs to plan lawful public-record requests without treating the request plan as evidence.
 ---
 
 # FOIA Open Records Planning
@@ -12,9 +12,9 @@ Lane/template metadata is generated from `docs/registry/`; do not invent new lan
 
 ## Purpose
 
-Use this skill to plan public-records requests for a TRCR case. A request plan is a lead and workflow artifact; it does not prove records exist or support factual claims until responsive records are received, registered, preserved, extracted, and cited.
+Use this skill to plan public-records requests for a CRK case. A request plan is a lead and workflow artifact; it does not prove records exist or support factual claims until responsive records are received, registered, preserved, extracted, and cited.
 
-This skill extends the TRCR case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries.
+This skill extends the CRK case workflow; follow the active truecrime-cult-research safety rules for privacy, source grading, source spans, claims, and public export boundaries.
 
 ## Required Inputs
 

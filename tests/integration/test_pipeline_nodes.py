@@ -6,14 +6,14 @@ from case_builder.graph.pipeline_nodes import (
     source_capture_node,
 )
 from case_builder.ops.result import OpResult
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT
 
 REPO_ROOT = KIT_ROOT
 
 
-def dry_runner() -> TrcrRunner:
-    return TrcrRunner(repo_root=REPO_ROOT, dry_run=True)
+def dry_runner() -> CrkRunner:
+    return CrkRunner(repo_root=REPO_ROOT, dry_run=True)
 
 
 def test_merge_results_folds_commands_and_errors():
@@ -86,7 +86,7 @@ def test_parse_or_ocr_skips_in_dry_run():
 def test_parse_or_ocr_records_runtime_errors_per_source(synthetic_case_copy):
     from case_builder.graph.pipeline_nodes import parse_or_ocr_node
 
-    node = parse_or_ocr_node(TrcrRunner(repo_root=REPO_ROOT, dry_run=False))
+    node = parse_or_ocr_node(CrkRunner(repo_root=REPO_ROOT, dry_run=False))
 
     update = node({"case_dir": str(synthetic_case_copy)})
 
@@ -132,9 +132,9 @@ def test_index_node_skips_unless_enabled():
 
 def test_index_node_reports_failure_without_raising(synthetic_case_copy):
     from case_builder.graph.pipeline_nodes import index_case_node
-    from case_builder.ops.runner import TrcrRunner
+    from case_builder.ops.runner import CrkRunner
 
-    node = index_case_node(TrcrRunner(repo_root=REPO_ROOT, dry_run=False))
+    node = index_case_node(CrkRunner(repo_root=REPO_ROOT, dry_run=False))
 
     update = node({"case_dir": str(synthetic_case_copy), "index_enabled": True})
 

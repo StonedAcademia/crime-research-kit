@@ -1,3 +1,3 @@
 # Guides
 
-Long-form architecture, integration, and operator guidance for TRCR.
+Long-form architecture, integration, and operator guidance for CRK.

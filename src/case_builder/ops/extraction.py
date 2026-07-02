@@ -9,7 +9,7 @@ from typing import Any
 from ..casefile import CasefileError, ensure_case, log_action
 from .policy import PolicyError, ensure_staged_write, lint_guilt_labels
 from .result import OpResult, local_op
-from .runner import TrcrRunner
+from .runner import CrkRunner
 
 IMPORT_REFUSAL = (
     "import_extraction writes canonical records and requires confirm=True "
@@ -17,11 +17,11 @@ IMPORT_REFUSAL = (
 )
 
 
-def draft_extraction(runner: TrcrRunner, case_dir: str, source_id: str, *, template: str = "generic") -> OpResult:
+def draft_extraction(runner: CrkRunner, case_dir: str, source_id: str, *, template: str = "generic") -> OpResult:
     return runner.run("draft_extraction", ["draft-extraction", case_dir, source_id, "--template", template])
 
 
-def import_extraction(runner: TrcrRunner, case_dir: str, packet_path: str, *, confirm: bool = False) -> OpResult:
+def import_extraction(runner: CrkRunner, case_dir: str, packet_path: str, *, confirm: bool = False) -> OpResult:
     if confirm is not True:
         return OpResult(name="import_extraction", ok=False, errors=[IMPORT_REFUSAL])
     return runner.run("import_extraction", ["import-extraction", case_dir, packet_path])

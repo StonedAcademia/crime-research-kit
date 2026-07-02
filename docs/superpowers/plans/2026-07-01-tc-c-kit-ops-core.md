@@ -4,7 +4,7 @@
 
 **Goal:** Extract a typed `case_builder/ops/` operations core (with `OpResult` and `policy.py` safety enforcement), re-point the CLI and LangGraph nodes at it, and turn the safety contract into tests.
 
-**Architecture:** Every case operation becomes a typed function returning `OpResult`. A `TrcrRunner` (moved from `tools/trcr_cli.py`) executes `tcr.py` subprocess commands; local-stack Python functions (acquisition/parsing/retrieval) are wrapped directly. `ops/policy.py` is the single enforcement point for staged-write classification, privacy filtering, automation defaults, and guilt-label linting. Frontends (CLI, graph) never touch `tcr.py` or the ledger directly after this phase.
+**Architecture:** Every case operation becomes a typed function returning `OpResult`. A `CrkRunner` (moved from `tools/crk_cli.py`) executes `tcr.py` subprocess commands; local-stack Python functions (acquisition/parsing/retrieval) are wrapped directly. `ops/policy.py` is the single enforcement point for staged-write classification, privacy filtering, automation defaults, and guilt-label linting. Frontends (CLI, graph) never touch `tcr.py` or the ledger directly after this phase.
 
 **Tech Stack:** Python ≥3.10 stdlib (dataclasses, subprocess, pathlib), pytest. No new runtime dependencies.
 
@@ -28,10 +28,10 @@
 
 ```
 tc-c-kit/src/case_builder/ops/
-  __init__.py     # re-exports OpResult, TrcrRunner
+  __init__.py     # re-exports OpResult, CrkRunner
   README.md       # package purpose + module map
   result.py       # OpResult dataclass + local_op() wrapper for Python-native ops
-  runner.py       # TrcrRunner subprocess executor (moved from tools/trcr_cli.py)
+  runner.py       # CrkRunner subprocess executor (moved from tools/crk_cli.py)
   policy.py       # PolicyError, ensure_staged_write, filter_public,
                   # apply_automation_defaults, lint_guilt_labels
   case.py         # init_case, case_info, validate, report
@@ -48,8 +48,8 @@ tc-c-kit/src/case_builder/ops/
 
 Modified:
   tc-c-kit/src/case_builder/graph/nodes.py       # ops functions instead of CaseBuilderTools
-  tc-c-kit/src/case_builder/graph/runner.py      # TrcrRunner injection
-  tc-c-kit/src/case_builder/app/service.py       # constructs TrcrRunner
+  tc-c-kit/src/case_builder/graph/runner.py      # CrkRunner injection
+  tc-c-kit/src/case_builder/app/service.py       # constructs CrkRunner
   tc-c-kit/src/case_builder/cli.py               # local-stack handlers go through ops
   tc-c-kit/src/case_builder/README.md            # module map row: tools/ -> ops/
   tc-c-kit/docs/case-builder-langgraph.md        # source-layout table row
@@ -224,7 +224,7 @@ never touch `tcr.py`, the JSONL ledger, or local-stack modules directly.
 | Module | Responsibility |
 | --- | --- |
 | `result.py` | `OpResult` dataclass and `local_op` wrapper for Python-native ops. |
-| `runner.py` | `TrcrRunner` subprocess executor around the repo-local `tcr.py`. |
+| `runner.py` | `CrkRunner` subprocess executor around the repo-local `tcr.py`. |
 | `policy.py` | Safety contract as code: staged-write classification, privacy filtering, automation defaults, guilt-label lint. |
 | `case.py` | Case lifecycle: init, info, validate, report. |
 | `sources.py` | Source intake: planning, registration, ingestion, preservation, discovery, parsing, OCR. |
@@ -253,7 +253,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 
 ---
 
-### Task 2: `TrcrRunner` subprocess executor
+### Task 2: `CrkRunner` subprocess executor
 
 **Files:**
 - Create: `tc-c-kit/src/case_builder/ops/runner.py`
@@ -262,7 +262,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 
 **Interfaces:**
 - Consumes: `OpResult` from Task 1.
-- Produces: `TrcrRunner` class — constructor `TrcrRunner(*, repo_root: Path | None = None, dry_run: bool = True, python_executable: str | None = None)`; methods `run(name: str, args: Sequence[str]) -> OpResult`, `command(args: Sequence[str]) -> list[str]`, `case_path(case_dir: str) -> Path`; attributes `repo_root`, `dry_run`, `tcr_path`. Module functions `default_repo_root() -> Path`, `default_tcr_path(repo_root: Path) -> Path` (moved verbatim from `tools/trcr_cli.py`). Do NOT delete `tools/` yet — that happens in Task 7 after frontends are re-pointed.
+- Produces: `CrkRunner` class — constructor `CrkRunner(*, repo_root: Path | None = None, dry_run: bool = True, python_executable: str | None = None)`; methods `run(name: str, args: Sequence[str]) -> OpResult`, `command(args: Sequence[str]) -> list[str]`, `case_path(case_dir: str) -> Path`; attributes `repo_root`, `dry_run`, `tcr_path`. Module functions `default_repo_root() -> Path`, `default_tcr_path(repo_root: Path) -> Path` (moved verbatim from `tools/crk_cli.py`). Do NOT delete `tools/` yet — that happens in Task 7 after frontends are re-pointed.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -272,14 +272,14 @@ Create `tc-c-kit/tests/test_ops_runner.py`:
 import sys
 from pathlib import Path
 
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 
 KIT_ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = KIT_ROOT.parent
 
 
 def test_dry_run_returns_planned_command_without_executing():
-    runner = TrcrRunner(repo_root=REPO_ROOT, dry_run=True)
+    runner = CrkRunner(repo_root=REPO_ROOT, dry_run=True)
 
     result = runner.run("validate", ["validate", "data/cases/nonexistent"])
 
@@ -291,7 +291,7 @@ def test_dry_run_returns_planned_command_without_executing():
 
 
 def test_executed_run_validates_synthetic_case(synthetic_case_copy):
-    runner = TrcrRunner(repo_root=REPO_ROOT, dry_run=False)
+    runner = CrkRunner(repo_root=REPO_ROOT, dry_run=False)
 
     result = runner.run("validate", ["validate", str(synthetic_case_copy)])
 
@@ -301,7 +301,7 @@ def test_executed_run_validates_synthetic_case(synthetic_case_copy):
 
 
 def test_failed_run_reports_error(tmp_path):
-    runner = TrcrRunner(repo_root=REPO_ROOT, dry_run=False)
+    runner = CrkRunner(repo_root=REPO_ROOT, dry_run=False)
 
     result = runner.run("validate", ["validate", str(tmp_path / "not_a_case")])
 
@@ -311,7 +311,7 @@ def test_failed_run_reports_error(tmp_path):
 
 
 def test_runner_finds_tcr_script():
-    runner = TrcrRunner(repo_root=REPO_ROOT)
+    runner = CrkRunner(repo_root=REPO_ROOT)
 
     assert runner.tcr_path.exists()
 ```
@@ -323,10 +323,10 @@ Expected: FAIL with `ModuleNotFoundError` / `ImportError` for `case_builder.ops.
 
 - [ ] **Step 3: Write minimal implementation**
 
-Create `tc-c-kit/src/case_builder/ops/runner.py` (this is `tools/trcr_cli.py` restructured around `OpResult`; the path-discovery helpers move over unchanged):
+Create `tc-c-kit/src/case_builder/ops/runner.py` (this is `tools/crk_cli.py` restructured around `OpResult`; the path-discovery helpers move over unchanged):
 
 ```python
-"""Subprocess executor for the repo-local TRCR CLI."""
+"""Subprocess executor for the repo-local CRK CLI."""
 
 from __future__ import annotations
 
@@ -338,7 +338,7 @@ from typing import Sequence
 from .result import OpResult
 
 
-class TrcrRunner:
+class CrkRunner:
     """Low-level executor that turns tcr.py invocations into OpResults."""
 
     def __init__(
@@ -404,9 +404,9 @@ Update `tc-c-kit/src/case_builder/ops/__init__.py`:
 from __future__ import annotations
 
 from .result import OpResult, local_op
-from .runner import TrcrRunner
+from .runner import CrkRunner
 
-__all__ = ["OpResult", "TrcrRunner", "local_op"]
+__all__ = ["OpResult", "CrkRunner", "local_op"]
 ```
 
 - [ ] **Step 4: Run test to verify it passes**
@@ -418,7 +418,7 @@ Expected: PASS (4 tests; the executed-run test invokes real `tcr.py validate` on
 
 ```bash
 git add tc-c-kit/src/case_builder/ops tc-c-kit/tests/test_ops_runner.py
-git commit -m "feat(ops): add TrcrRunner subprocess executor
+git commit -m "feat(ops): add CrkRunner subprocess executor
 
 Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 ```
@@ -637,7 +637,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 - Test: `tc-c-kit/tests/test_ops_case_sources.py`
 
 **Interfaces:**
-- Consumes: `TrcrRunner` (Task 2), `OpResult`/`local_op` (Task 1), existing `casefile` helpers, existing local-stack functions `case_builder.acquisition.discover_sources`, `case_builder.parsing.parse_source`, `case_builder.parsing.ocr_source`.
+- Consumes: `CrkRunner` (Task 2), `OpResult`/`local_op` (Task 1), existing `casefile` helpers, existing local-stack functions `case_builder.acquisition.discover_sources`, `case_builder.parsing.parse_source`, `case_builder.parsing.ocr_source`.
 - Produces (all return `OpResult`):
   - `case.init_case(runner, case_dir: str, title: str | None = None)` — skips (`skipped=True`) when `case.json` exists, mirroring current `CaseBuilderTools.init_case`.
   - `case.case_info(case_dir: str)` — no runner; reads `case.json` + per-record-type counts.
@@ -660,13 +660,13 @@ from pathlib import Path
 
 from case_builder.ops import case as case_ops
 from case_builder.ops import sources as source_ops
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
-def dry_runner() -> TrcrRunner:
-    return TrcrRunner(repo_root=REPO_ROOT, dry_run=True)
+def dry_runner() -> CrkRunner:
+    return CrkRunner(repo_root=REPO_ROOT, dry_run=True)
 
 
 def test_init_case_skips_existing_case(synthetic_case_copy):
@@ -779,10 +779,10 @@ from typing import Any
 
 from ..casefile import RECORD_FILES, ensure_case, load_records
 from .result import OpResult, local_op
-from .runner import TrcrRunner
+from .runner import CrkRunner
 
 
-def init_case(runner: TrcrRunner, case_dir: str, title: str | None = None) -> OpResult:
+def init_case(runner: CrkRunner, case_dir: str, title: str | None = None) -> OpResult:
     case_path = runner.case_path(case_dir)
     args = ["init-case", case_dir, "--title", title or case_path.name.replace("_", " ").title()]
     if (case_path / "case.json").exists():
@@ -794,11 +794,11 @@ def case_info(case_dir: str) -> OpResult:
     return local_op("case_info", _case_info_data, case_dir)
 
 
-def validate(runner: TrcrRunner, case_dir: str) -> OpResult:
+def validate(runner: CrkRunner, case_dir: str) -> OpResult:
     return runner.run("validate", ["validate", case_dir])
 
 
-def report(runner: TrcrRunner, case_dir: str) -> OpResult:
+def report(runner: CrkRunner, case_dir: str) -> OpResult:
     return runner.run("report", ["report", case_dir])
 
 
@@ -822,10 +822,10 @@ from ..acquisition import discover_sources as _discover_sources
 from ..parsing import ocr_source as _ocr_source
 from ..parsing import parse_source as _parse_source
 from .result import OpResult, local_op
-from .runner import TrcrRunner
+from .runner import CrkRunner
 
 
-def plan_public_records(runner: TrcrRunner, case_dir: str, subject: str, lanes: Sequence[str]) -> OpResult:
+def plan_public_records(runner: CrkRunner, case_dir: str, subject: str, lanes: Sequence[str]) -> OpResult:
     args = ["plan-public-records", case_dir, "--subject", subject]
     for lane in lanes:
         args.extend(["--lane", lane])
@@ -833,7 +833,7 @@ def plan_public_records(runner: TrcrRunner, case_dir: str, subject: str, lanes: 
 
 
 def add_source(
-    runner: TrcrRunner,
+    runner: CrkRunner,
     case_dir: str,
     *,
     title: str,
@@ -864,7 +864,7 @@ def add_source(
 
 
 def ingest_url(
-    runner: TrcrRunner,
+    runner: CrkRunner,
     case_dir: str,
     url: str,
     *,
@@ -887,7 +887,7 @@ def ingest_url(
 
 
 def preserve_source(
-    runner: TrcrRunner,
+    runner: CrkRunner,
     case_dir: str,
     source_id: str,
     *,
@@ -950,7 +950,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 - Test: `tc-c-kit/tests/test_ops_extraction.py`
 
 **Interfaces:**
-- Consumes: `TrcrRunner`, `OpResult`, `policy.ensure_staged_write`, `policy.lint_guilt_labels`, `policy.PolicyError`, `casefile.ensure_case`, `casefile.log_action`.
+- Consumes: `CrkRunner`, `OpResult`, `policy.ensure_staged_write`, `policy.lint_guilt_labels`, `policy.PolicyError`, `casefile.ensure_case`, `casefile.log_action`.
 - Produces (all return `OpResult`):
   - `draft_extraction(runner, case_dir, source_id, *, template: str = "generic")` — passes `--template` to `tcr.py draft-extraction`.
   - `list_packets(case_dir)` — `data={"packets": [<filenames sorted>]}` from `staging/extractions/`.
@@ -967,13 +967,13 @@ import json
 from pathlib import Path
 
 from case_builder.ops import extraction as extraction_ops
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
-def dry_runner() -> TrcrRunner:
-    return TrcrRunner(repo_root=REPO_ROOT, dry_run=True)
+def dry_runner() -> CrkRunner:
+    return CrkRunner(repo_root=REPO_ROOT, dry_run=True)
 
 
 def test_import_extraction_refuses_without_confirm():
@@ -1054,7 +1054,7 @@ from typing import Any
 from ..casefile import ensure_case, log_action
 from .policy import PolicyError, ensure_staged_write, lint_guilt_labels
 from .result import OpResult, local_op
-from .runner import TrcrRunner
+from .runner import CrkRunner
 
 IMPORT_REFUSAL = (
     "import_extraction writes canonical records and requires confirm=True "
@@ -1062,11 +1062,11 @@ IMPORT_REFUSAL = (
 )
 
 
-def draft_extraction(runner: TrcrRunner, case_dir: str, source_id: str, *, template: str = "generic") -> OpResult:
+def draft_extraction(runner: CrkRunner, case_dir: str, source_id: str, *, template: str = "generic") -> OpResult:
     return runner.run("draft_extraction", ["draft-extraction", case_dir, source_id, "--template", template])
 
 
-def import_extraction(runner: TrcrRunner, case_dir: str, packet_path: str, *, confirm: bool = False) -> OpResult:
+def import_extraction(runner: CrkRunner, case_dir: str, packet_path: str, *, confirm: bool = False) -> OpResult:
     if confirm is not True:
         return OpResult(name="import_extraction", ok=False, errors=[IMPORT_REFUSAL])
     return runner.run("import_extraction", ["import-extraction", case_dir, packet_path])
@@ -1136,7 +1136,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 - Test: `tc-c-kit/tests/test_ops_query_review_exports.py`
 
 **Interfaces:**
-- Consumes: `TrcrRunner`, `OpResult`/`local_op`, `policy.filter_public`, `casefile.load_records`/`RECORD_FILES`, existing `case_builder.retrieval.index_case` / `case_builder.retrieval.query_case`.
+- Consumes: `CrkRunner`, `OpResult`/`local_op`, `policy.filter_public`, `casefile.load_records`/`RECORD_FILES`, existing `case_builder.retrieval.index_case` / `case_builder.retrieval.query_case`.
 - Produces (all return `OpResult`):
   - `query.get_records(case_dir, record_type, *, include_private=False)` — `data={"record_type", "count", "records", "filtered"}`; unknown type → `ok=False` listing valid types.
   - `query.index_case(case_dir, *, include_private=False, qdrant_url="http://localhost:6333", collection=None, embed_model="BAAI/bge-small-en-v1.5")`
@@ -1156,13 +1156,13 @@ from pathlib import Path
 from case_builder.ops import exports as export_ops
 from case_builder.ops import query as query_ops
 from case_builder.ops import review as review_ops
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
-def dry_runner() -> TrcrRunner:
-    return TrcrRunner(repo_root=REPO_ROOT, dry_run=True)
+def dry_runner() -> CrkRunner:
+    return CrkRunner(repo_root=REPO_ROOT, dry_run=True)
 
 
 def add_private_claim(case_dir: Path) -> None:
@@ -1248,7 +1248,7 @@ from ..retrieval import index_case as _index_case
 from ..retrieval import query_case as _query_case
 from .policy import filter_public
 from .result import OpResult, local_op
-from .runner import TrcrRunner
+from .runner import CrkRunner
 
 
 def get_records(case_dir: str, record_type: str, *, include_private: bool = False) -> OpResult:
@@ -1300,7 +1300,7 @@ def query_case(
     )
 
 
-def link_names(runner: TrcrRunner, case_dir: str, *, names: Sequence[str] = (), names_file: str | None = None) -> OpResult:
+def link_names(runner: CrkRunner, case_dir: str, *, names: Sequence[str] = (), names_file: str | None = None) -> OpResult:
     args = ["link-names", case_dir]
     for name in names:
         args.extend(["--name", name])
@@ -1317,26 +1317,26 @@ Create `tc-c-kit/src/case_builder/ops/review.py`:
 from __future__ import annotations
 
 from .result import OpResult
-from .runner import TrcrRunner
+from .runner import CrkRunner
 
 
-def audit_contradictions(runner: TrcrRunner, case_dir: str) -> OpResult:
+def audit_contradictions(runner: CrkRunner, case_dir: str) -> OpResult:
     return runner.run("audit_contradictions", ["audit-contradictions", case_dir])
 
 
-def review_narrative_readiness(runner: TrcrRunner, case_dir: str) -> OpResult:
+def review_narrative_readiness(runner: CrkRunner, case_dir: str) -> OpResult:
     return runner.run("review_narrative_readiness", ["review-narrative-readiness", case_dir])
 
 
-def audit_privacy_redactions(runner: TrcrRunner, case_dir: str) -> OpResult:
+def audit_privacy_redactions(runner: CrkRunner, case_dir: str) -> OpResult:
     return runner.run("audit_privacy_redactions", ["audit-privacy-redactions", case_dir])
 
 
-def audit_public_export(runner: TrcrRunner, case_dir: str) -> OpResult:
+def audit_public_export(runner: CrkRunner, case_dir: str) -> OpResult:
     return runner.run("audit_public_export", ["audit-public-export", case_dir])
 
 
-def audit_source_independence(runner: TrcrRunner, case_dir: str) -> OpResult:
+def audit_source_independence(runner: CrkRunner, case_dir: str) -> OpResult:
     return runner.run("audit_source_independence", ["audit-source-independence", case_dir])
 ```
 
@@ -1348,22 +1348,22 @@ Create `tc-c-kit/src/case_builder/ops/exports.py`:
 from __future__ import annotations
 
 from .result import OpResult
-from .runner import TrcrRunner
+from .runner import CrkRunner
 
 
-def export_manim(runner: TrcrRunner, case_dir: str, *, include_private: bool = False) -> OpResult:
+def export_manim(runner: CrkRunner, case_dir: str, *, include_private: bool = False) -> OpResult:
     return runner.run("export_manim", _args("export-manim", case_dir, include_private))
 
 
-def export_case_charts(runner: TrcrRunner, case_dir: str, *, include_private: bool = False, out_dir: str | None = None) -> OpResult:
+def export_case_charts(runner: CrkRunner, case_dir: str, *, include_private: bool = False, out_dir: str | None = None) -> OpResult:
     return runner.run("export_case_charts", _args("export-case-charts", case_dir, include_private, out_dir))
 
 
-def export_analysis_charts(runner: TrcrRunner, case_dir: str, *, include_private: bool = False, out_dir: str | None = None) -> OpResult:
+def export_analysis_charts(runner: CrkRunner, case_dir: str, *, include_private: bool = False, out_dir: str | None = None) -> OpResult:
     return runner.run("export_analysis_charts", _args("export-analysis-charts", case_dir, include_private, out_dir))
 
 
-def export_timeline(runner: TrcrRunner, cases_root: str, *, include_private: bool = False, out_dir: str | None = None) -> OpResult:
+def export_timeline(runner: CrkRunner, cases_root: str, *, include_private: bool = False, out_dir: str | None = None) -> OpResult:
     return runner.run("export_timeline", _args("export-timeline", cases_root, include_private, out_dir))
 
 
@@ -1398,12 +1398,12 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 - Modify: `tc-c-kit/src/case_builder/graph/nodes.py`
 - Modify: `tc-c-kit/src/case_builder/graph/runner.py`
 - Modify: `tc-c-kit/src/case_builder/app/service.py`
-- Delete: `tc-c-kit/src/case_builder/tools/` (entire directory: `__init__.py`, `trcr_cli.py`, `README.md`)
+- Delete: `tc-c-kit/src/case_builder/tools/` (entire directory: `__init__.py`, `crk_cli.py`, `README.md`)
 - Test: existing `tc-c-kit/tests/test_case_builder.py` (unchanged — regression canary)
 
 **Interfaces:**
-- Consumes: `TrcrRunner` (Task 2), `case_ops.init_case` (Task 4), `source_ops.plan_public_records` (Task 4), `OpResult`.
-- Produces: `init_case_node(runner: TrcrRunner)`, `plan_public_records_node(runner: TrcrRunner)`, `run_sequential(state: CaseBuilderState, runner: TrcrRunner)`, `build_case_builder_graph(runner: TrcrRunner)`. `merge_result(state, result: OpResult, success_status)` keys `tool_results` entries by `OpResult.to_dict()` (superset of the old `TrcrToolResult` dict — `name`, `command`, `dry_run`, `returncode`, `stdout`, `stderr`, `skipped` all preserved).
+- Consumes: `CrkRunner` (Task 2), `case_ops.init_case` (Task 4), `source_ops.plan_public_records` (Task 4), `OpResult`.
+- Produces: `init_case_node(runner: CrkRunner)`, `plan_public_records_node(runner: CrkRunner)`, `run_sequential(state: CaseBuilderState, runner: CrkRunner)`, `build_case_builder_graph(runner: CrkRunner)`. `merge_result(state, result: OpResult, success_status)` keys `tool_results` entries by `OpResult.to_dict()` (superset of the old `CrkToolResult` dict — `name`, `command`, `dry_run`, `returncode`, `stdout`, `stderr`, `skipped` all preserved).
 
 - [ ] **Step 1: Run the canary test to confirm current green**
 
@@ -1423,7 +1423,7 @@ from ..agents.source_lanes import infer_source_lanes
 from ..ops import case as case_ops
 from ..ops import sources as source_ops
 from ..ops.result import OpResult
-from ..ops.runner import TrcrRunner
+from ..ops.runner import CrkRunner
 from .state import GraphState
 
 
@@ -1432,7 +1432,7 @@ def infer_lanes_node(state: GraphState) -> GraphState:
     return {"lanes": lanes, "status": "lanes_inferred"}
 
 
-def init_case_node(runner: TrcrRunner):
+def init_case_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         result = case_ops.init_case(runner, required_case_dir(state), state.get("title"))
         return merge_result(state, result, "case_initialized")
@@ -1440,7 +1440,7 @@ def init_case_node(runner: TrcrRunner):
     return node
 
 
-def plan_public_records_node(runner: TrcrRunner):
+def plan_public_records_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         subject = state.get("subject")
         if not subject:
@@ -1491,12 +1491,12 @@ Replace the entire content of `tc-c-kit/src/case_builder/graph/runner.py` with:
 from __future__ import annotations
 
 from ..models.state import CaseBuilderState
-from ..ops.runner import TrcrRunner
+from ..ops.runner import CrkRunner
 from .nodes import infer_lanes_node, init_case_node, plan_public_records_node, review_gate_node
 from .state import GraphState
 
 
-def run_sequential(state: CaseBuilderState, runner: TrcrRunner) -> dict[str, object]:
+def run_sequential(state: CaseBuilderState, runner: CrkRunner) -> dict[str, object]:
     current: GraphState = state.to_dict()
     for node in (infer_lanes_node, init_case_node(runner), plan_public_records_node(runner), review_gate_node):
         current.update(node(current))
@@ -1504,7 +1504,7 @@ def run_sequential(state: CaseBuilderState, runner: TrcrRunner) -> dict[str, obj
     return dict(current)
 
 
-def build_case_builder_graph(runner: TrcrRunner):
+def build_case_builder_graph(runner: CrkRunner):
     try:
         from langgraph.graph import END, START, StateGraph
     except ImportError as exc:
@@ -1544,7 +1544,7 @@ from typing import Any, Literal
 
 from ..graph.runner import build_case_builder_graph, langgraph_available, run_sequential
 from ..models.state import CaseBuilderState
-from ..ops.runner import TrcrRunner
+from ..ops.runner import CrkRunner
 
 RunnerName = Literal["auto", "langgraph", "sequential"]
 
@@ -1557,25 +1557,25 @@ def run_case_builder(
 ) -> dict[str, Any]:
     """Run a case-builder plan and return serializable state.
 
-    Dry runs produce the exact TRCR commands the app would execute. Executed
+    Dry runs produce the exact CRK commands the app would execute. Executed
     runs still stop at a human review gate before any narrative use.
     """
-    trcr = TrcrRunner(dry_run=not execute)
+    crk = CrkRunner(dry_run=not execute)
     if runner in {"auto", "langgraph"} and langgraph_available():
-        graph = build_case_builder_graph(trcr)
+        graph = build_case_builder_graph(crk)
         result = graph.invoke(state.to_dict())
         result["runner"] = "langgraph"
         return result
     if runner == "langgraph":
         raise RuntimeError("LangGraph is not installed. Install with `pip install -e '.[agentic]'`.")
-    return run_sequential(state, trcr)
+    return run_sequential(state, crk)
 ```
 
 - [ ] **Step 5: Delete the `tools/` package and check for stragglers**
 
 ```bash
 git rm -r tc-c-kit/src/case_builder/tools
-grep -rn "trcr_cli\|CaseBuilderTools\|TrcrToolResult\|case_builder.tools\|from ..tools\|from .tools" tc-c-kit/src tc-c-kit/tests tc-c-kit/docs
+grep -rn "crk_cli\|CaseBuilderTools\|CrkToolResult\|case_builder.tools\|from ..tools\|from .tools" tc-c-kit/src tc-c-kit/tests tc-c-kit/docs
 ```
 
 Expected: `grep` returns no matches in `tc-c-kit/src` and `tc-c-kit/tests`. `tc-c-kit/docs/case-builder-langgraph.md` will still mention `src/case_builder/tools/` — that doc row is updated in Task 9; everything else must be clean. If `grep` finds a code reference this plan missed, update that import to the ops equivalent before proceeding.
@@ -1741,7 +1741,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 Replace the row:
 
 ```markdown
-| `src/case_builder/tools/` | Repo-local TRCR CLI tool adapter. |
+| `src/case_builder/tools/` | Repo-local CRK CLI tool adapter. |
 ```
 
 with:
@@ -1755,7 +1755,7 @@ with:
 Open the file; wherever it lists or describes `tools/` (module map/table or prose), replace that entry with:
 
 ```markdown
-| `ops/` | Typed operations core: `OpResult`, `TrcrRunner`, safety `policy`, and per-domain op modules. Frontends call ops instead of `tcr.py` or the ledger. |
+| `ops/` | Typed operations core: `OpResult`, `CrkRunner`, safety `policy`, and per-domain op modules. Frontends call ops instead of `tcr.py` or the ledger. |
 ```
 
 If the README has no module table, add a short "Module map" section listing `agents/`, `app/`, `graph/`, `models/`, `ops/`, `acquisition/`, `parsing/`, `retrieval/`, `memory/` with one-line descriptions matching each package's own README.
@@ -1764,7 +1764,7 @@ If the README has no module table, add a short "Module map" section listing `age
 
 ```bash
 cd tc-c-kit
-grep -rn "case_builder.tools\|CaseBuilderTools\|TrcrToolResult" src tests docs README.md; echo "grep exit: $?"
+grep -rn "case_builder.tools\|CaseBuilderTools\|CrkToolResult" src tests docs README.md; echo "grep exit: $?"
 .venv/bin/python -m compileall -q src ../.agents/skills/truecrime-cult-research/scripts
 .venv/bin/python ../.agents/skills/truecrime-cult-research/scripts/tcr.py validate data/examples/synthetic_case
 .venv/bin/python -m pytest -q
@@ -1787,5 +1787,5 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 
 - **Spec coverage (Phase 1 bullets):** ops extraction → Tasks 1–6; `OpResult` → Task 1; `policy.py` → Task 3; re-point CLI → Task 8; re-point graph nodes → Task 7; safety invariants as tests → Tasks 3 (privacy filter, automation defaults, guilt lint, staged writes), 5 (gated import), 6 (public-safe export defaults, `get_records` filtering). Egress tagging and `remember_research_actions` wrapping are explicitly deferred (Phase 3 dependency / operational-not-case-op) and noted in the plan scope section.
 - **Flag accuracy:** all `tcr.py` flags in Tasks 4–6 were verified against `--help` output on 2026-07-01 (`add-source --title/--url/--source-type/--reliability-grade/--no-public-export`, `ingest-url case_dir url` positional, `preserve-source case_dir source_id`, `draft-extraction --template`, `import-extraction case_dir extraction_json`, `link-names --name/--names-file`, `export-* --include-private/--out-dir`, audits take `case_dir`).
-- **Type consistency:** `TrcrRunner.run(name, args) -> OpResult` used identically in Tasks 4–6; node factories take `runner: TrcrRunner` in Task 7 matching Task 2's constructor; `merge_result` consumes `OpResult.ok`/`.errors`/`.command`/`.to_dict()` — all defined in Task 1.
-- **Behavior preservation:** `test_case_builder.py` and `test_local_stack.py` assertions are never edited (Task 8 only appends a new test); `OpResult.to_dict()` is a superset of `TrcrToolResult.to_dict()` so `tool_results` consumers keep working.
+- **Type consistency:** `CrkRunner.run(name, args) -> OpResult` used identically in Tasks 4–6; node factories take `runner: CrkRunner` in Task 7 matching Task 2's constructor; `merge_result` consumes `OpResult.ok`/`.errors`/`.command`/`.to_dict()` — all defined in Task 1.
+- **Behavior preservation:** `test_case_builder.py` and `test_local_stack.py` assertions are never edited (Task 8 only appends a new test); `OpResult.to_dict()` is a superset of `CrkToolResult.to_dict()` so `tool_results` consumers keep working.

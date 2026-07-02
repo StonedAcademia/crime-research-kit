@@ -1,6 +1,6 @@
-# TRCR Case Mapping For Claim Contradiction Audits
+# CRK Case Mapping For Claim Contradiction Audits
 
-Use existing TRCR ledgers. Do not rewrite claim status unless the source-backed basis is clear and cited.
+Use existing CRK ledgers. Do not rewrite claim status unless the source-backed basis is clear and cited.
 
 ## Reports
 

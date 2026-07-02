@@ -14,16 +14,16 @@ ROOT = Path(__file__).resolve().parents[3]
 ZERO_SHA = "0" * 40
 
 BRANCH_TARGETS: dict[str, list[str]] = {
-    "dev": ["trcr:check", "trcr:test-smoke"],
-    "canary": ["trcr:check", "trcr:test-governance", "trcr:test-smoke", "trcr:audit-secrets"],
-    "main": ["trcr:check", "trcr:test", "trcr:audit-secrets"],
+    "dev": ["crk:check", "crk:test-smoke"],
+    "canary": ["crk:check", "crk:test-governance", "crk:test-smoke", "crk:audit-secrets"],
+    "main": ["crk:check", "crk:test", "crk:audit-secrets"],
 }
 PREFIX_TARGETS: tuple[tuple[tuple[str, ...], list[str]], ...] = (
-    (("docs/",), ["trcr:check", "trcr:test-governance"]),
-    (("gov/", "test/", "chore/"), ["trcr:check", "trcr:test-governance", "trcr:test-smoke"]),
-    (("feat/", "fix/", "ci/"), ["trcr:check", "trcr:test-governance", "trcr:test-smoke", "trcr:test-integration"]),
+    (("docs/",), ["crk:check", "crk:test-governance"]),
+    (("gov/", "test/", "chore/"), ["crk:check", "crk:test-governance", "crk:test-smoke"]),
+    (("feat/", "fix/", "ci/"), ["crk:check", "crk:test-governance", "crk:test-smoke", "crk:test-integration"]),
 )
-UNKNOWN_TARGETS = ["trcr:check", "trcr:test"]
+UNKNOWN_TARGETS = ["crk:check", "crk:test"]
 
 
 def run(command: list[str]) -> str:
@@ -39,7 +39,7 @@ def branch_from_ref(ref: str) -> str | None:
 
 
 def current_branch() -> str | None:
-    override = os.environ.get("TRCR_HOOK_BRANCH")
+    override = os.environ.get("CRK_HOOK_BRANCH")
     if override:
         return override
     try:

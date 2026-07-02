@@ -1,4 +1,4 @@
-"""Subprocess executor for the repo-local TRCR CLI."""
+"""Subprocess executor for the repo-local CRK CLI."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from typing import Sequence
 from .result import OpResult
 
 
-class TrcrRunner:
+class CrkRunner:
     """Low-level executor that turns tcr.py invocations into OpResults."""
 
     def __init__(

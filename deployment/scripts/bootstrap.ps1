@@ -1,4 +1,4 @@
-# Bootstrap the minimum TRCR toolchain: proto, plus the moon and python
+# Bootstrap the minimum CRK toolchain: proto, plus the moon and python
 # versions pinned in .prototools. Run once before the README quick start.
 $ErrorActionPreference = "Stop"
 
@@ -15,4 +15,4 @@ proto use
 
 Write-Host ""
 Write-Host "Toolchain ready. Continue with the README quick start:"
-Write-Host "  moon run trcr:install-dev"
+Write-Host "  moon run crk:install-dev"

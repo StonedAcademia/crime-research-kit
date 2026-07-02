@@ -1,4 +1,4 @@
-"""Application services for the TRCR case-builder app."""
+"""Application services for the CRK case-builder app."""
 
 from __future__ import annotations
 

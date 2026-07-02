@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from ..ops.runner import TrcrRunner, default_repo_root
+from ..ops.runner import CrkRunner, default_repo_root
 
 CASE_SLUG_RE = re.compile(r"[a-zA-Z0-9][a-zA-Z0-9_-]{0,80}")
 
@@ -17,23 +17,23 @@ CASE_SLUG_RE = re.compile(r"[a-zA-Z0-9][a-zA-Z0-9_-]{0,80}")
 class ServerContext:
     repo_root: Path
     cases_root: Path
-    runner: TrcrRunner
+    runner: CrkRunner
     skill_root: Path | None = None
 
 
 def default_context() -> ServerContext:
     repo_root = default_repo_root()
-    cases_root = Path(os.environ.get("TRCR_CASES_ROOT") or repo_root / "data" / "cases")
+    cases_root = Path(os.environ.get("CRK_CASES_ROOT") or repo_root / "data" / "cases")
     return ServerContext(
         repo_root=repo_root,
         cases_root=cases_root,
-        runner=TrcrRunner(repo_root=repo_root, dry_run=False),
+        runner=CrkRunner(repo_root=repo_root, dry_run=False),
         skill_root=default_skill_root(repo_root),
     )
 
 
 def default_skill_root(repo_root: Path) -> Path:
-    configured = os.environ.get("TRCR_SKILL_ROOT")
+    configured = os.environ.get("CRK_SKILL_ROOT")
     if configured:
         return Path(configured)
     candidates = [

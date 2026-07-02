@@ -25,14 +25,14 @@ def test_parse_model_spec_rejects_managed_providers():
 
 
 def test_active_model_spec_defaults_local(monkeypatch):
-    monkeypatch.delenv("TRCR_MODEL", raising=False)
+    monkeypatch.delenv("CRK_MODEL", raising=False)
 
     assert active_model_spec() == parse_model_spec(DEFAULT_MODEL_SPEC)
     assert is_local_provider(active_model_spec()[0]) is True
 
 
 def test_active_model_spec_reads_self_hosted_env(monkeypatch):
-    monkeypatch.setenv("TRCR_MODEL", "ollama:qwen2.5")
+    monkeypatch.setenv("CRK_MODEL", "ollama:qwen2.5")
 
     provider, model = active_model_spec()
 

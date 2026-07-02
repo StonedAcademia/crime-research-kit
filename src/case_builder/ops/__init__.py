@@ -3,6 +3,6 @@
 from __future__ import annotations
 
 from .result import OpResult, local_op
-from .runner import TrcrRunner
+from .runner import CrkRunner
 
-__all__ = ["OpResult", "TrcrRunner", "local_op"]
+__all__ = ["OpResult", "CrkRunner", "local_op"]

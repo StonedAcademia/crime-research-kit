@@ -1,6 +1,6 @@
-# TRCR Case Mapping For Educational Paths
+# CRK Case Mapping For Educational Paths
 
-Use existing TRCR ledgers. Keep original education-source details in `notes` when no dedicated field exists.
+Use existing CRK ledgers. Keep original education-source details in `notes` when no dedicated field exists.
 
 ## Entities
 

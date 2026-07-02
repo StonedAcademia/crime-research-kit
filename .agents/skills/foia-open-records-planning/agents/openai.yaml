@@ -1,4 +1,4 @@
 interface:
   display_name: "FOIA Open Records Planning"
   short_description: "Plan public-records requests safely"
-  default_prompt: "Use $foia-open-records-planning to draft a FOIA or open-records request plan for a TRCR case."
+  default_prompt: "Use $foia-open-records-planning to draft a FOIA or open-records request plan for a CRK case."

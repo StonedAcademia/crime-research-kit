@@ -6,7 +6,7 @@ from case_builder.graph.llm_nodes import (
     readiness_brief_node,
     suggest_lanes_node,
 )
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT
 
 
@@ -21,12 +21,12 @@ class FakeModel:
         return Reply()
 
 
-def execute_runner() -> TrcrRunner:
-    return TrcrRunner(repo_root=KIT_ROOT, dry_run=False)
+def execute_runner() -> CrkRunner:
+    return CrkRunner(repo_root=KIT_ROOT, dry_run=False)
 
 
 def test_llm_nodes_skip_without_flag_factory_or_execute():
-    dry = TrcrRunner(repo_root=KIT_ROOT, dry_run=True)
+    dry = CrkRunner(repo_root=KIT_ROOT, dry_run=True)
     factory = lambda: FakeModel("[]")
 
     assert suggest_lanes_node(execute_runner(), None)({"llm_enabled": True})["status"] == "lane_suggestions_skipped"
@@ -47,7 +47,7 @@ def test_suggest_lanes_node_records_suggestions():
 
 
 def test_fill_packets_node_fills_and_saves_staged_packet(synthetic_case_copy, monkeypatch):
-    monkeypatch.delenv("TRCR_MODEL", raising=False)
+    monkeypatch.delenv("CRK_MODEL", raising=False)
     source_id = "SDEMO0001"
     text_file = synthetic_case_copy / "raw" / "sources" / f"{source_id}.txt"
     text_file.parent.mkdir(parents=True, exist_ok=True)

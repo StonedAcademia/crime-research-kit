@@ -4,13 +4,13 @@
 
 **Goal:** Grow the case-builder graph from the 4-node bootstrap to the full deterministic case-building loop with a SQLite checkpointer and resumable interrupt-based review gates.
 
-**Architecture:** Seven new deterministic nodes (`source_capture`, `parse_or_ocr`, `draft_packets`, `import_and_validate`, `index_case`, `readiness_audit`, `export_bundle`) plus two gate nodes call the Phase 1 ops core exclusively. Gates use LangGraph `interrupt()` when a checkpointer is active and degrade to a terminal `waiting_for_human_review` status in the sequential runner and non-checkpointed graphs (conditional edges route waiting states to END). A `SqliteSaver` at `<case>/.runs/checkpoints.db` makes runs survive restarts; `trcr-case-builder resume` continues a paused thread with packet approvals/rejections and export approval.
+**Architecture:** Seven new deterministic nodes (`source_capture`, `parse_or_ocr`, `draft_packets`, `import_and_validate`, `index_case`, `readiness_audit`, `export_bundle`) plus two gate nodes call the Phase 1 ops core exclusively. Gates use LangGraph `interrupt()` when a checkpointer is active and degrade to a terminal `waiting_for_human_review` status in the sequential runner and non-checkpointed graphs (conditional edges route waiting states to END). A `SqliteSaver` at `<case>/.runs/checkpoints.db` makes runs survive restarts; `cr-kit resume` continues a paused thread with packet approvals/rejections and export approval.
 
 **Tech Stack:** Python ≥3.10, LangGraph (`langgraph`, `langgraph-checkpoint-sqlite` — added to the existing `[agentic]` extra), pytest with `importorskip` so the suite stays green without the extra installed.
 
 ## Global Constraints
 
-- All paths relative to the repo root `<project_root>/` (the kit is now a self-contained git repo; `.agents/`, `src/`, `tests/`, `docs/`, `data/` all live here). `REPO_ROOT` in test snippets is the kit root (`parents[1]` from a test file), which is also the `TrcrRunner` repo root — `tcr.py` resolves to `.agents/skills/truecrime-cult-research/scripts/tcr.py` inside it.
+- All paths relative to the repo root `<project_root>/` (the kit is now a self-contained git repo; `.agents/`, `src/`, `tests/`, `docs/`, `data/` all live here). `REPO_ROOT` in test snippets is the kit root (`parents[1]` from a test file), which is also the `CrkRunner` repo root — `tcr.py` resolves to `.agents/skills/truecrime-cult-research/scripts/tcr.py` inside it.
 - Every Python module stays under **200 non-comment LOC**; every package dir under `src/case_builder/` has a `README.md` (enforced by `tests/test_case_builder_structure.py`).
 - `[project] dependencies = []` stays empty — LangGraph additions go in the `agentic` optional extra only.
 - Nodes call **ops functions only** — never `tcr.py`, ledger files, or local-stack modules directly (spec: single safety-enforcement point).
@@ -26,7 +26,7 @@
 
 ## Existing interfaces this plan builds on (Phase 1, already landed)
 
-- `case_builder.ops.runner.TrcrRunner(*, repo_root=None, dry_run=True, python_executable=None)` — `.run(name, args) -> OpResult`, `.dry_run: bool`.
+- `case_builder.ops.runner.CrkRunner(*, repo_root=None, dry_run=True, python_executable=None)` — `.run(name, args) -> OpResult`, `.dry_run: bool`.
 - `case_builder.ops.result.OpResult` — `.ok`, `.errors: list[str]`, `.command: list[str]`, `.to_dict()`.
 - `ops.case.init_case(runner, case_dir, title=None)`, `ops.case.validate(runner, case_dir)`, `ops.case.report(runner, case_dir)`.
 - `ops.sources.plan_public_records(runner, case_dir, subject, lanes)`, `ops.sources.ingest_url(runner, case_dir, url, *, title=None, source_type=None, reliability_grade=None, timeout=None, public_export=True)`, `ops.sources.parse_source(case_dir, source_id, *, force=False)`, `ops.sources.ocr_source(case_dir, source_id, *, language="eng", force=False)` — the last two are local ops that may raise `RuntimeError` when Docling/OCRmyPDF are missing.
@@ -373,7 +373,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 - Test: `tests/test_pipeline_nodes.py`
 
 **Interfaces:**
-- Consumes: `TrcrRunner`, ops functions (see "Existing interfaces"), `nodes.merge_result` semantics, `nodes.required_case_dir`.
+- Consumes: `CrkRunner`, ops functions (see "Existing interfaces"), `nodes.merge_result` semantics, `nodes.required_case_dir`.
 - Produces: `merge_results(state: GraphState, results: list[OpResult], success_status: str) -> GraphState` (multi-result fold with the same keys as `merge_result`), plus node factories `source_capture_node(runner)`, `parse_or_ocr_node(runner)`, `draft_packets_node(runner)`. Status vocabulary produced here and relied on downstream: `source_capture_skipped`, `sources_captured`, `parse_skipped_dry_run`, `sources_parsed`, `draft_skipped_no_sources`, `packets_drafted`, `error`.
 
 - [ ] **Step 1: Write the failing test**
@@ -389,13 +389,13 @@ from case_builder.graph.pipeline_nodes import (
     source_capture_node,
 )
 from case_builder.ops.result import OpResult
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
-def dry_runner() -> TrcrRunner:
-    return TrcrRunner(repo_root=REPO_ROOT, dry_run=True)
+def dry_runner() -> CrkRunner:
+    return CrkRunner(repo_root=REPO_ROOT, dry_run=True)
 
 
 def test_merge_results_folds_commands_and_errors():
@@ -468,7 +468,7 @@ def test_parse_or_ocr_skips_in_dry_run():
 def test_parse_or_ocr_records_runtime_errors_per_source(synthetic_case_copy):
     from case_builder.graph.pipeline_nodes import parse_or_ocr_node
 
-    node = parse_or_ocr_node(TrcrRunner(repo_root=REPO_ROOT, dry_run=False))
+    node = parse_or_ocr_node(CrkRunner(repo_root=REPO_ROOT, dry_run=False))
 
     update = node({"case_dir": str(synthetic_case_copy)})
 
@@ -499,7 +499,7 @@ from ..ops import query as query_ops
 from ..ops import review as review_ops
 from ..ops import sources as source_ops
 from ..ops.result import OpResult
-from ..ops.runner import TrcrRunner
+from ..ops.runner import CrkRunner
 from .nodes import required_case_dir
 from .state import GraphState
 
@@ -522,7 +522,7 @@ def merge_results(state: GraphState, results: list[OpResult], success_status: st
     }
 
 
-def source_capture_node(runner: TrcrRunner):
+def source_capture_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         urls = state.get("source_urls") or []
         if not urls:
@@ -534,7 +534,7 @@ def source_capture_node(runner: TrcrRunner):
     return node
 
 
-def parse_or_ocr_node(runner: TrcrRunner):
+def parse_or_ocr_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         if runner.dry_run:
             return {"status": "parse_skipped_dry_run"}
@@ -562,7 +562,7 @@ def parse_or_ocr_node(runner: TrcrRunner):
     return node
 
 
-def draft_packets_node(runner: TrcrRunner):
+def draft_packets_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         case_dir = required_case_dir(state)
         source_ids = list(state.get("source_ids") or [])
@@ -650,9 +650,9 @@ def test_index_node_skips_unless_enabled():
 
 def test_index_node_reports_failure_without_raising(synthetic_case_copy):
     from case_builder.graph.pipeline_nodes import index_case_node
-    from case_builder.ops.runner import TrcrRunner
+    from case_builder.ops.runner import CrkRunner
 
-    node = index_case_node(TrcrRunner(repo_root=REPO_ROOT, dry_run=False))
+    node = index_case_node(CrkRunner(repo_root=REPO_ROOT, dry_run=False))
 
     update = node({"case_dir": str(synthetic_case_copy), "index_enabled": True})
 
@@ -701,7 +701,7 @@ Expected: new tests FAIL with `ImportError` (factories not defined); Task 3 test
 Append to `src/case_builder/graph/pipeline_nodes.py`:
 
 ```python
-def import_and_validate_node(runner: TrcrRunner):
+def import_and_validate_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         approved = state.get("approved_packets") or []
         if not approved:
@@ -722,7 +722,7 @@ def import_and_validate_node(runner: TrcrRunner):
     return node
 
 
-def index_case_node(runner: TrcrRunner):
+def index_case_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         if not state.get("index_enabled") or runner.dry_run:
             return {"status": "index_skipped"}
@@ -739,7 +739,7 @@ def index_case_node(runner: TrcrRunner):
     return node
 
 
-def readiness_audit_node(runner: TrcrRunner):
+def readiness_audit_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         case_dir = required_case_dir(state)
         results = [
@@ -753,7 +753,7 @@ def readiness_audit_node(runner: TrcrRunner):
     return node
 
 
-def export_bundle_node(runner: TrcrRunner):
+def export_bundle_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         case_dir = required_case_dir(state)
         results = [export_ops.export_manim(runner, case_dir), case_ops.report(runner, case_dir)]
@@ -790,9 +790,9 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 **Interfaces:**
 - Consumes: all node factories from Tasks 2–4, existing bootstrap nodes.
 - Produces:
-  - `pipeline_nodes_list(runner: TrcrRunner, *, use_interrupt: bool) -> list[tuple[str, Callable]]` — ordered `(name, node)` pairs.
-  - `run_sequential(state: CaseBuilderState, runner: TrcrRunner) -> dict` — runs the full pipeline, **stopping when `status == "waiting_for_human_review"`**.
-  - `build_case_builder_graph(runner: TrcrRunner, *, checkpointer=None, use_interrupt: bool = False)` — compiled graph with conditional edges routing waiting/rejected gate states to END.
+  - `pipeline_nodes_list(runner: CrkRunner, *, use_interrupt: bool) -> list[tuple[str, Callable]]` — ordered `(name, node)` pairs.
+  - `run_sequential(state: CaseBuilderState, runner: CrkRunner) -> dict` — runs the full pipeline, **stopping when `status == "waiting_for_human_review"`**.
+  - `build_case_builder_graph(runner: CrkRunner, *, checkpointer=None, use_interrupt: bool = False)` — compiled graph with conditional edges routing waiting/rejected gate states to END.
   - `checkpoint.case_checkpointer(case_dir: str)` — returns a `SqliteSaver` on `<case_dir>/.runs/checkpoints.db` (creates the directory); raises `RuntimeError` with an install hint if the sqlite checkpointer is missing.
 
 - [ ] **Step 1: Write the failing test**
@@ -804,13 +804,13 @@ from pathlib import Path
 
 from case_builder.graph.runner import run_sequential
 from case_builder.models.state import CaseBuilderState
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
-def dry_runner() -> TrcrRunner:
-    return TrcrRunner(repo_root=REPO_ROOT, dry_run=True)
+def dry_runner() -> CrkRunner:
+    return CrkRunner(repo_root=REPO_ROOT, dry_run=True)
 
 
 def test_sequential_dry_run_stops_at_packet_gate():
@@ -916,7 +916,7 @@ Replace the entire content of `src/case_builder/graph/runner.py` with:
 from __future__ import annotations
 
 from ..models.state import CaseBuilderState
-from ..ops.runner import TrcrRunner
+from ..ops.runner import CrkRunner
 from .gates import export_review_gate_node, packet_review_gate_node
 from .nodes import infer_lanes_node, init_case_node, plan_public_records_node
 from .pipeline_nodes import (
@@ -934,7 +934,7 @@ GATE_TARGETS = {"packet_review_gate": "import_and_validate", "export_review_gate
 STOP_STATUSES = {"waiting_for_human_review", "packets_rejected"}
 
 
-def pipeline_nodes_list(runner: TrcrRunner, *, use_interrupt: bool):
+def pipeline_nodes_list(runner: CrkRunner, *, use_interrupt: bool):
     return [
         ("infer_lanes", infer_lanes_node),
         ("init_case", init_case_node(runner)),
@@ -951,7 +951,7 @@ def pipeline_nodes_list(runner: TrcrRunner, *, use_interrupt: bool):
     ]
 
 
-def run_sequential(state: CaseBuilderState, runner: TrcrRunner) -> dict[str, object]:
+def run_sequential(state: CaseBuilderState, runner: CrkRunner) -> dict[str, object]:
     current: GraphState = state.to_dict()
     for _name, node in pipeline_nodes_list(runner, use_interrupt=False):
         current.update(node(current))
@@ -961,7 +961,7 @@ def run_sequential(state: CaseBuilderState, runner: TrcrRunner) -> dict[str, obj
     return dict(current)
 
 
-def build_case_builder_graph(runner: TrcrRunner, *, checkpointer=None, use_interrupt: bool = False):
+def build_case_builder_graph(runner: CrkRunner, *, checkpointer=None, use_interrupt: bool = False):
     try:
         from langgraph.graph import END, START, StateGraph
     except ImportError as exc:
@@ -1045,7 +1045,7 @@ from langgraph.types import Command
 
 from case_builder.graph.runner import build_case_builder_graph
 from case_builder.models.state import CaseBuilderState
-from case_builder.ops.runner import TrcrRunner
+from case_builder.ops.runner import CrkRunner
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
@@ -1053,7 +1053,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 def make_graph(db_path: Path):
     """Build a fresh graph + saver on the same DB, simulating a process restart."""
     connection = sqlite3.connect(str(db_path), check_same_thread=False)
-    runner = TrcrRunner(repo_root=REPO_ROOT, dry_run=True)
+    runner = CrkRunner(repo_root=REPO_ROOT, dry_run=True)
     return build_case_builder_graph(runner, checkpointer=SqliteSaver(connection), use_interrupt=True)
 
 
@@ -1249,7 +1249,7 @@ from typing import Any, Literal, Sequence
 from ..graph.checkpoint import case_checkpointer
 from ..graph.runner import build_case_builder_graph, langgraph_available, run_sequential
 from ..models.state import CaseBuilderState
-from ..ops.runner import TrcrRunner
+from ..ops.runner import CrkRunner
 
 RunnerName = Literal["auto", "langgraph", "sequential"]
 LANGGRAPH_HINT = "LangGraph is not installed. Install with `pip install -e '.[agentic]'`."
@@ -1264,26 +1264,26 @@ def run_case_builder(
 ) -> dict[str, Any]:
     """Run a case-builder plan and return serializable state.
 
-    Dry runs produce the exact TRCR commands the app would execute. Executed
+    Dry runs produce the exact CRK commands the app would execute. Executed
     runs still stop at human review gates before canonical import or export.
     """
-    trcr = TrcrRunner(dry_run=not execute)
+    crk = CrkRunner(dry_run=not execute)
     use_langgraph = runner in {"auto", "langgraph"} and langgraph_available()
     if runner == "langgraph" and not langgraph_available():
         raise RuntimeError(LANGGRAPH_HINT)
     if not use_langgraph:
         if checkpoint:
             raise RuntimeError("Checkpointing requires the langgraph runner.")
-        return run_sequential(state, trcr)
+        return run_sequential(state, crk)
 
     payload = state.to_dict()
     if not checkpoint:
-        graph = build_case_builder_graph(trcr)
+        graph = build_case_builder_graph(crk)
         result = dict(graph.invoke(payload))
         result["runner"] = "langgraph"
         return result
 
-    graph = build_case_builder_graph(trcr, checkpointer=case_checkpointer(state.case_dir), use_interrupt=True)
+    graph = build_case_builder_graph(crk, checkpointer=case_checkpointer(state.case_dir), use_interrupt=True)
     config = {"configurable": {"thread_id": payload["thread_id"]}}
     result = dict(graph.invoke(payload, config))
     return _annotate(result, graph, config, payload["thread_id"])
@@ -1303,8 +1303,8 @@ def resume_case_builder(
         raise RuntimeError(LANGGRAPH_HINT)
     from langgraph.types import Command
 
-    trcr = TrcrRunner(dry_run=not execute)
-    graph = build_case_builder_graph(trcr, checkpointer=case_checkpointer(case_dir), use_interrupt=True)
+    crk = CrkRunner(dry_run=not execute)
+    graph = build_case_builder_graph(crk, checkpointer=case_checkpointer(case_dir), use_interrupt=True)
     config = {"configurable": {"thread_id": thread_id}}
     payload = {
         "approved_packets": list(approved_packets),
@@ -1347,7 +1347,7 @@ In `src/case_builder/cli.py`:
     resume.add_argument("--reject-packet", action="append", default=[], help="Staged packet filename to reject. Repeatable.")
     resume.add_argument("--reason", default=None, help="Reason recorded for rejected packets.")
     resume.add_argument("--approve-export", action="store_true", help="Approve the public export gate.")
-    resume.add_argument("--execute", action="store_true", help="Run TRCR commands instead of dry-running them.")
+    resume.add_argument("--execute", action="store_true", help="Run CRK commands instead of dry-running them.")
     resume.set_defaults(handler=run_resume_command)
 ```
 
@@ -1433,15 +1433,15 @@ non-checkpointed graphs) an unapproved gate ends the run with
 Checkpointed run and resume:
 
 ```bash
-trcr-case-builder plan data/cases/example_case \
+cr-kit plan data/cases/example_case \
   --title "Example Case" --subject "Jane Doe missing person" \
   --source-url "https://example.com/story" \
   --runner langgraph --checkpoint --execute
 
-trcr-case-builder resume data/cases/example_case --thread <thread_id> \
+cr-kit resume data/cases/example_case --thread <thread_id> \
   --approve-packet S0001_extraction.json --execute
 
-trcr-case-builder resume data/cases/example_case --thread <thread_id> \
+cr-kit resume data/cases/example_case --thread <thread_id> \
   --approve-export --execute
 ```
 
@@ -1499,6 +1499,6 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 
 - **Spec coverage (Phase 2 bullets):** checkpointer → Task 5 (`checkpoint.py`) + Task 7 (service wiring); interrupt/resume → Tasks 2, 6, 7 (`resume` CLI matches the spec's approve/reject semantics; the spec's illustrative `--approve packet:<ID>` syntax is realized as `--approve-packet <name>`); `source_capture` → Task 3; `parse_or_ocr` → Task 3; `import_and_validate` → Task 4; `index_case` → Task 4; `export_bundle` → Task 4. `draft_packets` (deterministic template drafting) and deterministic `readiness_audit` are included so the gates guard real work; their LLM upgrades are Phase 3 and documented as such in Task 8.
 - **Safety invariants:** `confirm=True` appears only in `import_and_validate_node`, which is reachable only through the packet gate (conditional edges route unapproved states to END; sequential runner breaks on waiting). Export bundle uses public-safe defaults (asserted in Task 4's test). Automated records/packet linting remain enforced in ops (Phase 1).
-- **Type consistency:** node factories all take `TrcrRunner`; gates take `use_interrupt: bool`; `merge_results(state, results, success_status)` used in Tasks 3–4 matches its Task 3 definition; resume payload keys (`approved_packets`, `rejected_packets`, `export_approved`) are identical in gates (Task 2), the durability test (Task 6), and the service/CLI (Task 7); `pipeline_nodes_list` names in Task 5 match the gate-router targets and the `paused_before` assertions in Tasks 6–7.
+- **Type consistency:** node factories all take `CrkRunner`; gates take `use_interrupt: bool`; `merge_results(state, results, success_status)` used in Tasks 3–4 matches its Task 3 definition; resume payload keys (`approved_packets`, `rejected_packets`, `export_approved`) are identical in gates (Task 2), the durability test (Task 6), and the service/CLI (Task 7); `pipeline_nodes_list` names in Task 5 match the gate-router targets and the `paused_before` assertions in Tasks 6–7.
 - **Behavior preservation:** canary assertions hold because in a bare dry run all new pre-gate nodes skip (`source_capture_skipped` → `parse_skipped_dry_run` → `draft_skipped_no_sources`) leaving `tool_results` untouched, and the packet gate reproduces the old terminal state.
 - **LangGraph availability:** installed in Task 1; every langgraph-touching test either lives after that task or guards with `importorskip`, so the suite stays green even on a fresh venv without extras.

@@ -1,6 +1,6 @@
 ---
 name: source-independence-audit
-description: Source-chain and corroboration workflow for detecting repeated wire copy, press-release repetition, same-source chains, shared authors/publishers, docket/archive reuse, and overstated corroboration in TRCR cases. Use when Codex needs to verify whether multiple sources are genuinely independent before public narration.
+description: Source-chain and corroboration workflow for detecting repeated wire copy, press-release repetition, same-source chains, shared authors/publishers, docket/archive reuse, and overstated corroboration in CRK cases. Use when Codex needs to verify whether multiple sources are genuinely independent before public narration.
 ---
 
 # Source Independence Audit
