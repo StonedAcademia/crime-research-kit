@@ -5,66 +5,117 @@
 <h1 align="center">True Crime / Cult-Origin Research Kit</h1>
 
 <p align="center">
-  <strong>Turn public sources into source-traceable case files, timelines, relationship graphs, contradiction audits, and public-ready evidence boards.</strong>
+  <strong>Turn public sources into a source-traceable case ledger — timelines,
+  relationship graphs, contradiction audits, and public-ready evidence boards.</strong>
 </p>
 
 <p align="center">
-  <a href="#index">Index</a> |
+  <a href="#the-evidence-chain">Evidence chain</a> |
+  <a href="#choose-your-path">Choose your path</a> |
   <a href="#quick-start">Quick start</a> |
-  <a href="#what-you-can-build">What you can build</a> |
-  <a href="#document-structure">Docs</a> |
-  <a href="#public-interest-boundaries">Safety</a>
+  <a href="#architecture-at-a-glance">Architecture</a> |
+  <a href="#public-interest-boundaries">Safety</a> |
+  <a href="#documentation-and-development">Docs</a>
 </p>
 
-TRCR is a local-first research kit for public-interest, documentary-style work
-around true crime, high-control groups, cult-origin networks, missing-person
-leads, public records, timelines, and source provenance. It helps an agent or
-researcher move from a pile of articles, transcripts, PDFs, and archive links
-into a structured case ledger where every claim can point back to sources,
-reliability grades, confidence/status, privacy review, and export decisions.
+TRCR is a **local-first** research kit for public-interest, documentary-style
+work on true crime, high-control groups, cult-origin networks, missing-person
+leads, and public records. It moves an agent or researcher from a pile of
+articles, transcripts, PDFs, and archive links into a structured case ledger
+where every claim points back to its sources, reliability grade,
+confidence/status, privacy review, and export decision.
 
-This is not a rumor engine. AI can help organize, search, OCR, index, and draft
-extraction packets, but **AI-generated summaries are never evidence**. Claims
-only become public-facing material after source support, validation,
-contradiction review, source-independence review, and privacy review.
+**This is not a rumor engine.** AI can organize, search, OCR, index, and draft
+extraction packets, but **AI-generated summaries are never evidence.** A claim
+becomes public-facing only after source support, validation, contradiction
+review, source-independence review, and privacy review.
 
-## Index
+## The evidence chain
 
-| Need | Start here |
-| --- | --- |
-| Install the kit or troubleshoot setup | [Initial App Install](docs/guides/runbooks/setup/install.md) |
-| Walk through a source-backed case workflow | [Case Workflow](docs/guides/runbooks/cases/case-workflow.md) |
-| Operate the self-hosted local stack | [Self-Hosted Deployment](docs/guides/runbooks/setup/self-hosted-deployment.md) |
-| Check public-output blockers | [Public Output Readiness](docs/guides/runbooks/cases/public-output-readiness.md) |
-| Generate evidence boards, Manim CSVs, charts, timelines, or bundles | [Export Artifacts](docs/guides/runbooks/outputs/export-artifacts.md) |
-| Integrate the MCP server | [MCP Server](docs/guides/integrations/mcp-server.md) |
-| Understand the LangGraph case-builder boundary | [Case Builder LangGraph](docs/guides/architecture/case-builder-langgraph.md) |
-| Build against the machine-facing contract | [Skill API Spec](docs/guides/skill-api-spec.md) |
+Every public-facing claim must reduce to the chain below. If any link breaks —
+no source, unresolved contradiction, private-person detail, failed privacy
+review — the claim stays out of the public output.
 
-## Document Structure
+```mermaid
+flowchart LR
+  C["Claim"] --> S["Source(s)<br/>source_ids"]
+  S --> R["Reliability grade"]
+  R --> CS["Confidence + status"]
+  CS --> G{"Review gates<br/>contradictions · independence · privacy"}
+  G -->|passes| P["Public-safe export"]
+  G -.->|"unsourced · disputed<br/>private-person detail"| B["Blocked — stays internal"]
+  classDef blocked fill:#fde2e1,stroke:#b42318,color:#7a271a;
+  class B blocked;
+```
 
-| Path | Purpose |
-| --- | --- |
-| `README.md` | Project orientation, safety boundary, capability summary, and links. |
-| `docs/README.md` | Documentation map and grouping rules. |
-| `docs/guides/architecture/` | System architecture, ownership boundaries, and orchestration design. |
-| `docs/guides/integrations/` | Host, protocol, and external-tool integration guides. |
-| `docs/guides/skill-api-spec.md` | Stable machine-facing contracts and API/reference material. |
-| `docs/guides/runbooks/` | Operator procedures and repeatable workflows. Long command sequences belong here. |
-| `docs/schemas/` | JSON Schemas grouped by case, evidence, and review records. |
-| `docs/registry/lanes.json` | Canonical lane and extraction-template vocabulary. |
-| `docs/superpowers/` | Planning/spec history for larger implementation phases. |
-| `.agents/skills/` | Repo-local skills and reusable workflow instructions. |
-| `src/case_builder/` | Optional case-builder app, LangGraph runner, MCP surface, retrieval, memory, and ops wrappers. |
-| `deployment/` | Self-hosted stack, deployment scripts, and local-service configuration. |
-| `data/examples/` | Tracked synthetic fixtures. Generated case work belongs in ignored `data/cases/`. |
+The record-level contract behind this chain is documented in
+[Case Ledger](docs/guides/architecture/case-ledger.md).
 
-Keep the README focused on orientation. Move install matrices, deployment
-operations, full case walkthroughs, export manifests, public-readiness
-checklists, troubleshooting tables, and local-service command sequences into
-runbooks.
+## Choose your path
 
-## What You Can Build
+| I am a… | What you get | Start here |
+| --- | --- | --- |
+| **Researcher** | A local case workspace, the `tcr.py` ledger CLI, repo-local skills, staged extraction packets, audits, and public-safe exports. | [Case Workflow](docs/guides/runbooks/cases/case-workflow.md) · [Agent Skills](docs/guides/integrations/agent-skills.md) · [Export Artifacts](docs/guides/runbooks/outputs/export-artifacts.md) · [Public Output Readiness](docs/guides/runbooks/cases/public-output-readiness.md) |
+| **Operator** | A self-hosted local stack: SearXNG discovery, Qdrant retrieval, Ollama runtime, OCR, MCP, and the case-builder app. | [Initial App Install](docs/guides/runbooks/setup/install.md) · [Self-Hosted Deployment](docs/guides/runbooks/setup/self-hosted-deployment.md) |
+| **Developer / agent integrator** | The MCP server, the `src/case_builder/` app boundary and typed ops core, the skill API contract, and the skill invocation model. | [System Overview](docs/guides/architecture/system-overview.md) · [Case Builder & LangGraph](docs/guides/architecture/case-builder-langgraph.md) · [MCP Server](docs/guides/integrations/mcp-server.md) · [Skill API Spec](docs/guides/skill-api-spec.md) |
+
+New to the kit? Read [the evidence chain](#the-evidence-chain) and
+[public-interest boundaries](#public-interest-boundaries) first — they define
+what TRCR will and will not produce.
+
+## Quick start
+
+Install the dev environment, verify against the tracked synthetic case, and
+create your first case:
+
+```bash
+moon run trcr:install-dev
+python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/examples/synthetic_case
+python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case data/cases/sample_case --title "Sample Case"
+```
+
+Missing `moon`? Bootstrap the minimum toolchain first — it installs
+[proto](https://moonrepo.dev/proto) plus the `moon` and `python` versions
+pinned in `.prototools`:
+
+```bash
+./deployment/scripts/bootstrap.sh      # Linux / macOS
+```
+
+```powershell
+.\deployment\scripts\bootstrap.ps1     # Windows
+```
+
+From there, ingest URLs, draft and import extraction packets, run audits, and
+export. The full source-review loop is in the
+[Case Workflow runbook](docs/guides/runbooks/cases/case-workflow.md); manual
+install, optional extras, retrieval, OCR, and memory setup are in
+[Initial App Install](docs/guides/runbooks/setup/install.md).
+
+## Architecture at a glance
+
+Two implementation layers share one canonical JSONL ledger: the
+standard-library-only skill CLI (`tcr.py` plus sixteen adjacent domain
+skills), and the `src/case_builder/` agent app whose frontends (CLI,
+LangGraph, MCP) go through a typed ops core. Retrieval indexes, workflow
+memory, and parse artifacts are optional, rebuildable, and never evidence.
+
+```mermaid
+flowchart LR
+  SRC["Public sources<br/>URLs · PDFs · transcripts · records"] --> TCR["Skill layer<br/>tcr.py CLI + 16 adjacent skills"]
+  SRC --> APP["case_builder app<br/>CLI · LangGraph · MCP → typed ops core"]
+  APP -.-> OPT["Optional subsystems<br/>parsing · retrieval · memory · acquisition"]
+  APP --> TCR
+  TCR --> LED[("Canonical JSONL case ledger<br/>data/cases/{slug}/records/*.jsonl")]
+  LED --> AUD["validate + audits<br/>public · privacy · contradictions · independence"]
+  AUD --> EXP["Public-safe exports<br/>boards · timelines · Manim CSVs · bundles"]
+```
+
+The full write-up — layer boundaries, optional subsystems, data flow, and
+design invariants — is in
+[System Overview](docs/guides/architecture/system-overview.md).
+
+## What you can build
 
 | Goal | TRCR output |
 | --- | --- |
@@ -75,7 +126,6 @@ runbooks.
 | Contradiction audit | Reports for corrections, denials, retractions, court findings, disputed dates, and unsupported public claims. |
 | Source independence review | Detection of repeated wire copy, press-release reuse, shared publishers, and same-source chains. |
 | Privacy audit | Redaction blockers for living private people, minors, addresses, contact info, medical details, and weak allegations. |
-| Local RAG/context retrieval | Optional local-first parsing, OCR, Qdrant/LlamaIndex retrieval, and workflow memory without hosted vector services. |
 | Public-safe exports | Evidence boards, Manim CSVs, charts, timelines, and public-safe bundle exports. |
 
 ## Public-Interest Boundaries
@@ -95,125 +145,15 @@ Core guardrails:
 - Search for contradictions, corrections, retractions, denials, and
   disconfirming evidence before marking claims as corroborated.
 
-## What This Gives You
+## Documentation and development
 
-- A Codex skill at `.agents/skills/truecrime-cult-research/SKILL.md`.
-- A repository-level `AGENTS.md` with persistent project rules for Codex.
-- JSON schemas under `docs/schemas/` for sources, entities, claims, events,
-  event links, relationships, places, artifacts, quotes, source spans, and
-  redactions.
-- A Python CLI for creating case folders, ingesting URLs, staging extraction
-  packets, importing structured records, validating ledgers, auditing public
-  readiness, and exporting Manim-ready CSVs.
-- Local-first case-builder helpers for SearXNG discovery, Docling parsing,
-  OCRmyPDF OCR, LlamaIndex/Qdrant retrieval, and Mem0 OSS workflow memory.
-- Templates for case briefs, source notes, extraction packets, redaction logs,
-  public-record plans, source-independence reviews, and evidence boards.
-- Operator runbooks under `docs/guides/runbooks/` for install, case workflow,
-  self-hosted deployment, public-output readiness, and artifact exports.
-- Repeatable workflows for news articles, eyewitness accounts, court/public
-  records, transcripts, archives, property/location records, FOIA planning,
-  contradictions, and disconfirming sources.
+The documentation map lives in [docs/README.md](docs/README.md): architecture
+notes and the [ledger contract](docs/guides/architecture/case-ledger.md) under
+`docs/guides/architecture/`, integration guides under
+`docs/guides/integrations/`, operator procedures under
+`docs/guides/runbooks/`, JSON Schemas under `docs/schemas/`, and the canonical
+lane/template registry under `docs/registry/`. Persistent agent rules live in
+`AGENTS.md`.
 
-## Quick start
-
-Install the development environment, then create a small sample case:
-
-```bash
-moon run trcr:install-dev
-```
-
-```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case data/cases/sample_case --title "Sample Case"
-```
-
-Add or ingest a public URL:
-
-```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url data/cases/sample_case "https://example.com/news-story" --source-type news_article --reliability-grade B
-```
-
-Create an extraction packet for Codex to fill:
-
-```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction data/cases/sample_case SOURCE_ID
-```
-
-After Codex fills the staged JSON extraction, import it:
-
-```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction data/cases/sample_case data/cases/sample_case/staging/extractions/SOURCE_ID_extraction.json
-```
-
-Validate and export:
-
-```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/cases/sample_case
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-manim data/cases/sample_case
-python .agents/skills/truecrime-cult-research/scripts/tcr.py report data/cases/sample_case
-```
-
-Use [Case Workflow](docs/guides/runbooks/cases/case-workflow.md) for the full
-source-review loop, [Export Artifacts](docs/guides/runbooks/outputs/export-artifacts.md)
-for every export command, and [Initial App Install](docs/guides/runbooks/setup/install.md) for manual install,
-optional extras, case-builder, local retrieval, OCR, and memory setup.
-
-## How to invoke the skill in Codex
-
-Codex should discover repo skills under `.agents/skills`. You can invoke explicitly in Codex with something like:
-
-```text
-Use the $truecrime-cult-research skill. Build a case file for [topic]. Find public news sources, eyewitness accounts, and official records. Save sources, extract entities/events/claims, flag contradictions, and export Manim-ready CSVs.
-```
-
-Or ask:
-
-```text
-Use the truecrime-cult-research skill to create a data-first source map for the origins of [group/case]. Start with public news coverage and eyewitness accounts, but do not publish private-person details or infer guilt.
-```
-
-## Adjacent skill routing
-
-Use `truecrime-cult-research` as the case ledger and safety baseline. Route
-domain-heavy packets to adjacent skills only when their lane applies.
-
-Canonical lane/template metadata lives in `docs/registry/lanes.json`. Generated
-reference tables live in
-`.agents/skills/truecrime-cult-research/references/lane_registry.md` and
-`.agents/skills/public-records-router/references/routing_matrix.md`.
-
-Adjacent skills write source-traceable entities, claims, events, relationships,
-artifacts, and notes back into the same TRCR case structure.
-
-## App And Integration References
-
-| Surface | Reference |
-| --- | --- |
-| Case-builder and LangGraph workflow | [docs/guides/architecture/case-builder-langgraph.md](docs/guides/architecture/case-builder-langgraph.md) |
-| MCP server for Codex, Claude Code, and Claude Desktop | [docs/guides/integrations/mcp-server.md](docs/guides/integrations/mcp-server.md) |
-| Local parsing, OCR, retrieval, and memory setup | [docs/guides/runbooks/setup/install.md](docs/guides/runbooks/setup/install.md) |
-| Self-hosted SearXNG, Qdrant, Ollama, OCR, MCP, and app runtime | [docs/guides/runbooks/setup/self-hosted-deployment.md](docs/guides/runbooks/setup/self-hosted-deployment.md) |
-| Case workspace layout and full source workflow | [docs/guides/runbooks/cases/case-workflow.md](docs/guides/runbooks/cases/case-workflow.md) |
-
-## Key conventions
-
-- `research_actions.jsonl` is an audit log for workflow steps such as source intake, extraction import, source-independence review, and public-export review.
-- Use `records/source_spans.jsonl` plus `source_span_ids` on claims, events, relationships, event links, quotes, or artifacts when page, paragraph, timestamp, line, section, or URL-fragment locators are needed.
-- Use `assertion_type` to preserve how a source frames an assertion: `source_stated_fact`, `allegation`, `denial`, `court_finding`, `self_report`, `biography_claim`, `lead_only`, or `expert_context`.
-- Use `independence_group` on sources to avoid treating repeated wire stories, copied articles, shared dockets, or common archive packets as independent corroboration.
-- Use `references/controlled_vocabularies.md` and `references/topic_extraction_templates.md` from the skill directory before creating new terms.
-- Use JSON Schemas from `docs/schemas/` when validating machine-facing records.
-- Before public output, run `validate`, review `public_export` and `privacy_review`, and use `audit-public-export` when available. `report` and `export-analysis-charts` provide the fallback public-readiness review surface.
-
-See `docs/guides/skill-api-spec.md` for the machine-facing CLI and JSONL
-contract.
-
-## Key principle
-
-Every public-facing claim should reduce to:
-
-```text
-Claim → source(s) → reliability grade → confidence → privacy review → visualization output
-```
-
-If that chain breaks, the claim stays out of the public script.
+Validate changes with `make check` (compile + ledger validation) and
+`.venv/bin/python -m pytest` (unit, integration, e2e, governance, smoke).

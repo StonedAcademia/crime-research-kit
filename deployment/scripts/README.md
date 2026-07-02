@@ -2,6 +2,8 @@
 
 Scripts are grouped by operational intent:
 
+- `bootstrap.sh` / `bootstrap.ps1` install the minimum toolchain (proto, plus
+  the moon and python versions pinned in `.prototools`) before first use.
 - `checks/` runs local validation, smoke checks, and branch gates.
 - `local/` operates the self-hosted Docker Compose stack.
 - `tools/` handles install, virtualenv command execution, and export helpers.
