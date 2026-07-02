@@ -348,6 +348,19 @@ Each `src/case_builder` package directory has a local `README.md`; tests enforce
 the 200 non-comment LOC ceiling for Python modules. See
 `docs/case-builder-langgraph.md` for the workflow boundary and next nodes.
 
+## MCP server
+
+Expose the same ops surface to Claude Code, Codex, or Claude Desktop:
+
+```bash
+uv pip install -p .venv/bin/python -e '.[mcp]'
+claude mcp add trcr -- /home/jdean/Documents/programming/true-crime-research/tc-c-kit/.venv/bin/trcr-mcp
+```
+
+Read/query tools are always safe; write tools stage drafts only; canonical
+`import_extraction` requires `confirm=true` after explicit human review, and
+exports stay public-safe by default. See `docs/mcp-server.md`.
+
 ## Local document, retrieval, and memory stack
 
 The case-builder app also exposes optional local-first commands for source
