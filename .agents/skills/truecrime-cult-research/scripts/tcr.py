@@ -100,6 +100,7 @@ from adapters.ops.evidence.shared.records import (  # noqa: E402
     source_independence_key,
     write_csv,
 )
+from adapters.ops.evidence.shared.markdown import md_table  # noqa: E402
 from adapters.ops.evidence.shared.scoring import date_sort_key, evidence_level, grade_summary  # noqa: E402
 from adapters.ops.evidence.quality.preservation import (  # noqa: E402
     preservation_artifact,
@@ -4346,14 +4347,6 @@ def export_manim(args: argparse.Namespace) -> None:
     write_csv(out / "relationships.csv", relationships, ["rel_id", "src_entity_id", "dst_entity_id", "relation_type", "relationship_class", "start_date", "end_date", "claim_ids", "source_ids", "confidence", "status", "public_export"])
 
     print(f"Exported Manim CSVs to {out}")
-
-
-def md_table(headers: list[str], rows: list[list[str]]) -> str:
-    lines = ["| " + " | ".join(headers) + " |", "|" + "|".join(["---"] * len(headers)) + "|"]
-    for row in rows:
-        clean = [str(cell).replace("|", "\\|").replace("\n", " ") for cell in row]
-        lines.append("| " + " | ".join(clean) + " |")
-    return "\n".join(lines)
 
 
 def report(args: argparse.Namespace) -> None:
