@@ -1299,6 +1299,58 @@ def discover_cases(cases_root: str | Path) -> list[Path]:
     return cases
 
 
+def collect_public_output_blockers(label: str, report_path: Path) -> list[str]:
+    if not report_path.exists():
+        return [f"{label}: missing audit report {report_path}"]
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    blockers: list[str] = []
+    if label == "audit-public-export":
+        for issue in report.get("issues", []):
+            blockers.append(f"{label}: {issue.get('issue_type', 'issue')} {issue.get('record_id', '')}".strip())
+    else:
+        for issue in report.get("issues", []):
+            if str(issue.get("severity", "blocker")) == "blocker":
+                blockers.append(f"{label}: {issue.get('issue_type', 'issue')} {issue.get('record_id', '')}".strip())
+        for flag in report.get("flags", []):
+            if str(flag.get("severity", "")).casefold() == "blocker":
+                blockers.append(f"{label}: {flag.get('flag_type', 'flag')} {flag.get('record_id', '')}".strip())
+    return blockers
+
+
+def enforce_public_output_gate(target: str | Path, command_name: str, include_private: bool = False) -> None:
+    if include_private:
+        print(f"{command_name}: internal export requested with --include-private; public-output gate skipped.")
+        return
+    blockers: list[str] = []
+    for case_dir in discover_cases(target):
+        audit_public_export(argparse.Namespace(case_dir=str(case_dir), out=None, warn_only=True))
+        audit_privacy_redactions(argparse.Namespace(case_dir=str(case_dir), out=None, include_private=False, require_redaction_log=False, warn_only=True))
+        audit_contradictions(argparse.Namespace(case_dir=str(case_dir), out=None, include_private=False, min_overlap=0.45, fail_on_flags=False))
+        source_independence(argparse.Namespace(case_dir=str(case_dir), out=None, include_private=False, min_title_chars=16, fail_on_flags=False))
+        review_narrative_readiness(argparse.Namespace(
+            case_dir=str(case_dir),
+            out=None,
+            include_private=False,
+            require_spans=False,
+            min_independent_sources=2,
+            fail_on_blockers=False,
+        ))
+        reports = {
+            "audit-public-export": case_dir / "exports" / "public_export_audit.json",
+            "audit-privacy-redactions": case_dir / "exports" / "privacy_redaction_audit.json",
+            "audit-contradictions": case_dir / "exports" / "claim_contradiction_audit.json",
+            "audit-source-independence": case_dir / "exports" / "source_independence_report.json",
+            "review-narrative-readiness": case_dir / "exports" / "narrative_readiness_review.json",
+        }
+        for label, report_path in reports.items():
+            blockers.extend(collect_public_output_blockers(label, report_path))
+    if blockers:
+        print(f"{command_name}: public export blocked by unresolved data-safety audit issues.", file=sys.stderr)
+        for blocker in blockers:
+            print(f"- {blocker}", file=sys.stderr)
+        raise SystemExit(1)
+
+
 def source_independence_key(source: dict[str, Any]) -> str:
     if source.get("independence_group"):
         return str(source["independence_group"])
@@ -2775,6 +2827,7 @@ def date_sort_key(value: Any) -> tuple[int, int, int, str]:
 
 
 def export_timeline(args: argparse.Namespace) -> None:
+    enforce_public_output_gate(args.cases_root, "export-timeline", args.include_private)
     case_dirs = discover_cases(args.cases_root)
     include_private = args.include_private
     out = Path(args.out_dir).expanduser().resolve() if args.out_dir else case_dirs[0].parent.parent / "exports" / "timeline"
@@ -3529,6 +3582,8 @@ th {{ background: #eef2f7; }}
 
 def export_case_charts(args: argparse.Namespace) -> None:
     ensure_case(args.case_dir)
+    if not getattr(args, "skip_public_gate", False):
+        enforce_public_output_gate(args.case_dir, "export-case-charts", args.include_private)
     cdir = case_path(args.case_dir)
     include_private = args.include_private
     out = Path(args.out_dir).expanduser().resolve() if args.out_dir else cdir / "exports" / "charts"
@@ -4043,12 +4098,18 @@ th {{ background: #eef2f7; }}
 
 def export_people_clusters(args: argparse.Namespace) -> None:
     ensure_case(args.case_dir)
+    enforce_public_output_gate(args.case_dir, "export-people-clusters", args.include_private)
     cdir = case_path(args.case_dir)
     out = Path(args.out_dir).expanduser().resolve() if args.out_dir else cdir / "exports" / "clusters"
     charts_dir = Path(args.charts_dir).expanduser().resolve() if args.charts_dir else cdir / "exports" / "charts"
     out.mkdir(parents=True, exist_ok=True)
 
-    export_case_charts(argparse.Namespace(case_dir=args.case_dir, out_dir=str(charts_dir), include_private=args.include_private))
+    export_case_charts(argparse.Namespace(
+        case_dir=args.case_dir,
+        out_dir=str(charts_dir),
+        include_private=args.include_private,
+        skip_public_gate=True,
+    ))
 
     case_meta = json.loads((cdir / "case.json").read_text(encoding="utf-8"))
     case_title = str(case_meta.get("title", cdir.name))
@@ -5780,6 +5841,7 @@ def render_analysis_dashboard(case_title: str, include_private: bool, chart_spec
 
 def export_analysis_charts(args: argparse.Namespace) -> None:
     ensure_case(args.case_dir)
+    enforce_public_output_gate(args.case_dir, "export-analysis-charts", args.include_private)
     cdir = case_path(args.case_dir)
     include_private = args.include_private
     out = Path(args.out_dir).expanduser().resolve() if args.out_dir else cdir / "exports" / "analysis_charts"
@@ -6955,6 +7017,7 @@ def export_analysis_charts(args: argparse.Namespace) -> None:
 
 def export_manim(args: argparse.Namespace) -> None:
     ensure_case(args.case_dir)
+    enforce_public_output_gate(args.case_dir, "export-manim", args.include_private)
     cdir = case_path(args.case_dir)
     out = cdir / "exports" / "manim"
     include_private = args.include_private
