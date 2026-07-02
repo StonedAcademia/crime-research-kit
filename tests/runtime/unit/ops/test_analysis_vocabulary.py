@@ -9,10 +9,12 @@ import pytest
 from adapters.ops.evidence.reports.analysis.vocabulary import (
     CASE_PACK_FILENAME,
     TermPack,
+    VocabPacks,
     load_case_packs,
     load_default_packs,
     match_pack,
 )
+from adapters.ops.evidence.reports.analysis.relationships import relation_family, relationship_class
 from core.casefile import CasefileError
 
 
@@ -76,3 +78,43 @@ def test_malformed_override_fails_fast(tmp_path):
     with pytest.raises(CasefileError) as excinfo:
         load_case_packs(tmp_path)
     assert CASE_PACK_FILENAME in str(excinfo.value)
+
+
+def test_relationship_class_unmatched_falls_to_unclassified():
+    record = {"rel_id": "r1", "relation_type": "vague_link", "status": "corroborated", "notes": ""}
+    assert relationship_class(record) == "unclassified"
+
+
+def test_relationship_class_structural_rules_survive_empty_packs():
+    empty = VocabPacks()
+    assert relationship_class({"relation_type": "co_mentioned_with"}, packs=empty) == "hypothesis_requires_more_sources"
+    assert relationship_class({"relation_type": "x", "status": "disputed"}, packs=empty) == "contested_overlap"
+    assert relationship_class({"relation_type": "x", "status": "unverified"}, packs=empty) == "hypothesis_requires_more_sources"
+    assert relationship_class({"relation_type": "x"}, "event_link", packs=empty) == "personnel_bridge"
+
+
+def test_relationship_class_respects_explicit_field():
+    assert relationship_class({"relationship_class": "method_diffusion", "relation_type": "x"}) == "method_diffusion"
+
+
+def test_relation_family_pack_driven_and_unclassified():
+    assert relation_family("completed_treatment_at") == "treatment_lineage"
+    assert relation_family("co_mentioned_with") == "lead_only_co_mentions"
+    assert relation_family("x", "event_link") == "event_context"
+    assert relation_family("totally_novel_relation") == "unclassified"
+
+
+def test_case_pack_changes_classification(tmp_path):
+    (tmp_path / "case.json").write_text(json.dumps({"case_id": "t"}), encoding="utf-8")
+    (tmp_path / "analysis_vocabulary.json").write_text(
+        json.dumps({"relationship_classes": [{"key": "contested_overlap", "terms": ["zzz_special_inquiry"]}]}),
+        encoding="utf-8",
+    )
+    record = {
+        "rel_id": "r1",
+        "relation_type": "x",
+        "notes": "zzz_special_inquiry raised",
+        "status": "corroborated",
+    }
+    assert relationship_class(record) == "unclassified"
+    assert relationship_class(record, packs=load_case_packs(tmp_path)) == "contested_overlap"

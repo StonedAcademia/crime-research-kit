@@ -30,6 +30,7 @@ RELATIONSHIP_CLASS_TITLES = {
     "narrative_inheritance": "Narrative inheritance / story-world growth",
     "contested_overlap": "Contested overlap / disputed institutional tie",
     "hypothesis_requires_more_sources": "Hypothesis requiring more sources",
+    "unclassified": "Unclassified (no pack or rule matched)",
 }
 
 
