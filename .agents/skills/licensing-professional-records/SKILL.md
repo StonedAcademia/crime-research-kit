@@ -7,7 +7,7 @@ description: Public-record workflow for researching professional licenses, certi
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `licensing-professional` for this lane; CLI fallback: `tcr.py draft-extraction ... --template licensing-professional`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `licensing-professional` for this lane; CLI fallback: `crk-ledger draft-extraction ... --template licensing-professional`.
 
 
 ## Purpose
@@ -38,17 +38,17 @@ If the person identity is ambiguous, route through `identity-resolution` before 
 ## Commands
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source tc-c-kit/data/cases/<case_slug> \
+crk-ledger add-source tc-c-kit/data/cases/<case_slug> \
   --title "<Board or license record title>" \
   --url "<official URL>" \
   --source-type government_record \
   --reliability-grade A \
   --notes "license/board; jurisdiction; license number or docket; status date"
 
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template licensing-professional
-python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
-python .agents/skills/truecrime-cult-research/scripts/tcr.py resolve-identities tc-c-kit/data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export tc-c-kit/data/cases/<case_slug> --warn-only
+crk-ledger draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template licensing-professional
+crk-ledger import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
+crk-ledger resolve-identities tc-c-kit/data/cases/<case_slug>
+crk-ledger audit-public-export tc-c-kit/data/cases/<case_slug> --warn-only
 ```
 
 ## Extraction Rules

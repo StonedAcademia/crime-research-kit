@@ -3,7 +3,7 @@ from pathlib import Path
 from adapters.interfaces.mcp import tools_gated, tools_write
 from adapters.interfaces.mcp.context import ServerContext
 from adapters.ops.runner import CrkRunner
-from tests.helpers import KIT_ROOT
+from tests.helpers import KIT_ROOT, ledger_command_args, ledger_subcommand
 
 
 def make_ctx(cases_root: Path) -> ServerContext:
@@ -51,7 +51,7 @@ def test_ingest_url_tool_builds_command(synthetic_case_copy):
         source_type="news_article",
     )
 
-    assert result["command"][2] == "ingest-url"
+    assert ledger_subcommand(result["command"]) == "ingest-url"
 
 
 def test_import_extraction_refuses_without_confirm(synthetic_case_copy):
@@ -82,8 +82,8 @@ def test_import_extraction_plans_command_with_confirm(synthetic_case_copy):
     result = tools_gated.import_extraction_tool(ctx, "synthetic_case", "p.json", confirm=True)
 
     assert result["ok"] is True
-    assert result["command"][2] == "import-extraction"
-    assert result["command"][4].endswith("staging/extractions/p.json")
+    assert ledger_subcommand(result["command"]) == "import-extraction"
+    assert ledger_command_args(result["command"])[2].endswith("staging/extractions/p.json")
 
 
 def test_exports_echo_privacy_mode(synthetic_case_copy):

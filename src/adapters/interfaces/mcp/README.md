@@ -16,6 +16,6 @@ generation.
 | `server.py` | `create_server()` and `main()` stdio entry point. |
 
 The safety contract is enforced in `adapters.ops`: this package adds no
-second enforcement path and must never call `tcr.py` or the ledger directly.
+second enforcement path and must never call `crk-ledger` or the ledger directly.
 Config: `CRK_CASES_ROOT` (default `<repo>/data/cases`).
 Skill references: `CRK_SKILL_ROOT` (default repo-local `.agents` skill copy).

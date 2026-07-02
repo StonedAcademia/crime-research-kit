@@ -20,7 +20,7 @@ Manual registration is useful when a document must be tracked before parsing:
 
 ```bash
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
-  python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source \
+  crk-ledger add-source \
   data/cases/mkultra_course \
   --title "Project MKULTRA, the CIA's Program of Research in Behavioral Modification" \
   --url "https://www.intelligence.senate.gov/wp-content/uploads/2024/08/sites-default-files-hearings-95mkultra.pdf" \
@@ -34,7 +34,7 @@ For ordinary HTML capture, use `ingest-url`:
 
 ```bash
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
-  python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url \
+  crk-ledger ingest-url \
   data/cases/mkultra_course \
   "https://oversight.house.gov/hearing/mind-control-and-accountability-uncovering-the-truth-of-the-cias-mkultra-project/" \
   --source-type government_record \
@@ -45,7 +45,7 @@ After a source is local, preserve it:
 
 ```bash
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
-  python .agents/skills/truecrime-cult-research/scripts/tcr.py preserve-source \
+  crk-ledger preserve-source \
   data/cases/mkultra_course S_SENATE_MKULTRA_1977
 ```
 
@@ -91,7 +91,7 @@ Draft packets only after the source has a useful text file or OCR output:
 
 ```bash
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
-  python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction \
+  crk-ledger draft-extraction \
   data/cases/mkultra_course S_CIA_MKULTRA_IG_1963 \
   --template source-capture
 ```
@@ -106,7 +106,7 @@ Run validation whenever the source ledger or extraction packets change:
 
 ```bash
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
-  python .agents/skills/truecrime-cult-research/scripts/tcr.py validate \
+  crk-ledger validate \
   data/cases/mkultra_course
 ```
 
@@ -114,15 +114,15 @@ Before any public report or video script:
 
 ```bash
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
-  python .agents/skills/truecrime-cult-research/scripts/tcr.py report \
+  crk-ledger report \
   data/cases/mkultra_course
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
-  python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export \
+  crk-ledger audit-public-export \
   data/cases/mkultra_course
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
-  python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-source-independence \
+  crk-ledger audit-source-independence \
   data/cases/mkultra_course
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
-  python .agents/skills/truecrime-cult-research/scripts/tcr.py review-narrative-readiness \
+  crk-ledger review-narrative-readiness \
   data/cases/mkultra_course --require-spans
 ```

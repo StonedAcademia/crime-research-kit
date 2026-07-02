@@ -49,7 +49,7 @@ interest reason is recorded.
 Initialize the workspace:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case data/cases/harbor_study_circle \
+crk-ledger init-case data/cases/harbor_study_circle \
   --title "Harbor Study Circle Source Map"
 ```
 
@@ -79,9 +79,9 @@ Expected first output:
 Write source plans before treating route suggestions as evidence:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-public-records data/cases/harbor_study_circle \
+crk-ledger plan-public-records data/cases/harbor_study_circle \
   --subject "Harbor Study Circle"
-python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-open-records data/cases/harbor_study_circle \
+crk-ledger plan-open-records data/cases/harbor_study_circle \
   --agency "Harbor City Council" \
   --subject "Harbor Study Circle"
 ```
@@ -108,7 +108,7 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-open-records d
 For a downloadable public URL:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url data/cases/harbor_study_circle \
+crk-ledger ingest-url data/cases/harbor_study_circle \
   "https://example.com/harbor-local-report-1978" \
   --source-type news_article \
   --reliability-grade B
@@ -117,7 +117,7 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url data/cas
 For a source that needs manual registration:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source data/cases/harbor_study_circle \
+crk-ledger add-source data/cases/harbor_study_circle \
   --title "Harbor City Council Meeting Minutes, May 1978" \
   --url "https://example.com/harbor-council-minutes-1978" \
   --source-type government_record \
@@ -136,7 +136,7 @@ Preserve local source files and hashes before extraction when the source is not
 already archived:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py preserve-source data/cases/harbor_study_circle <SOURCE_ID>
+crk-ledger preserve-source data/cases/harbor_study_circle <SOURCE_ID>
 ```
 
 ## Draft And Fill Extraction Packets
@@ -144,13 +144,13 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py preserve-source dat
 Draft a generic packet:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction data/cases/harbor_study_circle <SOURCE_ID>
+crk-ledger draft-extraction data/cases/harbor_study_circle <SOURCE_ID>
 ```
 
 Draft a lane-specific packet when the source calls for it:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction data/cases/harbor_study_circle <SOURCE_ID> \
+crk-ledger draft-extraction data/cases/harbor_study_circle <SOURCE_ID> \
   --template media-transcript
 ```
 
@@ -170,13 +170,13 @@ Review staged packets for `source_ids`, `source_span_ids`, privacy defaults,
 assertion framing, and conservative status/confidence before importing.
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction data/cases/harbor_study_circle \
+crk-ledger import-extraction data/cases/harbor_study_circle \
   data/cases/harbor_study_circle/staging/extractions/<SOURCE_ID>_extraction.json
 ```
 
 Use local suggestions only as review aids, not as canonical records:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py ner-suggest data/cases/harbor_study_circle <SOURCE_ID>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py index-transcript data/cases/harbor_study_circle <SOURCE_ID>
+crk-ledger ner-suggest data/cases/harbor_study_circle <SOURCE_ID>
+crk-ledger index-transcript data/cases/harbor_study_circle <SOURCE_ID>
 ```

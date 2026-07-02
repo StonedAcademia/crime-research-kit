@@ -17,8 +17,8 @@ def run(command: list[str]) -> None:
 
 
 def main() -> int:
-    run([sys.executable, "-m", "compileall", "src", ".agents/skills/truecrime-cult-research/scripts"])
-    run([sys.executable, ".agents/skills/truecrime-cult-research/scripts/tcr.py", "validate", "data/examples/synthetic_case"])
+    run([sys.executable, "-m", "compileall", "src"])
+    run([sys.executable, "-m", "adapters.interfaces.cli", "validate", "data/examples/synthetic_case"])
     return 0
 
 

@@ -3,7 +3,7 @@ from pathlib import Path
 from adapters.ops import case as case_ops
 from adapters.ops import sources as source_ops
 from adapters.ops.runner import CrkRunner
-from tests.helpers import KIT_ROOT
+from tests.helpers import KIT_ROOT, ledger_command_args, ledger_subcommand
 
 REPO_ROOT = KIT_ROOT
 
@@ -50,8 +50,8 @@ def test_validate_and_report_plan_commands(synthetic_case_copy):
     validate = case_ops.validate(runner, str(synthetic_case_copy))
     report = case_ops.report(runner, str(synthetic_case_copy))
 
-    assert validate.command[2] == "validate"
-    assert report.command[2] == "report"
+    assert ledger_subcommand(validate.command) == "validate"
+    assert ledger_subcommand(report.command) == "report"
 
 
 def test_plan_public_records_repeats_lane_flags():
@@ -62,7 +62,7 @@ def test_plan_public_records_repeats_lane_flags():
         ["legal-court", "missing-persons"],
     )
 
-    assert result.command[2] == "plan-public-records"
+    assert ledger_subcommand(result.command) == "plan-public-records"
     assert result.command.count("--lane") == 2
     assert "legal-court" in result.command
     assert "missing-persons" in result.command
@@ -80,7 +80,7 @@ def test_add_source_builds_optional_flags():
     )
 
     command = result.command
-    assert command[2] == "add-source"
+    assert ledger_subcommand(command) == "add-source"
     assert command[command.index("--title") + 1] == "A Story"
     assert command[command.index("--url") + 1] == "https://example.com/story"
     assert command[command.index("--reliability-grade") + 1] == "B"
@@ -95,7 +95,7 @@ def test_ingest_url_places_url_positionally():
         source_type="news_article",
     )
 
-    assert result.command[2:5] == ["ingest-url", "data/cases/x", "https://example.com/story"]
+    assert ledger_command_args(result.command)[:3] == ["ingest-url", "data/cases/x", "https://example.com/story"]
     assert "--source-type" in result.command
 
 
@@ -107,7 +107,7 @@ def test_preserve_source_plans_command():
         archive_url="https://archive.org/x",
     )
 
-    assert result.command[2:5] == ["preserve-source", "data/cases/x", "S0001"]
+    assert ledger_command_args(result.command)[:3] == ["preserve-source", "data/cases/x", "S0001"]
     assert "--archive-url" in result.command
 
 

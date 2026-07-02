@@ -7,7 +7,7 @@ description: Public-record source-planning workflow for routing a CRK case subje
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `public-records-router` for this lane; CLI fallback: `tcr.py draft-extraction ... --template public-records-router`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `public-records-router` for this lane; CLI fallback: `crk-ledger draft-extraction ... --template public-records-router`.
 
 
 ## Purpose
@@ -40,11 +40,11 @@ If the subject is ambiguous, route to `identity-resolution` before collecting se
 Use the wrapper-local CRK tool path and prefix case paths with `tc-c-kit/`:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-public-records tc-c-kit/data/cases/<case_slug> \
+crk-ledger plan-public-records tc-c-kit/data/cases/<case_slug> \
   --subject "<person, org, case, place, or event>" \
   --question "<optional research question>"
 
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template public-records-router
+crk-ledger draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template public-records-router
 ```
 
 Use `--lane licensing-professional`, `--lane media-transcript`, or another lane to force a plan for a known domain.

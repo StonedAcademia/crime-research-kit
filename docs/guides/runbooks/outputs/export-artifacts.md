@@ -8,11 +8,11 @@ commands assume the `tc-c-kit` repository root.
 Run validation and public-output checks before export:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-privacy-redactions data/cases/<case_slug> --require-redaction-log
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-source-independence data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py review-narrative-readiness data/cases/<case_slug> --require-spans
+crk-ledger validate data/cases/<case_slug>
+crk-ledger audit-public-export data/cases/<case_slug>
+crk-ledger audit-privacy-redactions data/cases/<case_slug> --require-redaction-log
+crk-ledger audit-source-independence data/cases/<case_slug>
+crk-ledger review-narrative-readiness data/cases/<case_slug> --require-spans
 ```
 
 Default exports include public rows only. Use `--include-private` only for
@@ -23,7 +23,7 @@ internal review artifacts that must not be published.
 Write the Markdown evidence board:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py report data/cases/<case_slug>
+crk-ledger report data/cases/<case_slug>
 ```
 
 Output:
@@ -37,7 +37,7 @@ data/cases/<case_slug>/exports/evidence_board.md
 Export public-safe Manim-ready CSVs:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-manim data/cases/<case_slug>
+crk-ledger export-manim data/cases/<case_slug>
 ```
 
 Outputs:
@@ -57,7 +57,7 @@ data/cases/<case_slug>/exports/manim/places.csv
 Export the public-safe timeline and claim corroboration index:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-timeline data/cases
+crk-ledger export-timeline data/cases
 ```
 
 Outputs:
@@ -72,7 +72,7 @@ data/exports/timeline/timeline.md
 For internal review, opt in explicitly:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-timeline data/cases \
+crk-ledger export-timeline data/cases \
   --include-private \
   --out-dir data/exports/timeline_internal
 ```
@@ -82,7 +82,7 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py export-timeline dat
 Export the people graph and subcase timeline charts:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-case-charts data/cases/<case_slug>
+crk-ledger export-case-charts data/cases/<case_slug>
 ```
 
 Outputs:
@@ -102,7 +102,7 @@ Run evidence-weighted Leiden clustering and graph-kernel/KDE analysis:
 
 ```bash
 uv run --cache-dir .uv-cache --no-project --with-editable '.[dev]' --with igraph --with leidenalg \
-  python .agents/skills/truecrime-cult-research/scripts/tcr.py export-people-clusters data/cases/<case_slug> --include-private
+  crk-ledger export-people-clusters data/cases/<case_slug> --include-private
 ```
 
 This export is typically internal review because graph clustering can surface
@@ -125,7 +125,7 @@ data/cases/<case_slug>/exports/clusters/clusters.md
 Build the extended analysis chart package:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-analysis-charts data/cases/<case_slug> --include-private
+crk-ledger export-analysis-charts data/cases/<case_slug> --include-private
 ```
 
 Outputs include:

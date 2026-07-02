@@ -3,7 +3,7 @@
 The CLI command:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-manim tc-c-kit/data/cases/<case_slug>
+crk-ledger export-manim tc-c-kit/data/cases/<case_slug>
 ```
 
 writes CSVs to:

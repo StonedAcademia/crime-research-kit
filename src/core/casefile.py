@@ -33,6 +33,10 @@ def case_path(case_dir: str | Path) -> Path:
     return Path(case_dir).expanduser().resolve()
 
 
+def records_dir(case_dir: str | Path) -> Path:
+    return case_path(case_dir) / "records"
+
+
 def ensure_case(case_dir: str | Path) -> Path:
     path = case_path(case_dir)
     if not (path / "case.json").exists():
@@ -74,6 +78,11 @@ def append_jsonl(path: Path, row: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
+
+
+def write_json(path: Path, data: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def load_records(case_dir: str | Path, record_name: str) -> list[dict[str, Any]]:
@@ -124,6 +133,20 @@ def file_sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def slugify(value: str, max_len: int = 80) -> str:
+def today() -> str:
+    return dt.date.today().isoformat()
+
+
+def now_utc() -> str:
+    return dt.datetime.now(dt.timezone.utc).isoformat()
+
+
+def slugify(value: str, max_len: int = 64) -> str:
     slug = re.sub(r"[^a-zA-Z0-9]+", "_", value.strip().lower()).strip("_")
     return (slug[:max_len] or "item").strip("_")
+
+
+def stable_id(prefix: str, *parts: str, length: int = 10) -> str:
+    raw = "|".join(part or "" for part in parts)
+    digest = hashlib.sha1(raw.encode("utf-8", errors="replace")).hexdigest()[:length].upper()
+    return f"{prefix}{digest}"

@@ -7,7 +7,7 @@ description: Public-record workflow for reviewing aliases, duplicate entities, a
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `identity-resolution` for this lane; CLI fallback: `tcr.py draft-extraction ... --template identity-resolution`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `identity-resolution` for this lane; CLI fallback: `crk-ledger draft-extraction ... --template identity-resolution`.
 
 
 ## Purpose
@@ -40,12 +40,12 @@ If the identity is ambiguous, keep the entity `status: candidate` or the claim `
 Use the wrapper-local CRK tool path and prefix case paths with `tc-c-kit/`:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py resolve-identities tc-c-kit/data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py dedupe tc-c-kit/data/cases/<case_slug> --record-type entities
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template identity-resolution
-python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export tc-c-kit/data/cases/<case_slug> --warn-only
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate tc-c-kit/data/cases/<case_slug>
+crk-ledger resolve-identities tc-c-kit/data/cases/<case_slug>
+crk-ledger dedupe tc-c-kit/data/cases/<case_slug> --record-type entities
+crk-ledger draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template identity-resolution
+crk-ledger import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
+crk-ledger audit-public-export tc-c-kit/data/cases/<case_slug> --warn-only
+crk-ledger validate tc-c-kit/data/cases/<case_slug>
 ```
 
 ## Resolution Rules

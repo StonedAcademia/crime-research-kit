@@ -1,0 +1,1 @@
+"""Analysis chart report modules."""

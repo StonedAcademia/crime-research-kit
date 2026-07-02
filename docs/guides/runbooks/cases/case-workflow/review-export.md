@@ -5,31 +5,31 @@
 Validate the ledger:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/cases/harbor_study_circle
-python .agents/skills/truecrime-cult-research/scripts/tcr.py report data/cases/harbor_study_circle
+crk-ledger validate data/cases/harbor_study_circle
+crk-ledger report data/cases/harbor_study_circle
 ```
 
 Review duplicate and ambiguous identity candidates before export:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py dedupe data/cases/harbor_study_circle
-python .agents/skills/truecrime-cult-research/scripts/tcr.py resolve-identities data/cases/harbor_study_circle
+crk-ledger dedupe data/cases/harbor_study_circle
+crk-ledger resolve-identities data/cases/harbor_study_circle
 ```
 
 Run public-output audits:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-contradictions data/cases/harbor_study_circle
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export data/cases/harbor_study_circle
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-privacy-redactions data/cases/harbor_study_circle
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-source-independence data/cases/harbor_study_circle
-python .agents/skills/truecrime-cult-research/scripts/tcr.py review-narrative-readiness data/cases/harbor_study_circle
+crk-ledger audit-contradictions data/cases/harbor_study_circle
+crk-ledger audit-public-export data/cases/harbor_study_circle
+crk-ledger audit-privacy-redactions data/cases/harbor_study_circle
+crk-ledger audit-source-independence data/cases/harbor_study_circle
+crk-ledger review-narrative-readiness data/cases/harbor_study_circle
 ```
 
 Export Manim-ready CSVs after review:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-manim data/cases/harbor_study_circle
+crk-ledger export-manim data/cases/harbor_study_circle
 ```
 
 Export a public-safe Phanestead bundle:

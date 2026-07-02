@@ -70,14 +70,14 @@ def test_frontends_never_touch_ledger_internals():
     assert not offenders, offenders
 
 
-def test_tcr_script_only_referenced_via_ops_runner():
+def test_frontends_do_not_shell_out_to_skill_scripts():
     offenders = [
         str(path.relative_to(KIT_ROOT))
         for root in FRONTEND_ROOTS
         for path in iter_py(root)
-        if "tcr.py" in path.read_text()
+        if ".agents/skills" in path.read_text() and "/scripts/" in path.read_text()
     ]
-    assert not offenders, f"frontends reference tcr.py directly: {offenders}"
+    assert not offenders, f"frontends reference agent script files directly: {offenders}"
 
 
 def test_optional_packages_import_lazily():

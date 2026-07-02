@@ -7,7 +7,7 @@ description: Public-record workflow for researching property, parcel, deed, perm
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `property-location` for this lane; CLI fallback: `tcr.py draft-extraction ... --template property-location`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `property-location` for this lane; CLI fallback: `crk-ledger draft-extraction ... --template property-location`.
 
 
 ## Purpose
@@ -38,17 +38,17 @@ If a record points to a private residence or private person, keep the place and 
 ## Commands
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source tc-c-kit/data/cases/<case_slug> \
+crk-ledger add-source tc-c-kit/data/cases/<case_slug> \
   --title "<Assessor, recorder, permit, map, or facility record>" \
   --url "<official URL>" \
   --source-type government_record \
   --reliability-grade A \
   --notes "property/location; jurisdiction; parcel/instrument/permit identifier; redaction review needed"
 
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template property-location
-python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export tc-c-kit/data/cases/<case_slug> --warn-only
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate tc-c-kit/data/cases/<case_slug>
+crk-ledger draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template property-location
+crk-ledger import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
+crk-ledger audit-public-export tc-c-kit/data/cases/<case_slug> --warn-only
+crk-ledger validate tc-c-kit/data/cases/<case_slug>
 ```
 
 ## Extraction Rules

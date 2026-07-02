@@ -7,7 +7,7 @@ description: Public-record workflow for researching corporations, nonprofits, ba
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `corporate` for this lane; CLI fallback: `tcr.py draft-extraction ... --template corporate`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `corporate` for this lane; CLI fallback: `crk-ledger draft-extraction ... --template corporate`.
 
 
 ## Purpose
@@ -41,17 +41,17 @@ If the company identity is ambiguous, create candidate entities and mark claims 
 Use the wrapper-local CRK tool path and prefix case paths with `tc-c-kit/`:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source tc-c-kit/data/cases/<case_slug> \
+crk-ledger add-source tc-c-kit/data/cases/<case_slug> \
   --title "<Filing or docket title>" \
   --url "<official URL>" \
   --source-type government_record \
   --reliability-grade A \
   --notes "corporate financial record; exact filing date and accession/docket number"
 
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate tc-c-kit/data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py report tc-c-kit/data/cases/<case_slug>
+crk-ledger draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID>
+crk-ledger import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
+crk-ledger validate tc-c-kit/data/cases/<case_slug>
+crk-ledger report tc-c-kit/data/cases/<case_slug>
 ```
 
 Prefer `source_type: government_record` for SEC, state registry, court, bankruptcy, Companies House, or regulator records; `court_record` for docket/case filings; `official_report` for audited annual reports and regulator reports; `news_article` for reputable reporting; `other` for secondary corporate databases used as leads only.

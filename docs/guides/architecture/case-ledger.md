@@ -51,7 +51,7 @@ flowchart LR
 
 ## Validation and audit commands
 
-`tcr.py` provides the review-gate surface over the ledger: `validate`,
+`crk-ledger` provides the review-gate surface over the ledger: `validate`,
 `audit-public-export`, `audit-privacy-redactions`,
 `audit-source-independence`, `audit-contradictions`, and
 `review-narrative-readiness`. Run them from the repo root against the case

@@ -10,15 +10,15 @@ output.
 CRK has two implementation layers. Both read and write the same JSONL case
 ledger, and neither is allowed to bypass its contract:
 
-1. **Skill scripts** — `.agents/skills/truecrime-cult-research/scripts/tcr.py`
-   is a standard-library-only, single-file CLI implementing the complete
+1. **Skills and ledger CLI** — `crk-ledger`
+   is a standard-library-only packaged CLI implementing the complete
    ledger contract: case init, URL ingest, extraction staging and import,
    validation, audits, and exports. Sixteen adjacent skills under
    `.agents/skills/` (legal-court-records, missing-persons-case,
    privacy-redaction-audit, …) extend the same case ledger with
    domain-specific packets. See [Agent Skills](../integrations/agent-skills.md).
 2. **`src/`** — the agent app. Its frontends (CLI, LangGraph
-   workflow, MCP server) never touch `tcr.py` or the ledger directly; they go
+   workflow, MCP server) never touch `crk-ledger` or the ledger directly; they go
    through the typed ops core in `ops/` (`OpResult`, `CrkRunner`, and the
    safety `policy`). The graph runner stops at a human review gate. See
    [Case Builder & LangGraph](case-builder-langgraph.md).
@@ -29,8 +29,8 @@ ledger, and neither is allowed to bypass its contract:
 flowchart TB
   SRC["Public sources<br/>news, transcripts, PDFs, court/public records, archives"]
 
-  subgraph SKILL["Layer 1 · Skill scripts (standard library only)"]
-    TCR["tcr.py single-file CLI<br/>init · ingest · extraction · validate · audit · export"]
+  subgraph SKILL["Layer 1 · Skills and ledger CLI (standard library only)"]
+    TCR["crk-ledger packaged CLI<br/>init · ingest · extraction · validate · audit · export"]
     ADJ["16 adjacent skills<br/>legal · missing-persons · FOIA · privacy · ..."]
   end
 
@@ -82,7 +82,7 @@ and payload contract lives in the [Skill API Spec](../skill-api-spec.md).
 ## Optional subsystems
 
 Each subsystem sits behind an optional extra in `pyproject.toml`, imports
-lazily, and skips its tests when the dependency is absent. The core `tcr.py`
+lazily, and skips its tests when the dependency is absent. The core `crk-ledger`
 CLI and base case-builder CLI run on the standard library alone.
 
 | Subsystem | Extra | Provides |
@@ -108,7 +108,7 @@ The full loop is the [Case Workflow runbook](../runbooks/cases/case-workflow.md)
 ## Design invariants
 
 - The JSONL ledger is canonical; everything else is rebuildable from it.
-- Frontends never bypass the ops core; the ops core never bypasses `tcr.py`.
+- Frontends never bypass the ops core; the ops core never bypasses `crk-ledger`.
 - AI-generated summaries are never evidence; extraction packets are staged
   for review before import.
 - Optional dependencies degrade gracefully — no required third-party packages

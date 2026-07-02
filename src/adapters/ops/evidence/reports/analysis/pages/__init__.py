@@ -1,0 +1,2 @@
+"""Analysis chart page helpers."""
+

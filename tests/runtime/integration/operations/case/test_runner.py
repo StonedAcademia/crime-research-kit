@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-from adapters.ops.runner import CrkRunner
+from adapters.ops.runner import LEDGER_CLI_MODULE, CrkRunner
 from tests.helpers import KIT_ROOT
 
 REPO_ROOT = KIT_ROOT
@@ -15,8 +15,8 @@ def test_dry_run_returns_planned_command_without_executing():
     assert result.ok is True
     assert result.dry_run is True
     assert result.command[0] == sys.executable
-    assert result.command[1].endswith("scripts/tcr.py")
-    assert result.command[2:] == ["validate", "data/cases/nonexistent"]
+    assert result.command[1:3] == ["-m", LEDGER_CLI_MODULE]
+    assert result.command[3:] == ["validate", "data/cases/nonexistent"]
 
 
 def test_executed_run_validates_synthetic_case(synthetic_case_copy):
@@ -39,7 +39,7 @@ def test_failed_run_reports_error(tmp_path):
     assert result.errors
 
 
-def test_runner_finds_tcr_script():
+def test_runner_uses_packaged_ledger_cli():
     runner = CrkRunner(repo_root=REPO_ROOT)
 
-    assert runner.tcr_path.exists()
+    assert runner.cli_module == LEDGER_CLI_MODULE

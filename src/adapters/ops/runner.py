@@ -1,4 +1,4 @@
-"""Subprocess executor for the repo-local CRK CLI."""
+"""Subprocess executor for the packaged CRK ledger CLI."""
 
 from __future__ import annotations
 
@@ -10,8 +10,11 @@ from typing import Sequence
 from .result import OpResult
 
 
+LEDGER_CLI_MODULE = "adapters.interfaces.cli"
+
+
 class CrkRunner:
-    """Low-level executor that turns tcr.py invocations into OpResults."""
+    """Low-level executor that turns ledger CLI invocations into OpResults."""
 
     def __init__(
         self,
@@ -23,10 +26,10 @@ class CrkRunner:
         self.repo_root = repo_root or default_repo_root()
         self.dry_run = dry_run
         self.python_executable = python_executable or sys.executable
-        self.tcr_path = default_tcr_path(self.repo_root)
+        self.cli_module = LEDGER_CLI_MODULE
 
     def command(self, args: Sequence[str]) -> list[str]:
-        return [self.python_executable, str(self.tcr_path), *args]
+        return [self.python_executable, "-m", self.cli_module, *args]
 
     def case_path(self, case_dir: str) -> Path:
         path = Path(case_dir)
@@ -62,13 +65,3 @@ def default_repo_root() -> Path:
     if (cwd / "case.json").exists() or (cwd / "pyproject.toml").exists() or (cwd / "tc-c-kit").exists():
         return cwd
     return package_root
-
-
-def default_tcr_path(repo_root: Path) -> Path:
-    rel = Path(".agents/skills/truecrime-cult-research/scripts/tcr.py")
-    candidates = [repo_root, Path.cwd(), *Path.cwd().parents, Path(__file__).resolve().parents[3]]
-    for root in candidates:
-        path = root / rel
-        if path.exists():
-            return path
-    return repo_root / rel

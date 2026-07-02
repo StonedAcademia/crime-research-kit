@@ -7,7 +7,7 @@ description: Public-record workflow for researching an individual's education hi
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `education` for this lane; CLI fallback: `tcr.py draft-extraction ... --template education`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `education` for this lane; CLI fallback: `crk-ledger draft-extraction ... --template education`.
 
 
 ## Purpose
@@ -49,17 +49,17 @@ If the person identity is ambiguous, create candidate entities and mark claims `
 Use the wrapper-local CRK tool path and prefix case paths with `tc-c-kit/`:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source tc-c-kit/data/cases/<case_slug> \
+crk-ledger add-source tc-c-kit/data/cases/<case_slug> \
   --title "<Public education source title>" \
   --url "<official or archived URL>" \
   --source-type government_record \
   --reliability-grade A \
   --notes "education-path record; exact institution/source date/page"
 
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate tc-c-kit/data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py report tc-c-kit/data/cases/<case_slug>
+crk-ledger draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID>
+crk-ledger import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
+crk-ledger validate tc-c-kit/data/cases/<case_slug>
+crk-ledger report tc-c-kit/data/cases/<case_slug>
 ```
 
 Source-type defaults:

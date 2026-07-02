@@ -49,11 +49,11 @@ Prefer MCP tools when `crk-mcp` is registered:
 | --- | --- | --- |
 | List/open cases | `list_cases`, `case_info` | inspect `data/cases/<case>/case.json` only when tooling is unavailable |
 | Read records/source text | `get_records`, `get_source_text` | use `cr-kit query-case` or the source files through repo tooling |
-| Register sources | `ingest_url`, `add_source` | `tcr.py ingest-url`, `tcr.py add-source` |
-| Draft packets | `draft_extraction` | `tcr.py draft-extraction --template <template>` |
+| Register sources | `ingest_url`, `add_source` | `crk-ledger ingest-url`, `crk-ledger add-source` |
+| Draft packets | `draft_extraction` | `crk-ledger draft-extraction --template <template>` |
 | Save staged packets | `save_extraction_packet` | write reviewed JSON under `staging/extractions/` through repo tooling |
-| Import canonical records | `import_extraction(confirm=true)` after explicit user approval | `tcr.py import-extraction` after explicit user approval |
-| Public exports | `export_manim`, `export_case_charts`, `export_analysis_charts` | matching `tcr.py export-*` commands |
+| Import canonical records | `import_extraction(confirm=true)` after explicit user approval | `crk-ledger import-extraction` after explicit user approval |
+| Public exports | `export_manim`, `export_case_charts`, `export_analysis_charts` | matching `crk-ledger export-*` commands |
 
 Lane and template names come from `docs/registry/`; generated reference tables
 live in `references/lane_registry.md` and
@@ -87,7 +87,7 @@ If the chain is incomplete, do not put the claim in the public-facing script or 
 If a case folder does not exist, run:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case tc-c-kit/data/cases/<case_slug> --title "<Case Title>"
+crk-ledger init-case tc-c-kit/data/cases/<case_slug> --title "<Case Title>"
 ```
 
 ### 2. Build a source-discovery plan
@@ -117,13 +117,13 @@ extraction mapping.
 For each promising public URL, run:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url tc-c-kit/data/cases/<case_slug> "<URL>" --source-type news_article --reliability-grade B
+crk-ledger ingest-url tc-c-kit/data/cases/<case_slug> "<URL>" --source-type news_article --reliability-grade B
 ```
 
 For a source that cannot be downloaded, manually register it:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source tc-c-kit/data/cases/<case_slug> \
+crk-ledger add-source tc-c-kit/data/cases/<case_slug> \
   --title "<Title>" \
   --url "<URL or path>" \
   --source-type eyewitness_account \
@@ -136,14 +136,14 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source tc-c-kit
 For each source with text:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID>
+crk-ledger draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID>
 ```
 
 Then read the source text and fill the staged JSON packet. Extract only what the source directly supports. Use `references/controlled_vocabularies.md` and add `source_spans` locators when a claim, quote, event, relationship, or event link needs page/paragraph/timestamp support.
 
 Use operation `draft_extraction` with the lane-specific template from
 `docs/registry/` when the source is primarily in one of those adjacent lanes.
-CLI fallback: `tcr.py draft-extraction ... --template <template>`.
+CLI fallback: `crk-ledger draft-extraction ... --template <template>`.
 
 ### 5. Extract structured records
 
@@ -163,10 +163,10 @@ Use neutral language. Preserve uncertainty.
 ### 6. Import, validate, and report
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate tc-c-kit/data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py report tc-c-kit/data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-manim tc-c-kit/data/cases/<case_slug>
+crk-ledger import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
+crk-ledger validate tc-c-kit/data/cases/<case_slug>
+crk-ledger report tc-c-kit/data/cases/<case_slug>
+crk-ledger export-manim tc-c-kit/data/cases/<case_slug>
 ```
 
 ### 7. Run privacy review
@@ -360,10 +360,10 @@ Review claims in tc-c-kit/data/cases/[case_slug]/records/claims.jsonl. Search fo
 
 ## Tooling included
 
-The main script is:
+The ledger CLI is:
 
 ```bash
-.agents/skills/truecrime-cult-research/scripts/tcr.py
+crk-ledger
 ```
 
 Important commands:

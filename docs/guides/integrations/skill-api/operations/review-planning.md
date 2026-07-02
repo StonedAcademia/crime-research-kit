@@ -8,7 +8,7 @@ use.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export data/cases/<case_slug>
+crk-ledger audit-public-export data/cases/<case_slug>
 ```
 
 Payload fields: `include_private`, `warn_only`, and `out`. The audit fails on
@@ -27,7 +27,7 @@ The command does not merge or delete evidence rows.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py dedupe data/cases/<case_slug>
+crk-ledger dedupe data/cases/<case_slug>
 ```
 
 Payload fields: `record_type`, `min_key_chars`, and `out`. Writes
@@ -43,7 +43,7 @@ create evidence records.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py preserve-source data/cases/<case_slug> <SOURCE_ID>
+crk-ledger preserve-source data/cases/<case_slug> <SOURCE_ID>
 ```
 
 Payload fields: `source_id`, `archive_url`, `content_type`, and `out`. Writes
@@ -58,7 +58,7 @@ records.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py resolve-identities data/cases/<case_slug>
+crk-ledger resolve-identities data/cases/<case_slug>
 ```
 
 Payload fields: `min_key_chars`, `include_merged`, and `out`. Writes
@@ -73,7 +73,7 @@ flags.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-contradictions data/cases/<case_slug>
+crk-ledger audit-contradictions data/cases/<case_slug>
 ```
 
 Payload fields: `include_private`, `min_overlap`, `fail_on_flags`, and `out`.
@@ -87,7 +87,7 @@ does not create evidence claims or imply misconduct, identity, or relationships.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-public-records data/cases/<case_slug> --subject "<subject>"
+crk-ledger plan-public-records data/cases/<case_slug> --subject "<subject>"
 ```
 
 Payload fields: `subject`, `question`, repeated `lane`, and `out`. Supported
@@ -104,7 +104,7 @@ quotes.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py index-transcript data/cases/<case_slug> <SOURCE_ID>
+crk-ledger index-transcript data/cases/<case_slug> <SOURCE_ID>
 ```
 
 Payload fields: `source_id`, `max_segments`, `include_private`, and `out`.
@@ -118,7 +118,7 @@ not prove that records exist.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-open-records data/cases/<case_slug> --subject "<subject>" --agency "<agency>"
+crk-ledger plan-open-records data/cases/<case_slug> --subject "<subject>" --agency "<agency>"
 ```
 
 Payload fields: `subject`, `agency`, optional `jurisdiction`, `law`,
@@ -133,7 +133,7 @@ rewrite claims, events, relationships, or public-export flags.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py review-narrative-readiness data/cases/<case_slug>
+crk-ledger review-narrative-readiness data/cases/<case_slug>
 ```
 
 Payload fields: `include_private`, `require_spans`,
@@ -147,7 +147,7 @@ Reports privacy and redaction blockers before public output.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-privacy-redactions data/cases/<case_slug>
+crk-ledger audit-privacy-redactions data/cases/<case_slug>
 ```
 
 Payload fields: `include_private`, `require_redaction_log`, `warn_only`, and
@@ -162,7 +162,7 @@ support risks. The `source-independence` alias is equivalent to
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py source-independence data/cases/<case_slug>
+crk-ledger source-independence data/cases/<case_slug>
 ```
 
 Payload fields: `include_private`, `min_title_chars`, `fail_on_flags`, and

@@ -7,7 +7,7 @@ description: Public-record workflow for researching court cases, dockets, filing
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `legal-court` for this lane; CLI fallback: `tcr.py draft-extraction ... --template legal-court`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `legal-court` for this lane; CLI fallback: `crk-ledger draft-extraction ... --template legal-court`.
 
 
 ## Purpose
@@ -41,18 +41,18 @@ If the case identity is ambiguous, record candidates and mark claims `unverified
 Use the wrapper-local CRK tool path and prefix case paths with `tc-c-kit/`:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source tc-c-kit/data/cases/<case_slug> \
+crk-ledger add-source tc-c-kit/data/cases/<case_slug> \
   --title "<Court, case, docket item, or filing title>" \
   --url "<official or archived URL>" \
   --source-type court_record \
   --reliability-grade A \
   --notes "court; case number; docket/document number; filing date; page or locator notes"
 
-python .agents/skills/truecrime-cult-research/scripts/tcr.py preserve-source tc-c-kit/data/cases/<case_slug> <SOURCE_ID>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template legal-court
-python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-contradictions tc-c-kit/data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate tc-c-kit/data/cases/<case_slug>
+crk-ledger preserve-source tc-c-kit/data/cases/<case_slug> <SOURCE_ID>
+crk-ledger draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template legal-court
+crk-ledger import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
+crk-ledger audit-contradictions tc-c-kit/data/cases/<case_slug>
+crk-ledger validate tc-c-kit/data/cases/<case_slug>
 ```
 
 ## Extraction Rules

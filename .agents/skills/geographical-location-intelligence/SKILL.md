@@ -7,7 +7,7 @@ description: "CRK workflow for identifying, reconciling, and mapping locations t
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `geographical-location` for this lane; CLI fallback: `tcr.py draft-extraction ... --template geographical-location`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `geographical-location` for this lane; CLI fallback: `crk-ledger draft-extraction ... --template geographical-location`.
 
 
 ## Purpose
@@ -43,21 +43,21 @@ If a location is a current private residence, minor-related place, shelter/safe 
 Use the wrapper-local CRK tool path and prefix case paths with `tc-c-kit/`:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-public-records tc-c-kit/data/cases/<case_slug> \
+crk-ledger plan-public-records tc-c-kit/data/cases/<case_slug> \
   --subject "<event, source, route, evidence item, place, or map question>" \
   --lane geographical-location
 
-python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source tc-c-kit/data/cases/<case_slug> \
+crk-ledger add-source tc-c-kit/data/cases/<case_slug> \
   --title "<Map, exhibit, article, transcript, photo, report, or location source>" \
   --url "<public URL or local path>" \
   --source-type other \
   --reliability-grade B \
   --notes "geographical-location; event/evidence locator; precision/privacy review needed"
 
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template geographical-location
-python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export tc-c-kit/data/cases/<case_slug> --warn-only
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate tc-c-kit/data/cases/<case_slug>
+crk-ledger draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template geographical-location
+crk-ledger import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
+crk-ledger audit-public-export tc-c-kit/data/cases/<case_slug> --warn-only
+crk-ledger validate tc-c-kit/data/cases/<case_slug>
 ```
 
 ## Extraction Rules

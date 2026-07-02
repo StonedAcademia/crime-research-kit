@@ -78,7 +78,7 @@ Initialize the local ignored case workspace:
 
 ```bash
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
-  python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case \
+  crk-ledger init-case \
   data/cases/mkultra_course \
   --title "MKUltra Source-Traceable Course Case"
 ```

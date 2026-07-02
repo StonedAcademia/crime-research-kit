@@ -7,7 +7,7 @@ description: Public-records request planning workflow for FOIA, state open-recor
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `foia-open-records` for this lane; CLI fallback: `tcr.py draft-extraction ... --template foia-open-records`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `foia-open-records` for this lane; CLI fallback: `crk-ledger draft-extraction ... --template foia-open-records`.
 
 
 ## Purpose
@@ -38,14 +38,14 @@ Do not request private-person contact details, medical details, financial identi
 ## Commands
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-open-records tc-c-kit/data/cases/<case_slug> \
+crk-ledger plan-open-records tc-c-kit/data/cases/<case_slug> \
   --subject "<subject>" \
   --agency "<agency or office>" \
   --jurisdiction "<jurisdiction>" \
   --date-range "<date range>" \
   --record "<record category>"
 
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template foia-open-records
+crk-ledger draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template foia-open-records
 ```
 
 ## Output Expectations

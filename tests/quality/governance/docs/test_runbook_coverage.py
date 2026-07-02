@@ -11,11 +11,10 @@ from tests.helpers import KIT_ROOT, moon_task_names
 
 
 RUNBOOK_ROOT = KIT_ROOT / "docs" / "guides" / "runbooks"
-TCR = KIT_ROOT / ".agents" / "skills" / "truecrime-cult-research" / "scripts" / "tcr.py"
 
 RUNBOOK_EXEMPT = {
     # Compatibility alias for audit-source-independence; the canonical command is documented.
-    "tcr.py source-independence",
+    "crk-ledger source-independence",
 }
 
 
@@ -35,9 +34,9 @@ def cr_kit_commands() -> set[str]:
     return {f"cr-kit {name}" for name in subcommands_from_help(output)}
 
 
-def tcr_commands() -> set[str]:
-    output = run_help([sys.executable, str(TCR), "--help"])
-    return {f"tcr.py {name}" for name in subcommands_from_help(output)}
+def ledger_commands() -> set[str]:
+    output = run_help([sys.executable, "-m", "adapters.interfaces.cli", "--help"])
+    return {f"crk-ledger {name}" for name in subcommands_from_help(output)}
 
 
 def docker_moon_targets() -> set[str]:
@@ -49,7 +48,7 @@ def runbook_text() -> str:
 
 
 def test_public_commands_are_covered_by_runbooks():
-    commands = cr_kit_commands() | tcr_commands() | docker_moon_targets()
+    commands = cr_kit_commands() | ledger_commands() | docker_moon_targets()
     docs = runbook_text()
     missing = sorted(command for command in commands if command not in RUNBOOK_EXEMPT and command not in docs)
     assert not missing, "public commands missing from runbooks:\n" + "\n".join(missing)

@@ -35,6 +35,7 @@ EXPECTED_EXTRAS = {
 }
 EXPECTED_SCRIPTS = {
     "cr-kit": "cli:main",
+    "crk-ledger": "adapters.interfaces.cli.entry:main",
     "crk-mcp": "adapters.interfaces.mcp.server:main",
 }
 REGISTRY_SHARDS = (

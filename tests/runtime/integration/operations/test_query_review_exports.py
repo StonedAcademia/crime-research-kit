@@ -5,7 +5,7 @@ from adapters.ops import exports as export_ops
 from adapters.ops import query as query_ops
 from adapters.ops import review as review_ops
 from adapters.ops.runner import CrkRunner
-from tests.helpers import KIT_ROOT
+from tests.helpers import KIT_ROOT, ledger_subcommand
 
 REPO_ROOT = KIT_ROOT
 
@@ -48,7 +48,7 @@ def test_get_records_rejects_unknown_type(synthetic_case_copy):
 def test_link_names_repeats_name_flags():
     result = query_ops.link_names(dry_runner(), "data/cases/x", names=["Jane Doe|JD", "John Roe"])
 
-    assert result.command[2] == "link-names"
+    assert ledger_subcommand(result.command) == "link-names"
     assert result.command.count("--name") == 2
 
 
@@ -63,7 +63,7 @@ def test_review_audits_plan_expected_subcommands():
     }
 
     for func, subcommand in expectations.items():
-        assert func(runner, "data/cases/x").command[2] == subcommand
+        assert ledger_subcommand(func(runner, "data/cases/x").command) == subcommand
 
 
 def test_exports_default_public_safe():
@@ -84,5 +84,5 @@ def test_export_timeline_accepts_out_dir():
         include_private=True,
     )
 
-    assert result.command[2] == "export-timeline"
+    assert ledger_subcommand(result.command) == "export-timeline"
     assert result.command[result.command.index("--out-dir") + 1] == "data/exports/timeline_internal"

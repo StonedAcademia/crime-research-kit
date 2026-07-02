@@ -71,13 +71,14 @@ def test_generic_is_template_not_lane():
     assert "generic" not in registry["lanes"]
 
 
-def test_tcr_draft_extraction_help_includes_registry_templates():
+def test_ledger_draft_extraction_help_includes_registry_templates():
     registry = load_registry()
 
     result = subprocess.run(
         [
             sys.executable,
-            ".agents/skills/truecrime-cult-research/scripts/tcr.py",
+            "-m",
+            "adapters.interfaces.cli",
             "draft-extraction",
             "--help",
         ],
@@ -91,7 +92,7 @@ def test_tcr_draft_extraction_help_includes_registry_templates():
         assert template_id in result.stdout
 
 
-def test_tcr_plan_public_records_help_includes_planning_lanes():
+def test_ledger_plan_public_records_help_includes_planning_lanes():
     registry = load_registry()
     planning_lanes = {
         lane_id for lane_id, lane in registry["lanes"].items() if lane["public_record_plan"]
@@ -100,7 +101,8 @@ def test_tcr_plan_public_records_help_includes_planning_lanes():
     result = subprocess.run(
         [
             sys.executable,
-            ".agents/skills/truecrime-cult-research/scripts/tcr.py",
+            "-m",
+            "adapters.interfaces.cli",
             "plan-public-records",
             "--help",
         ],

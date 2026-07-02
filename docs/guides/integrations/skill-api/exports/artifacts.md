@@ -7,7 +7,7 @@ Exports public-safe Manim-ready CSVs.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-manim data/cases/<case_slug>
+crk-ledger export-manim data/cases/<case_slug>
 ```
 
 Payload field: `include_private`. Creates CSVs under `exports/manim/` for
@@ -20,7 +20,7 @@ Exports a cross-case timeline and claim corroboration index.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-timeline data/cases
+crk-ledger export-timeline data/cases
 ```
 
 Payload fields: `cases_root`, `out_dir`, and `include_private`. Creates
@@ -35,7 +35,7 @@ review.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-case-charts data/cases/<case_slug>
+crk-ledger export-case-charts data/cases/<case_slug>
 ```
 
 Payload fields: `out_dir` and `include_private`. Creates
@@ -51,7 +51,7 @@ analysis artifacts. This is the main source-independence tooling surface.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-analysis-charts data/cases/<case_slug> --include-private
+crk-ledger export-analysis-charts data/cases/<case_slug> --include-private
 ```
 
 Payload fields: `out_dir`, `clusters_dir`, and `include_private`. Creates:
@@ -83,7 +83,7 @@ CLI:
 
 ```bash
 uv run --cache-dir .uv-cache --no-project --with-editable '.[dev]' --with igraph --with leidenalg \
-  python .agents/skills/truecrime-cult-research/scripts/tcr.py export-people-clusters data/cases/<case_slug> --include-private
+  crk-ledger export-people-clusters data/cases/<case_slug> --include-private
 ```
 
 Payload fields: `out_dir`, `charts_dir`, `include_private`, `resolution`,
