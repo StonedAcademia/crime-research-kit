@@ -3,9 +3,9 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "truecrime-cult-research-kit"
+name = "crime-research-kit"
 version = "0.11.0"
-description = "Codex skill and CLI scaffolding for data-first true crime and cult-origin research organization."
+description = "Agentic skill, MCP, SDK, and CLI scaffolding for data-first crime research."
 requires-python = ">=3.10"
 license = {text = "MIT"}
 dependencies = []
