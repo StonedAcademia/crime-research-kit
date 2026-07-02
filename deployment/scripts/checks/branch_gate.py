@@ -14,8 +14,8 @@ ZERO_SHA = "0" * 40
 
 BRANCH_TARGETS: dict[str, list[str]] = {
     "dev": ["trcr:check", "trcr:test-smoke"],
-    "canary": ["trcr:check", "trcr:test-governance", "trcr:test-smoke"],
-    "main": ["trcr:check", "trcr:test"],
+    "canary": ["trcr:check", "trcr:test-governance", "trcr:test-smoke", "trcr:audit-secrets"],
+    "main": ["trcr:check", "trcr:test", "trcr:audit-secrets"],
 }
 
 
