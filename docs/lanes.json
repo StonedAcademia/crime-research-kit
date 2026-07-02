@@ -166,7 +166,7 @@
       "template": "property-location",
       "public_record_plan": true,
       "source_lane_inference": true,
-      "triggers": ["property", "parcel", "deed", "address", "permit", "land", "building", "map", "location", "zoning"],
+      "triggers": ["property", "parcel", "deed", "address", "permit", "land", "building", "zoning"],
       "source_types": ["government_record", "archive", "news_article", "other"],
       "notes": "Use for parcels, deeds, permits, maps, facility locations, and address-sensitive location records.",
       "tool_ops": {"draft_packet": "draft_extraction", "plan_records": "plan_public_records"}

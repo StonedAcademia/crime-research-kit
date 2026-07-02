@@ -74,12 +74,14 @@ def infer_lanes(subject: str | None, explicit_lanes: Sequence[str] | None = None
     if explicit_lanes:
         return _dedupe([str(lane) for lane in explicit_lanes])
     text = (subject or "").casefold()
-    matches = [
-        lane_id
-        for lane_id, triggers in lane_triggers().items()
-        if any(trigger.casefold() in text for trigger in triggers)
-    ]
-    return _dedupe(matches or fallback_source_lanes())
+    matches: list[tuple[int, str]] = []
+    for lane_id, triggers in lane_triggers().items():
+        positions = [text.find(trigger.casefold()) for trigger in triggers if trigger.casefold() in text]
+        if positions:
+            matches.append((min(positions), lane_id))
+    matches.sort(key=lambda item: item[0])
+    lanes = [lane_id for _position, lane_id in matches]
+    return _dedupe(lanes or fallback_source_lanes())
 
 
 def validate_lane_names(lanes: Sequence[str], *, public_record_plan: bool = False) -> list[str]:

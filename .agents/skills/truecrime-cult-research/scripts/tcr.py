@@ -68,91 +68,43 @@ DEFAULT_EXTRACTION = {
     "redactions": [],
 }
 
-EXTRACTION_TEMPLATE_FILES = {
-    "generic": "extraction_packet.json",
-    "corporate": "extraction_packet_corporate.json",
-    "education": "extraction_packet_education.json",
-    "legal-court": "extraction_packet_legal_court.json",
-    "identity-resolution": "extraction_packet_identity_resolution.json",
-    "source-capture": "extraction_packet_source_capture.json",
-    "claim-contradiction": "extraction_packet_claim_contradiction.json",
-    "public-records-router": "extraction_packet_public_records_router.json",
-    "licensing-professional": "extraction_packet_licensing_professional.json",
-    "media-transcript": "extraction_packet_media_transcript.json",
-    "property-location": "extraction_packet_property_location.json",
-    "missing-persons": "extraction_packet_missing_persons.json",
-    "geographical-location": "extraction_packet_geographical_location.json",
-    "foia-open-records": "extraction_packet_foia_open_records.json",
-    "narrative-readiness": "extraction_packet_narrative_readiness.json",
-    "privacy-redaction": "extraction_packet_privacy_redaction.json",
-    "source-independence": "extraction_packet_source_independence.json",
-}
+def lane_registry_path() -> Path:
+    script = Path(__file__).resolve()
+    candidates = [
+        script.parents[4] / "docs" / "lanes.json",
+        Path.cwd() / "docs" / "lanes.json",
+        Path.cwd() / "tc-c-kit" / "docs" / "lanes.json",
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    searched = ", ".join(str(candidate) for candidate in candidates)
+    raise SystemExit(f"Missing docs/lanes.json lane registry. Searched: {searched}")
 
-EXTRACTION_TEMPLATE_NOTES = {
-    "generic": "Use for general case/source extraction.",
-    "corporate": (
-        "Use for corporations, nonprofits, investments, bankruptcies, officers, directors, "
-        "board members, ownership, contracts, and securities or court filings."
-    ),
-    "education": (
-        "Use for schools attended, degrees, credentials, academic appointments, training, "
-        "student-era events, alumni claims, and institution affiliations."
-    ),
-    "legal-court": (
-        "Use for public dockets, filings, orders, testimony, opinions, court findings, "
-        "allegations, denials, parties, attorneys, judges, and hearing timelines."
-    ),
-    "identity-resolution": (
-        "Use for aliases, duplicate entities, ambiguous public-record identities, entity "
-        "match evidence, and non-mutating merge-review packets."
-    ),
-    "source-capture": (
-        "Use for source preservation checks, capture metadata, archive URLs, raw/text paths, "
-        "hashes, and source provenance gaps."
-    ),
-    "claim-contradiction": (
-        "Use for contradictions, denials, corrections, retractions, disputed claims, and "
-        "court-finding-versus-allegation reviews."
-    ),
-    "public-records-router": (
-        "Use for routing a subject or question across court, corporate, education, licensing, "
-        "property, media, archive, and other public-record lanes."
-    ),
-    "licensing-professional": (
-        "Use for professional licenses, board certifications, disciplinary records, sanctions, "
-        "employment eligibility, and credential-status public records."
-    ),
-    "media-transcript": (
-        "Use for interviews, videos, podcasts, hearings, documentaries, broadcast transcripts, "
-        "speaker turns, timestamps, quotes, and media provenance."
-    ),
-    "property-location": (
-        "Use for property records, parcels, deeds, land records, permits, maps, facility locations, "
-        "and address-sensitive public-location records."
-    ),
-    "missing-persons": (
-        "Use for missing-person, unidentified-person, last-seen, reported-missing, located, recovered, "
-        "candidate-match, and status-update records."
-    ),
-    "geographical-location": (
-        "Use for evidence-item locations, event geography, routes, sightings, map/exhibit locators, "
-        "locations of interest, and public-safe map packets."
-    ),
-    "foia-open-records": (
-        "Use for FOIA, open-records, sunshine-law, public-records request planning, agency scope, "
-        "request wording, exemptions, fee waivers, and appeal trackers."
-    ),
-    "narrative-readiness": (
-        "Use for public script, episode, report, timeline, or video readiness review before narrative use."
-    ),
-    "privacy-redaction": (
-        "Use for redaction logs, private-person review, minors, addresses, contact details, weak allegations, "
-        "and public-export blockers."
-    ),
-    "source-independence": (
-        "Use for source-chain, wire-copy, press-release repetition, same-source-chain, and corroboration independence review."
-    ),
+
+def load_lanes_registry() -> dict[str, Any]:
+    return json.loads(lane_registry_path().read_text(encoding="utf-8"))
+
+
+LANE_REGISTRY = load_lanes_registry()
+EXTRACTION_TEMPLATE_FILES = {
+    name: row["template_file"] for name, row in LANE_REGISTRY["templates"].items()
 }
+EXTRACTION_TEMPLATE_NOTES = {
+    name: row["notes"] for name, row in LANE_REGISTRY["templates"].items()
+}
+PUBLIC_RECORD_LANES = {
+    lane: {
+        "skill": row["skill"],
+        "triggers": row["triggers"],
+        "source_types": row["source_types"],
+        "template": row["template"],
+        "notes": row["notes"],
+    }
+    for lane, row in LANE_REGISTRY["lanes"].items()
+    if row.get("public_record_plan")
+}
+FALLBACK_PUBLIC_RECORD_LANES = list(LANE_REGISTRY["fallback_public_record_lanes"])
 
 ID_FIELDS = {
     "sources": "source_id",
@@ -197,113 +149,6 @@ DATE_RE = re.compile(r"\b(?:\d{4}-\d{2}-\d{2}|\d{1,2}/\d{1,2}/\d{2,4}|(?:Jan|Feb
 CAP_PHRASE_RE = re.compile(r"\b(?:[A-Z][a-zA-Z'\-.]+(?:\s+|$)){2,5}")
 TIMESTAMP_RE = re.compile(r"(?<!\d)(?:(?P<hours>\d{1,2}):)?(?P<minutes>\d{1,2}):(?P<seconds>\d{2})(?:[.,]\d{1,3})?(?!\d)")
 SPEAKER_LINE_RE = re.compile(r"^\s*(?P<speaker>[A-Z][A-Za-z0-9 .'\-]{1,48}):\s*(?P<text>.+?)\s*$")
-
-PUBLIC_RECORD_LANES = {
-    "legal-court": {
-        "skill": "legal-court-records",
-        "triggers": ["court", "docket", "filing", "lawsuit", "charge", "judgment", "hearing", "appeal", "bankruptcy"],
-        "source_types": ["court_record", "government_record", "news_article"],
-        "template": "legal-court",
-        "notes": "Use for dockets, filings, orders, hearings, allegations, denials, and court findings.",
-    },
-    "corporate": {
-        "skill": "corporate-financial-records",
-        "triggers": ["company", "corporation", "nonprofit", "bankruptcy", "investment", "board", "officer", "director", "sec", "filing"],
-        "source_types": ["government_record", "court_record", "official_report", "news_article"],
-        "template": "corporate",
-        "notes": "Use for corporate registries, securities filings, bankruptcy, ownership, finance, boards, and officers.",
-    },
-    "education": {
-        "skill": "educational-path-records",
-        "triggers": ["school", "college", "university", "degree", "alumni", "credential", "faculty", "training"],
-        "source_types": ["government_record", "official_report", "academic", "news_article"],
-        "template": "education",
-        "notes": "Use for education paths, degrees, attendance, credentials, and academic appointments.",
-    },
-    "licensing-professional": {
-        "skill": "licensing-professional-records",
-        "triggers": ["license", "licensing", "certification", "board", "disciplinary", "sanction", "credential", "professional"],
-        "source_types": ["government_record", "official_report", "news_article"],
-        "template": "licensing-professional",
-        "notes": "Use for professional licenses, board actions, certifications, discipline, sanctions, and credential status.",
-    },
-    "media-transcript": {
-        "skill": "media-transcript-intelligence",
-        "triggers": ["video", "audio", "podcast", "interview", "transcript", "hearing", "broadcast", "documentary", "timestamp"],
-        "source_types": ["interview", "documentary", "official_report", "news_article", "other"],
-        "template": "media-transcript",
-        "notes": "Use for timestamped media, speaker turns, transcript claims, quote locators, and media provenance.",
-    },
-    "property-location": {
-        "skill": "property-location-records",
-        "triggers": ["property", "parcel", "deed", "address", "permit", "land", "building", "map", "location", "zoning"],
-        "source_types": ["government_record", "archive", "news_article", "other"],
-        "template": "property-location",
-        "notes": "Use for parcels, deeds, permits, maps, facility locations, and address-sensitive location records.",
-    },
-    "missing-persons": {
-        "skill": "missing-persons-case",
-        "triggers": [
-            "missing person",
-            "missing-person",
-            "reported missing",
-            "last seen",
-            "last contact",
-            "unidentified",
-            "found remains",
-            "located",
-            "recovered",
-            "namus",
-            "ncmec",
-        ],
-        "source_types": ["government_record", "official_report", "news_article", "archive", "other"],
-        "template": "missing-persons",
-        "notes": "Use for missing-person candidates, last-seen/location-time matching, status updates, unidentified-person comparisons, and privacy-sensitive lead review.",
-    },
-    "geographical-location": {
-        "skill": "geographical-location-intelligence",
-        "triggers": [
-            "geographical",
-            "geographic",
-            "geospatial",
-            "map",
-            "route",
-            "coordinates",
-            "gps",
-            "location of interest",
-            "evidence location",
-            "sighting",
-            "search area",
-            "last seen",
-            "exhibit map",
-        ],
-        "source_types": ["government_record", "court_record", "archive", "news_article", "interview", "documentary", "other"],
-        "template": "geographical-location",
-        "notes": "Use for evidence-item locations, event maps, routes, sightings, map/exhibit locators, and locations-of-interest clusters.",
-    },
-    "foia-open-records": {
-        "skill": "foia-open-records-planning",
-        "triggers": ["foia", "open records", "public records request", "sunshine", "freedom of information", "agency records", "records request"],
-        "source_types": ["government_record", "official_report", "archive", "other"],
-        "template": "foia-open-records",
-        "notes": "Use for open-records request planning, agency scope, request wording, exemptions, fee waivers, and appeals.",
-    },
-    "source-capture": {
-        "skill": "source-capture-preservation",
-        "triggers": ["archive", "capture", "hash", "preserve", "raw", "source", "provenance"],
-        "source_types": ["archive", "government_record", "court_record", "news_article", "other"],
-        "template": "source-capture",
-        "notes": "Use for source preservation, archive URLs, hashes, provenance gaps, and capture metadata.",
-    },
-    "contradiction": {
-        "skill": "claim-contradiction-audit",
-        "triggers": ["contradiction", "correction", "retraction", "denial", "disputed", "conflict", "misidentified"],
-        "source_types": ["court_record", "government_record", "news_article", "official_report", "interview"],
-        "template": "claim-contradiction",
-        "notes": "Use for corrections, denials, retractions, court-finding conflicts, and claim-status review.",
-    },
-}
-
 
 def today() -> str:
     return dt.date.today().isoformat()
@@ -1923,16 +1768,7 @@ def infer_public_record_lanes(subject: str, requested_lanes: list[str]) -> list[
     ]
     if matches:
         return sorted(dict.fromkeys(matches))
-    return [
-        "source-capture",
-        "legal-court",
-        "corporate",
-        "licensing-professional",
-        "media-transcript",
-        "missing-persons",
-        "geographical-location",
-        "property-location",
-    ]
+    return list(FALLBACK_PUBLIC_RECORD_LANES)
 
 
 def public_record_lane_plan(lane: str, subject: str) -> dict[str, Any]:
