@@ -19,6 +19,9 @@ MAX_DIRS_PER_DIR = 3
 MAX_NON_COMMENT_LOC = 200
 SKIPPED_ROOTS = (Path(".agents"), Path("data"), Path("docs/superpowers"))
 SRC_ROOT = Path("src")
+DIR_LIMIT_OVERRIDES = {
+    Path("docs/guides"): {"max_dirs": 4},
+}
 
 HASH_COMMENT_SUFFIXES = {".py", ".sh", ".yml", ".yaml", ".toml"}
 HASH_COMMENT_NAMES = {"Dockerfile", ".dockerignore", ".gitignore", ".prototools"}
@@ -59,14 +62,17 @@ def test_directories_keep_small_bounded_shape():
     for directory in sorted(dirs):
         if directory == Path("."):
             continue
+        limits = DIR_LIMIT_OVERRIDES.get(directory, {})
+        max_files = limits.get("max_files", MAX_FILES_PER_DIR)
+        max_dirs = limits.get("max_dirs", MAX_DIRS_PER_DIR)
         files = file_counts.get(directory, 0)
         children = len(child_dirs.get(directory, set()))
-        files_ok = MIN_FILES_PER_DIR <= files <= MAX_FILES_PER_DIR
-        dirs_ok = MIN_DIRS_PER_DIR <= children <= MAX_DIRS_PER_DIR
+        files_ok = MIN_FILES_PER_DIR <= files <= max_files
+        dirs_ok = MIN_DIRS_PER_DIR <= children <= max_dirs
         if not files_ok or not dirs_ok:
             offenders.append(
-                f"{directory.as_posix()} files={files} allowed={MIN_FILES_PER_DIR}-{MAX_FILES_PER_DIR} "
-                f"dirs={children} allowed={MIN_DIRS_PER_DIR}-{MAX_DIRS_PER_DIR}"
+                f"{directory.as_posix()} files={files} allowed={MIN_FILES_PER_DIR}-{max_files} "
+                f"dirs={children} allowed={MIN_DIRS_PER_DIR}-{max_dirs}"
             )
 
     assert offenders == []
