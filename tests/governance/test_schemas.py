@@ -1,8 +1,7 @@
 import json
 from pathlib import Path
 
-KIT_ROOT = Path(__file__).resolve().parents[1]
-REPO_ROOT = KIT_ROOT.parent
+from tests.helpers import KIT_ROOT
 
 
 def test_schemas_parse():
@@ -11,4 +10,4 @@ def test_schemas_parse():
 
 
 def test_skill_exists():
-    assert (REPO_ROOT / ".agents/skills/truecrime-cult-research/SKILL.md").exists()
+    assert (KIT_ROOT / ".agents/skills/truecrime-cult-research/SKILL.md").exists()

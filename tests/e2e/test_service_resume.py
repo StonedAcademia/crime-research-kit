@@ -1,10 +1,6 @@
-from pathlib import Path
-
 import pytest
 
 from case_builder.cli import build_parser
-
-REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_plan_parser_accepts_pipeline_flags():

@@ -5,8 +5,9 @@ from case_builder.ops import exports as export_ops
 from case_builder.ops import query as query_ops
 from case_builder.ops import review as review_ops
 from case_builder.ops.runner import TrcrRunner
+from tests.helpers import KIT_ROOT
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+REPO_ROOT = KIT_ROOT
 
 
 def dry_runner() -> TrcrRunner:

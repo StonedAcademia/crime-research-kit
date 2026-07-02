@@ -6,9 +6,7 @@ from case_builder.cli import build_parser
 from case_builder import config
 from case_builder.memory import remember_research_actions
 from case_builder.retrieval import build_evidence_documents
-
-
-KIT_ROOT = Path(__file__).resolve().parents[1]
+from tests.helpers import KIT_ROOT
 
 
 def copy_synthetic_case(tmp_path: Path) -> Path:

@@ -2,8 +2,9 @@ from pathlib import Path
 
 from case_builder.ops import extraction as extraction_ops
 from case_builder.ops.runner import TrcrRunner
+from tests.helpers import KIT_ROOT
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+REPO_ROOT = KIT_ROOT
 
 
 def dry_runner() -> TrcrRunner:

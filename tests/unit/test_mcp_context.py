@@ -10,8 +10,7 @@ from case_builder.mcp.context import (
     resolve_case,
 )
 from case_builder.ops.runner import TrcrRunner
-
-KIT_ROOT = Path(__file__).resolve().parents[1]
+from tests.helpers import KIT_ROOT
 
 
 def make_ctx(cases_root: Path) -> ServerContext:

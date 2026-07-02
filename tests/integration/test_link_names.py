@@ -1,10 +1,7 @@
 import importlib.util
 from pathlib import Path
 
-
-REPO_ROOT = Path(__file__).resolve().parents[2]
-TCR_PATH = REPO_ROOT / ".agents/skills/truecrime-cult-research/scripts/tcr.py"
-
+from tests.helpers import TCR_PATH
 
 def load_tcr():
     spec = importlib.util.spec_from_file_location("tcr", TCR_PATH)

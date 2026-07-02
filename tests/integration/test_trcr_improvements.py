@@ -5,11 +5,7 @@ from pathlib import Path
 
 import pytest
 
-
-KIT_ROOT = Path(__file__).resolve().parents[1]
-REPO_ROOT = KIT_ROOT.parent
-TCR_PATH = REPO_ROOT / ".agents/skills/truecrime-cult-research/scripts/tcr.py"
-
+from tests.helpers import KIT_ROOT, TCR_PATH
 
 def load_tcr():
     spec = importlib.util.spec_from_file_location("tcr", TCR_PATH)

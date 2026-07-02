@@ -61,5 +61,18 @@ trcr-mcp = "case_builder.mcp.server:main"
 where = ["src"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = [
+  "tests/unit",
+  "tests/integration",
+  "tests/e2e",
+  "tests/governance",
+  "tests/smoke",
+]
 pythonpath = ["src", "."]
+markers = [
+  "unit: pure functions and small helpers",
+  "integration: ops, CLI-adjacent, filesystem, and component-boundary tests",
+  "e2e: full graph, service, or MCP orchestration tests",
+  "governance: repository policy, schemas, generated docs, and skill drift checks",
+  "smoke: fast heartbeat coverage for the main workflow",
+]

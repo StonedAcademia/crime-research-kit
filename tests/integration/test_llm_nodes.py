@@ -7,8 +7,7 @@ from case_builder.graph.llm_nodes import (
     suggest_lanes_node,
 )
 from case_builder.ops.runner import TrcrRunner
-
-KIT_ROOT = Path(__file__).resolve().parents[1]
+from tests.helpers import KIT_ROOT
 
 
 class FakeModel:
