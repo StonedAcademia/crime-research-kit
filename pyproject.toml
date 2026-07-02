@@ -27,6 +27,9 @@ llm = [
   "langchain>=0.3",
   "langchain-ollama>=0.2",
 ]
+mcp = [
+  "mcp>=1.2.0",
+]
 web-local = [
   "playwright>=1.50.0",
   "scrapy>=2.12.0",
@@ -53,6 +56,7 @@ memory-local = [
 
 [project.scripts]
 trcr-case-builder = "case_builder.cli:main"
+trcr-mcp = "case_builder.mcp.server:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
