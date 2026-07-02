@@ -52,22 +52,12 @@ from adapters.ops.casework.records.workspace import (  # noqa: E402
     init_case,
     load_sources,
 )
+from adapters.ops.casework.records.extractions import (  # noqa: E402
+    EXTRACTION_TEMPLATE_FILES,
+    draft_extraction,
+    import_extraction,
+)
 from adapters.ops.casework.records.validation import validate  # noqa: E402
-
-DEFAULT_EXTRACTION = {
-    "source_id": "",
-    "extraction_notes": "",
-    "entities": [],
-    "places": [],
-    "artifacts": [],
-    "claims": [],
-    "events": [],
-    "event_links": [],
-    "relationships": [],
-    "source_spans": [],
-    "quotes": [],
-    "redactions": [],
-}
 
 def lane_registry_path() -> Path:
     script = Path(__file__).resolve()
@@ -102,12 +92,6 @@ def load_lanes_registry() -> dict[str, Any]:
 
 
 LANE_REGISTRY = load_lanes_registry()
-EXTRACTION_TEMPLATE_FILES = {
-    name: row["template_file"] for name, row in LANE_REGISTRY["templates"].items()
-}
-EXTRACTION_TEMPLATE_NOTES = {
-    name: row["notes"] for name, row in LANE_REGISTRY["templates"].items()
-}
 PUBLIC_RECORD_LANES = {
     lane: {
         "skill": row["skill"],
@@ -169,41 +153,6 @@ def ensure_case(case_dir: str | Path) -> None:
     cdir = case_path(case_dir)
     if not (cdir / "case.json").exists():
         raise SystemExit(f"Not a case workspace: {cdir}. Run init-case first.")
-
-
-def skill_dir() -> Path:
-    return Path(__file__).resolve().parents[1]
-
-
-def fresh_default_extraction() -> dict[str, Any]:
-    return json.loads(json.dumps(DEFAULT_EXTRACTION))
-
-
-def load_extraction_template(template_name: str) -> dict[str, Any]:
-    filename = EXTRACTION_TEMPLATE_FILES.get(template_name)
-    if not filename:
-        raise SystemExit(f"Unknown extraction template: {template_name}")
-    candidates = [
-        skill_dir() / "assets" / "templates" / filename,
-        Path.cwd() / ".agents" / "skills" / "truecrime-cult-research" / "assets" / "templates" / filename,
-        Path.cwd() / "tc-c-kit" / ".agents" / "skills" / "truecrime-cult-research" / "assets" / "templates" / filename,
-    ]
-    for path in candidates:
-        if path.exists():
-            data = json.loads(path.read_text(encoding="utf-8"))
-            break
-    else:
-        data = fresh_default_extraction()
-
-    packet = fresh_default_extraction()
-    for key, value in data.items():
-        packet[key] = value
-    for key, value in DEFAULT_EXTRACTION.items():
-        if key not in packet:
-            packet[key] = [] if isinstance(value, list) else value
-    packet["extraction_template"] = template_name
-    packet["template_focus"] = EXTRACTION_TEMPLATE_NOTES[template_name]
-    return packet
 
 
 def safe_filename_from_url(url: str) -> str:
@@ -347,35 +296,6 @@ def ingest_url(args: argparse.Namespace) -> None:
     )
     print(f"Ingested {url}")
     print(json.dumps(rec, indent=2, ensure_ascii=False))
-
-
-def draft_extraction(args: argparse.Namespace) -> None:
-    ensure_case(args.case_dir)
-    cdir = case_path(args.case_dir)
-    src = find_source(args.case_dir, args.source_id)
-    if not src:
-        raise SystemExit(f"Source not found: {args.source_id}")
-    packet = load_extraction_template(args.template)
-    packet["source_id"] = args.source_id
-    packet["source_metadata"] = src
-    packet["extraction_instructions"] = (
-        "Fill arrays using only claims directly supported by this source. "
-        "Treat eyewitness statements as claims. Do not infer guilt, motive, membership, or relationships. "
-        "Set claim assertion_type to distinguish source-stated facts, allegations, denials, court findings, "
-        "self-reports, biography claims, lead-only items, and expert context. "
-        "Add source_spans for page, paragraph, timestamp, exhibit, docket item, accession, or quote-offset locators. "
-        "Set public_export=false for living private persons, minors, private addresses/contact info, and weak allegations."
-    )
-    text_rel = src.get("text_path")
-    if text_rel:
-        text_path = cdir / text_rel
-        packet["source_text_path"] = text_rel
-        if text_path.exists():
-            content = text_path.read_text(encoding="utf-8", errors="replace")
-            packet["source_excerpt_for_orientation"] = content[: args.excerpt_chars]
-    out = cdir / "staging" / "extractions" / f"{args.source_id}_extraction.json"
-    write_json(out, packet)
-    print(f"Wrote draft extraction packet: {out}")
 
 
 def make_candidate_id(prefix: str, name: str, source_id: str) -> str:
@@ -941,49 +861,6 @@ def link_names(args: argparse.Namespace) -> None:
         },
     )
     print(json.dumps({"counts": counts, "research_brief": str(brief_path)}, indent=2, ensure_ascii=False))
-
-
-def import_extraction(args: argparse.Namespace) -> None:
-    ensure_case(args.case_dir)
-    path = Path(args.extraction_json).expanduser().resolve()
-    if not path.exists():
-        raise SystemExit(f"Missing extraction JSON: {path}")
-    data = json.loads(path.read_text(encoding="utf-8"))
-    source_id = data.get("source_id")
-    if not source_id:
-        raise SystemExit("Extraction JSON must include source_id")
-    if not find_source(args.case_dir, source_id):
-        raise SystemExit(f"Unknown source_id in extraction: {source_id}")
-
-    mapping = {
-        "entities": "entities",
-        "places": "places",
-        "artifacts": "artifacts",
-        "claims": "claims",
-        "events": "events",
-        "event_links": "event_links",
-        "relationships": "relationships",
-        "source_spans": "source_spans",
-        "quotes": "quotes",
-        "redactions": "redactions",
-    }
-    counts: dict[str, int] = {}
-    for key, record_name in mapping.items():
-        rows = data.get(key, []) or []
-        if not isinstance(rows, list):
-            raise SystemExit(f"Expected {key} to be a list")
-        for row in rows:
-            if not isinstance(row, dict):
-                raise SystemExit(f"Expected each item in {key} to be an object")
-            row.setdefault("source_ids", [source_id])
-            if key in {"quotes", "source_spans"}:
-                row.setdefault("source_id", source_id)
-            if key == "source_spans" and not row.get("source_span_id") and row.get("span_id"):
-                row["source_span_id"] = row["span_id"]
-            append_jsonl(record_path(args.case_dir, record_name), row)
-        counts[key] = len(rows)
-    log_action(args.case_dir, "import_extraction", {"source_id": source_id, "path": str(path), "counts": counts})
-    print(json.dumps({"imported": counts}, indent=2))
 
 
 def flatten(value: Any) -> str:
