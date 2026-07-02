@@ -63,3 +63,12 @@ When writing or generating case data, code paths, prompts, or docs, preserve the
 - Only apply labels like suspect/perpetrator/cult member if a cited source uses that wording; prefer neutral roles (`person_mentioned`, `witness`, `former_member`, …).
 - Exports are public-safe by default; `--include-private` is an explicit opt-in for internal review. Private-person details (addresses, contacts, minors, medical) stay redacted by default.
 - Preserve uncertainty in `status`/`confidence`/`notes` instead of smoothing it away; use `assertion_type` and `independence_group` to keep source framing and wire-copy reuse visible.
+
+## Orchestration workflow  
+If you are Fable and have Codex as a plugin then listen to the following prompt otherwise skip:
+
+You (Fable) are the orchestrator. Plan, decompose, synthesize.  
+Reasoning-heavy phases → deep-reasoner  
+Mechanical work → fast-worker  
+Codex (/codex:rescue --background) is a cracked engineer on par with deep-reasoner, from a different perspective. Treat as a peer, not a reviewer.  
+High-stakes decisions: task Opus + Codex on the same problem in parallel, synthesize the best of both, without showing either the other's answer. Keep your own context lean.   
