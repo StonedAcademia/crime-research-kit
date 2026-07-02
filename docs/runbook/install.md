@@ -77,6 +77,25 @@ Use `agentic` for the LangGraph runner, `llm` for optional LLM packet helpers,
 `documents` for parsing and OCR, `retrieval` for local Qdrant/LlamaIndex
 search, and `memory-local` for workflow memory.
 
+## Self-Hosted Container Install
+
+The container deployment treats those runtime surfaces as mandatory and runs
+them with local services: SearXNG, Valkey, Qdrant, Ollama, OCR tooling,
+retrieval, memory, LangGraph, and MCP.
+
+```bash
+cp deployment/.env.example deployment/.env
+make docker-build
+make docker-up
+make docker-pull-model
+make docker-smoke
+```
+
+Codex and Claude Code can operate the self-hosted stack through CLI or MCP.
+They are agent hosts, not TRCR runtime model providers. No LangSmith, managed
+vector store, or managed model-provider configuration is part of this
+deployment. See `deployment/README.md`.
+
 ## Verify the Install
 
 Run the synthetic fixture through the core validator:
@@ -200,7 +219,7 @@ trcr-case-builder resume tc-c-kit/data/cases/<case_slug> \
   --execute
 ```
 
-## Optional LLM and Tracing Settings
+## Optional LLM Settings
 
 LLM nodes are disabled unless `--llm` is passed. Configure the model with:
 
@@ -208,21 +227,10 @@ LLM nodes are disabled unless `--llm` is passed. Configure the model with:
 export TRCR_MODEL=ollama:llama3.1
 ```
 
-When using a non-local model provider, treat source text egress as a reviewable
-event and make sure it is appropriate for the case. LLM output is never
-evidence; it must still pass source support, packet review, validation, and
-privacy review.
-
-LangSmith tracing is optional:
-
-```bash
-export LANGSMITH_TRACING=true
-export LANGSMITH_API_KEY=<redacted>
-export LANGSMITH_PROJECT=trcr-case-builder-dev
-```
-
-Do not send private source text, private-person details, or unredacted case
-material to hosted traces.
+The self-hosted runtime supports Ollama. Codex and Claude Code can operate the
+local stack through CLI or MCP, but they are agent hosts rather than TRCR
+runtime model providers. LLM output is never evidence; it must still pass
+source support, packet review, validation, and privacy review.
 
 ## Optional Local Services
 

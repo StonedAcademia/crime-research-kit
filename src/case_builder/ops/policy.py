@@ -63,7 +63,7 @@ def apply_automation_defaults(record: dict[str, Any]) -> dict[str, Any]:
 
 
 def record_llm_egress(case_dir: str | Path, provider: str, context: str) -> None:
-    """Audit-log that source text was sent to a non-local LLM provider."""
+    """Audit-log that source text was sent to an external LLM endpoint."""
     log_action(
         ensure_case(case_dir),
         "llm_egress",

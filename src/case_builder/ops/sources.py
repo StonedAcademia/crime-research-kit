@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Sequence
 
 from ..acquisition import discover_sources as _discover_sources
+from ..config import searxng_url as default_searxng_url
 from ..parsing import ocr_source as _ocr_source
 from ..parsing import parse_source as _parse_source
 from .result import OpResult, local_op
@@ -90,7 +91,7 @@ def discover_sources(
     case_dir: str,
     *,
     query: str,
-    searxng_url: str = "http://localhost:8080",
+    searxng_url: str | None = None,
     limit: int = 10,
     out: str | None = None,
 ) -> OpResult:
@@ -99,7 +100,7 @@ def discover_sources(
         _discover_sources,
         case_dir,
         query=query,
-        searxng_url=searxng_url,
+        searxng_url=default_searxng_url(searxng_url),
         limit=limit,
         out=out,
     )

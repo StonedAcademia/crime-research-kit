@@ -12,7 +12,7 @@ the existing TRCR import and validation commands.
 | Case ledger | `data/cases/<case>/records/*.jsonl` | Canonical source, entity, event, claim, relationship, quote, redaction, and action records. |
 | Workflow state | `case_builder.CaseBuilderState` | Serializable run state for planning, command outputs, errors, and review gates. |
 | Orchestration | LangGraph | Optional runtime for resumable step graphs. The sequential runner remains available for tests and local dry runs. |
-| Observability | LangSmith | Enabled by environment variables; do not send private source text or unredacted private-person details. |
+| Observability | Local logs and `research_actions.jsonl` | No managed tracing service is configured for the self-hosted stack. |
 | Analysis surface | Phanestead Apothecary | Consumes exported bundles and reports readiness, source quality, timelines, and graph metrics. |
 
 ## Source Layout
@@ -97,14 +97,6 @@ trcr-case-builder plan data/cases/example_case \
   --runner langgraph
 ```
 
-Enable LangSmith tracing in development or staging:
-
-```bash
-export LANGSMITH_TRACING=true
-export LANGSMITH_API_KEY=<redacted>
-export LANGSMITH_PROJECT=trcr-case-builder-dev
-```
-
 ## Safety Boundaries
 
 - Do not let graph nodes infer guilt, motive, cult membership, suspect status, or
@@ -114,13 +106,13 @@ export LANGSMITH_PROJECT=trcr-case-builder-dev
 - Do not import extraction packets without human review.
 - Record every workflow action and command result in local run state before
   writing canonical records.
-- Treat LangSmith traces as operational metadata, not evidence.
 
 ## LLM Agent Nodes
 
 Optional nodes activate with `--llm` (plus `--execute`) and the `TRCR_MODEL`
 environment variable (`provider:model`, default `ollama:llama3.1`; install
-`pip install -e '.[llm]'` plus the provider package):
+`pip install -e '.[llm]'`). The self-hosted deployment supports Ollama as the
+runtime provider.
 
 - `suggest_lanes`: lane suggestions with rationale, recorded in
   `lane_suggestions`; never silently applied.
@@ -133,9 +125,8 @@ environment variable (`provider:model`, default `ollama:llama3.1`; install
 - `readiness_brief`: summarizes the deterministic audit outputs into
   `staging/candidates/readiness_brief_<date>.md`. It flags; it never decides.
 
-Non-local providers are recorded as `llm_egress` rows in
-`research_actions.jsonl` because source text leaves the machine. LLM output
-is never evidence; filled packets still stop at the packet review gate.
+LLM output is never evidence; filled packets still stop at the packet review
+gate.
 
 ## Local Stack Commands
 

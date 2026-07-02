@@ -11,7 +11,7 @@ inject fakes and never require langchain or a running model.
 | `audit_brief.py` | Summarize deterministic audit outputs into a reviewer brief under `staging/candidates/`. Flags, never decides. |
 | `lane_suggest.py` | Suggest additional source lanes with rationale; suggestions are recorded, never silently applied. |
 
-Configuration: `TRCR_MODEL=provider:model` (default `ollama:llama3.1`).
-Non-local providers trigger an `llm_egress` audit row via `ops.policy`.
+Configuration: `TRCR_MODEL=ollama:model` (default `ollama:llama3.1`).
+Managed model-provider specs are rejected before model initialization.
 LLM output is never evidence: agent-written records stay `status: unverified`,
 low confidence, `public_export: false`, and go through the packet review gate.

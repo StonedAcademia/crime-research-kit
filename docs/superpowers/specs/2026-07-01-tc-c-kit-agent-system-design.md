@@ -24,7 +24,7 @@ contract in `docs/skill-api-spec.md`; it moves that contract into code.
 | Question | Decision |
 | --- | --- |
 | Where does agent intelligence live? | Both layers: MCP for interactive hosts, LangGraph for batch runs, shared tool core underneath. |
-| LLM provider | Provider-pluggable with local (Ollama) default; Anthropic/OpenAI selectable via config. |
+| LLM provider | Self-hosted runtime provider. Ollama is supported now; future providers must expose local/self-hosted APIs. |
 | MCP write authority | Read/query everything; writes limited to `staging/`; `import-extraction` gated behind an explicit `confirm` parameter. |
 | Packaging | One phased roadmap spec (this document); implementation plans proceed phase by phase. |
 | Internal architecture | Shared ops core (`case_builder/ops/`) consumed by CLI, graph, and MCP — not MCP-as-hub, not duplicate thin adapters. |
@@ -118,10 +118,9 @@ infer_lanes → init_case → plan_public_records
 ### Component 3: LLM provider layer — `case_builder/llm/`
 
 A single module exposing `get_chat_model()` driven by `TRCR_MODEL` config
-(env var or config file): `ollama:<model>` (default), `anthropic:<model>`,
-`openai:<model>`. Uses the langchain chat-model init path so LangGraph nodes
-and any future callers share it. Non-local providers trigger the
-egress-tagging behavior in `ops/policy.py`.
+(env var or config file): `ollama:<model>` (default). The runtime path rejects
+managed model-provider specs; future additions must expose self-hosted local
+APIs. LangGraph nodes and any future callers share this provider layer.
 
 ### Component 4: Agent nodes (bounded LLM calls)
 

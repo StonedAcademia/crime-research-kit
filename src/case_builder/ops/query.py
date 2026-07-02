@@ -5,6 +5,8 @@ from __future__ import annotations
 from typing import Sequence
 
 from ..casefile import RECORD_FILES, CasefileError, find_source, load_records, resolve_case_path
+from ..config import embed_model as default_embed_model
+from ..config import qdrant_url as default_qdrant_url
 from ..retrieval import index_case as _index_case
 from ..retrieval import query_case as _query_case
 from .policy import filter_public
@@ -69,18 +71,18 @@ def index_case(
     case_dir: str,
     *,
     include_private: bool = False,
-    qdrant_url: str = "http://localhost:6333",
+    qdrant_url: str | None = None,
     collection: str | None = None,
-    embed_model: str = "BAAI/bge-small-en-v1.5",
+    embed_model: str | None = None,
 ) -> OpResult:
     return local_op(
         "index_case",
         _index_case,
         case_dir,
         include_private=include_private,
-        qdrant_url=qdrant_url,
+        qdrant_url=default_qdrant_url(qdrant_url),
         collection=collection,
-        embed_model=embed_model,
+        embed_model=default_embed_model(embed_model),
     )
 
 
@@ -89,9 +91,9 @@ def query_case(
     query_text: str,
     *,
     include_private: bool = False,
-    qdrant_url: str = "http://localhost:6333",
+    qdrant_url: str | None = None,
     collection: str | None = None,
-    embed_model: str = "BAAI/bge-small-en-v1.5",
+    embed_model: str | None = None,
     top_k: int = 8,
 ) -> OpResult:
     return local_op(
@@ -100,9 +102,9 @@ def query_case(
         case_dir,
         query_text,
         include_private=include_private,
-        qdrant_url=qdrant_url,
+        qdrant_url=default_qdrant_url(qdrant_url),
         collection=collection,
-        embed_model=embed_model,
+        embed_model=default_embed_model(embed_model),
         top_k=top_k,
     )
 

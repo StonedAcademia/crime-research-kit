@@ -1,14 +1,13 @@
-"""Provider-pluggable chat-model resolution with a local default."""
+"""Self-hosted chat-model resolution with an Ollama default."""
 
 from __future__ import annotations
 
-import os
+from ..config import DEFAULT_MODEL_SPEC, model_spec
 
-DEFAULT_MODEL_SPEC = "ollama:llama3.1"
-LOCAL_PROVIDERS = frozenset({"ollama"})
+SUPPORTED_PROVIDERS = frozenset({"ollama"})
 
 
-def parse_model_spec(spec: str) -> tuple[str, str]:
+def parse_model_spec(spec: str, *, validate_provider: bool = True) -> tuple[str, str]:
     """Split 'provider:model' into its parts, validating both are present."""
     provider, separator, model = (spec or "").partition(":")
     if not separator or not provider.strip() or not model.strip():
@@ -16,15 +15,19 @@ def parse_model_spec(spec: str) -> tuple[str, str]:
             "TRCR_MODEL must look like 'provider:model' "
             f"(e.g. '{DEFAULT_MODEL_SPEC}'), got: {spec!r}"
         )
-    return provider.strip(), model.strip()
+    provider = provider.strip()
+    if validate_provider and provider not in SUPPORTED_PROVIDERS:
+        allowed = ", ".join(sorted(SUPPORTED_PROVIDERS))
+        raise ValueError(f"TRCR_MODEL provider must be self-hosted. Supported providers: {allowed}.")
+    return provider, model.strip()
 
 
 def active_model_spec() -> tuple[str, str]:
-    return parse_model_spec(os.environ.get("TRCR_MODEL") or DEFAULT_MODEL_SPEC)
+    return parse_model_spec(model_spec())
 
 
 def is_local_provider(provider: str) -> bool:
-    return provider in LOCAL_PROVIDERS
+    return provider in SUPPORTED_PROVIDERS
 
 
 def get_chat_model(spec: str | None = None):
@@ -35,6 +38,6 @@ def get_chat_model(spec: str | None = None):
     except ImportError as exc:
         raise RuntimeError(
             "LLM support requires the llm extra. Install with `pip install -e '.[llm]'` "
-            "(plus the provider package, e.g. langchain-ollama or langchain-anthropic)."
+            "(including the local Ollama provider package)."
         ) from exc
     return init_chat_model(model, model_provider=provider)
