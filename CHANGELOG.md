@@ -19,6 +19,7 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 - Fixed the fresh-build wheel import smoke to import the current `cli`, `core`, `pipeline`, and MCP adapter modules instead of removed `case_builder` package paths.
 - Updated the deployment smoke script to use the current `python -m cli` and `adapters.interfaces.mcp.server` entry points.
 - Added governance coverage so stale `case_builder` package paths cannot return to the release build and deployment smoke checks.
+- Fixed audit-lane drift from `lychee` flag changes and sparse `setuptools` license metadata.
 
 ## [0.11.0] - 2026-07-02
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -30,6 +31,11 @@ ALLOW_MARKERS = (
     "lesser general public license",
 )
 DENY_MARKERS = ("sspl", "server side public license")
+# Some core packaging tools publish sparse license metadata in installed wheels.
+# Keep this list small and source-specific so genuinely unknown licenses still surface.
+LICENSE_METADATA_GAPS = {
+    "setuptools": "MIT",
+}
 
 
 def venv_bin(name: str) -> Path:
@@ -66,6 +72,16 @@ def classify(license_text: str) -> str:
     return "unknown"
 
 
+def normalize_package_name(name: str) -> str:
+    return re.sub(r"[-_.]+", "-", name).lower()
+
+
+def effective_license(name: str, license_text: str) -> str:
+    if classify(license_text) != "unknown":
+        return license_text
+    return LICENSE_METADATA_GAPS.get(normalize_package_name(name), license_text)
+
+
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, help="Read pip-licenses JSON from a file instead of invoking pip-licenses.")
@@ -76,7 +92,7 @@ def main(argv: list[str]) -> int:
     for row in load_records(args.input):
         name = row.get("Name", "<unknown>")
         version = row.get("Version", "")
-        license_text = row.get("License", "UNKNOWN")
+        license_text = effective_license(name, row.get("License", "UNKNOWN"))
         label = f"{name} {version}: {license_text}".strip()
         outcome = classify(license_text)
         if outcome == "denied":

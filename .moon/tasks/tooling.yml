@@ -35,7 +35,7 @@ tasks:
   audit-links:
     description: "Run lychee external link checks."
     command: "uv"
-    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".[governance]", "--", "python", "deployment/scripts/tools/fetch_governance_tools.py", "run", "lychee", "--no-progress", "--exclude-mail", "README.md", "docs"]
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".[governance]", "--", "python", "deployment/scripts/tools/fetch_governance_tools.py", "run", "lychee", "--no-progress", "README.md", "docs"]
     inputs: ["@group(docs)", "deployment/tooling/manifest.json", "deployment/scripts/tools/fetch_governance_tools.py"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
