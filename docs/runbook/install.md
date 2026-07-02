@@ -1,15 +1,15 @@
 # Initial App Install
 
 This runbook sets up the TRCR kit and the optional case-builder app for local
-case work. Commands assume you are running from the wrapper repository root:
+case work. Commands assume you are running from the `tc-c-kit` repository root:
 
 ```text
-<projects-root>/true-crime-research
+<projects-root>/true-crime-research/tc-c-kit
 ```
 
 That keeps the repo-local skill path at
 `.agents/skills/truecrime-cult-research/` and keeps generated case work under
-`tc-c-kit/data/cases/`.
+`data/cases/`.
 
 ## Prerequisites
 
@@ -23,10 +23,9 @@ That keeps the repo-local skill path at
 
 ## Install the Core Kit
 
-For the minimum local app install, use the Makefile from inside `tc-c-kit`:
+For the minimum local app install, use the Makefile from the repository root:
 
 ```bash
-cd tc-c-kit
 make install
 ```
 
@@ -40,36 +39,34 @@ make install-linux
 make install-windows
 ```
 
-To do the same setup manually from the wrapper root, create a virtual
-environment inside `tc-c-kit` and install the package in editable mode:
+To do the same setup manually, create a virtual environment in the repository
+root and install the package in editable mode:
 
 ```bash
-python3 -m venv tc-c-kit/.venv
-source tc-c-kit/.venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 python -m pip install --upgrade pip
-python -m pip install -e './tc-c-kit'
+python -m pip install -e .
 ```
 
 The minimum install uses the core package only. The `dev` extra installs the
 dependencies used by tests, schema validation, source extraction helpers, and
 chart exports.
 
-If you are already inside `tc-c-kit`, use `../.agents/...` for the skill script
-and `data/cases/...` for case paths. From the wrapper root, keep the examples in
-this runbook unchanged.
+Use `.agents/...` for the skill script and `data/cases/...` for case paths.
 
 ## Optional Extras
 
 Install only the surfaces you need:
 
 ```bash
-python -m pip install -e './tc-c-kit[agentic]'
-python -m pip install -e './tc-c-kit[llm]'
-python -m pip install -e './tc-c-kit[mcp]'
-python -m pip install -e './tc-c-kit[web-local]'
-python -m pip install -e './tc-c-kit[documents]'
-python -m pip install -e './tc-c-kit[retrieval]'
-python -m pip install -e './tc-c-kit[memory-local]'
+python -m pip install -e '.[agentic]'
+python -m pip install -e '.[llm]'
+python -m pip install -e '.[mcp]'
+python -m pip install -e '.[web-local]'
+python -m pip install -e '.[documents]'
+python -m pip install -e '.[retrieval]'
+python -m pip install -e '.[memory-local]'
 ```
 
 Use `agentic` for the LangGraph runner, `llm` for optional LLM packet helpers,
@@ -101,13 +98,13 @@ deployment. See `deployment/README.md`.
 Run the synthetic fixture through the core validator:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate tc-c-kit/data/examples/synthetic_case
+python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/examples/synthetic_case
 ```
 
 Check that the case-builder app can plan a dry run:
 
 ```bash
-PYTHONPATH=tc-c-kit/src python -m case_builder.cli plan tc-c-kit/data/cases/install_smoke \
+PYTHONPATH=src python -m case_builder.cli plan data/cases/install_smoke \
   --title "Install Smoke Test" \
   --subject "Synthetic public-source smoke test for setup verification"
 ```
@@ -115,7 +112,7 @@ PYTHONPATH=tc-c-kit/src python -m case_builder.cli plan tc-c-kit/data/cases/inst
 If the package entry point is installed, the same app is available as:
 
 ```bash
-trcr-case-builder plan tc-c-kit/data/cases/install_smoke \
+trcr-case-builder plan data/cases/install_smoke \
   --title "Install Smoke Test" \
   --subject "Synthetic public-source smoke test for setup verification"
 ```
@@ -128,14 +125,14 @@ only when you want the app to create or modify the case workspace.
 Initialize a local case workspace:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case tc-c-kit/data/cases/<case_slug> \
+python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case data/cases/<case_slug> \
   --title "<Case Title>"
 ```
 
 Register a source manually when it should be tracked before extraction:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source tc-c-kit/data/cases/<case_slug> \
+python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source data/cases/<case_slug> \
   --title "<Source Title>" \
   --url "<URL or local path>" \
   --source-type news_article \
@@ -146,7 +143,7 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source tc-c-kit
 Or capture a public URL directly:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url tc-c-kit/data/cases/<case_slug> \
+python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url data/cases/<case_slug> \
   "<URL>" \
   --source-type news_article \
   --reliability-grade B
@@ -155,17 +152,17 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url tc-c-kit
 Draft an extraction packet for review:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction data/cases/<case_slug> <SOURCE_ID>
 ```
 
 After the packet is filled and reviewed, import and validate it:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction tc-c-kit/data/cases/<case_slug> \
-  tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
+python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction data/cases/<case_slug> \
+  data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
 
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate tc-c-kit/data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py report tc-c-kit/data/cases/<case_slug>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/cases/<case_slug>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py report data/cases/<case_slug>
 ```
 
 ## Run the Case-Builder App
@@ -176,7 +173,7 @@ The ledger under `records/*.jsonl` remains the source of truth.
 Dry run:
 
 ```bash
-trcr-case-builder plan tc-c-kit/data/cases/<case_slug> \
+trcr-case-builder plan data/cases/<case_slug> \
   --title "<Case Title>" \
   --subject "<case subject, source question, names, dates, and places>"
 ```
@@ -184,7 +181,7 @@ trcr-case-builder plan tc-c-kit/data/cases/<case_slug> \
 Execute deterministic commands:
 
 ```bash
-trcr-case-builder plan tc-c-kit/data/cases/<case_slug> \
+trcr-case-builder plan data/cases/<case_slug> \
   --title "<Case Title>" \
   --subject "<case subject, source question, names, dates, and places>" \
   --execute
@@ -193,7 +190,7 @@ trcr-case-builder plan tc-c-kit/data/cases/<case_slug> \
 Run with LangGraph checkpoints:
 
 ```bash
-trcr-case-builder plan tc-c-kit/data/cases/<case_slug> \
+trcr-case-builder plan data/cases/<case_slug> \
   --title "<Case Title>" \
   --subject "<case subject, source question, names, dates, and places>" \
   --runner langgraph \
@@ -204,7 +201,7 @@ trcr-case-builder plan tc-c-kit/data/cases/<case_slug> \
 Resume after human packet review:
 
 ```bash
-trcr-case-builder resume tc-c-kit/data/cases/<case_slug> \
+trcr-case-builder resume data/cases/<case_slug> \
   --thread <thread_id> \
   --approve-packet <SOURCE_ID>_extraction.json \
   --execute
@@ -213,7 +210,7 @@ trcr-case-builder resume tc-c-kit/data/cases/<case_slug> \
 Resume after public-export review:
 
 ```bash
-trcr-case-builder resume tc-c-kit/data/cases/<case_slug> \
+trcr-case-builder resume data/cases/<case_slug> \
   --thread <thread_id> \
   --approve-export \
   --execute
@@ -237,7 +234,7 @@ source support, packet review, validation, and privacy review.
 SearXNG source discovery:
 
 ```bash
-trcr-case-builder discover-sources tc-c-kit/data/cases/<case_slug> \
+trcr-case-builder discover-sources data/cases/<case_slug> \
   --query "<public source search query>" \
   --searxng-url http://localhost:8080
 ```
@@ -245,24 +242,24 @@ trcr-case-builder discover-sources tc-c-kit/data/cases/<case_slug> \
 Docling parse and OCR:
 
 ```bash
-trcr-case-builder parse-source tc-c-kit/data/cases/<case_slug> <SOURCE_ID>
-trcr-case-builder ocr-source tc-c-kit/data/cases/<case_slug> <SOURCE_ID>
+trcr-case-builder parse-source data/cases/<case_slug> <SOURCE_ID>
+trcr-case-builder ocr-source data/cases/<case_slug> <SOURCE_ID>
 ```
 
 Qdrant-backed local retrieval:
 
 ```bash
-trcr-case-builder index-case tc-c-kit/data/cases/<case_slug> \
+trcr-case-builder index-case data/cases/<case_slug> \
   --qdrant-url http://localhost:6333
 
-trcr-case-builder query-case tc-c-kit/data/cases/<case_slug> \
+trcr-case-builder query-case data/cases/<case_slug> \
   "Which claims lack source spans?"
 ```
 
 Workflow memory:
 
 ```bash
-trcr-case-builder remember-research-actions tc-c-kit/data/cases/<case_slug> --provider local
+trcr-case-builder remember-research-actions data/cases/<case_slug> --provider local
 ```
 
 Memory and retrieval results are operational context only. They are not
@@ -290,10 +287,10 @@ local workspace:
 
 | Symptom | Check |
 | --- | --- |
-| `ModuleNotFoundError: case_builder` | Activate `tc-c-kit/.venv`, install `-e './tc-c-kit[dev]'`, or run with `PYTHONPATH=tc-c-kit/src`. |
-| `.agents/.../tcr.py` not found | Run from the wrapper root, or use `../.agents/...` from inside `tc-c-kit`. |
-| Case files appear in the wrong directory | From the wrapper root, use `tc-c-kit/data/cases/<case_slug>`. From inside `tc-c-kit`, use `data/cases/<case_slug>`. |
-| LangGraph imports fail | Install `python -m pip install -e './tc-c-kit[agentic]'`. |
-| LLM node imports fail | Install `python -m pip install -e './tc-c-kit[llm]'` and set `TRCR_MODEL`. |
+| `ModuleNotFoundError: case_builder` | Activate `.venv`, install `-e '.[dev]'`, or run with `PYTHONPATH=src`. |
+| `.agents/.../tcr.py` not found | Run from the `tc-c-kit` repository root. |
+| Case files appear in the wrong directory | Use `data/cases/<case_slug>` from the repository root. |
+| LangGraph imports fail | Install `python -m pip install -e '.[agentic]'`. |
+| LLM node imports fail | Install `python -m pip install -e '.[llm]'` and set `TRCR_MODEL`. |
 | Parse, OCR, retrieval, or memory commands fail | Install the matching optional extra and start any required local services. |
 | A claim is blocked from public export | Keep it internal until source support, contradiction review, source-independence review, and privacy review are complete. |

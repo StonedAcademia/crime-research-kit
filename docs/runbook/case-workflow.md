@@ -4,9 +4,9 @@ This runbook shows how to ask Codex or another agent to use the TRCR skills and
 agent flows without turning lead discovery into unsourced claims. The example is
 synthetic and uses placeholder sources.
 
-Commands assume they are run from the wrapper repository root so the skill
+Commands assume they are run from the `tc-c-kit` repository root so the skill
 script path is `.agents/skills/truecrime-cult-research/scripts/tcr.py` and case
-work stays under `tc-c-kit/data/cases/`.
+work stays under `data/cases/`.
 
 ## Working Rule
 
@@ -38,7 +38,7 @@ interest reason is recorded.
 Initialize the workspace:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case tc-c-kit/data/cases/harbor_study_circle \
+python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case data/cases/harbor_study_circle \
   --title "Harbor Study Circle Source Map"
 ```
 
@@ -49,7 +49,7 @@ boundary:
 
 ```text
 Use the $truecrime-cult-research skill.
-Create or open tc-c-kit/data/cases/harbor_study_circle for the synthetic Harbor Study Circle example.
+Create or open data/cases/harbor_study_circle for the synthetic Harbor Study Circle example.
 Build a public-source plan for the group's formation, named public leaders, meeting locations, documented disputes, and later corrections.
 Use public news, official records, archive documents, interviews/transcripts, and scholarly context.
 Do not infer guilt, motive, membership, or hidden control from proximity.
@@ -87,7 +87,7 @@ Expected first output:
 For a downloadable public URL:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url tc-c-kit/data/cases/harbor_study_circle \
+python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url data/cases/harbor_study_circle \
   "https://example.com/harbor-local-report-1978" \
   --source-type news_article \
   --reliability-grade B
@@ -96,7 +96,7 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url tc-c-kit
 For a source that needs manual registration:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source tc-c-kit/data/cases/harbor_study_circle \
+python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source data/cases/harbor_study_circle \
   --title "Harbor City Council Meeting Minutes, May 1978" \
   --url "https://example.com/harbor-council-minutes-1978" \
   --source-type government_record \
@@ -107,7 +107,7 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source tc-c-kit
 Ask Codex to keep the source ledger conservative:
 
 ```text
-For each source in tc-c-kit/data/cases/harbor_study_circle/records/sources.jsonl, check whether title, URL/path, publication metadata, source_type, reliability_grade, archive/preservation notes, and independence_group are present.
+For each source in data/cases/harbor_study_circle/records/sources.jsonl, check whether title, URL/path, publication metadata, source_type, reliability_grade, archive/preservation notes, and independence_group are present.
 Do not extract claims yet. Report missing metadata and suggest source IDs that need preservation or manual review.
 ```
 
@@ -116,13 +116,13 @@ Do not extract claims yet. Report missing metadata and suggest source IDs that n
 Draft a generic packet:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/harbor_study_circle <SOURCE_ID>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction data/cases/harbor_study_circle <SOURCE_ID>
 ```
 
 Draft a lane-specific packet when the source calls for it:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/harbor_study_circle <SOURCE_ID> \
+python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction data/cases/harbor_study_circle <SOURCE_ID> \
   --template media-transcript
 ```
 
@@ -130,7 +130,7 @@ Ask the agent to fill only what the source supports:
 
 ```text
 Use the $truecrime-cult-research skill.
-Fill tc-c-kit/data/cases/harbor_study_circle/staging/extractions/<SOURCE_ID>_extraction.json from the registered source text.
+Fill data/cases/harbor_study_circle/staging/extractions/<SOURCE_ID>_extraction.json from the registered source text.
 Extract only source-stated entities, places, artifacts, claims, events, event_links, relationships, quotes, and source_spans.
 Use neutral wording and preserve whether each assertion is a source-stated fact, allegation, denial, court finding, self-report, lead-only item, or expert context.
 Treat eyewitness statements as claims, not facts.
@@ -151,8 +151,8 @@ Review the staged packet before importing. The human review should check:
 Import only after review:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction tc-c-kit/data/cases/harbor_study_circle \
-  tc-c-kit/data/cases/harbor_study_circle/staging/extractions/<SOURCE_ID>_extraction.json
+python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction data/cases/harbor_study_circle \
+  data/cases/harbor_study_circle/staging/extractions/<SOURCE_ID>_extraction.json
 ```
 
 ## Run the Agentic Case Builder
@@ -160,7 +160,7 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction t
 Use the app for a planned, resumable workflow around the same ledger:
 
 ```bash
-trcr-case-builder plan tc-c-kit/data/cases/harbor_study_circle \
+trcr-case-builder plan data/cases/harbor_study_circle \
   --title "Harbor Study Circle Source Map" \
   --subject "formation, public leaders, meeting locations, disputes, corrections" \
   --source-url "https://example.com/harbor-local-report-1978" \
@@ -183,7 +183,7 @@ The packet review gate exists so an agent cannot silently promote a draft into
 canonical records. Resume with approvals after packet review:
 
 ```bash
-trcr-case-builder resume tc-c-kit/data/cases/harbor_study_circle \
+trcr-case-builder resume data/cases/harbor_study_circle \
   --thread <thread_id> \
   --approve-packet <SOURCE_ID>_extraction.json \
   --execute
@@ -193,7 +193,7 @@ Resume with public-export approval only after validation, contradiction review,
 source-independence review, and privacy review:
 
 ```bash
-trcr-case-builder resume tc-c-kit/data/cases/harbor_study_circle \
+trcr-case-builder resume data/cases/harbor_study_circle \
   --thread <thread_id> \
   --approve-export \
   --execute
@@ -207,7 +207,7 @@ Use these prompts as operating questions, not as evidence by themselves.
 
 ```text
 Use the $truecrime-cult-research skill and route source planning through public-records-router.
-For tc-c-kit/data/cases/harbor_study_circle, build a source-lane plan for formation date, named public leaders, meeting locations, disputes, and corrections.
+For data/cases/harbor_study_circle, build a source-lane plan for formation date, named public leaders, meeting locations, disputes, and corrections.
 Separate official/public records, local news, national news, archive documents, transcripts/interviews, scholarly context, contradiction searches, and privacy review.
 Do not create evidence claims from route suggestions.
 ```
@@ -216,7 +216,7 @@ Do not create evidence claims from route suggestions.
 
 ```text
 Use the $truecrime-cult-research skill and route source preservation through source-capture-preservation.
-For tc-c-kit/data/cases/harbor_study_circle, verify source capture metadata, archive URLs, raw/text paths, checksums, and provenance gaps.
+For data/cases/harbor_study_circle, verify source capture metadata, archive URLs, raw/text paths, checksums, and provenance gaps.
 Report which sources need manual capture or stronger metadata before extraction.
 ```
 
@@ -224,7 +224,7 @@ Report which sources need manual capture or stronger metadata before extraction.
 
 ```text
 Use the $truecrime-cult-research skill.
-Review claims in tc-c-kit/data/cases/harbor_study_circle/records/claims.jsonl that are single_source, unverified, disputed, or public_export: false.
+Review claims in data/cases/harbor_study_circle/records/claims.jsonl that are single_source, unverified, disputed, or public_export: false.
 For each claim, list what source support exists, what is missing, what contradiction searches to run, and whether the claim can appear in a public script.
 ```
 
@@ -232,7 +232,7 @@ For each claim, list what source support exists, what is missing, what contradic
 
 ```text
 Use the $truecrime-cult-research skill and route contradiction review through claim-contradiction-audit.
-Audit tc-c-kit/data/cases/harbor_study_circle for corrections, retractions, denials, court findings, later interviews, source conflicts, and date conflicts.
+Audit data/cases/harbor_study_circle for corrections, retractions, denials, court findings, later interviews, source conflicts, and date conflicts.
 Do not smooth conflicts into certainty. Preserve unresolved conflicts in notes, status, confidence, and public_export.
 ```
 
@@ -240,7 +240,7 @@ Do not smooth conflicts into certainty. Preserve unresolved conflicts in notes, 
 
 ```text
 Use the $truecrime-cult-research skill and route source-chain review through source-independence-audit.
-Review tc-c-kit/data/cases/harbor_study_circle for repeated wire copy, press-release repetition, same-publisher chains, shared archive packets, and overstated corroboration.
+Review data/cases/harbor_study_circle for repeated wire copy, press-release repetition, same-publisher chains, shared archive packets, and overstated corroboration.
 Recommend independence_group values and identify claims that still depend on one source chain.
 ```
 
@@ -248,7 +248,7 @@ Recommend independence_group values and identify claims that still depend on one
 
 ```text
 Use the $truecrime-cult-research skill and route privacy review through privacy-redaction-audit.
-Audit tc-c-kit/data/cases/harbor_study_circle for living private people, minors, private addresses, contact details, private workplaces/schools, medical details, family details, and weak allegations.
+Audit data/cases/harbor_study_circle for living private people, minors, private addresses, contact details, private workplaces/schools, medical details, family details, and weak allegations.
 Return redaction blockers before any public export.
 ```
 
@@ -256,7 +256,7 @@ Return redaction blockers before any public export.
 
 ```text
 Use the $truecrime-cult-research skill and route public-output review through narrative-readiness-review.
-Review tc-c-kit/data/cases/harbor_study_circle for source support, contradiction handling, source independence, privacy blockers, caveat needs, and unsupported narrative points before script, report, evidence-board, or Manim use.
+Review data/cases/harbor_study_circle for source support, contradiction handling, source independence, privacy blockers, caveat needs, and unsupported narrative points before script, report, evidence-board, or Manim use.
 ```
 
 ## Validate and Export
@@ -264,30 +264,30 @@ Review tc-c-kit/data/cases/harbor_study_circle for source support, contradiction
 Validate the ledger:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate tc-c-kit/data/cases/harbor_study_circle
-python .agents/skills/truecrime-cult-research/scripts/tcr.py report tc-c-kit/data/cases/harbor_study_circle
+python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/cases/harbor_study_circle
+python .agents/skills/truecrime-cult-research/scripts/tcr.py report data/cases/harbor_study_circle
 ```
 
 Run public-output audits:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export tc-c-kit/data/cases/harbor_study_circle
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-privacy-redactions tc-c-kit/data/cases/harbor_study_circle
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-source-independence tc-c-kit/data/cases/harbor_study_circle
-python .agents/skills/truecrime-cult-research/scripts/tcr.py review-narrative-readiness tc-c-kit/data/cases/harbor_study_circle
+python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export data/cases/harbor_study_circle
+python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-privacy-redactions data/cases/harbor_study_circle
+python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-source-independence data/cases/harbor_study_circle
+python .agents/skills/truecrime-cult-research/scripts/tcr.py review-narrative-readiness data/cases/harbor_study_circle
 ```
 
 Export Manim-ready CSVs after review:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-manim tc-c-kit/data/cases/harbor_study_circle
+python .agents/skills/truecrime-cult-research/scripts/tcr.py export-manim data/cases/harbor_study_circle
 ```
 
 Export a public-safe Phanestead bundle:
 
 ```bash
-bun scripts/export_trcr_ufb.mjs tc-c-kit/data/cases/harbor_study_circle \
-  --out tc-c-kit/data/cases/harbor_study_circle/exports/ufb/harbor_study_circle.ufb_v2
+bun deployment/scripts/export_trcr_ufb.mjs data/cases/harbor_study_circle \
+  --out data/cases/harbor_study_circle/exports/ufb/harbor_study_circle.ufb_v2
 ```
 
 Use `--include-private` only for internal review artifacts.

@@ -74,6 +74,8 @@ Core guardrails:
   OCRmyPDF OCR, LlamaIndex/Qdrant retrieval, and Mem0 OSS workflow memory.
 - Templates for case briefs, source notes, extraction packets, redaction logs,
   public-record plans, source-independence reviews, and evidence boards.
+- Operator runbooks under `docs/runbook/` for install, case workflow,
+  self-hosted deployment, public-output readiness, and artifact exports.
 - Repeatable workflows for news articles, eyewitness accounts, court/public
   records, transcripts, archives, property/location records, FOIA planning,
   contradictions, and disconfirming sources.
@@ -217,10 +219,10 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py report data/cases/s
 Build a cross-case timeline and claim corroboration index:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-timeline tc-c-kit/data/cases
+python .agents/skills/truecrime-cult-research/scripts/tcr.py export-timeline data/cases
 ```
 
-This writes public-safe cross-case artifacts to `tc-c-kit/data/exports/timeline/`:
+This writes public-safe cross-case artifacts to `data/exports/timeline/`:
 
 - `cases.csv`
 - `timeline.csv`
@@ -230,17 +232,17 @@ This writes public-safe cross-case artifacts to `tc-c-kit/data/exports/timeline/
 For internal review of non-public, disputed, excluded, or unverified rows, opt in explicitly:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-timeline tc-c-kit/data/cases --include-private --out-dir tc-c-kit/data/exports/timeline_internal
+python .agents/skills/truecrime-cult-research/scripts/tcr.py export-timeline data/cases --include-private --out-dir data/exports/timeline_internal
 ```
 
-`tc-c-kit/data/cases/` and `tc-c-kit/data/exports/` are local/generated working areas and
+`data/cases/` and `data/exports/` are local/generated working areas and
 are ignored by Git except for `.gitkeep` placeholders. Keep reusable fixtures in
-`tc-c-kit/data/examples/` instead.
+`data/examples/` instead.
 
 Build case-level chart artifacts for a people-only graph and subcase timeline:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-case-charts tc-c-kit/data/cases/<case_slug>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py export-case-charts data/cases/<case_slug>
 ```
 
 This writes public-safe chart artifacts to `data/cases/<case_slug>/exports/charts/`:
@@ -276,7 +278,7 @@ corroboration, source quality, path atlases, swimlanes, relationship-class
 treemaps, and public narrative readiness:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-analysis-charts tc-c-kit/data/cases/<case_slug> --include-private
+python .agents/skills/truecrime-cult-research/scripts/tcr.py export-analysis-charts data/cases/<case_slug> --include-private
 ```
 
 This writes review artifacts to `data/cases/<case_slug>/exports/analysis_charts/`,
@@ -292,7 +294,7 @@ hypotheses requiring more sources.
 Link a list of names to existing events and co-mentions:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py link-names tc-c-kit/data/cases/<case_slug> --names-file names.txt --name "Primary Name|Known Alias"
+python .agents/skills/truecrime-cult-research/scripts/tcr.py link-names data/cases/<case_slug> --names-file names.txt --name "Primary Name|Known Alias"
 ```
 
 `link-names` writes conservative, private-by-default co-mention records and a research brief under `notes/`. It does not make guilt, membership, motive, or participation claims from proximity.
@@ -300,7 +302,7 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py link-names tc-c-kit
 Export a TRCR case to a Phanestead-readable UFB v2 bundle:
 
 ```bash
-bun scripts/export_trcr_ufb.mjs tc-c-kit/data/cases/<case_slug> --out tc-c-kit/data/cases/<case_slug>/exports/ufb/<case_slug>.ufb_v2
+bun deployment/scripts/export_trcr_ufb.mjs data/cases/<case_slug> --out data/cases/<case_slug>/exports/ufb/<case_slug>.ufb_v2
 ```
 
 The exporter writes a public-safe bundle by default. Use `--include-private`

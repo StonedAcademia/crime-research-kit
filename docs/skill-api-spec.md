@@ -42,7 +42,7 @@ Every operation must preserve these invariants:
 Case workspaces live under:
 
 ```text
-tc-c-kit/data/cases/<case_slug>/
+data/cases/<case_slug>/
 ```
 
 Records are append-oriented JSONL files under `records/`:
@@ -81,7 +81,7 @@ Generated files are written under:
 | Privacy redaction audit | `exports/privacy_redaction_audit.json` |
 | Manim CSVs | `exports/manim/*.csv` |
 | Case charts | `exports/charts/*` |
-| Cross-case timeline | `tc-c-kit/data/exports/timeline/*` or caller-provided `out_dir` |
+| Cross-case timeline | `data/exports/timeline/*` or caller-provided `out_dir` |
 
 ## Record-Level Conventions
 
@@ -248,7 +248,7 @@ Use this logical envelope for programmatic callers, even when invoking the CLI:
 {
   "skill": "truecrime-cult-research",
   "operation": "operationName",
-  "case_dir": "tc-c-kit/data/cases/<case_slug>",
+  "case_dir": "data/cases/<case_slug>",
   "request_id": "optional-caller-id",
   "include_private": false,
   "dry_run": false,
@@ -262,7 +262,7 @@ Common response envelope:
 {
   "ok": true,
   "operation": "operationName",
-  "case_dir": "tc-c-kit/data/cases/<case_slug>",
+  "case_dir": "data/cases/<case_slug>",
   "created": [],
   "updated": [],
   "outputs": [],
@@ -306,7 +306,7 @@ Creates a case workspace and empty record files.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case tc-c-kit/data/cases/<case_slug> --title "<Case Title>"
+python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case data/cases/<case_slug> --title "<Case Title>"
 ```
 
 Payload:
@@ -333,7 +333,7 @@ Registers a source without fetching content.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source tc-c-kit/data/cases/<case_slug> --title "<Title>" --url "<URL>" --source-type news_article --reliability-grade B
+python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source data/cases/<case_slug> --title "<Title>" --url "<URL>" --source-type news_article --reliability-grade B
 ```
 
 Payload:
@@ -366,7 +366,7 @@ Fetches a public URL, extracts text where possible, and registers the source.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url tc-c-kit/data/cases/<case_slug> "<URL>" --source-type news_article --reliability-grade B
+python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url data/cases/<case_slug> "<URL>" --source-type news_article --reliability-grade B
 ```
 
 Payload extends `addSource` with:
@@ -392,7 +392,7 @@ Creates a source-specific extraction packet for agent or human review.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction data/cases/<case_slug> <SOURCE_ID>
 ```
 
 Payload:
@@ -428,14 +428,14 @@ Imports a filled extraction packet into JSONL records.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
+python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction data/cases/<case_slug> data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
 ```
 
 Payload:
 
 ```json
 {
-  "extraction_json": "tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json"
+  "extraction_json": "data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json"
 }
 ```
 
@@ -453,7 +453,7 @@ Generates crude named-entity and date candidates from registered source text.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py ner-suggest tc-c-kit/data/cases/<case_slug> --source-id <SOURCE_ID> --limit 80
+python .agents/skills/truecrime-cult-research/scripts/tcr.py ner-suggest data/cases/<case_slug> --source-id <SOURCE_ID> --limit 80
 ```
 
 Payload:
@@ -480,7 +480,7 @@ Links a caller-provided name list to existing events and co-mentions.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py link-names tc-c-kit/data/cases/<case_slug> --names-file names.txt --name "Primary Name|Alias"
+python .agents/skills/truecrime-cult-research/scripts/tcr.py link-names data/cases/<case_slug> --names-file names.txt --name "Primary Name|Alias"
 ```
 
 Payload:
@@ -521,7 +521,7 @@ Validates case records against required fields and available schemas.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate tc-c-kit/data/cases/<case_slug>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/cases/<case_slug>
 ```
 
 Payload:
@@ -542,7 +542,7 @@ Writes a Markdown evidence board.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py report tc-c-kit/data/cases/<case_slug>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py report data/cases/<case_slug>
 ```
 
 Creates:
@@ -566,7 +566,7 @@ Exports public-safe Manim-ready CSVs.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-manim tc-c-kit/data/cases/<case_slug>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py export-manim data/cases/<case_slug>
 ```
 
 Payload:
@@ -594,7 +594,7 @@ Audits whether a case is ready for public/script/video/export use.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export tc-c-kit/data/cases/<case_slug>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export data/cases/<case_slug>
 ```
 
 Payload:
@@ -629,7 +629,7 @@ The command does not merge or delete evidence rows.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py dedupe tc-c-kit/data/cases/<case_slug>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py dedupe data/cases/<case_slug>
 ```
 
 Payload:
@@ -656,7 +656,7 @@ metadata and does not create claims, entities, events, or relationships.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py preserve-source tc-c-kit/data/cases/<case_slug> <SOURCE_ID>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py preserve-source data/cases/<case_slug> <SOURCE_ID>
 ```
 
 Payload:
@@ -685,7 +685,7 @@ records.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py resolve-identities tc-c-kit/data/cases/<case_slug>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py resolve-identities data/cases/<case_slug>
 ```
 
 Payload:
@@ -711,7 +711,7 @@ targets and does not change claim status, confidence, or public-export flags.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-contradictions tc-c-kit/data/cases/<case_slug>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-contradictions data/cases/<case_slug>
 ```
 
 Payload:
@@ -738,7 +738,7 @@ does not create evidence claims or imply misconduct, identity, or relationships.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-public-records tc-c-kit/data/cases/<case_slug> --subject "<subject>"
+python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-public-records data/cases/<case_slug> --subject "<subject>"
 ```
 
 Payload:
@@ -770,7 +770,7 @@ claims or quotes.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py index-transcript tc-c-kit/data/cases/<case_slug> <SOURCE_ID>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py index-transcript data/cases/<case_slug> <SOURCE_ID>
 ```
 
 Payload:
@@ -797,7 +797,7 @@ not prove that records exist.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-open-records tc-c-kit/data/cases/<case_slug> --subject "<subject>" --agency "<agency>"
+python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-open-records data/cases/<case_slug> --subject "<subject>" --agency "<agency>"
 ```
 
 Payload:
@@ -827,7 +827,7 @@ rewrite claims, events, relationships, or public-export flags.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py review-narrative-readiness tc-c-kit/data/cases/<case_slug>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py review-narrative-readiness data/cases/<case_slug>
 ```
 
 Payload:
@@ -854,7 +854,7 @@ Reports privacy and redaction blockers before public output.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-privacy-redactions tc-c-kit/data/cases/<case_slug>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-privacy-redactions data/cases/<case_slug>
 ```
 
 Payload:
@@ -882,7 +882,7 @@ support risks. The `source-independence` alias is equivalent to
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py source-independence tc-c-kit/data/cases/<case_slug>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py source-independence data/cases/<case_slug>
 ```
 
 Payload:
@@ -908,14 +908,14 @@ Exports a cross-case timeline and claim corroboration index.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-timeline tc-c-kit/data/cases
+python .agents/skills/truecrime-cult-research/scripts/tcr.py export-timeline data/cases
 ```
 
 Payload:
 
 ```json
 {
-  "cases_root": "tc-c-kit/data/cases",
+  "cases_root": "data/cases",
   "out_dir": null,
   "include_private": false
 }
@@ -931,7 +931,7 @@ Creates:
 Default output:
 
 ```text
-tc-c-kit/data/exports/timeline/
+data/exports/timeline/
 ```
 
 ### `exportCaseCharts`
@@ -941,7 +941,7 @@ Exports case-level chart artifacts for people graph and subcase timeline review.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-case-charts tc-c-kit/data/cases/<case_slug>
+python .agents/skills/truecrime-cult-research/scripts/tcr.py export-case-charts data/cases/<case_slug>
 ```
 
 Payload:
@@ -965,7 +965,7 @@ Creates:
 Default output:
 
 ```text
-tc-c-kit/data/cases/<case_slug>/exports/charts/
+data/cases/<case_slug>/exports/charts/
 ```
 
 ### `exportAnalysisCharts`
@@ -976,7 +976,7 @@ analysis artifacts. This is the main source-independence tooling surface.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-analysis-charts tc-c-kit/data/cases/<case_slug> --include-private
+python .agents/skills/truecrime-cult-research/scripts/tcr.py export-analysis-charts data/cases/<case_slug> --include-private
 ```
 
 Payload:
@@ -1031,7 +1031,7 @@ CLI:
 
 ```bash
 uv run --extra dev --with igraph --with leidenalg \
-  python .agents/skills/truecrime-cult-research/scripts/tcr.py export-people-clusters tc-c-kit/data/cases/<case_slug> --include-private
+  python .agents/skills/truecrime-cult-research/scripts/tcr.py export-people-clusters data/cases/<case_slug> --include-private
 ```
 
 Payload:
@@ -1059,7 +1059,7 @@ Creates:
 Default output:
 
 ```text
-tc-c-kit/data/cases/<case_slug>/exports/clusters/
+data/cases/<case_slug>/exports/clusters/
 ```
 
 ## Future HTTP Mapping
