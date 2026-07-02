@@ -19,8 +19,8 @@ excluded from public output.
 Validate the ledger and write the evidence board:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py report data/cases/<case_slug>
+crk-ledger validate data/cases/<case_slug>
+crk-ledger report data/cases/<case_slug>
 ```
 
 Check the core records before running public gates:
@@ -40,20 +40,20 @@ Run the public-export audit. This command fails when public rows include unsafe
 or unsupported records unless `--warn-only` is used for triage:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export data/cases/<case_slug>
+crk-ledger audit-public-export data/cases/<case_slug>
 ```
 
 Run the privacy audit and require a redaction log when public output is planned:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-privacy-redactions data/cases/<case_slug> \
+crk-ledger audit-privacy-redactions data/cases/<case_slug> \
   --require-redaction-log
 ```
 
 Run source-chain review before treating multiple sources as corroboration:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-source-independence data/cases/<case_slug> \
+crk-ledger audit-source-independence data/cases/<case_slug> \
   --fail-on-flags
 ```
 
@@ -61,7 +61,7 @@ Run narrative readiness with source-span checks for script, report, timeline, or
 bundle use:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py review-narrative-readiness data/cases/<case_slug> \
+crk-ledger review-narrative-readiness data/cases/<case_slug> \
   --require-spans \
   --fail-on-blockers
 ```
@@ -69,7 +69,7 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py review-narrative-re
 Optional internal triage can include private rows:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py review-narrative-readiness data/cases/<case_slug> \
+crk-ledger review-narrative-readiness data/cases/<case_slug> \
   --include-private \
   --require-spans
 ```

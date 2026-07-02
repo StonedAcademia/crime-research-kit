@@ -6,8 +6,8 @@ import html
 from typing import Any
 
 from adapters.ops.evidence.reports.common import truncate_label
-from adapters.ops.evidence.shared.records import flatten
-from adapters.ops.evidence.shared.scoring import date_sort_key
+from adapters.ops.evidence.ledger.records import flatten
+from adapters.ops.evidence.ledger.scoring import date_sort_key
 
 
 def render_subcase_timeline_html(

@@ -9,7 +9,7 @@ from typing import Any
 from core.casefile import case_path, ensure_case, log_action, now_utc, read_jsonl, record_path, stable_id, today, write_json
 
 from ...casework.records.names.matching import clean_id_list
-from ..shared.records import compact_record, normalize_match_text, report_out_path
+from ..ledger.records import compact_record, normalize_match_text, report_out_path
 
 
 def entity_resolution_context(

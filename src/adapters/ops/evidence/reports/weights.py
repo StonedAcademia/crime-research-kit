@@ -138,7 +138,7 @@ def leiden_partition(
         raise SystemExit(
             "Leiden clustering requires igraph and leidenalg. "
             "Run with: cd tc-c-kit && uv run --extra dev --with igraph --with leidenalg "
-            "python ../.agents/skills/truecrime-cult-research/scripts/tcr.py export-people-clusters ..."
+            "crk-ledger export-people-clusters ..."
         ) from exc
 
     graph = ig.Graph()

@@ -15,7 +15,7 @@ tesseract --version >/dev/null
 gs --version >/dev/null
 ocrmypdf --version >/dev/null
 
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/examples/synthetic_case
+crk-ledger validate data/examples/synthetic_case
 
 curl -fsS "${CRK_QDRANT_URL:-http://qdrant:6333}/readyz" >/dev/null
 curl -fsS "${CRK_SEARXNG_URL:-http://searxng:8080}/search?q=crk&format=json" >/dev/null

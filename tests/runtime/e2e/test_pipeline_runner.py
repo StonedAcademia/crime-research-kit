@@ -3,7 +3,7 @@ from pathlib import Path
 from pipeline.graph.runner import run_sequential
 from core.models.state import CaseBuilderState
 from adapters.ops.runner import CrkRunner
-from tests.helpers import KIT_ROOT
+from tests.helpers import KIT_ROOT, ledger_subcommand
 
 REPO_ROOT = KIT_ROOT
 
@@ -21,7 +21,7 @@ def test_sequential_dry_run_stops_at_packet_gate():
     assert result["status"] == "waiting_for_human_review"
     assert result["review_required"] is True
     # Nothing after the packet gate ran:
-    subcommands = [command[2] for command in result["planned_commands"]]
+    subcommands = [ledger_subcommand(command) for command in result["planned_commands"]]
     assert "import-extraction" not in subcommands
     assert "export-manim" not in subcommands
 
@@ -42,7 +42,7 @@ def test_sequential_full_pass_with_preapprovals_runs_whole_pipeline():
 
     assert result["status"] == "bundle_exported"
     assert result["review_required"] is False
-    subcommands = [command[2] for command in result["planned_commands"]]
+    subcommands = [ledger_subcommand(command) for command in result["planned_commands"]]
     assert subcommands == [
         "init-case",
         "plan-public-records",

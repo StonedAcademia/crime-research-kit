@@ -8,7 +8,7 @@ from typing import Any
 
 from core.casefile import case_path, ensure_case, log_action, now_utc, read_jsonl, record_path, today, write_json
 
-from ..shared.records import compact_record, normalize_match_text, normalize_url, report_out_path
+from ..ledger.records import compact_record, normalize_match_text, normalize_url, report_out_path
 
 
 def append_duplicate_candidate(

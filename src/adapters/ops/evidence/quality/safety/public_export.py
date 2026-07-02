@@ -10,7 +10,7 @@ from typing import Any, Iterable
 from core.casefile import RECORD_FILES, case_path, ensure_case, log_action, now_utc, read_jsonl, record_path, write_json
 
 from adapters.ops.casework.records.names.matching import clean_id_list
-from adapters.ops.evidence.shared.records import record_id, report_out_path, source_independence_key
+from adapters.ops.evidence.ledger.records import record_id, report_out_path, source_independence_key
 
 PUBLIC_CONTACT_RE = re.compile(
     r"(?i)(?:\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b|\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}\b|\b\d{3}-\d{2}-\d{4}\b)"

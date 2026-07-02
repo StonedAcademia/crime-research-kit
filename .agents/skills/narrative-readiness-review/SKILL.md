@@ -7,7 +7,7 @@ description: Public-output readiness workflow for CRK scripts, reports, episodes
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `narrative-readiness` for this lane; CLI fallback: `tcr.py draft-extraction ... --template narrative-readiness`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `narrative-readiness` for this lane; CLI fallback: `crk-ledger draft-extraction ... --template narrative-readiness`.
 
 
 ## Purpose
@@ -25,10 +25,10 @@ Use this skill before turning a CRK case ledger into a public script, report, ti
 ## Commands
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py review-narrative-readiness tc-c-kit/data/cases/<case_slug> --require-spans
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export tc-c-kit/data/cases/<case_slug> --warn-only
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-privacy-redactions tc-c-kit/data/cases/<case_slug> --warn-only
-python .agents/skills/truecrime-cult-research/scripts/tcr.py source-independence tc-c-kit/data/cases/<case_slug>
+crk-ledger review-narrative-readiness tc-c-kit/data/cases/<case_slug> --require-spans
+crk-ledger audit-public-export tc-c-kit/data/cases/<case_slug> --warn-only
+crk-ledger audit-privacy-redactions tc-c-kit/data/cases/<case_slug> --warn-only
+crk-ledger source-independence tc-c-kit/data/cases/<case_slug>
 ```
 
 ## Readiness Rules

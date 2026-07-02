@@ -9,7 +9,7 @@ from typing import Any
 from core.casefile import case_path, ensure_case, log_action, now_utc, slugify, today, write_json
 from core.lanes.registry import fallback_public_record_lanes, lane_records
 
-from adapters.ops.evidence.shared.records import report_out_path
+from adapters.ops.evidence.ledger.records import report_out_path
 
 PUBLIC_RECORD_LANES = {
     lane: {

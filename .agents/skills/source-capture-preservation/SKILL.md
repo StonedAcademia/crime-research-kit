@@ -7,7 +7,7 @@ description: Public-source preservation workflow for CRK cases. Capture or regis
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `source-capture` for this lane; CLI fallback: `tcr.py draft-extraction ... --template source-capture`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `source-capture` for this lane; CLI fallback: `crk-ledger draft-extraction ... --template source-capture`.
 
 
 ## Purpose
@@ -40,15 +40,15 @@ If a source cannot be captured, register metadata and explain the gap in notes. 
 Use the wrapper-local CRK tool path and prefix case paths with `tc-c-kit/`:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url tc-c-kit/data/cases/<case_slug> "<URL>" \
+crk-ledger ingest-url tc-c-kit/data/cases/<case_slug> "<URL>" \
   --source-type news_article \
   --reliability-grade B \
   --archive-url "<archive URL if available>"
 
-python .agents/skills/truecrime-cult-research/scripts/tcr.py preserve-source tc-c-kit/data/cases/<case_slug> <SOURCE_ID>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template source-capture
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export tc-c-kit/data/cases/<case_slug> --warn-only
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate tc-c-kit/data/cases/<case_slug>
+crk-ledger preserve-source tc-c-kit/data/cases/<case_slug> <SOURCE_ID>
+crk-ledger draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template source-capture
+crk-ledger audit-public-export tc-c-kit/data/cases/<case_slug> --warn-only
+crk-ledger validate tc-c-kit/data/cases/<case_slug>
 ```
 
 ## Preservation Rules

@@ -14,8 +14,8 @@ from adapters.ops.evidence.reports.case_charts.command import export_case_charts
 from adapters.ops.evidence.reports.clusters.renderers import render_people_clusters_html
 from adapters.ops.evidence.reports.common import entity_display, read_csv_dicts
 from adapters.ops.evidence.reports.weights import evidence_edge_weight, kernel_affinity_matrix, leiden_partition, parse_float, weighted_distances
-from adapters.ops.evidence.shared.markdown import md_table
-from adapters.ops.evidence.shared.records import write_csv
+from adapters.ops.evidence.ledger.markdown import md_table
+from adapters.ops.evidence.ledger.records import write_csv
 
 
 def export_people_clusters(args: argparse.Namespace) -> None:

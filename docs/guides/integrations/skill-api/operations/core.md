@@ -42,7 +42,7 @@ Creates a case workspace and empty record files.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case data/cases/<case_slug> --title "<Case Title>"
+crk-ledger init-case data/cases/<case_slug> --title "<Case Title>"
 ```
 
 Payload: `title`, optional `scope`, and `public_interest`. Creates `case.json`,
@@ -56,7 +56,7 @@ Registers a source without fetching content.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source data/cases/<case_slug> --title "<Title>" --url "<URL>" --source-type news_article --reliability-grade B
+crk-ledger add-source data/cases/<case_slug> --title "<Title>" --url "<URL>" --source-type news_article --reliability-grade B
 ```
 
 Payload fields: `title`, `url`, `source_type`, `reliability_grade`, optional
@@ -70,7 +70,7 @@ Fetches a public URL, extracts text where possible, and registers the source.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url data/cases/<case_slug> "<URL>" --source-type news_article --reliability-grade B
+crk-ledger ingest-url data/cases/<case_slug> "<URL>" --source-type news_article --reliability-grade B
 ```
 
 Payload extends `addSource` with `timeout`. Creates raw download text,
@@ -83,7 +83,7 @@ Creates a source-specific extraction packet for agent or human review.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction data/cases/<case_slug> <SOURCE_ID>
+crk-ledger draft-extraction data/cases/<case_slug> <SOURCE_ID>
 ```
 
 Payload fields: `source_id`, `excerpt_chars`, and `template`. Creates
@@ -98,7 +98,7 @@ Imports a filled extraction packet into JSONL records.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction data/cases/<case_slug> data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
+crk-ledger import-extraction data/cases/<case_slug> data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
 ```
 
 Payload field: `extraction_json`. The packet must include `source_id`, and the
@@ -112,7 +112,7 @@ Generates crude named-entity and date candidates from registered source text.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py ner-suggest data/cases/<case_slug> --source-id <SOURCE_ID> --limit 80
+crk-ledger ner-suggest data/cases/<case_slug> --source-id <SOURCE_ID> --limit 80
 ```
 
 Payload fields: optional `source_id` and `limit`. Creates
@@ -126,7 +126,7 @@ Links a caller-provided name list to existing events and co-mentions.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py link-names data/cases/<case_slug> --names-file names.txt --name "Primary Name|Alias"
+crk-ledger link-names data/cases/<case_slug> --names-file names.txt --name "Primary Name|Alias"
 ```
 
 Payload fields: `names` and optional `names_file`. The operation resolves
@@ -146,7 +146,7 @@ Validates case records against required fields and available schemas.
 CLI:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/cases/<case_slug>
+crk-ledger validate data/cases/<case_slug>
 ```
 
 Returns a success message or validation errors by record type and row index.

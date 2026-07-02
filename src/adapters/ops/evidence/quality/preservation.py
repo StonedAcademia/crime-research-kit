@@ -19,7 +19,7 @@ from core.casefile import (
     write_jsonl,
 )
 
-from ..shared.records import report_out_path
+from ..ledger.records import report_out_path
 
 
 def preservation_artifact(case_dir: str | Path, source: dict[str, Any], path_field: str) -> dict[str, Any]:

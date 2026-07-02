@@ -6,7 +6,7 @@ Use `link-names` when you need candidate event and co-mention links for known
 names or aliases:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py link-names data/cases/<case_slug> \
+crk-ledger link-names data/cases/<case_slug> \
   --names-file names.txt \
   --name "Primary Name|Known Alias"
 ```

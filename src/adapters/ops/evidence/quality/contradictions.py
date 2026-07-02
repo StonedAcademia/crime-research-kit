@@ -10,7 +10,7 @@ from typing import Any
 from core.casefile import case_path, ensure_case, log_action, now_utc, read_jsonl, record_path, stable_id, write_json
 
 from ...casework.records.names.matching import clean_id_list
-from ..shared.records import compact_record, normalize_match_text, public_rows, report_out_path
+from ..ledger.records import compact_record, normalize_match_text, public_rows, report_out_path
 
 
 def claim_tokens(claim: dict[str, Any]) -> set[str]:

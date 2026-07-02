@@ -59,7 +59,7 @@ uv run --cache-dir .uv-cache --no-project --with-editable '.[dev]' -- python -c 
 
 The minimum install uses the core package only. The `dev` extra installs the
 dependencies used by tests, schema validation, source extraction helpers, and
-chart exports. Use `.agents/...` for the skill script and `data/cases/...` for
+chart exports. Use `crk-ledger` for ledger commands and `data/cases/...` for
 case paths.
 
 ## Optional Extras

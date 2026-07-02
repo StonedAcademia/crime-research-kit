@@ -8,7 +8,7 @@ from adapters.ops.evidence.reports.analysis.classifiers import public_ready_reco
 from adapters.ops.evidence.reports.analysis.command.context import AnalysisContext
 from adapters.ops.evidence.reports.analysis.relationships import relationship_class
 from adapters.ops.evidence.reports.common import entity_display, parse_cell_list
-from adapters.ops.evidence.shared.scoring import date_sort_key
+from adapters.ops.evidence.ledger.scoring import date_sort_key
 
 
 def build_swimlanes(ctx: AnalysisContext) -> list[dict[str, Any]]:

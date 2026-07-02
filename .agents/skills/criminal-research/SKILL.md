@@ -7,7 +7,7 @@ description: Source-backed criminal research and academic forensic analysis work
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `criminal-research` for this lane; CLI fallback: `tcr.py draft-extraction ... --template criminal-research`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `criminal-research` for this lane; CLI fallback: `crk-ledger draft-extraction ... --template criminal-research`.
 
 ## Purpose
 
@@ -37,11 +37,11 @@ If the subject is a living private person, unnamed suspect, minor, or weakly sou
 ## Commands
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template criminal-research
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-contradictions tc-c-kit/data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py source-independence tc-c-kit/data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export tc-c-kit/data/cases/<case_slug> --warn-only
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate tc-c-kit/data/cases/<case_slug>
+crk-ledger draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template criminal-research
+crk-ledger audit-contradictions tc-c-kit/data/cases/<case_slug>
+crk-ledger source-independence tc-c-kit/data/cases/<case_slug>
+crk-ledger audit-public-export tc-c-kit/data/cases/<case_slug> --warn-only
+crk-ledger validate tc-c-kit/data/cases/<case_slug>
 ```
 
 ## Analysis Rules

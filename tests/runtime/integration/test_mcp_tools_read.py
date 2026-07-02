@@ -4,7 +4,7 @@ from pathlib import Path
 from adapters.interfaces.mcp import tools_read
 from adapters.interfaces.mcp.context import ServerContext
 from adapters.ops.runner import CrkRunner
-from tests.helpers import KIT_ROOT
+from tests.helpers import KIT_ROOT, ledger_subcommand
 
 
 def make_ctx(cases_root: Path, dry_run: bool = True) -> ServerContext:
@@ -72,7 +72,7 @@ def test_run_report_tool_plans_report_command(synthetic_case_copy):
 
     result = tools_read.run_report_tool(ctx, "synthetic_case")
 
-    assert result["command"][2] == "report"
+    assert ledger_subcommand(result["command"]) == "report"
 
 
 def test_query_case_tool_degrades_to_error_dict(synthetic_case_copy):

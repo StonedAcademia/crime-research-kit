@@ -7,7 +7,7 @@ description: Privacy and redaction workflow for CRK cases. Use when Codex needs 
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `privacy-redaction` for this lane; CLI fallback: `tcr.py draft-extraction ... --template privacy-redaction`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `privacy-redaction` for this lane; CLI fallback: `crk-ledger draft-extraction ... --template privacy-redaction`.
 
 
 ## Purpose
@@ -25,9 +25,9 @@ Use this skill before any public export, script, report, bundle, evidence board,
 ## Commands
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-privacy-redactions tc-c-kit/data/cases/<case_slug> --warn-only
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template privacy-redaction
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export tc-c-kit/data/cases/<case_slug> --warn-only
+crk-ledger audit-privacy-redactions tc-c-kit/data/cases/<case_slug> --warn-only
+crk-ledger draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template privacy-redaction
+crk-ledger audit-public-export tc-c-kit/data/cases/<case_slug> --warn-only
 ```
 
 ## Redaction Rules

@@ -17,7 +17,7 @@ from adapters.ops.evidence.quality.safety.public_export import (
     text_fields_for_public_scan,
 )
 from adapters.ops.evidence.quality.safety.readiness import add_review_issue
-from adapters.ops.evidence.shared.records import record_id, report_out_path
+from adapters.ops.evidence.ledger.records import record_id, report_out_path
 
 
 def audit_privacy_redactions(args: argparse.Namespace) -> None:

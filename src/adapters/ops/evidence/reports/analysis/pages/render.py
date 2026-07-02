@@ -10,7 +10,7 @@ from adapters.ops.evidence.reports.analysis.pages.assets import analysis_chart_c
 from adapters.ops.evidence.reports.analysis.pages.interactions import analysis_chart_script
 from adapters.ops.evidence.reports.analysis.svg.base import short_label
 from adapters.ops.evidence.reports.common import parse_cell_list
-from adapters.ops.evidence.shared.records import flatten
+from adapters.ops.evidence.ledger.records import flatten
 
 
 def chart_row_table(rows: list[dict[str, Any]], columns: list[str], limit: int = 25) -> str:

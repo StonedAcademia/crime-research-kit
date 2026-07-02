@@ -7,7 +7,7 @@ description: Source-chain and corroboration workflow for detecting repeated wire
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `source-independence` for this lane; CLI fallback: `tcr.py draft-extraction ... --template source-independence`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `source-independence` for this lane; CLI fallback: `crk-ledger draft-extraction ... --template source-independence`.
 
 
 ## Purpose
@@ -25,9 +25,9 @@ Use this skill to check whether claims, events, event links, or relationships re
 ## Commands
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py source-independence tc-c-kit/data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template source-independence
-python .agents/skills/truecrime-cult-research/scripts/tcr.py review-narrative-readiness tc-c-kit/data/cases/<case_slug>
+crk-ledger source-independence tc-c-kit/data/cases/<case_slug>
+crk-ledger draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template source-independence
+crk-ledger review-narrative-readiness tc-c-kit/data/cases/<case_slug>
 ```
 
 ## Independence Rules

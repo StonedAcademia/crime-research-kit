@@ -7,7 +7,7 @@ import json
 
 from core.casefile import case_path, ensure_case, log_action, now_utc, slugify, today, write_json
 
-from adapters.ops.evidence.shared.records import report_out_path
+from adapters.ops.evidence.ledger.records import report_out_path
 
 
 def plan_open_records(args: argparse.Namespace) -> None:

@@ -7,7 +7,7 @@ description: CRK workflow for finding and documenting conflicting claims, denial
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `claim-contradiction` for this lane; CLI fallback: `tcr.py draft-extraction ... --template claim-contradiction`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `claim-contradiction` for this lane; CLI fallback: `crk-ledger draft-extraction ... --template claim-contradiction`.
 
 
 ## Purpose
@@ -40,12 +40,12 @@ If a contradiction involves private people, minors, addresses, weak allegations,
 Use the wrapper-local CRK tool path and prefix case paths with `tc-c-kit/`:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-contradictions tc-c-kit/data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py source-independence tc-c-kit/data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template claim-contradiction
-python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export tc-c-kit/data/cases/<case_slug> --warn-only
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate tc-c-kit/data/cases/<case_slug>
+crk-ledger audit-contradictions tc-c-kit/data/cases/<case_slug>
+crk-ledger source-independence tc-c-kit/data/cases/<case_slug>
+crk-ledger draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template claim-contradiction
+crk-ledger import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
+crk-ledger audit-public-export tc-c-kit/data/cases/<case_slug> --warn-only
+crk-ledger validate tc-c-kit/data/cases/<case_slug>
 ```
 
 ## Audit Rules

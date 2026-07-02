@@ -8,7 +8,7 @@ from adapters.ops.evidence.reports.analysis.command.context import AnalysisConte
 from adapters.ops.evidence.reports.analysis.command.manifest import write_analysis_index
 from adapters.ops.evidence.reports.analysis.pages.render import render_analysis_chart_page, render_analysis_dashboard
 from adapters.ops.evidence.reports.analysis.pages.specs import build_analysis_chart_specs
-from adapters.ops.evidence.shared.records import write_csv
+from adapters.ops.evidence.ledger.records import write_csv
 
 
 def write_analysis_outputs(ctx: AnalysisContext, products: dict[str, Any]) -> None:

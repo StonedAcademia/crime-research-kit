@@ -10,7 +10,7 @@ from core.casefile import RECORD_FILES, case_path, ensure_case, log_action, now_
 
 from adapters.ops.casework.records.names.matching import clean_id_list
 from adapters.ops.evidence.quality.safety.public_export import source_rows_for_ids
-from adapters.ops.evidence.shared.records import (
+from adapters.ops.evidence.ledger.records import (
     normalize_match_text,
     public_rows,
     record_id,

@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from adapters.ops.evidence.shared.records import source_independence_key
+from adapters.ops.evidence.ledger.records import source_independence_key
 
 
 def evidence_level(claim: dict[str, Any], source_rows: list[dict[str, Any]]) -> str:

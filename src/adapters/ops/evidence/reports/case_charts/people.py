@@ -14,7 +14,7 @@ from adapters.ops.evidence.reports.common import (
     truncate_label,
 )
 from adapters.ops.evidence.reports.weights import evidence_edge_weight, parse_float
-from adapters.ops.evidence.shared.records import flatten
+from adapters.ops.evidence.ledger.records import flatten
 
 
 def render_people_graph_html(

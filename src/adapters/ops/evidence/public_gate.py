@@ -12,7 +12,7 @@ from adapters.ops.evidence.quality.safety.privacy import audit_privacy_redaction
 from adapters.ops.evidence.quality.safety.public_export import audit_public_export
 from adapters.ops.evidence.quality.safety.readiness import review_narrative_readiness
 from adapters.ops.evidence.quality.safety.source_independence import source_independence
-from adapters.ops.evidence.shared.records import discover_cases
+from adapters.ops.evidence.ledger.records import discover_cases
 
 
 def collect_public_output_blockers(label: str, report_path: Path) -> list[str]:

@@ -2,7 +2,7 @@ from pathlib import Path
 
 from adapters.ops import extraction as extraction_ops
 from adapters.ops.runner import CrkRunner
-from tests.helpers import KIT_ROOT
+from tests.helpers import KIT_ROOT, ledger_subcommand
 
 REPO_ROOT = KIT_ROOT
 
@@ -28,13 +28,13 @@ def test_import_extraction_plans_command_with_confirm():
     )
 
     assert result.ok is True
-    assert result.command[2] == "import-extraction"
+    assert ledger_subcommand(result.command) == "import-extraction"
 
 
 def test_draft_extraction_passes_template():
     result = extraction_ops.draft_extraction(dry_runner(), "data/cases/x", "S0001", template="missing-persons")
 
-    assert result.command[2] == "draft-extraction"
+    assert ledger_subcommand(result.command) == "draft-extraction"
     assert result.command[result.command.index("--template") + 1] == "missing-persons"
 
 

@@ -7,7 +7,7 @@ import math
 import re
 from typing import Any
 
-from adapters.ops.evidence.shared.records import flatten
+from adapters.ops.evidence.ledger.records import flatten
 
 PALETTE = {
     "verified": "#1f7a4f",

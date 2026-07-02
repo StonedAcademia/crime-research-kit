@@ -1,17 +1,12 @@
-import importlib.util
 import json
 
 import pytest
 
-from tests.helpers import KIT_ROOT, TCR_PATH
+from tests.helpers import KIT_ROOT, load_ledger_cli
 
 
 def load_tcr():
-    spec = importlib.util.spec_from_file_location("tcr", TCR_PATH)
-    assert spec and spec.loader
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+    return load_ledger_cli()
 
 
 def subcommand_parsers(tcr):

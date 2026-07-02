@@ -54,7 +54,7 @@ The record-level contract behind this chain is documented in
 
 | I am a…                          | What you get                                                                                                                     | Start here                                                                                                                                                                                                                                                                        |
 | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Researcher**                   | A local case workspace, the `tcr.py` ledger CLI, repo-local skills, staged extraction packets, audits, and public-safe exports.  | [Case Workflow](docs/guides/runbooks/cases/case-workflow.md) · [Agent Skills](docs/guides/integrations/agent-skills.md) · [Export Artifacts](docs/guides/runbooks/outputs/export-artifacts.md) · [Public Output Readiness](docs/guides/runbooks/cases/public-output-readiness.md) |
+| **Researcher**                   | A local case workspace, the `crk-ledger` ledger CLI, repo-local skills, staged extraction packets, audits, and public-safe exports.  | [Case Workflow](docs/guides/runbooks/cases/case-workflow.md) · [Agent Skills](docs/guides/integrations/agent-skills.md) · [Export Artifacts](docs/guides/runbooks/outputs/export-artifacts.md) · [Public Output Readiness](docs/guides/runbooks/cases/public-output-readiness.md) |
 | **Operator**                     | A self-hosted local stack: SearXNG discovery, Qdrant retrieval, Ollama runtime, OCR, MCP, and the case-builder app.              | [Initial App Install](docs/guides/runbooks/setup/install.md) · [Self-Hosted Deployment](docs/guides/runbooks/setup/self-hosted-deployment.md)                                                                                                                                     |
 | **Developer / agent integrator** | The MCP server, the `src/` app boundary and typed ops core, the skill API contract, and the skill invocation model. | [System Overview](docs/guides/architecture/system-overview.md) · [Case Builder & LangGraph](docs/guides/architecture/case-builder-langgraph.md) · [MCP Server](docs/guides/integrations/mcp-server.md) · [Skill API Spec](docs/guides/skill-api-spec.md)                                      |
 
@@ -94,14 +94,14 @@ install, optional extras, retrieval, OCR, and memory setup are in
 ## Architecture at a glance
 
 Two implementation layers share one canonical JSONL ledger: the
-standard-library-only skill CLI (`tcr.py` plus sixteen adjacent domain
+standard-library-only ledger CLI (`crk-ledger` plus sixteen adjacent domain
 skills), and the `src/` agent app whose frontends (CLI,
 LangGraph, MCP) go through a typed ops core. Retrieval indexes, workflow
 memory, and parse artifacts are optional, rebuildable, and never evidence.
 
 ```mermaid
 flowchart LR
-  SRC["Public sources<br/>URLs · PDFs · transcripts · records"] --> TCR["Skill layer<br/>tcr.py CLI + 16 adjacent skills"]
+  SRC["Public sources<br/>URLs · PDFs · transcripts · records"] --> TCR["Skill layer<br/>crk-ledger CLI + 16 adjacent skills"]
   SRC --> APP["case-builder app<br/>CLI · LangGraph · MCP → typed ops core"]
   APP -.-> OPT["Optional subsystems<br/>parsing · retrieval · memory · acquisition"]
   APP --> TCR

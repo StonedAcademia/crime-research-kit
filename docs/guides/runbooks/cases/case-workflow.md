@@ -5,7 +5,7 @@ agent flows without turning lead discovery into unsourced claims. The full
 workflow is split into small reference files.
 
 Commands assume they are run from the `tc-c-kit` repository root so the skill
-script path is `.agents/skills/truecrime-cult-research/scripts/tcr.py` and case
+ledger command is `crk-ledger` and case
 work stays under `data/cases/`.
 
 ## Workflow Shards

@@ -11,7 +11,7 @@ from langgraph.types import Command
 from pipeline.graph.runner import build_case_builder_graph
 from core.models.state import CaseBuilderState
 from adapters.ops.runner import CrkRunner
-from tests.helpers import KIT_ROOT
+from tests.helpers import KIT_ROOT, ledger_subcommand
 
 REPO_ROOT = KIT_ROOT
 
@@ -40,7 +40,7 @@ def test_interrupt_resume_survives_graph_rebuild(tmp_path):
     snapshot = graph.get_state(config)
     assert "export_review_gate" in snapshot.next
     values = snapshot.values
-    subcommands = [command[2] for command in values["planned_commands"]]
+    subcommands = [ledger_subcommand(command) for command in values["planned_commands"]]
     assert "import-extraction" in subcommands
     assert "audit-contradictions" in subcommands
 
@@ -49,7 +49,7 @@ def test_interrupt_resume_survives_graph_rebuild(tmp_path):
     result = graph.invoke(Command(resume={"export_approved": True}), config)
     assert result["status"] == "bundle_exported"
     assert result["review_required"] is False
-    subcommands = [command[2] for command in result["planned_commands"]]
+    subcommands = [ledger_subcommand(command) for command in result["planned_commands"]]
     assert subcommands[-2:] == ["export-manim", "report"]
 
 
@@ -68,5 +68,5 @@ def test_rejecting_all_packets_ends_the_run(tmp_path):
     assert result["status"] == "packets_rejected"
     snapshot = graph.get_state(config)
     assert snapshot.next == ()  # routed to END, nothing pending
-    subcommands = [command[2] for command in result["planned_commands"]]
+    subcommands = [ledger_subcommand(command) for command in result["planned_commands"]]
     assert "import-extraction" not in subcommands

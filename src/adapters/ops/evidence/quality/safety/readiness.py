@@ -9,7 +9,7 @@ from typing import Any, Iterable
 from core.casefile import case_path, ensure_case, log_action, now_utc, read_jsonl, record_path, write_json
 
 from adapters.ops.casework.records.names.matching import clean_id_list
-from adapters.ops.evidence.shared.records import public_rows, report_out_path, source_independence_key
+from adapters.ops.evidence.ledger.records import public_rows, report_out_path, source_independence_key
 
 
 def add_review_issue(

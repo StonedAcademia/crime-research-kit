@@ -163,14 +163,14 @@ tasks:
   init-sample:
     description: "Create the sample case workspace."
     command: "uv"
-    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "python", ".agents/skills/truecrime-cult-research/scripts/tcr.py", "init-case", "data/cases/sample_case", "--title", "Sample Case"]
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "crk-ledger", "init-case", "data/cases/sample_case", "--title", "Sample Case"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   validate-sample:
     description: "Validate the sample case workspace."
     command: "uv"
-    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "python", ".agents/skills/truecrime-cult-research/scripts/tcr.py", "validate", "data/cases/sample_case"]
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "crk-ledger", "validate", "data/cases/sample_case"]
     inputs: ["data/cases/sample_case/**/*"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
@@ -178,7 +178,7 @@ tasks:
   export-sample:
     description: "Export Manim CSVs and an evidence board for the sample case."
     command: "uv"
-    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "python", ".agents/skills/truecrime-cult-research/scripts/tcr.py", "export-manim", "data/cases/sample_case"]
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "crk-ledger", "export-manim", "data/cases/sample_case"]
     deps: ["~:validate-sample"]
     outputs: ["data/cases/sample_case/exports/manim/**/*"]
     options: { cache: false, outputStyle: stream }

@@ -18,7 +18,7 @@ changing the case ledger.
 ## Covered Skills
 
 The primary implementation is
-`.agents/skills/truecrime-cult-research/scripts/tcr.py`. Adjacent repo-local
+`crk-ledger`. Adjacent repo-local
 skills extend the same case ledger for source packets and public-output review:
 
 - `corporate-financial-records`

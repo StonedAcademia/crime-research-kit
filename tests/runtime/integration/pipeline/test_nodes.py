@@ -7,7 +7,7 @@ from pipeline.graph.nodes.pipeline import (
 )
 from adapters.ops.result import OpResult
 from adapters.ops.runner import CrkRunner
-from tests.helpers import KIT_ROOT
+from tests.helpers import KIT_ROOT, ledger_command_args, ledger_subcommand
 
 REPO_ROOT = KIT_ROOT
 
@@ -52,7 +52,7 @@ def test_source_capture_plans_ingest_per_url():
 
     assert update["status"] == "sources_captured"
     assert [item["name"] for item in update["tool_results"]] == ["ingest_url", "ingest_url"]
-    assert update["planned_commands"][0][2] == "ingest-url"
+    assert ledger_subcommand(update["planned_commands"][0]) == "ingest-url"
 
 
 def test_draft_packets_skips_in_dry_run_without_source_ids():
@@ -70,7 +70,7 @@ def test_draft_packets_plans_draft_per_source_id():
 
     assert update["status"] == "packets_drafted"
     assert len(update["planned_commands"]) == 2
-    assert update["planned_commands"][0][2] == "draft-extraction"
+    assert ledger_subcommand(update["planned_commands"][0]) == "draft-extraction"
 
 
 def test_parse_or_ocr_skips_in_dry_run():
@@ -116,8 +116,8 @@ def test_import_and_validate_imports_each_approved_packet_with_confirm():
     assert update["status"] == "imported_and_validated"
     names = [item["name"] for item in update["tool_results"]]
     assert names == ["import_extraction", "import_extraction", "validate"]
-    assert update["planned_commands"][0][2] == "import-extraction"
-    assert update["planned_commands"][0][4].endswith("staging/extractions/S1_extraction.json")
+    assert ledger_subcommand(update["planned_commands"][0]) == "import-extraction"
+    assert ledger_command_args(update["planned_commands"][0])[2].endswith("staging/extractions/S1_extraction.json")
     assert not update["errors"]  # confirm=True flowed through the gate
 
 
@@ -149,7 +149,7 @@ def test_readiness_audit_runs_four_audits():
 
     update = node({"case_dir": "data/cases/x"})
 
-    subcommands = [command[2] for command in update["planned_commands"]]
+    subcommands = [ledger_subcommand(command) for command in update["planned_commands"]]
     assert subcommands == [
         "audit-contradictions",
         "review-narrative-readiness",
@@ -166,7 +166,7 @@ def test_export_bundle_exports_manim_and_report():
 
     update = node({"case_dir": "data/cases/x"})
 
-    subcommands = [command[2] for command in update["planned_commands"]]
+    subcommands = [ledger_subcommand(command) for command in update["planned_commands"]]
     assert subcommands == ["export-manim", "report"]
     assert update["status"] == "bundle_exported"
     assert update["review_required"] is False

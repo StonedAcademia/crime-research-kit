@@ -7,7 +7,7 @@ description: Public-source workflow for analyzing interviews, videos, audio, pod
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `media-transcript` for this lane; CLI fallback: `tcr.py draft-extraction ... --template media-transcript`.
+Lane/template metadata is generated from `docs/registry/`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `media-transcript` for this lane; CLI fallback: `crk-ledger draft-extraction ... --template media-transcript`.
 
 
 ## Purpose
@@ -39,11 +39,11 @@ If the transcript contains private-person details, minors, addresses, medical de
 ## Commands
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py index-transcript tc-c-kit/data/cases/<case_slug> <SOURCE_ID>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template media-transcript
-python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-contradictions tc-c-kit/data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate tc-c-kit/data/cases/<case_slug>
+crk-ledger index-transcript tc-c-kit/data/cases/<case_slug> <SOURCE_ID>
+crk-ledger draft-extraction tc-c-kit/data/cases/<case_slug> <SOURCE_ID> --template media-transcript
+crk-ledger import-extraction tc-c-kit/data/cases/<case_slug> tc-c-kit/data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
+crk-ledger audit-contradictions tc-c-kit/data/cases/<case_slug>
+crk-ledger validate tc-c-kit/data/cases/<case_slug>
 ```
 
 Use `--include-private` on `index-transcript` only for internal review of sources already marked non-public.

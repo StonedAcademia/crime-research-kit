@@ -2,7 +2,7 @@
 
 Status: draft v0.1  
 Applies to: `.agents/skills/truecrime-cult-research`  
-Primary implementation: `.agents/skills/truecrime-cult-research/scripts/tcr.py`
+Primary implementation: `crk-ledger`
 
 This page is the stable entry point for the machine-facing CLI and JSONL
 contract. The detailed contract is split into governed shards under

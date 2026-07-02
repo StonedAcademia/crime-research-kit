@@ -32,14 +32,14 @@ only when you want the app to create or modify the case workspace.
 Initialize a local case workspace:
 
 ```bash
-uv run --cache-dir .uv-cache --no-project --with-editable . -- python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case data/cases/<case_slug> \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- crk-ledger init-case data/cases/<case_slug> \
   --title "<Case Title>"
 ```
 
 Register a source manually when it should be tracked before extraction:
 
 ```bash
-uv run --cache-dir .uv-cache --no-project --with-editable . -- python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source data/cases/<case_slug> \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- crk-ledger add-source data/cases/<case_slug> \
   --title "<Source Title>" \
   --url "<URL or local path>" \
   --source-type news_article \
@@ -50,7 +50,7 @@ uv run --cache-dir .uv-cache --no-project --with-editable . -- python .agents/sk
 Or capture a public URL directly:
 
 ```bash
-uv run --cache-dir .uv-cache --no-project --with-editable . -- python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url data/cases/<case_slug> \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- crk-ledger ingest-url data/cases/<case_slug> \
   "<URL>" \
   --source-type news_article \
   --reliability-grade B
@@ -59,17 +59,17 @@ uv run --cache-dir .uv-cache --no-project --with-editable . -- python .agents/sk
 Draft an extraction packet for review:
 
 ```bash
-uv run --cache-dir .uv-cache --no-project --with-editable . -- python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction data/cases/<case_slug> <SOURCE_ID>
+uv run --cache-dir .uv-cache --no-project --with-editable . -- crk-ledger draft-extraction data/cases/<case_slug> <SOURCE_ID>
 ```
 
 After the packet is filled and reviewed, import and validate it:
 
 ```bash
-uv run --cache-dir .uv-cache --no-project --with-editable . -- python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction data/cases/<case_slug> \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- crk-ledger import-extraction data/cases/<case_slug> \
   data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
 
-uv run --cache-dir .uv-cache --no-project --with-editable . -- python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/cases/<case_slug>
-uv run --cache-dir .uv-cache --no-project --with-editable . -- python .agents/skills/truecrime-cult-research/scripts/tcr.py report data/cases/<case_slug>
+uv run --cache-dir .uv-cache --no-project --with-editable . -- crk-ledger validate data/cases/<case_slug>
+uv run --cache-dir .uv-cache --no-project --with-editable . -- crk-ledger report data/cases/<case_slug>
 ```
 
 ## Run The Case-Builder App

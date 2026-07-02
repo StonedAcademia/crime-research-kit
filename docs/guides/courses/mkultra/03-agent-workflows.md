@@ -78,17 +78,17 @@ only; do not import canonical records.
 
 ## Use CRK Through The CLI
 
-The plain script path is best for source-ledger operations:
+The `crk-ledger` command is best for source-ledger operations:
 
 ```bash
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
-  python .agents/skills/truecrime-cult-research/scripts/tcr.py validate \
+  crk-ledger validate \
   data/cases/mkultra_course
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
-  python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction \
+  crk-ledger draft-extraction \
   data/cases/mkultra_course S_SENATE_MKULTRA_1977
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
-  python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-contradictions \
+  crk-ledger audit-contradictions \
   data/cases/mkultra_course
 ```
 

@@ -13,7 +13,7 @@ from core.casefile import case_path, ensure_case, read_jsonl, record_path
 from adapters.ops.evidence.public_gate import enforce_public_output_gate
 from adapters.ops.evidence.reports.analysis.paths import analysis_graph, parse_cluster_bridge_audit, read_cluster_metadata
 from adapters.ops.evidence.reports.common import entity_display, read_csv_dicts
-from adapters.ops.evidence.shared.records import public_rows, source_independence_key
+from adapters.ops.evidence.ledger.records import public_rows, source_independence_key
 
 
 @dataclass

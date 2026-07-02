@@ -189,7 +189,7 @@
         "source_quality_rubric.md",
         "topic_extraction_templates.md"
       ],
-      "scripts": ["tcr.py"],
+      "scripts": [],
       "assets": ["templates"]
     }
   }

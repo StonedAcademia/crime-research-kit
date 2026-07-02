@@ -9,7 +9,7 @@ from typing import Any
 
 from core.casefile import case_path, ensure_case, log_action, now_utc, resolve_case_path, stable_id, today, write_json
 
-from adapters.ops.evidence.shared.records import report_out_path
+from adapters.ops.evidence.ledger.records import report_out_path
 
 from ..workspace import find_source
 

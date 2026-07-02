@@ -8,9 +8,9 @@ import html
 import json
 import re
 import urllib.parse
-import urllib.request
 from typing import Any
 
+from adapters.io.acquisition.http import fetch_url
 from core.casefile import case_path, ensure_case, file_sha256, log_action, now_utc, slugify
 
 from ..workspace import add_source_record
@@ -22,19 +22,6 @@ def safe_filename_from_url(url: str) -> str:
     path = slugify(parsed.path or "index")[:48]
     digest = hashlib.sha1(url.encode("utf-8")).hexdigest()[:8]
     return f"{domain}_{path}_{digest}"
-
-
-def fetch_url(url: str, timeout: int = 25) -> tuple[str, bytes, dict[str, str]]:
-    request = urllib.request.Request(
-        url,
-        headers={
-            "User-Agent": "truecrime-research-kit/0.1 (+public-interest research; contact: local-user)",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        },
-    )
-    with urllib.request.urlopen(request, timeout=timeout) as response:  # noqa: S310 - user-requested URL ingestion
-        content_type = response.headers.get("Content-Type", "")
-        return content_type, response.read(), dict(response.headers.items())
 
 
 def extract_html_text(raw: bytes, content_type: str) -> tuple[str, dict[str, Any]]:
