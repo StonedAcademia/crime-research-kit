@@ -26,7 +26,8 @@ ROOT = Path(__file__).resolve().parents[4]
 DEFAULT_EPOCH = "1735689600"
 SEMVER_PATTERN = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 REQUIRED_CHANGELOG_SECTIONS = ("Added", "Changed", "Security", "Fixed")
-MIN_RELEASE_BULLETS = 12
+MIN_MINOR_RELEASE_BULLETS = 12
+MIN_PATCH_RELEASE_BULLETS = 1
 
 
 class ReleaseError(RuntimeError):
@@ -79,6 +80,12 @@ def check_semver_version(version: str) -> None:
         raise ReleaseError(f"Project version {version!r} must be a semantic version MAJOR.MINOR.PATCH.")
 
 
+def semver_parts(version: str) -> tuple[int, int, int]:
+    check_semver_version(version)
+    major, minor, patch = version.split(".")
+    return int(major), int(minor), int(patch)
+
+
 def changelog_sections(text: str) -> dict[str, str | None]:
     sections: dict[str, str | None] = {}
     pattern = re.compile(r"^## \[([^\]]+)\](?: - (\d{4}-\d{2}-\d{2}))?\s*$", re.MULTILINE)
@@ -102,13 +109,21 @@ def check_changelog_coverage(text: str, version: str) -> None:
     body = changelog_release_body(text, version)
     if not body.strip():
         raise ReleaseError(f"CHANGELOG.md release section for {version} must not be empty.")
-    missing = [section for section in REQUIRED_CHANGELOG_SECTIONS if f"### {section}" not in body]
-    if missing:
-        raise ReleaseError(f"CHANGELOG.md release section for {version} is missing sections: {', '.join(missing)}.")
-    bullet_count = sum(1 for line in body.splitlines() if line.startswith("- "))
-    if bullet_count < MIN_RELEASE_BULLETS:
+    _major, _minor, patch = semver_parts(version)
+    present = [section for section in REQUIRED_CHANGELOG_SECTIONS if f"### {section}" in body]
+    if patch == 0:
+        missing = [section for section in REQUIRED_CHANGELOG_SECTIONS if section not in present]
+        if missing:
+            raise ReleaseError(f"CHANGELOG.md release section for {version} is missing sections: {', '.join(missing)}.")
+    elif not present:
         raise ReleaseError(
-            f"CHANGELOG.md release section for {version} must contain at least {MIN_RELEASE_BULLETS} bullets; found {bullet_count}."
+            f"CHANGELOG.md patch release section for {version} must include at least one standard change section."
+        )
+    bullet_count = sum(1 for line in body.splitlines() if line.startswith("- "))
+    minimum = MIN_MINOR_RELEASE_BULLETS if patch == 0 else MIN_PATCH_RELEASE_BULLETS
+    if bullet_count < minimum:
+        raise ReleaseError(
+            f"CHANGELOG.md release section for {version} must contain at least {minimum} bullets; found {bullet_count}."
         )
 
 

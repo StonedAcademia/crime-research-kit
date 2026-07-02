@@ -6,10 +6,19 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+## [0.11.1] - 2026-07-02
+
 ### Changed
 
 - Changed the project license from MIT to AGPL-3.0-only.
 - Retired the legacy wrapper command surface in favor of direct `moon run crk:<task>` usage across CI, governance checks, and operator docs.
+- Bumped release metadata for a patch release after the `v0.11.0` release gate exposed stale package import smoke checks.
+
+### Fixed
+
+- Fixed the fresh-build wheel import smoke to import the current `cli`, `core`, `pipeline`, and MCP adapter modules instead of removed `case_builder` package paths.
+- Updated the deployment smoke script to use the current `python -m cli` and `adapters.interfaces.mcp.server` entry points.
+- Added governance coverage so stale `case_builder` package paths cannot return to the release build and deployment smoke checks.
 
 ## [0.11.0] - 2026-07-02
 
