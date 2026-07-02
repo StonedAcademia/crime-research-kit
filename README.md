@@ -9,12 +9,10 @@
 </p>
 
 <p align="center">
+  <a href="#index">Index</a> |
   <a href="#quick-start">Quick start</a> |
-  <a href="#minimum-requirements">Requirements</a> |
   <a href="#what-you-can-build">What you can build</a> |
-  <a href="#example-workflows">Examples</a> |
-  <a href="#self-hosted-container-stack">Containers</a> |
-  <a href="#local-document-retrieval-and-memory-stack">Local stack</a> |
+  <a href="#document-structure">Docs</a> |
   <a href="#public-interest-boundaries">Safety</a>
 </p>
 
@@ -29,6 +27,38 @@ This is not a rumor engine. AI can help organize, search, OCR, index, and draft
 extraction packets, but **AI-generated summaries are never evidence**. Claims
 only become public-facing material after source support, validation,
 contradiction review, source-independence review, and privacy review.
+
+## Index
+
+| Need | Start here |
+| --- | --- |
+| Install the kit or troubleshoot setup | [Initial App Install](docs/runbook/install.md) |
+| Walk through a source-backed case workflow | [Case Workflow](docs/runbook/case-workflow.md) |
+| Operate the self-hosted local stack | [Self-Hosted Deployment](docs/runbook/self-hosted-deployment.md) |
+| Check public-output blockers | [Public Output Readiness](docs/runbook/public-output-readiness.md) |
+| Generate evidence boards, Manim CSVs, charts, timelines, or bundles | [Export Artifacts](docs/runbook/export-artifacts.md) |
+| Integrate the MCP server | [MCP Server](docs/mcp-server.md) |
+| Understand the LangGraph case-builder boundary | [Case Builder LangGraph](docs/case-builder-langgraph.md) |
+| Build against the machine-facing contract | [Skill API Spec](docs/skill-api-spec.md) |
+
+## Document Structure
+
+| Path | Purpose |
+| --- | --- |
+| `README.md` | Project orientation, safety boundary, capability summary, and links. |
+| `docs/runbook/` | Operator procedures and repeatable workflows. Long command sequences belong here. |
+| `docs/schemas/` | JSON Schemas for case-ledger records. |
+| `docs/lanes.json` | Canonical lane and extraction-template vocabulary. |
+| `docs/superpowers/` | Planning/spec history for larger implementation phases. |
+| `.agents/skills/` | Repo-local skills and reusable workflow instructions. |
+| `src/case_builder/` | Optional case-builder app, LangGraph runner, MCP surface, retrieval, memory, and ops wrappers. |
+| `deployment/` | Self-hosted stack, deployment scripts, and local-service configuration. |
+| `data/examples/` | Tracked synthetic fixtures. Generated case work belongs in ignored `data/cases/`. |
+
+Keep the README focused on orientation. Move install matrices, deployment
+operations, full case walkthroughs, export manifests, public-readiness
+checklists, troubleshooting tables, and local-service command sequences into
+runbooks.
 
 ## What You Can Build
 
@@ -81,144 +111,13 @@ Core guardrails:
   records, transcripts, archives, property/location records, FOIA planning,
   contradictions, and disconfirming sources.
 
-## Example Workflows
-
-### Build a source-backed case workspace
-
-```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case data/cases/harbor_study_circle \
-  --title "Harbor Study Circle"
-
-python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url data/cases/harbor_study_circle \
-  "https://example.com/local-report" \
-  --source-type news_article \
-  --reliability-grade B
-
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction data/cases/harbor_study_circle SOURCE_ID
-```
-
-Fill the staged extraction packet with only what the source directly supports,
-then import and validate it:
-
-```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction \
-  data/cases/harbor_study_circle \
-  data/cases/harbor_study_circle/staging/extractions/SOURCE_ID_extraction.json
-
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/cases/harbor_study_circle
-python .agents/skills/truecrime-cult-research/scripts/tcr.py report data/cases/harbor_study_circle
-```
-
-A public-ready claim stays machine-readable and source-bound:
-
-```json
-{
-  "claim_id": "CDEMO0001",
-  "claim": "The source states that the Harbor Study Circle began meeting in 1978.",
-  "claim_type": "timeline",
-  "assertion_type": "source_stated_fact",
-  "status": "single_source",
-  "confidence": 0.62,
-  "source_ids": ["SDEMO0001"],
-  "privacy_review": "clear",
-  "public_export": true
-}
-```
-
-### Plan public-record lanes before collecting sources
-
-```bash
-PYTHONPATH=src python -m case_builder.cli plan data/cases/example_case \
-  --title "Example Case" \
-  --subject "Jane Doe missing person last seen near Riverside Park map"
-```
-
-The planner infers source lanes such as missing-person, geographical-location,
-legal/court, media/transcript, property/location, licensing, or source-capture.
-Route suggestions are leads, not evidence.
-
-### Parse, OCR, index, and query local documents
-
-```bash
-trcr-case-builder parse-source data/cases/example_case SOURCE_ID
-trcr-case-builder ocr-source data/cases/example_case SOURCE_ID
-trcr-case-builder index-case data/cases/example_case
-trcr-case-builder query-case data/cases/example_case "Which timeline claims lack source spans?"
-```
-
-The local stack can help retrieve context and draft extraction candidates, but
-the canonical ledger remains `records/*.jsonl`.
-
-## Minimum Requirements
-
-- Python 3.10 or newer.
-- `pip` and Python `venv` support.
-- A local checkout of this repository, with commands run from the `tc-c-kit`
-  repository root.
-
-For the preferred task workflow, install `proto`; this repository pins `moon`,
-Python, and Bun in `.prototools`. Docker, Ollama, SearXNG, Qdrant, Tesseract,
-Ghostscript, and optional Python extras are only needed for the container
-stack, UFB exports, local retrieval, OCR, memory, or development workflows.
-
-## Recommended install
-
-Install proto, then install the pinned toolchain and create the development
-virtualenv:
-
-```bash
-curl -fsSL https://moonrepo.dev/install/proto.sh | bash
-```
-
-Windows PowerShell:
-
-```powershell
-irm https://moonrepo.dev/install/proto.ps1 | iex
-Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
-```
-
-```bash
-proto install
-moon run trcr:install-dev
-moon run trcr:check
-```
-
-Windows users run the same `proto install` and `moon run ...` commands from
-PowerShell after proto is available on `PATH`. The local `.venv` is created by
-a cross-platform Python installer under `deployment/scripts/install.py`.
-
-Manual fallback without moon:
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -e '.[dev]'
-```
-
-The core CLI mostly uses the Python standard library. Optional packages improve
-extraction and validation.
-
-## Self-Hosted Container Stack
-
-The full local deployment lives under `deployment/`. It runs the TRCR app,
-SearXNG, Valkey, Qdrant, Ollama, OCR tooling, retrieval, memory, LangGraph, and
-MCP without managed SaaS runtime services.
-
-```bash
-cp deployment/.env.example deployment/.env
-moon run trcr:docker-build
-moon run trcr:docker-up
-moon run trcr:docker-pull-model
-moon run trcr:docker-smoke
-```
-
-Codex and Claude Code can operate the stack through CLI or MCP. They are agent
-hosts, not TRCR runtime model providers. The runtime model provider defaults to
-self-hosted Ollama. See `deployment/README.md`.
-
 ## Quick start
 
-Create a case workspace:
+Install the development environment, then create a small sample case:
+
+```bash
+moon run trcr:install-dev
+```
 
 ```bash
 python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case data/cases/sample_case --title "Sample Case"
@@ -250,97 +149,10 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py export-manim data/c
 python .agents/skills/truecrime-cult-research/scripts/tcr.py report data/cases/sample_case
 ```
 
-Build a cross-case timeline and claim corroboration index:
-
-```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-timeline data/cases
-```
-
-This writes public-safe cross-case artifacts to `data/exports/timeline/`:
-
-- `cases.csv`
-- `timeline.csv`
-- `corroborations.csv`
-- `timeline.md`
-
-For internal review of non-public, disputed, excluded, or unverified rows, opt in explicitly:
-
-```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-timeline data/cases --include-private --out-dir data/exports/timeline_internal
-```
-
-`data/cases/` and `data/exports/` are local/generated working areas and
-are ignored by Git except for `.gitkeep` placeholders. Keep reusable fixtures in
-`data/examples/` instead.
-
-Build case-level chart artifacts for a people-only graph and subcase timeline:
-
-```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-case-charts data/cases/<case_slug>
-```
-
-This writes public-safe chart artifacts to `data/cases/<case_slug>/exports/charts/`:
-
-- `people_graph.html`
-- `people_nodes.csv`
-- `people_edges.csv`
-- `subcase_timelines.html`
-- `subcase_timelines.csv`
-- `subcase_summary.csv`
-
-Run evidence-weighted Leiden clustering plus graph-kernel/KDE density over the
-people graph:
-
-```bash
-cd tc-c-kit
-uv run --extra dev --with igraph --with leidenalg \
-  python ../.agents/skills/truecrime-cult-research/scripts/tcr.py export-people-clusters data/cases/<case_slug> --include-private
-```
-
-This writes internal-review clustering artifacts to
-`data/cases/<case_slug>/exports/clusters/`:
-
-- `people_clusters.html`
-- `people_clusters.csv`
-- `cluster_summary.csv`
-- `people_cluster_edges.csv`
-- `people_kernel_matrix.csv`
-- `clusters.md`
-
-Build the extended analysis chart package for cluster bridges, claim/source
-corroboration, source quality, path atlases, swimlanes, relationship-class
-treemaps, and public narrative readiness:
-
-```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py export-analysis-charts data/cases/<case_slug> --include-private
-```
-
-This writes review artifacts to `data/cases/<case_slug>/exports/analysis_charts/`,
-including `analysis_charts.html`, `cluster_bridge_sankey_nodes.csv`,
-`cluster_bridge_sankey_links.csv`, `evidence_confidence_heatmap.csv`,
-`claim_corroboration_matrix.csv`, `source_quality_dashboard.csv`,
-`sixdof_path_atlas.csv`, `relationship_type_treemap.csv`,
-`person_source_bipartite_nodes.csv`, and `public_narrative_readiness.csv`.
-The `relationship_class` column separates documented succession, method
-diffusion, personnel bridges, narrative inheritance, contested overlap, and
-hypotheses requiring more sources.
-
-Link a list of names to existing events and co-mentions:
-
-```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py link-names data/cases/<case_slug> --names-file names.txt --name "Primary Name|Known Alias"
-```
-
-`link-names` writes conservative, private-by-default co-mention records and a research brief under `notes/`. It does not make guilt, membership, motive, or participation claims from proximity.
-
-Export a TRCR case to a Phanestead-readable UFB v2 bundle:
-
-```bash
-bun deployment/scripts/export_trcr_ufb.mjs data/cases/<case_slug> --out data/cases/<case_slug>/exports/ufb/<case_slug>.ufb_v2
-```
-
-The exporter writes a public-safe bundle by default. Use `--include-private`
-only for internal testing artifacts.
+Use [Case Workflow](docs/runbook/case-workflow.md) for the full source-review
+loop, [Export Artifacts](docs/runbook/export-artifacts.md) for every export
+command, and [Initial App Install](docs/runbook/install.md) for manual install,
+optional extras, case-builder, local retrieval, OCR, and memory setup.
 
 ## How to invoke the skill in Codex
 
@@ -359,15 +171,7 @@ Use the truecrime-cult-research skill to create a data-first source map for the 
 ## Adjacent skill routing
 
 Use `truecrime-cult-research` as the case ledger and safety baseline. Route
-domain-heavy packets to adjacent skills when appropriate:
-
-- `corporate-financial-records`: corporations, nonprofits, banks, shell companies, bankruptcies, investments, ownership/control, boards, officers, transactions, SEC/state filings, and financial records.
-- `educational-path-records`: schools, degrees, training, credentials, academic appointments, alumni claims, student-era events, institution affiliations, and credential disputes.
-- `legal-court-records`, `identity-resolution`, `source-capture-preservation`, and `claim-contradiction-audit`: court records, ambiguous identities, source preservation, and contradiction review.
-- `public-records-router`, `licensing-professional-records`, `media-transcript-intelligence`, and `property-location-records`: source-lane planning, licenses, transcripts/media, and property/location records.
-- `missing-persons-case`: missing-person candidates, last-seen/time-location matching, public bulletins, status updates, and unidentified-person comparisons.
-- `geographical-location-intelligence`: evidence-item geography, event maps, routes, sightings, map/exhibit locators, and locations of interest.
-- `foia-open-records-planning`, `narrative-readiness-review`, `privacy-redaction-audit`, and `source-independence-audit`: open-records planning and public-output readiness review.
+domain-heavy packets to adjacent skills only when their lane applies.
 
 Canonical lane/template metadata lives in `docs/lanes.json`. Generated
 reference tables live in
@@ -377,126 +181,15 @@ reference tables live in
 Adjacent skills write source-traceable entities, claims, events, relationships,
 artifacts, and notes back into the same TRCR case structure.
 
-## LangGraph case-builder bootstrap
+## App And Integration References
 
-The optional `case_builder` app under `src/case_builder/` provides a small
-LangGraph-compatible bootstrap workflow around the existing TRCR CLI. It keeps
-the TRCR case ledger canonical, stops at a human review gate, and records local
-workflow actions in the case ledger.
-
-```bash
-PYTHONPATH=src python -m case_builder.cli plan data/cases/example_case \
-  --title "Example Case" \
-  --subject "Jane Doe missing person last seen near Riverside Park map"
-```
-
-Install the package and optional orchestration dependencies with:
-
-```bash
-pip install -e '.[agentic]'
-```
-
-After installation, the same command is available as:
-
-```bash
-trcr-case-builder plan data/cases/example_case \
-  --title "Example Case" \
-  --subject "Jane Doe missing person last seen near Riverside Park map"
-```
-
-Each `src/case_builder` package directory has a local `README.md`; tests enforce
-the 200 non-comment LOC ceiling for Python modules. See
-`docs/case-builder-langgraph.md` for the workflow boundary and next nodes.
-
-## MCP server
-
-Expose the same ops surface to Claude Code, Codex, or Claude Desktop:
-
-```bash
-uv pip install -p .venv/bin/python -e '.[mcp]'
-claude mcp add trcr -- <projects-root>/true-crime-research/tc-c-kit/.venv/bin/trcr-mcp
-```
-
-Read/query tools are always safe; write tools stage drafts only; canonical
-`import_extraction` requires `confirm=true` after explicit human review, and
-exports stay public-safe by default. See `docs/mcp-server.md`.
-
-## Local document, retrieval, and memory stack
-
-The case-builder app also exposes optional local-first commands for source
-discovery, document parsing, OCR, evidence retrieval, and workflow memory. The
-TRCR JSONL ledger remains canonical; these commands create parse artifacts,
-candidate reports, local indexes, or workflow memories that can be rebuilt.
-
-Install only the pieces you need:
-
-```bash
-pip install -e '.[web-local]'
-pip install -e '.[documents]'
-pip install -e '.[retrieval]'
-pip install -e '.[memory-local]'
-```
-
-Recommended local services:
-
-- SearXNG for source discovery at `http://localhost:8080`.
-- Qdrant for evidence and memory vectors at `http://localhost:6333`.
-- Ollama or another local LLM provider for Mem0 OSS.
-- Tesseract/Ghostscript system packages for OCRmyPDF.
-
-Useful commands:
-
-```bash
-trcr-case-builder discover-sources data/cases/<case_slug> --query "<case source query>"
-trcr-case-builder parse-source data/cases/<case_slug> <SOURCE_ID>
-trcr-case-builder ocr-source data/cases/<case_slug> <SOURCE_ID>
-trcr-case-builder index-case data/cases/<case_slug>
-trcr-case-builder query-case data/cases/<case_slug> "Which claims lack source spans?"
-trcr-case-builder remember-research-actions data/cases/<case_slug> --provider local
-trcr-case-builder remember-research-actions data/cases/<case_slug> --provider mem0
-```
-
-Workflow memory is operational context only. Do not treat Mem0 or local memory
-rows as evidence; source-backed facts still need `source_ids`, optional
-`source_span_ids`, staged extraction, validation, and public-output review.
-
-## Core case-folder layout
-
-```text
-data/cases/<case_slug>/
-  case.json
-  raw/
-    downloads/      # raw HTML or original downloaded files
-    sources/        # extracted text files
-  records/
-    sources.jsonl
-    entities.jsonl
-    places.jsonl
-    artifacts.jsonl
-    claims.jsonl
-    events.jsonl
-    event_links.jsonl
-    relationships.jsonl
-    quotes.jsonl
-    research_actions.jsonl
-    redactions.jsonl
-  staging/
-    extractions/    # source extraction packets for Codex/LLM review
-    candidates/     # entity suggestions and unresolved items
-  exports/
-    evidence_board.md
-    manim/
-      sources.csv
-      people.csv
-      events.csv
-      event_links.csv
-      relationships.csv
-      claims.csv
-      places.csv
-```
-
-This layout is intentionally ignored in Git. The tracked placeholder is
-`data/cases/.gitkeep`; the safe demonstration fixture lives in `data/examples/synthetic_case/`.
+| Surface | Reference |
+| --- | --- |
+| Case-builder and LangGraph workflow | [docs/case-builder-langgraph.md](docs/case-builder-langgraph.md) |
+| MCP server for Codex, Claude Code, and Claude Desktop | [docs/mcp-server.md](docs/mcp-server.md) |
+| Local parsing, OCR, retrieval, and memory setup | [docs/runbook/install.md](docs/runbook/install.md) |
+| Self-hosted SearXNG, Qdrant, Ollama, OCR, MCP, and app runtime | [docs/runbook/self-hosted-deployment.md](docs/runbook/self-hosted-deployment.md) |
+| Case workspace layout and full source workflow | [docs/runbook/case-workflow.md](docs/runbook/case-workflow.md) |
 
 ## Key conventions
 

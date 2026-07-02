@@ -20,6 +20,37 @@ If that chain is incomplete, keep the point out of public scripts, evidence
 boards, Manim exports, and public bundles except as an explicitly unknown,
 lead-only, or disputed item.
 
+## Case Workspace Layout
+
+Generated case work stays under `data/cases/`, which is ignored by Git except
+for `data/cases/.gitkeep`. Keep reusable fixtures in `data/examples/`.
+
+```text
+data/cases/<case_slug>/
+  case.json
+  raw/
+    downloads/
+    sources/
+  records/
+    sources.jsonl
+    entities.jsonl
+    places.jsonl
+    artifacts.jsonl
+    claims.jsonl
+    events.jsonl
+    event_links.jsonl
+    relationships.jsonl
+    quotes.jsonl
+    research_actions.jsonl
+    redactions.jsonl
+  staging/
+    extractions/
+    candidates/
+  exports/
+    evidence_board.md
+    manim/
+```
+
 ## Example Case
 
 Use a fictional public-source case for practice:
@@ -154,6 +185,21 @@ Import only after review:
 python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction data/cases/harbor_study_circle \
   data/cases/harbor_study_circle/staging/extractions/<SOURCE_ID>_extraction.json
 ```
+
+## Link Names Conservatively
+
+Use `link-names` when you need candidate event and co-mention links for known
+names or aliases:
+
+```bash
+python .agents/skills/truecrime-cult-research/scripts/tcr.py link-names data/cases/<case_slug> \
+  --names-file names.txt \
+  --name "Primary Name|Known Alias"
+```
+
+`link-names` writes conservative, private-by-default co-mention records and a
+research brief under `notes/`. It does not make guilt, membership, motive, or
+participation claims from proximity.
 
 ## Run the Agentic Case Builder
 
