@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "relation_families": [
+    {
+      "key": "treatment_lineage",
+      "terms": [
+        "found",
+        "co_found",
+        "member",
+        "participant",
+        "opened",
+        "completed_treatment",
+        "program"
+      ]
+    },
+    {
+      "key": "legal_criminal_or_family",
+      "terms": [
+        "father",
+        "family",
+        "sentenced",
+        "criminal",
+        "teacher",
+        "headmaster",
+        "hired"
+      ]
+    },
+    {
+      "key": "institutional_inquiry_context",
+      "terms": [
+        "institution",
+        "contract",
+        "inquiry"
+      ]
+    },
+    {
+      "key": "category_bridges",
+      "terms": [
+        "behavior",
+        "authority",
+        "category",
+        "context"
+      ]
+    }
+  ],
+  "relationship_classes": [
+    {
+      "key": "documented_successor",
+      "terms": [
+        "successor",
+        "part_of_program",
+        "component_of",
+        "absorbed_into",
+        "outgrowth",
+        "redesignated",
+        "program_lineage"
+      ]
+    },
+    {
+      "key": "method_diffusion",
+      "terms": [
+        "therapeutic_community_model",
+        "therapeutic_community",
+        "therapeutic-community",
+        "source_model_context",
+        "model_context",
+        "reformulated_program_context",
+        "reported_method",
+        "treatment_context",
+        "treatment-model",
+        "treatment model",
+        "treatment-method",
+        "treatment method",
+        "prior_treatment_context",
+        "method",
+        "behavior_modification",
+        "behavior modification",
+        "authority_conformity",
+        "authority/conformity",
+        "drug_rehabilitation",
+        "drug rehabilitation",
+        "rehabilitation program",
+        "drug rehab category",
+        "category_member_context",
+        "category bridge",
+        "category_bridge",
+        "behavioral context",
+        "peer pressure",
+        "self-help",
+        "residential program",
+        "source_describes_as",
+        "writings_described_as_basis",
+        "origin_context_for"
+      ]
+    },
+    {
+      "key": "narrative_inheritance",
+      "terms": [
+        "narrative",
+        "legend",
+        "appears_in_narrative",
+        "alleged_spin_off"
+      ]
+    },
+    {
+      "key": "contested_overlap",
+      "terms": [
+        "contested",
+        "reported_allegation",
+        "allegation",
+        "unclear",
+        "boundary",
+        "further investigation"
+      ]
+    },
+    {
+      "key": "personnel_bridge",
+      "terms": [
+        "co_founder",
+        "founder",
+        "member",
+        "participant",
+        "researcher",
+        "affiliated",
+        "classmate",
+        "father",
+        "teacher",
+        "headmaster",
+        "sentenced",
+        "worked",
+        "guided",
+        "approved_project"
+      ]
+    }
+  ],
+  "bridge_labels": [],
+  "layer_order": {
+    "person": 1,
+    "institution": 2,
+    "organization": 3,
+    "group": 4,
+    "event_series": 5,
+    "event": 6,
+    "object": 7,
+    "publication": 8,
+    "document": 9,
+    "place_alias": 10,
+    "entity": 11
+  }
+}

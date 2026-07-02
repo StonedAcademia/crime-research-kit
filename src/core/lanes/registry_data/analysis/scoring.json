@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "status_scores": {
+    "verified": 1.0,
+    "corroborated": 0.9,
+    "single_source": 0.65,
+    "disputed": 0.35,
+    "unverified": 0.2,
+    "excluded_from_public_script": 0.1,
+    "false_or_retracted": 0.05
+  },
+  "grade_scores": {
+    "A": 1.0,
+    "B": 0.82,
+    "C": 0.55,
+    "D": 0.25,
+    "X": 0.0
+  }
+}
