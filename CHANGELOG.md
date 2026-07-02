@@ -6,6 +6,38 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-07-02
+
+### Added
+
+- Added the packaged `crk-ledger` console script for canonical ledger operations.
+- Added `adapters.interfaces.cli` with package-module execution through `python -m adapters.interfaces.cli`.
+- Added source-backed case workspace, extraction, intake, name-linking, planning, and validation modules under `src/adapters/ops/casework/records`.
+- Added public-export, preservation, identity, contradiction, dedupe, privacy, readiness, and source-independence operations under `src/adapters/ops/evidence/quality`.
+- Added case output, timeline, case-chart, people-cluster, and extended analysis export modules under `src/adapters/ops/evidence/reports`.
+- Added modular SVG, page, command-context, builder, and output writer components for the extended analysis chart package.
+
+### Changed
+
+- Replaced the legacy `.agents/skills/truecrime-cult-research/scripts/tcr.py` script with the packaged `crk-ledger` CLI.
+- Updated `CrkRunner`, MCP tools, pipeline tests, Moon sample tasks, deployment smoke checks, runbooks, skill docs, and course docs to invoke the packaged ledger CLI.
+- Renamed evidence helper modules from the vague `evidence/shared` package to `evidence/ledger`.
+- Split the former monolithic ledger script into bounded `src` modules with per-directory README ownership notes.
+- Centered the square README artwork and kept the release docs aligned with the packaged CLI surface.
+
+### Security
+
+- Moved URL fetching into `adapters.io.acquisition` so network-capable code stays inside the governed acquisition boundary.
+- Preserved public-output, privacy-redaction, source-independence, contradiction, and narrative-readiness gates as package modules with focused runtime coverage.
+- Added governance coverage that prevents frontends from shelling out to repo-local agent script paths.
+
+### Fixed
+
+- Exempted `README.md` and `__init__.py` under `src` from repository-shape file-count budgets while keeping size checks active.
+- Removed stale `tcr.py` command references outside historical `docs/superpowers` materials.
+- Fixed path-policy drift by replacing the vague `evidence/shared` package name.
+- Updated release packaging expectations for the new `crk-ledger` console script.
+
 ## [0.11.1] - 2026-07-02
 
 ### Changed

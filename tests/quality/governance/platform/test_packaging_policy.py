@@ -109,7 +109,7 @@ def test_packaging_smoke_imports_current_package_modules():
 
 def test_license_policy_allows_agpl_project_and_copyleft_dependencies(tmp_path):
     records = [
-        {"Name": "crime-research-kit", "Version": "0.11.1", "License": "AGPL-3.0-only"},
+        {"Name": "crime-research-kit", "Version": "0.12.0", "License": "AGPL-3.0-only"},
         {"Name": "chardet", "Version": "5.2.0", "License": "GNU Lesser General Public License v2 or later"},
         {"Name": "tld", "Version": "0.13.2", "License": "MPL-1.1 OR GPL-2.0-only OR LGPL-2.1-or-later"},
         {"Name": "setuptools", "Version": "79.0.1", "License": "UNKNOWN"},
