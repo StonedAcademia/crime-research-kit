@@ -1,0 +1,21 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: moonrepo/setup-toolchain@v0
+      - run: make install-governance
+      - run: make test
+      - run: make build-dist
+      - run: make sbom
+      - run: make audit-secrets audit-deps
