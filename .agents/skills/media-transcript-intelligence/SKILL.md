@@ -5,6 +5,11 @@ description: Public-source workflow for analyzing interviews, videos, audio, pod
 
 # Media Transcript Intelligence
 
+## Operation vocabulary
+
+Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `media-transcript` for this lane; CLI fallback: `tcr.py draft-extraction ... --template media-transcript`.
+
+
 ## Purpose
 
 Use this skill to turn public media and transcripts into source-traceable TRCR packets. A transcript supports what a speaker said; it does not prove the statement is true without corroborating records.

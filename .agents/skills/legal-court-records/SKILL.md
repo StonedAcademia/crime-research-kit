@@ -5,6 +5,11 @@ description: Public-record workflow for researching court cases, dockets, filing
 
 # Legal Court Records
 
+## Operation vocabulary
+
+Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `legal-court` for this lane; CLI fallback: `tcr.py draft-extraction ... --template legal-court`.
+
+
 ## Purpose
 
 Use this skill to build a public, source-traceable legal record packet for a TRCR case. Treat court records as evidence for what the record says and when it said it; do not convert allegations into findings or procedural posture into guilt, liability, motive, or credibility.

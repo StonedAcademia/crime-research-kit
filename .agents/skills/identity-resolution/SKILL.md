@@ -5,6 +5,11 @@ description: Public-record workflow for reviewing aliases, duplicate entities, a
 
 # Identity Resolution
 
+## Operation vocabulary
+
+Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `identity-resolution` for this lane; CLI fallback: `tcr.py draft-extraction ... --template identity-resolution`.
+
+
 ## Purpose
 
 Use this skill to review whether multiple TRCR entity records, names, aliases, or public-record references may describe the same person or organization. The output is a source-backed review packet, not an automatic merge.

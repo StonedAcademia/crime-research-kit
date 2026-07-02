@@ -5,6 +5,11 @@ description: Public-record workflow for researching an individual's education hi
 
 # Educational Path Records
 
+## Operation vocabulary
+
+Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `education` for this lane; CLI fallback: `tcr.py draft-extraction ... --template education`.
+
+
 ## Purpose
 
 Use this skill to build a public, source-traceable educational path packet for an individual in a TRCR case. Capture what sources directly state about education, training, degrees, credentials, institutions, academic roles, and student-era events. Do not infer ideology, affiliation, misconduct, class rank, attendance, or degree completion from proximity or vague biographical wording.

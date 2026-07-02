@@ -5,6 +5,11 @@ description: Public-record source-planning workflow for routing a TRCR case subj
 
 # Public Records Router
 
+## Operation vocabulary
+
+Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `public-records-router` for this lane; CLI fallback: `tcr.py draft-extraction ... --template public-records-router`.
+
+
 ## Purpose
 
 Use this skill to turn a subject or research question into a public-record source plan. The router creates leads and lane choices, not evidence. Evidence starts only after sources are registered, preserved, extracted, and imported into the TRCR ledger.

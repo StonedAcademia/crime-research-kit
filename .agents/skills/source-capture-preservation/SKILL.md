@@ -5,6 +5,11 @@ description: Public-source preservation workflow for TRCR cases. Capture or regi
 
 # Source Capture Preservation
 
+## Operation vocabulary
+
+Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `source-capture` for this lane; CLI fallback: `tcr.py draft-extraction ... --template source-capture`.
+
+
 ## Purpose
 
 Use this skill to make source records reproducible and auditable before extracting facts. Preservation metadata supports the evidence chain; it does not make a source substantively reliable by itself.

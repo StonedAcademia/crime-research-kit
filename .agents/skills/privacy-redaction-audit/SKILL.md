@@ -5,6 +5,11 @@ description: Privacy and redaction workflow for TRCR cases. Use when Codex needs
 
 # Privacy Redaction Audit
 
+## Operation vocabulary
+
+Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `privacy-redaction` for this lane; CLI fallback: `tcr.py draft-extraction ... --template privacy-redaction`.
+
+
 ## Purpose
 
 Use this skill before any public export, script, report, video, bundle, or shared case review. It identifies privacy and redaction blockers; it does not make sensitive content safe by itself.

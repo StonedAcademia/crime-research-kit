@@ -40,6 +40,24 @@ and notes back into the same case. Do not infer misconduct, membership,
 influence, or hidden control from proximity, co-attendance, shared boards, or
 financial structure.
 
+## Tool access
+
+Prefer MCP tools when `trcr-mcp` is registered:
+
+| Workflow need | MCP operation | CLI fallback |
+| --- | --- | --- |
+| List/open cases | `list_cases`, `case_info` | inspect `data/cases/<case>/case.json` only when tooling is unavailable |
+| Read records/source text | `get_records`, `get_source_text` | use `trcr-case-builder query-case` or the source files through repo tooling |
+| Register sources | `ingest_url`, `add_source` | `tcr.py ingest-url`, `tcr.py add-source` |
+| Draft packets | `draft_extraction` | `tcr.py draft-extraction --template <template>` |
+| Save staged packets | `save_extraction_packet` | write reviewed JSON under `staging/extractions/` through repo tooling |
+| Import canonical records | `import_extraction(confirm=true)` after explicit user approval | `tcr.py import-extraction` after explicit user approval |
+| Public exports | `export_manim`, `export_case_charts`, `export_analysis_charts` | matching `tcr.py export-*` commands |
+
+Lane and template names come from `docs/lanes.json`; generated reference tables
+live in `references/lane_registry.md` and
+`public-records-router/references/routing_matrix.md`.
+
 ## Non-negotiable safety and ethics rules
 
 1. Use only public-interest and publicly available sources unless the user provides lawful private material they have permission to analyze.
@@ -122,14 +140,9 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc
 
 Then read the source text and fill the staged JSON packet. Extract only what the source directly supports. Use `references/controlled_vocabularies.md` and add `source_spans` locators when a claim, quote, event, relationship, or event link needs page/paragraph/timestamp support.
 
-Use `--template legal-court`, `--template identity-resolution`,
-`--template source-capture`, `--template claim-contradiction`,
-`--template public-records-router`, `--template licensing-professional`,
-`--template media-transcript`, `--template property-location`,
-`--template missing-persons`, `--template geographical-location`,
-`--template foia-open-records`, `--template narrative-readiness`,
-`--template privacy-redaction`, or `--template source-independence` when
-the source is primarily in one of those adjacent lanes.
+Use operation `draft_extraction` with the lane-specific template from
+`docs/lanes.json` when the source is primarily in one of those adjacent lanes.
+CLI fallback: `tcr.py draft-extraction ... --template <template>`.
 
 ### 5. Extract structured records
 

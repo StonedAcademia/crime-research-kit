@@ -5,6 +5,11 @@ description: Public-record workflow for researching property, parcel, deed, perm
 
 # Property Location Records
 
+## Operation vocabulary
+
+Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `property-location` for this lane; CLI fallback: `tcr.py draft-extraction ... --template property-location`.
+
+
 ## Purpose
 
 Use this skill to build public, source-traceable property and location packets for a TRCR case. Property records are often public but still privacy-sensitive; do not publish private home addresses, precise locations of private people, or minor-related locations unless central to a widely reported public record and clearly justified.
