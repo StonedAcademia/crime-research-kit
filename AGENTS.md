@@ -31,6 +31,16 @@ Optional when dev dependencies are installed:
 pytest
 ```
 
+## Versioning and changelog
+
+- Keep the project pre-1.0 until the public API and operator contract are intentionally declared stable.
+- Use SemVer with pre-1.0 release bands: patch bumps for compatible fixes after an existing tag, minor bumps for new feature bands or public contract changes, and `1.0.0` only for the first stable public release.
+- Before preparing a release, inspect git history since the last tag. If there is no prior tag, treat the accumulated history as one consolidated pre-1.0 release and choose a release-band version from the commit history.
+- Update `pyproject.toml` and `CHANGELOG.md` together. The changelog must have `## [Unreleased]` and a dated `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD` section with real `Added`, `Changed`, `Security`, and `Fixed` coverage when those categories apply.
+- Do not invent patch versions for untagged historical fixes. Record those fixes in the current release section; use patch versions only after a real release tag exists.
+- Release tags are annotated `vMAJOR.MINOR.PATCH` tags. Do not push release tags unless the user explicitly asks.
+- After version or changelog changes, run the release-readiness governance tests and `make release-check` against the intended local tag.
+
 ## Directory routing
 
 - Skill instructions live in `.agents/skills/truecrime-cult-research/SKILL.md`.

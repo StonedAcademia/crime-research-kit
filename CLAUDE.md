@@ -36,6 +36,30 @@ cr-kit <plan|parse-source|ocr-source|index-case|query-case|discover-sources|...>
 
 Self-hosted container stack (SearXNG, Qdrant, Ollama, MCP, …): `make docker-build`, `make docker-up`, `make docker-pull-model`, `make docker-smoke`. See `deployment/README.md`.
 
+## Versioning and changelog workflow
+
+CRK is still pre-1.0. Use SemVer, but treat minor versions as release bands until the public API and operator contract are intentionally stabilized. Patch bumps are only for compatible fixes after a real tag exists; do not invent patch history for untagged fixes.
+
+For release prep:
+
+```bash
+git log --oneline --reverse <last_tag>..HEAD   # or all history if no tags exist
+git tag --list 'v<version>'
+git ls-remote --tags origin 'v<version>'
+```
+
+Update `pyproject.toml` and `CHANGELOG.md` together. Keep `## [Unreleased]`, add a dated `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD` section, and summarize real user/operator-facing changes under Keep a Changelog categories such as `Added`, `Changed`, `Security`, and `Fixed`. Avoid placeholder release notes.
+
+Validate and tag locally:
+
+```bash
+.venv/bin/python -m pytest tests/governance/test_release_readiness.py -q
+git tag -a v<version> -m "CRK v<version>"
+make release-check
+```
+
+Release tags are annotated `vMAJOR.MINOR.PATCH` tags. Do not push release tags unless explicitly asked.
+
 ## Architecture
 
 **The JSONL ledger is canonical.** Everything else — retrieval indexes, memory, parse artifacts, exports — is rebuildable. A case lives at `data/cases/<case_slug>/` with append-oriented records in `records/*.jsonl` (one schema per record type in `docs/schemas/`), staged LLM extraction packets in `staging/extractions/`, and generated output in `exports/`. `data/cases/` and `data/exports/` are gitignored working areas; the reusable fixture is `data/examples/synthetic_case/`.
