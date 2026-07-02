@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 from tests.helpers import KIT_ROOT
@@ -25,6 +26,22 @@ SCHEMA_BY_RECORD = {
 REQUIRED_BY_RECORD = {
     name: set(json.loads((KIT_ROOT / "docs" / "schemas" / schema).read_text()).get("required", []))
     for name, schema in SCHEMA_BY_RECORD.items()
+}
+CASE_SPECIFIC_TERMS = (
+    "promis",
+    "inslaw",
+    "jonestown",
+    "narconon",
+    "finders",
+    "monarch",
+    "montauk",
+    "milab",
+    "hubbard",
+    "synanon",
+)
+CASE_TERM_PATTERNS = {
+    term: re.compile(rf"(?<![a-z]){re.escape(term)}(?![a-z])", re.IGNORECASE)
+    for term in CASE_SPECIFIC_TERMS
 }
 
 
@@ -105,3 +122,15 @@ def test_automation_comentions_are_private_and_unverified():
         if row.get("status") != "unverified" or row.get("public_export") is not False:
             errors.append(f"{path.relative_to(KIT_ROOT)}:{lineno} automation co-mention must be unverified and private")
     assert not errors, errors
+
+
+def test_src_and_default_analysis_registry_carry_no_case_specific_vocabulary():
+    violations = []
+    scan_paths = [*sorted((KIT_ROOT / "src").rglob("*.py"))]
+    scan_paths.extend(sorted((KIT_ROOT / "docs" / "registry" / "analysis").glob("*.json")))
+    for path in scan_paths:
+        text = path.read_text(encoding="utf-8")
+        for term, pattern in CASE_TERM_PATTERNS.items():
+            if pattern.search(text):
+                violations.append(f"{path.relative_to(KIT_ROOT)}: {term}")
+    assert violations == [], f"Case-specific vocabulary belongs in per-case override packs: {violations}"

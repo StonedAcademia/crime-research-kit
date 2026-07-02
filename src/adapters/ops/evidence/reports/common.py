@@ -8,18 +8,18 @@ from pathlib import Path
 from typing import Any
 
 SUBCASE_TITLES = {
-    "aa_synanon_daytop": "Recovery movement / therapeutic community lineage",
-    "parsons_hubbard_crowley": "Parsons / Hubbard / Crowley / O.T.O.",
+    "recovery_daytop": "Recovery movement / therapeutic community lineage",
+    "parsons_crowley_oto": "Parsons / Crowley / O.T.O.",
     "elan_tti": "Troubled Teen Industry / Elan School",
     "mkultra_cia": "MKULTRA industry / intelligence behavioral research",
     "psi_remote_viewing_gateway": "Psi / remote-viewing / Gateway intelligence lane",
     "pandora_bizarre_ti": "PANDORA / BIZARRE / targeted-individual allegation lane",
-    "monarch_montauk_narratives": "Monarch / Montauk / Phoenix narrative lane",
-    "milab_military_abductions": "Military abduction / super-soldier narrative lane",
-    "finders_jonestown_abuse_allegations": "Finders / Jonestown abuse-interference allegation lane",
-    "promis_corporate_intelligence": "PROMIS / corporate-intelligence vector lane",
+    "phoenix_narratives": "Phoenix narrative lane",
+    "military_abductions": "Military abduction / super-soldier narrative lane",
+    "abuse_interference_allegations": "Abuse-interference allegation lane",
+    "software_corporate_intelligence": "Software / corporate-intelligence vector lane",
     "maxwell_barr_epstein": "Epstein industry / Maxwell / Barr / Dalton lane",
-    "scientology": "Scientology / Hubbard institutional lane",
+    "scientology": "Scientology institutional lane",
     "general": "General / unassigned",
 }
 
@@ -62,29 +62,29 @@ def infer_subcase(event: dict[str, Any], claims: list[dict[str, Any]]) -> str:
         return re.search(pattern, text) is not None
 
     if any(has(pattern) for pattern in [r"\bbabalon\b", r"\bparsons\b", r"\bcrowley\b", r"\bo\.t\.o\b", r"\boto\b", r"\bagape lodge\b"]):
-        return "parsons_hubbard_crowley"
+        return "parsons_crowley_oto"
     if any(has(pattern) for pattern in [r"\belan\b", r"\btroubled teen\b", r"\bresidential treatment\b", r"\binstitutional child abuse\b", r"\bgao\b", r"\bsica\b"]):
         return "elan_tti"
-    if any(has(pattern) for pattern in [r"\bpromis\b", r"\binslaw\b", r"\bcasolaro\b", r"\bpergamon\b", r"\bmaxwell.*promis\b"]):
-        return "promis_corporate_intelligence"
+    if any(has(pattern) for pattern in [r"\bcasolaro\b", r"\bpergamon\b"]):
+        return "software_corporate_intelligence"
     if any(has(pattern) for pattern in [r"\bscanate\b", r"\bgondola wish\b", r"\bgrill flame\b", r"\bcenter lane\b", r"\bsun streak\b", r"\bstar gate\b", r"\bstargate\b", r"\bgateway process\b", r"\bmonroe institute\b", r"\bremote viewing\b"]):
         return "psi_remote_viewing_gateway"
     if any(has(pattern) for pattern in [r"\bpandora\b", r"\bbizarre\b", r"\bmoscow signal\b", r"\bsynthetic telepathy\b", r"\bvoice[- ]?to[- ]?skull\b", r"\btargeted individual\b", r"\bgangstalking\b", r"\bdirected energy\b"]):
         return "pandora_bizarre_ti"
-    if any(has(pattern) for pattern in [r"\bproject monarch\b", r"\bmonarch programming\b", r"\bmontauk\b", r"\bphoenix project\b", r"\bcamp hero\b", r"\btrauma[- ]based mind control\b"]):
-        return "monarch_montauk_narratives"
-    if any(has(pattern) for pattern in [r"\bmilab\b", r"\bmilitary abduction\b", r"\bsuper[- ]?soldier\b", r"\bsecret space\b"]):
-        return "milab_military_abductions"
-    if any(has(pattern) for pattern in [r"\bthe finders\b", r"\bfinders\b", r"\bjonestown\b", r"\bpeoples temple\b"]):
-        return "finders_jonestown_abuse_allegations"
+    if any(has(pattern) for pattern in [r"\bphoenix project\b", r"\bcamp hero\b", r"\btrauma[- ]based mind control\b"]):
+        return "phoenix_narratives"
+    if any(has(pattern) for pattern in [r"\bmilitary abduction\b", r"\bsuper[- ]?soldier\b", r"\bsecret space\b"]):
+        return "military_abductions"
+    if any(has(pattern) for pattern in [r"\bpeoples temple\b"]):
+        return "abuse_interference_allegations"
     if any(has(pattern) for pattern in [r"\bmkultra\b", r"\bmk-ultra\b", r"\bmksearch\b", r"\bmkoften\b", r"\bmkchickwit\b", r"\bmknaomi\b", r"\bmkdelta\b", r"\bqkhilltop\b", r"\bhuman ecology\b", r"\ballan memorial\b", r"\bewen cameron\b", r"\bpsychic driving\b", r"\bdepatterning\b", r"\bsubproject 68\b", r"\bcia\b", r"\bdulles\b"]):
         return "mkultra_cia"
     if any(has(pattern) for pattern in [r"\bepstein\b", r"\bghislaine\b", r"\brobert maxwell\b", r"\bdonald barr\b", r"\bdalton\b", r"\bpergamon\b"]):
         return "maxwell_barr_epstein"
     if any(has(pattern) for pattern in [r"\bscientology\b", r"\bdianetics\b"]):
         return "scientology"
-    if any(has(pattern) for pattern in [r"\balcoholics anonymous\b", r"\ba\.a\.", r"\baa\b", r"\bsynanon\b", r"\bdaytop\b", r"\bday top\b", r"\btherapeutic communit"]):
-        return "aa_synanon_daytop"
+    if any(has(pattern) for pattern in [r"\balcoholics anonymous\b", r"\ba\.a\.", r"\baa\b", r"\bdaytop\b", r"\bday top\b", r"\btherapeutic communit"]):
+        return "recovery_daytop"
     return "general"
 
 
