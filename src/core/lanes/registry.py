@@ -5,10 +5,14 @@ from __future__ import annotations
 import copy
 import json
 from importlib.resources import files
-from importlib.resources.abc import Traversable
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Sequence
+
+try:
+    from importlib.resources.abc import Traversable
+except ImportError:  # Python 3.10 exposes Traversable from importlib.abc.
+    from importlib.abc import Traversable
 
 
 def default_lanes_path(repo_root: Path | None = None) -> Path | Traversable:
