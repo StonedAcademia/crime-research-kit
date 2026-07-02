@@ -1,7 +1,7 @@
 MOON ?= moon
 PROJECT ?= trcr
 
-.PHONY: check-os install install-minimum install-dev install-linux install-windows \
+.PHONY: check-os install install-minimum install-dev install-governance install-linux install-windows \
 	docker-build docker-up docker-down docker-logs docker-shell docker-pull-model \
 	docker-smoke docker-config check test test-unit test-integration test-e2e \
 	test-governance test-smoke audit-secrets audit-deps audit-licenses audit-links \
@@ -17,6 +17,9 @@ install-minimum:
 
 install-dev:
 	$(MOON) run $(PROJECT):install-dev
+
+install-governance:
+	$(MOON) run $(PROJECT):install-governance
 
 install-linux: install-minimum
 

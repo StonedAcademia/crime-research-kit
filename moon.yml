@@ -23,6 +23,14 @@ tasks:
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
+  install-governance:
+    description: "Create .venv and install dev plus governance audit dependencies."
+    command: "proto"
+    args: ["run", "python", "--", "deployment/scripts/tools/install.py", "--dev", "--extras", "governance"]
+    inputs: ["pyproject.toml", "deployment/scripts/tools/install.py"]
+    options: { cache: false, outputStyle: stream }
+    toolchains: system
+
   check:
     description: "Compile Python sources and validate the synthetic fixture."
     command: "proto"

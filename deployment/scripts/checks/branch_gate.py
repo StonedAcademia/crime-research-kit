@@ -6,6 +6,7 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
+import argparse
 from pathlib import Path
 
 
@@ -17,6 +18,12 @@ BRANCH_TARGETS: dict[str, list[str]] = {
     "canary": ["trcr:check", "trcr:test-governance", "trcr:test-smoke", "trcr:audit-secrets"],
     "main": ["trcr:check", "trcr:test", "trcr:audit-secrets"],
 }
+PREFIX_TARGETS: tuple[tuple[tuple[str, ...], list[str]], ...] = (
+    (("docs/",), ["trcr:check", "trcr:test-governance"]),
+    (("gov/", "test/", "chore/"), ["trcr:check", "trcr:test-governance", "trcr:test-smoke"]),
+    (("feat/", "fix/", "ci/"), ["trcr:check", "trcr:test-governance", "trcr:test-smoke", "trcr:test-integration"]),
+)
+UNKNOWN_TARGETS = ["trcr:check", "trcr:test"]
 
 
 def run(command: list[str]) -> str:
@@ -60,13 +67,23 @@ def targets_for(branches: list[str]) -> list[str]:
     targets: list[str] = []
     for branch in branches:
         normalized = branch.lower()
-        for target in BRANCH_TARGETS.get(normalized, []):
+        branch_targets = BRANCH_TARGETS.get(normalized)
+        if branch_targets is None:
+            branch_targets = next(
+                (prefix_targets for prefixes, prefix_targets in PREFIX_TARGETS if normalized.startswith(prefixes)),
+                UNKNOWN_TARGETS,
+            )
+        for target in branch_targets:
             if target not in targets:
                 targets.append(target)
     return targets
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--dry-run", action="store_true", help="Print resolved targets without running moon.")
+    args = parser.parse_args()
+
     stdin = sys.stdin.read()
     branches = branches_from_pre_push(stdin)
     if not branches:
@@ -80,6 +97,8 @@ def main() -> int:
         return 0
 
     print(f"Running moon branch gate for {', '.join(branches)}: {', '.join(targets)}", flush=True)
+    if args.dry_run:
+        return 0
     return subprocess.run(["moon", "run", *targets], cwd=ROOT).returncode
 
 
