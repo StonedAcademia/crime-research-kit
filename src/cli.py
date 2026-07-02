@@ -113,6 +113,15 @@ def unwrap(result: OpResult) -> dict[str, object]:
     return result.data
 
 
+def _env_override(settings: CrkSettings, field: str) -> object | None:
+    """Return the settings value only if the environment explicitly set it.
+
+    Used at resume time so unset fields don't clobber checkpointed values with
+    ``CrkSettings`` defaults (see resume_case_builder's no-clobber guard).
+    """
+    return getattr(settings, field) if field in settings.model_fields_set else None
+
+
 def run_plan_command(args: argparse.Namespace) -> dict[str, object]:
     state = CaseBuilderState(
         case_dir=args.case_dir,
@@ -147,8 +156,8 @@ def run_resume_command(args: argparse.Namespace) -> dict[str, object]:
         execute=args.execute,
         llm=args.llm,
         model_spec=args.settings.model_spec if args.llm else None,
-        qdrant_url=args.settings.qdrant_url,
-        embed_model=args.settings.embed_model,
+        qdrant_url=_env_override(args.settings, "qdrant_url"),
+        embed_model=_env_override(args.settings, "embed_model"),
     )
 
 

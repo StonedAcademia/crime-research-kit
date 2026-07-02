@@ -5,6 +5,7 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
+from cli import _env_override
 from core.config import (
     DEFAULT_MODEL_SPEC,
     DEFAULT_QDRANT_PORT,
@@ -49,3 +50,15 @@ def test_settings_stay_at_process_boundaries():
     ).stdout.splitlines()
     allowed = {str(SRC / "core" / "config.py")}
     assert set(hits) <= allowed, f"Settings() constructed deep in core: {hits}"
+
+
+def test_env_override_returns_value_when_env_set(monkeypatch):
+    monkeypatch.setenv("CRK_QDRANT_URL", "http://custom-qdrant:6333")
+    settings = CrkSettings()
+    assert _env_override(settings, "qdrant_url") == "http://custom-qdrant:6333"
+
+
+def test_env_override_returns_none_when_env_unset(monkeypatch):
+    monkeypatch.delenv("CRK_QDRANT_URL", raising=False)
+    settings = CrkSettings()
+    assert _env_override(settings, "qdrant_url") is None
