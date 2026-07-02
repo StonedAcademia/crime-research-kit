@@ -2,6 +2,7 @@
 .worktrees/
 .moon/cache/
 deployment/tooling/bin/
+dist/
 __pycache__/
 *.pyc
 .DS_Store

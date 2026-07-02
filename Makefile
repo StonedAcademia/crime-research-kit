@@ -4,7 +4,8 @@ PROJECT ?= trcr
 .PHONY: check-os install install-minimum install-dev install-linux install-windows \
 	docker-build docker-up docker-down docker-logs docker-shell docker-pull-model \
 	docker-smoke docker-config check test test-unit test-integration test-e2e \
-	test-governance test-smoke init-sample validate-sample export-sample
+	test-governance test-smoke audit-secrets audit-deps audit-licenses audit-links \
+	sbom build-dist init-sample validate-sample export-sample
 
 check-os:
 	@echo "moon/proto handle cross-platform task routing for this repository."
@@ -65,6 +66,24 @@ test-governance:
 
 test-smoke:
 	$(MOON) run $(PROJECT):test-smoke
+
+audit-secrets:
+	$(MOON) run $(PROJECT):audit-secrets
+
+audit-deps:
+	$(MOON) run $(PROJECT):audit-deps
+
+audit-licenses:
+	$(MOON) run $(PROJECT):audit-licenses
+
+audit-links:
+	$(MOON) run $(PROJECT):audit-links
+
+sbom:
+	$(MOON) run $(PROJECT):sbom
+
+build-dist:
+	$(MOON) run $(PROJECT):build-dist
 
 init-sample:
 	$(MOON) run $(PROJECT):init-sample

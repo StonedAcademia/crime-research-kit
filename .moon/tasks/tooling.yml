@@ -1,0 +1,57 @@
+tasks:
+  fetch-governance-tools:
+    description: "Fetch pinned external governance binaries."
+    command: "proto"
+    args: ["run", "python", "--", "deployment/scripts/tools/fetch_governance_tools.py"]
+    inputs: ["deployment/tooling/manifest.json", "deployment/scripts/tools/fetch_governance_tools.py"]
+    options: { cache: false, outputStyle: stream }
+    preset: utility
+    toolchains: system
+
+  audit-secrets:
+    description: "Run gitleaks against tracked and fixture content."
+    command: "proto"
+    args: ["run", "python", "--", "deployment/scripts/tools/fetch_governance_tools.py", "run", "gitleaks", "detect", "--source", ".", "--config", ".gitleaks.toml", "--no-git", "--redact"]
+    inputs: ["@group(python)", "@group(deployment)", "deployment/tooling/manifest.json", ".gitleaks.toml"]
+    options: { cache: false, outputStyle: stream }
+    toolchains: system
+
+  audit-deps:
+    description: "Run pip-audit with offline degradation."
+    command: "proto"
+    args: ["run", "python", "--", "deployment/scripts/tools/fetch_governance_tools.py", "audit-deps"]
+    inputs: ["pyproject.toml", "deployment/scripts/tools/fetch_governance_tools.py"]
+    options: { cache: false, outputStyle: stream }
+    toolchains: system
+
+  audit-licenses:
+    description: "List installed licenses for the governance policy lane."
+    command: "proto"
+    args: ["run", "python", "--", "deployment/scripts/tools/fetch_governance_tools.py", "audit-licenses"]
+    inputs: ["pyproject.toml", "deployment/scripts/tools/fetch_governance_tools.py"]
+    options: { cache: false, outputStyle: stream }
+    toolchains: system
+
+  audit-links:
+    description: "Run lychee external link checks."
+    command: "proto"
+    args: ["run", "python", "--", "deployment/scripts/tools/fetch_governance_tools.py", "run", "lychee", "--no-progress", "--exclude-mail", "README.md", "docs"]
+    inputs: ["@group(docs)", "deployment/tooling/manifest.json", "deployment/scripts/tools/fetch_governance_tools.py"]
+    options: { cache: false, outputStyle: stream }
+    toolchains: system
+
+  sbom:
+    description: "Emit a CycloneDX SBOM for the installed environment."
+    command: "proto"
+    args: ["run", "python", "--", "deployment/scripts/tools/fetch_governance_tools.py", "sbom"]
+    inputs: ["pyproject.toml", "deployment/scripts/tools/fetch_governance_tools.py"]
+    options: { cache: false, outputStyle: stream }
+    toolchains: system
+
+  build-dist:
+    description: "Build sdist and wheel artifacts."
+    command: "proto"
+    args: ["run", "python", "--", "deployment/scripts/tools/fetch_governance_tools.py", "build-dist"]
+    inputs: ["@group(python)", "pyproject.toml"]
+    options: { cache: false, outputStyle: stream }
+    toolchains: system
