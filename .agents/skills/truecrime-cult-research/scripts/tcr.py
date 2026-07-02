@@ -122,22 +122,7 @@ from adapters.ops.evidence.quality.safety.readiness import (  # noqa: E402
     review_narrative_readiness,
 )
 from adapters.ops.evidence.quality.safety.source_independence import source_independence  # noqa: E402
-from adapters.ops.evidence.reports.analysis.command.builders.bridges import build_cluster_bridges  # noqa: E402
-from adapters.ops.evidence.reports.analysis.command.builders.evidence import build_evidence_products  # noqa: E402
-from adapters.ops.evidence.reports.analysis.command.builders.facets.boundary import (  # noqa: E402
-    build_boundary_rows,
-    build_readiness_products,
-)
-from adapters.ops.evidence.reports.analysis.command.builders.facets.people import (  # noqa: E402
-    build_fragility,
-    build_person_source_products,
-)
-from adapters.ops.evidence.reports.analysis.command.builders.facets.relationships import build_relation_type_counts  # noqa: E402
-from adapters.ops.evidence.reports.analysis.command.builders.facets.timelines import build_swimlanes  # noqa: E402
-from adapters.ops.evidence.reports.analysis.command.builders.layered import build_layered_graphs  # noqa: E402
-from adapters.ops.evidence.reports.analysis.command.builders.paths import build_path_atlas  # noqa: E402
-from adapters.ops.evidence.reports.analysis.command.context import load_analysis_context  # noqa: E402
-from adapters.ops.evidence.reports.analysis.command.output import write_analysis_outputs  # noqa: E402
+from adapters.ops.evidence.reports.analysis.command.entry import export_analysis_charts  # noqa: E402
 from adapters.ops.evidence.reports.analysis.classifiers import (  # noqa: E402
     GRADE_SCORE,
     STATUS_SCORE,
@@ -179,102 +164,6 @@ from adapters.ops.evidence.reports.weights import (  # noqa: E402
     evidence_edge_weight,
     parse_float,
 )
-
-def export_analysis_charts(args: argparse.Namespace) -> None:
-    ctx = load_analysis_context(args)
-    cdir = ctx.cdir
-    include_private = ctx.include_private
-    out = ctx.out
-    case_title = ctx.case_title
-    sources = ctx.sources
-    entities = ctx.entities
-    claims = ctx.claims
-    events = ctx.events
-    event_links = ctx.event_links
-    relationships = ctx.relationships
-    source_by_id = ctx.source_by_id
-    claim_by_id = ctx.claim_by_id
-    entity_by_id = ctx.entity_by_id
-    people = ctx.people
-    people_by_id = ctx.people_by_id
-    cluster_by_person = ctx.cluster_by_person
-    cluster_summary = ctx.cluster_summary
-    cluster_labels = ctx.cluster_labels
-    audit_bridges = ctx.audit_bridges
-    graph = ctx.graph
-    graph_meta = ctx.graph_meta
-    cluster_members = ctx.cluster_members
-    cluster_ids = ctx.cluster_ids
-    bridge_products = build_cluster_bridges(ctx)
-    sankey_nodes = bridge_products["sankey_nodes"]
-    cluster_bridge_rows = bridge_products["cluster_bridge_rows"]
-    cluster_bridge_links = bridge_products["cluster_bridge_links"]
-    bridge_segment_rows = bridge_products["bridge_segment_rows"]
-    edge_load = bridge_products["edge_load"]
-    path_products = build_path_atlas(ctx)
-    path_atlas = path_products["path_atlas"]
-    path_segments = path_products["path_segments"]
-
-    layered_products = build_layered_graphs(ctx)
-    layered_nodes = layered_products["layered_nodes"]
-    layered_edges = layered_products["layered_edges"]
-    layered_v2_nodes = layered_products["layered_v2_nodes"]
-    layered_v2_edges = layered_products["layered_v2_edges"]
-    layered_v2_layers = layered_products["layered_v2_layers"]
-
-    evidence_products = build_evidence_products(ctx)
-    claim_heatmap = evidence_products["claim_heatmap"]
-    claim_matrix = evidence_products["claim_matrix"]
-    claim_edge_rows = evidence_products["claim_edge_rows"]
-    heatmap_aggregate = evidence_products["heatmap_aggregate"]
-    source_dashboard = evidence_products["source_dashboard"]
-    source_grade_count_rows = evidence_products["source_grade_count_rows"]
-
-    boundary_rows = build_boundary_rows(ctx)
-
-    swimlanes = build_swimlanes(ctx)
-
-    relation_type_counts = build_relation_type_counts(ctx)
-
-    person_products = build_person_source_products(ctx)
-    person_source = person_products["person_source"]
-    person_source_nodes = person_products["person_source_nodes"]
-
-    readiness_products = build_readiness_products(ctx)
-    readiness_rows = readiness_products["readiness_rows"]
-    readiness_counts = readiness_products["readiness_counts"]
-
-    fragility = build_fragility(edge_load)
-
-    products = {
-        "sankey_nodes": sankey_nodes,
-        "cluster_bridge_links": cluster_bridge_links,
-        "cluster_bridge_rows": cluster_bridge_rows,
-        "bridge_segment_rows": bridge_segment_rows,
-        "layered_nodes": layered_nodes,
-        "layered_edges": layered_edges,
-        "layered_v2_nodes": layered_v2_nodes,
-        "layered_v2_edges": layered_v2_edges,
-        "layered_v2_layers": layered_v2_layers,
-        "claim_heatmap": claim_heatmap,
-        "heatmap_aggregate": heatmap_aggregate,
-        "fragility": fragility,
-        "claim_matrix": claim_matrix,
-        "claim_edge_rows": claim_edge_rows,
-        "source_grade_count_rows": source_grade_count_rows,
-        "source_dashboard": source_dashboard,
-        "path_atlas": path_atlas,
-        "path_segments": path_segments,
-        "boundary_rows": boundary_rows,
-        "swimlanes": swimlanes,
-        "relation_type_counts": relation_type_counts,
-        "person_source": person_source,
-        "person_source_nodes": person_source_nodes,
-        "readiness_rows": readiness_rows,
-        "readiness_counts": readiness_counts,
-    }
-    write_analysis_outputs(ctx, products)
-
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="True Crime / Cult-Origin Research CLI")
