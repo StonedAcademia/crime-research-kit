@@ -12,6 +12,7 @@ ops core. The public API is `CaseBuilderState`, `new_run_id`, and
 | `agents/` | Deterministic routing policy such as source-lane inference. |
 | `app/` | Service boundary and runner selection. |
 | `graph/` | LangGraph state, nodes, graph builder, and sequential fallback. |
+| `lanes/` | Canonical lane/template registry loader over `docs/lanes.json`. |
 | `models/` | Serializable state models shared by CLI, graph, and tests. |
 | `ops/` | Typed operations core: `OpResult`, `TrcrRunner`, safety `policy`, and per-domain op modules. Frontends call ops instead of `tcr.py` or the ledger. |
 | `acquisition/` | Local source discovery helpers. |
