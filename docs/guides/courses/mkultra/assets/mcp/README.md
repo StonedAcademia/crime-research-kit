@@ -4,7 +4,7 @@ Planned files:
 
 | File Name | Required State |
 | --- | --- |
-| `mcp-01-register-crk.png` | `claude mcp add crk -- "$PWD/.venv/bin/crk-mcp"` or equivalent host config. |
+| `mcp-01-register-crk.png` | `claude mcp add crk -- uv run --directory "$PWD" ... -- crk-mcp` or equivalent host config. |
 | `mcp-02-list-tools.png` | MCP host showing CRK tools such as `case_info`, `get_source_text`, and `draft_extraction`. |
 | `mcp-03-case-info.png` | `case_info` result for `mkultra_course`. |
 | `mcp-04-get-source-text.png` | `get_source_text` for `S_SENATE_MKULTRA_1977` with only a short visible excerpt. |

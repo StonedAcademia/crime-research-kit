@@ -41,21 +41,22 @@ Expected agent outputs:
 
 ## Use CRK Through MCP
 
-Install the MCP extra if it was not installed with the dev environment:
+Run the MCP server through the `mcp` optional extra:
 
 ```bash
-source .venv/bin/activate
-python -m pip install -e '.[mcp]'
+uv run --cache-dir .uv-cache --no-project --with-editable '.[mcp]' -- crk-mcp --help
 ```
 
 Register the stdio server with Claude Code:
 
 ```bash
-claude mcp add crk -- "$PWD/.venv/bin/crk-mcp"
+claude mcp add crk -- uv run --directory "$PWD" --cache-dir .uv-cache \
+  --no-project --with-editable '.[mcp]' -- crk-mcp
 ```
 
-Other MCP hosts should use command `$PWD/.venv/bin/crk-mcp` with stdio
-transport. Useful MCP operations for this case:
+Other MCP hosts should use command `uv` with args `run --directory <repo>
+--cache-dir .uv-cache --no-project --with-editable '.[mcp]' -- crk-mcp` and
+stdio transport. Useful MCP operations for this case:
 
 | Workflow Need | MCP Tool |
 | --- | --- |
@@ -80,18 +81,22 @@ only; do not import canonical records.
 The plain script path is best for source-ledger operations:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- \
+  python .agents/skills/truecrime-cult-research/scripts/tcr.py validate \
   data/cases/mkultra_course
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- \
+  python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction \
   data/cases/mkultra_course S_SENATE_MKULTRA_1977
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-contradictions \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- \
+  python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-contradictions \
   data/cases/mkultra_course
 ```
 
-The installed `cr-kit` command runs the case-builder workflow:
+The `cr-kit` command runs the case-builder workflow through `uv`:
 
 ```bash
-.venv/bin/cr-kit plan data/cases/mkultra_course \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- \
+  cr-kit plan data/cases/mkultra_course \
   --title "MKUltra Source-Traceable Course Case" \
   --subject "Source-backed MKULTRA course with official, archive, testimony, and boundary records"
 ```
@@ -99,7 +104,8 @@ The installed `cr-kit` command runs the case-builder workflow:
 Execute only after reviewing the planned writes:
 
 ```bash
-.venv/bin/cr-kit plan data/cases/mkultra_course \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- \
+  cr-kit plan data/cases/mkultra_course \
   --title "MKUltra Source-Traceable Course Case" \
   --subject "Draft extraction packets for core official MKULTRA sources" \
   --execute
@@ -108,7 +114,8 @@ Execute only after reviewing the planned writes:
 If LangGraph checkpoints are installed:
 
 ```bash
-.venv/bin/cr-kit plan data/cases/mkultra_course \
+uv run --cache-dir .uv-cache --no-project --with-editable '.[agentic]' -- \
+  cr-kit plan data/cases/mkultra_course \
   --runner langgraph \
   --checkpoint \
   --title "MKUltra Source-Traceable Course Case" \
@@ -119,7 +126,8 @@ If LangGraph checkpoints are installed:
 Resume after packet review:
 
 ```bash
-.venv/bin/cr-kit resume data/cases/mkultra_course \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- \
+  cr-kit resume data/cases/mkultra_course \
   --thread <thread_id> \
   --approve-packet <packet_name>.json \
   --execute

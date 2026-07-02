@@ -19,7 +19,8 @@ URLs, publication metadata, local raw/text paths, and exact locators.
 Manual registration is useful when a document must be tracked before parsing:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- \
+  python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source \
   data/cases/mkultra_course \
   --title "Project MKULTRA, the CIA's Program of Research in Behavioral Modification" \
   --url "https://www.intelligence.senate.gov/wp-content/uploads/2024/08/sites-default-files-hearings-95mkultra.pdf" \
@@ -32,7 +33,8 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source \
 For ordinary HTML capture, use `ingest-url`:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- \
+  python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url \
   data/cases/mkultra_course \
   "https://oversight.house.gov/hearing/mind-control-and-accountability-uncovering-the-truth-of-the-cias-mkultra-project/" \
   --source-type government_record \
@@ -42,7 +44,8 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url \
 After a source is local, preserve it:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py preserve-source \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- \
+  python .agents/skills/truecrime-cult-research/scripts/tcr.py preserve-source \
   data/cases/mkultra_course S_SENATE_MKULTRA_1977
 ```
 
@@ -75,7 +78,8 @@ pdftotext -layout \
 For image-only scans, run OCR before using exact citations:
 
 ```bash
-.venv/bin/cr-kit ocr-source data/cases/mkultra_course S_FBI_FINDERS_PART_01
+uv run --cache-dir .uv-cache --no-project --with-editable '.[documents]' -- \
+  cr-kit ocr-source data/cases/mkultra_course S_FBI_FINDERS_PART_01
 ```
 
 The Finders FBI Vault PDFs were captured in this session, but their extracted
@@ -86,7 +90,8 @@ text sidecars are placeholders. Treat them as OCR pending.
 Draft packets only after the source has a useful text file or OCR output:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- \
+  python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction \
   data/cases/mkultra_course S_CIA_MKULTRA_IG_1963 \
   --template source-capture
 ```
@@ -100,19 +105,24 @@ status, and privacy fields.
 Run validation whenever the source ledger or extraction packets change:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- \
+  python .agents/skills/truecrime-cult-research/scripts/tcr.py validate \
   data/cases/mkultra_course
 ```
 
 Before any public report or video script:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py report \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- \
+  python .agents/skills/truecrime-cult-research/scripts/tcr.py report \
   data/cases/mkultra_course
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- \
+  python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-public-export \
   data/cases/mkultra_course
-python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-source-independence \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- \
+  python .agents/skills/truecrime-cult-research/scripts/tcr.py audit-source-independence \
   data/cases/mkultra_course
-python .agents/skills/truecrime-cult-research/scripts/tcr.py review-narrative-readiness \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- \
+  python .agents/skills/truecrime-cult-research/scripts/tcr.py review-narrative-readiness \
   data/cases/mkultra_course --require-spans
 ```
