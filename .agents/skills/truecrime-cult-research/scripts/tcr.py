@@ -123,6 +123,7 @@ from adapters.ops.evidence.quality.safety.readiness import (  # noqa: E402
 )
 from adapters.ops.evidence.quality.safety.source_independence import source_independence  # noqa: E402
 from adapters.ops.evidence.reports.analysis.command.builders.bridges import build_cluster_bridges  # noqa: E402
+from adapters.ops.evidence.reports.analysis.command.builders.paths import build_path_atlas  # noqa: E402
 from adapters.ops.evidence.reports.analysis.command.context import load_analysis_context  # noqa: E402
 from adapters.ops.evidence.reports.analysis.classifiers import (  # noqa: E402
     GRADE_SCORE,
@@ -197,64 +198,10 @@ def export_analysis_charts(args: argparse.Namespace) -> None:
     cluster_bridge_links = bridge_products["cluster_bridge_links"]
     bridge_segment_rows = bridge_products["bridge_segment_rows"]
     edge_load = bridge_products["edge_load"]
-    path_atlas: list[dict[str, Any]] = []
-    path_segments: list[dict[str, Any]] = []
+    path_products = build_path_atlas(ctx)
+    path_atlas = path_products["path_atlas"]
+    path_segments = path_products["path_segments"]
     node_label = ctx.node_label
-    path_label = ctx.path_label
-
-    anchor_id = "E_BILL_W" if "E_BILL_W" in people_by_id else (sorted(people_by_id, key=lambda eid: entity_display(people_by_id[eid]))[0] if people_by_id else "")
-    if anchor_id:
-        for person_id, person in sorted(people_by_id.items(), key=lambda item: entity_display(item[1])):
-            if person_id == anchor_id:
-                continue
-            steps = shortest_analysis_path(graph, [anchor_id], [person_id])
-            if steps is None:
-                continue
-            statuses = [str(step[2].get("status", "")) for step in steps]
-            path_id = f"P_{slugify(entity_display(people_by_id[anchor_id]), 24).upper()}_{slugify(entity_display(person), 24).upper()}"
-            path_atlas.append({
-                "path_id": path_id,
-                "anchor_person": entity_display(people_by_id[anchor_id]),
-                "target_person": entity_display(person),
-                "target_entity_id": person_id,
-                "target_cluster": cluster_by_person.get(person_id, ""),
-                "hops": len(steps),
-                "over_six_hops": len(steps) > 6,
-                "path": path_label(steps),
-                "weakest_status": min(statuses, key=lambda status: STATUS_SCORE.get(status, 0.0)) if statuses else "",
-                "bridge_classes": sorted({classify_bridge_path([step], graph_meta) for step in steps}),
-                "relationship_classes": sorted({
-                    relationship_class(step[2], str(step[2].get("edge_type", "relationship")))
-                    for step in steps
-                }),
-                "source_ids": sorted({sid for step in steps for sid in parse_cell_list(step[2].get("source_ids"))}),
-                "claim_ids": sorted({cid for step in steps for cid in parse_cell_list(step[2].get("claim_ids"))}),
-                "caveat": "Contains category/context bridges; path length is not evidence of influence, guilt, membership, or control.",
-            })
-            for idx, (src, dst, edge) in enumerate(steps, start=1):
-                step_class = classify_bridge_path([(src, dst, edge)], graph_meta)
-                path_segments.append({
-                    "path_id": path_id,
-                    "segment_index": idx,
-                    "src_id": src,
-                    "src_label": node_label(src),
-                    "dst_id": dst,
-                    "dst_label": node_label(dst),
-                    "src_cluster": graph_meta.get(src, {}).get("cluster_id", ""),
-                    "dst_cluster": graph_meta.get(dst, {}).get("cluster_id", ""),
-                    "record_type": edge.get("edge_type", ""),
-                    "record_id": edge.get("record_id", ""),
-                    "relation_type": edge.get("relation_type", ""),
-                    "relationship_class": edge.get("relationship_class") or relationship_class(edge, str(edge.get("edge_type", "relationship"))),
-                    "segment_status": edge.get("status", ""),
-                    "segment_confidence": edge.get("confidence", ""),
-                    "segment_public_export": edge.get("public_export", True),
-                    "source_ids": parse_cell_list(edge.get("source_ids")),
-                    "claim_ids": parse_cell_list(edge.get("claim_ids")),
-                    "is_category_bridge": step_class == "category_bridge",
-                    "is_context_only": step_class in {"category_bridge", "institutional_software_bridge", "lead_context_bridge", "indirect_context_bridge"},
-                    "caveat": "context/category/lead edge" if step_class != "direct_or_near_direct" else "",
-                })
 
     layered_nodes: list[dict[str, Any]] = []
     for node_id, meta in sorted(graph_meta.items(), key=lambda item: (item[1].get("layer", ""), item[1].get("label", ""))):
