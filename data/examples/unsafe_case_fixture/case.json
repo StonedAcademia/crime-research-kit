@@ -1,0 +1,6 @@
+{
+  "case_id": "unsafe_case_fixture",
+  "title": "Unsafe Case Fixture",
+  "created_at": "2026-07-02T00:00:00Z",
+  "research_scope": "negative data-safety fixture only"
+}
