@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "relation_families": [
+    {
+      "key": "software_inquiry_context",
+      "terms": [
+        "promis",
+        "inslaw",
+        "cia"
+      ]
+    }
+  ],
+  "relationship_classes": [
+    {
+      "key": "method_diffusion",
+      "terms": [
+        "based on hubbard",
+        "narconon",
+        "drug residues",
+        "obedience research",
+        "classic studies in the conformity debate"
+      ]
+    },
+    {
+      "key": "narrative_inheritance",
+      "terms": [
+        "monarch",
+        "montauk",
+        "milab",
+        "super_soldier",
+        "targeted_individual",
+        "synthetic_telepathy"
+      ]
+    },
+    {
+      "key": "contested_overlap",
+      "terms": [
+        "house_inquiry",
+        "house question",
+        "question/inquiry",
+        "inquiry lane",
+        "promis",
+        "inslaw",
+        "finders",
+        "jonestown"
+      ]
+    }
+  ],
+  "bridge_labels": [
+    {
+      "key": "institutional_software_bridge",
+      "terms": [
+        "promis",
+        "inslaw",
+        "central intelligence agency",
+        "cia"
+      ]
+    },
+    {
+      "key": "category_bridge",
+      "terms": [
+        "drug rehabilitation program context",
+        "behavioral-control and authority context"
+      ]
+    }
+  ]
+}
