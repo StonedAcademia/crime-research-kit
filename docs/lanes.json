@@ -1,0 +1,281 @@
+{
+  "version": 1,
+  "fallback_source_lanes": [
+    "source-capture",
+    "contradiction"
+  ],
+  "fallback_public_record_lanes": [
+    "source-capture",
+    "legal-court",
+    "corporate",
+    "licensing-professional",
+    "media-transcript",
+    "missing-persons",
+    "geographical-location",
+    "property-location"
+  ],
+  "lanes": {
+    "contradiction": {
+      "label": "Claim contradiction review",
+      "category": "review",
+      "skill": "claim-contradiction-audit",
+      "template": "claim-contradiction",
+      "public_record_plan": true,
+      "source_lane_inference": true,
+      "triggers": ["contradiction", "correction", "retraction", "denial", "disputed", "conflict", "misidentified"],
+      "source_types": ["court_record", "government_record", "news_article", "official_report", "interview"],
+      "notes": "Use for corrections, denials, retractions, court-finding conflicts, and claim-status review.",
+      "tool_ops": {"draft_packet": "draft_extraction", "plan_records": "plan_public_records"}
+    },
+    "corporate": {
+      "label": "Corporate and financial records",
+      "category": "public_record",
+      "skill": "corporate-financial-records",
+      "template": "corporate",
+      "public_record_plan": true,
+      "source_lane_inference": true,
+      "triggers": ["company", "corporation", "nonprofit", "bankruptcy", "investment", "board", "officer", "director", "sec", "filing"],
+      "source_types": ["government_record", "court_record", "official_report", "news_article"],
+      "notes": "Use for corporate registries, securities filings, bankruptcy, ownership, finance, boards, and officers.",
+      "tool_ops": {"draft_packet": "draft_extraction", "plan_records": "plan_public_records"}
+    },
+    "education": {
+      "label": "Education path records",
+      "category": "public_record",
+      "skill": "educational-path-records",
+      "template": "education",
+      "public_record_plan": true,
+      "source_lane_inference": true,
+      "triggers": ["school", "college", "university", "degree", "alumni", "credential", "faculty", "training"],
+      "source_types": ["government_record", "official_report", "academic", "news_article"],
+      "notes": "Use for education paths, degrees, attendance, credentials, and academic appointments.",
+      "tool_ops": {"draft_packet": "draft_extraction", "plan_records": "plan_public_records"}
+    },
+    "foia-open-records": {
+      "label": "FOIA and open-records planning",
+      "category": "review",
+      "skill": "foia-open-records-planning",
+      "template": "foia-open-records",
+      "public_record_plan": true,
+      "source_lane_inference": true,
+      "triggers": ["foia", "open records", "public records request", "sunshine", "freedom of information", "agency records", "records request"],
+      "source_types": ["government_record", "official_report", "archive", "other"],
+      "notes": "Use for open-records request planning, agency scope, request wording, exemptions, fee waivers, and appeals.",
+      "tool_ops": {"draft_packet": "draft_extraction", "plan_records": "plan_public_records"}
+    },
+    "geographical-location": {
+      "label": "Geographical location intelligence",
+      "category": "public_record",
+      "skill": "geographical-location-intelligence",
+      "template": "geographical-location",
+      "public_record_plan": true,
+      "source_lane_inference": true,
+      "triggers": ["geographical", "geographic", "geospatial", "map", "route", "coordinates", "gps", "location of interest", "evidence location", "sighting", "search area", "last seen", "exhibit map"],
+      "source_types": ["government_record", "court_record", "archive", "news_article", "interview", "documentary", "other"],
+      "notes": "Use for evidence-item locations, event maps, routes, sightings, map/exhibit locators, and locations-of-interest clusters.",
+      "tool_ops": {"draft_packet": "draft_extraction", "plan_records": "plan_public_records"}
+    },
+    "identity-resolution": {
+      "label": "Identity resolution",
+      "category": "support",
+      "skill": "identity-resolution",
+      "template": "identity-resolution",
+      "public_record_plan": true,
+      "source_lane_inference": false,
+      "triggers": ["alias", "aliases", "identity", "same person", "duplicate", "aka", "maiden name", "name variant"],
+      "source_types": ["government_record", "court_record", "official_report", "news_article", "archive"],
+      "notes": "Use for aliases, duplicate entities, ambiguous public-record identities, entity match evidence, and non-mutating merge-review packets.",
+      "tool_ops": {"draft_packet": "draft_extraction", "plan_records": "plan_public_records"}
+    },
+    "legal-court": {
+      "label": "Legal and court records",
+      "category": "public_record",
+      "skill": "legal-court-records",
+      "template": "legal-court",
+      "public_record_plan": true,
+      "source_lane_inference": true,
+      "triggers": ["court", "docket", "filing", "lawsuit", "charge", "judgment", "hearing", "appeal", "bankruptcy"],
+      "source_types": ["court_record", "government_record", "news_article"],
+      "notes": "Use for dockets, filings, orders, hearings, allegations, denials, and court findings.",
+      "tool_ops": {"draft_packet": "draft_extraction", "plan_records": "plan_public_records"}
+    },
+    "licensing-professional": {
+      "label": "Licensing and professional records",
+      "category": "public_record",
+      "skill": "licensing-professional-records",
+      "template": "licensing-professional",
+      "public_record_plan": true,
+      "source_lane_inference": true,
+      "triggers": ["license", "licensing", "certification", "board", "disciplinary", "sanction", "credential", "professional"],
+      "source_types": ["government_record", "official_report", "news_article"],
+      "notes": "Use for professional licenses, board actions, certifications, discipline, sanctions, and credential status.",
+      "tool_ops": {"draft_packet": "draft_extraction", "plan_records": "plan_public_records"}
+    },
+    "media-transcript": {
+      "label": "Media and transcript intelligence",
+      "category": "public_record",
+      "skill": "media-transcript-intelligence",
+      "template": "media-transcript",
+      "public_record_plan": true,
+      "source_lane_inference": true,
+      "triggers": ["video", "audio", "podcast", "interview", "transcript", "hearing", "broadcast", "documentary", "timestamp"],
+      "source_types": ["interview", "documentary", "official_report", "news_article", "other"],
+      "notes": "Use for timestamped media, speaker turns, transcript claims, quote locators, and media provenance.",
+      "tool_ops": {"draft_packet": "draft_extraction", "plan_records": "plan_public_records"}
+    },
+    "missing-persons": {
+      "label": "Missing-person and unidentified-person records",
+      "category": "public_record",
+      "skill": "missing-persons-case",
+      "template": "missing-persons",
+      "public_record_plan": true,
+      "source_lane_inference": true,
+      "triggers": ["missing person", "missing-person", "reported missing", "last seen", "last contact", "unidentified", "found remains", "located", "recovered", "namus", "ncmec"],
+      "source_types": ["government_record", "official_report", "news_article", "archive", "other"],
+      "notes": "Use for missing-person candidates, last-seen/location-time matching, status updates, unidentified-person comparisons, and privacy-sensitive lead review.",
+      "tool_ops": {"draft_packet": "draft_extraction", "plan_records": "plan_public_records"}
+    },
+    "narrative-readiness": {
+      "label": "Narrative readiness review",
+      "category": "review",
+      "skill": "narrative-readiness-review",
+      "template": "narrative-readiness",
+      "public_record_plan": false,
+      "source_lane_inference": false,
+      "triggers": ["narrative", "script", "episode", "readiness", "public output"],
+      "source_types": [],
+      "notes": "Use for public script, episode, report, timeline, or video readiness review before narrative use.",
+      "tool_ops": {"draft_packet": "draft_extraction"}
+    },
+    "privacy-redaction": {
+      "label": "Privacy and redaction audit",
+      "category": "review",
+      "skill": "privacy-redaction-audit",
+      "template": "privacy-redaction",
+      "public_record_plan": false,
+      "source_lane_inference": false,
+      "triggers": ["privacy", "redaction", "minor", "address", "contact", "public export"],
+      "source_types": [],
+      "notes": "Use for redaction logs, private-person review, minors, addresses, contact details, weak allegations, and public-export blockers.",
+      "tool_ops": {"draft_packet": "draft_extraction"}
+    },
+    "property-location": {
+      "label": "Property and location records",
+      "category": "public_record",
+      "skill": "property-location-records",
+      "template": "property-location",
+      "public_record_plan": true,
+      "source_lane_inference": true,
+      "triggers": ["property", "parcel", "deed", "address", "permit", "land", "building", "map", "location", "zoning"],
+      "source_types": ["government_record", "archive", "news_article", "other"],
+      "notes": "Use for parcels, deeds, permits, maps, facility locations, and address-sensitive location records.",
+      "tool_ops": {"draft_packet": "draft_extraction", "plan_records": "plan_public_records"}
+    },
+    "public-records-router": {
+      "label": "Public-records router",
+      "category": "support",
+      "skill": "public-records-router",
+      "template": "public-records-router",
+      "public_record_plan": false,
+      "source_lane_inference": false,
+      "triggers": ["routing", "public records", "source lanes", "records plan"],
+      "source_types": [],
+      "notes": "Use for routing a subject or question across court, corporate, education, licensing, property, media, archive, and other public-record lanes.",
+      "tool_ops": {"draft_packet": "draft_extraction"}
+    },
+    "source-capture": {
+      "label": "Source capture and preservation",
+      "category": "support",
+      "skill": "source-capture-preservation",
+      "template": "source-capture",
+      "public_record_plan": true,
+      "source_lane_inference": true,
+      "triggers": ["archive", "capture", "hash", "preserve", "raw", "source", "provenance"],
+      "source_types": ["archive", "government_record", "court_record", "news_article", "other"],
+      "notes": "Use for source preservation, archive URLs, hashes, provenance gaps, and capture metadata.",
+      "tool_ops": {"draft_packet": "draft_extraction", "plan_records": "plan_public_records"}
+    },
+    "source-independence": {
+      "label": "Source independence audit",
+      "category": "review",
+      "skill": "source-independence-audit",
+      "template": "source-independence",
+      "public_record_plan": false,
+      "source_lane_inference": false,
+      "triggers": ["source independence", "wire copy", "press release", "same source", "corroboration"],
+      "source_types": [],
+      "notes": "Use for source-chain, wire-copy, press-release repetition, same-source-chain, and corroboration independence review.",
+      "tool_ops": {"draft_packet": "draft_extraction"}
+    }
+  },
+  "templates": {
+    "claim-contradiction": {
+      "template_file": "extraction_packet_claim_contradiction.json",
+      "notes": "Use for contradictions, denials, corrections, retractions, disputed claims, and court-finding-versus-allegation reviews."
+    },
+    "corporate": {
+      "template_file": "extraction_packet_corporate.json",
+      "notes": "Use for corporations, nonprofits, investments, bankruptcies, officers, directors, board members, ownership, contracts, and securities or court filings."
+    },
+    "education": {
+      "template_file": "extraction_packet_education.json",
+      "notes": "Use for schools attended, degrees, credentials, academic appointments, training, student-era events, alumni claims, and institution affiliations."
+    },
+    "foia-open-records": {
+      "template_file": "extraction_packet_foia_open_records.json",
+      "notes": "Use for FOIA, open-records, sunshine-law, public-records request planning, agency scope, request wording, exemptions, fee waivers, and appeal trackers."
+    },
+    "generic": {
+      "template_file": "extraction_packet.json",
+      "notes": "Use for general case/source extraction."
+    },
+    "geographical-location": {
+      "template_file": "extraction_packet_geographical_location.json",
+      "notes": "Use for evidence-item locations, event geography, routes, sightings, map/exhibit locators, locations of interest, and public-safe map packets."
+    },
+    "identity-resolution": {
+      "template_file": "extraction_packet_identity_resolution.json",
+      "notes": "Use for aliases, duplicate entities, ambiguous public-record identities, entity match evidence, and non-mutating merge-review packets."
+    },
+    "legal-court": {
+      "template_file": "extraction_packet_legal_court.json",
+      "notes": "Use for public dockets, filings, orders, testimony, opinions, court findings, allegations, denials, parties, attorneys, judges, and hearing timelines."
+    },
+    "licensing-professional": {
+      "template_file": "extraction_packet_licensing_professional.json",
+      "notes": "Use for professional licenses, board certifications, disciplinary records, sanctions, employment eligibility, and credential-status public records."
+    },
+    "media-transcript": {
+      "template_file": "extraction_packet_media_transcript.json",
+      "notes": "Use for interviews, videos, podcasts, hearings, documentaries, broadcast transcripts, speaker turns, timestamps, quotes, and media provenance."
+    },
+    "missing-persons": {
+      "template_file": "extraction_packet_missing_persons.json",
+      "notes": "Use for missing-person, unidentified-person, last-seen, reported-missing, located, recovered, candidate-match, and status-update records."
+    },
+    "narrative-readiness": {
+      "template_file": "extraction_packet_narrative_readiness.json",
+      "notes": "Use for public script, episode, report, timeline, or video readiness review before narrative use."
+    },
+    "privacy-redaction": {
+      "template_file": "extraction_packet_privacy_redaction.json",
+      "notes": "Use for redaction logs, private-person review, minors, addresses, contact details, weak allegations, and public-export blockers."
+    },
+    "property-location": {
+      "template_file": "extraction_packet_property_location.json",
+      "notes": "Use for property records, parcels, deeds, land records, permits, maps, facility locations, and address-sensitive public-location records."
+    },
+    "public-records-router": {
+      "template_file": "extraction_packet_public_records_router.json",
+      "notes": "Use for routing a subject or question across court, corporate, education, licensing, property, media, archive, and other public-record lanes."
+    },
+    "source-capture": {
+      "template_file": "extraction_packet_source_capture.json",
+      "notes": "Use for source preservation checks, capture metadata, archive URLs, raw/text paths, hashes, and source provenance gaps."
+    },
+    "source-independence": {
+      "template_file": "extraction_packet_source_independence.json",
+      "notes": "Use for source-chain, wire-copy, press-release repetition, same-source-chain, and corroboration independence review."
+    }
+  }
+}
