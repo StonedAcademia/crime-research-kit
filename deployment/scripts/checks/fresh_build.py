@@ -46,7 +46,7 @@ def build_from_archive(source: Path, python: Path, dist_dir: Path) -> None:
 
 def import_check_wheel(python: Path, wheel: Path) -> None:
     run([str(python), "-m", "pip", "install", "--disable-pip-version-check", str(wheel)], cwd=ROOT)
-    code = "import case_builder; import case_builder.cli; import case_builder.mcp.server"
+    code = "import cli; import core.lanes.registry; import pipeline.app.service; import adapters.interfaces.mcp.server"
     run([str(python), "-c", code], cwd=ROOT)
 
 

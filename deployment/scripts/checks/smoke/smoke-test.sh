@@ -4,12 +4,12 @@ set -eu
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 "$SCRIPT_DIR/../../local/wait-for-local-stack.sh"
 
-python -m case_builder.cli --help >/dev/null
+python -m cli --help >/dev/null
 cr-kit plan /tmp/crk_install_smoke \
   --title "CRK Container Smoke" \
   --subject "self-hosted deployment smoke test" >/tmp/crk-plan.json
 
-python -c "from case_builder.mcp.server import create_server; create_server()"
+python -c "from adapters.interfaces.mcp.server import create_server; create_server()"
 
 tesseract --version >/dev/null
 gs --version >/dev/null

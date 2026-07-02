@@ -95,6 +95,16 @@ def test_moon_uses_packaging_check_scripts():
     assert "deployment/scripts/checks/fresh_build.py" in tooling
 
 
+def test_packaging_smoke_imports_current_package_modules():
+    fresh_build = (KIT_ROOT / "deployment" / "scripts" / "checks" / "fresh_build.py").read_text(encoding="utf-8")
+    smoke = (KIT_ROOT / "deployment" / "scripts" / "checks" / "smoke" / "smoke-test.sh").read_text(encoding="utf-8")
+    text = f"{fresh_build}\n{smoke}"
+
+    assert "case_builder" not in text
+    assert "import cli" in fresh_build
+    assert "adapters.interfaces.mcp.server" in text
+
+
 def test_license_policy_allows_agpl_project_and_copyleft_dependencies(tmp_path):
     records = [
         {"Name": "crime-research-kit", "Version": "0.11.0", "License": "AGPL-3.0-only"},
