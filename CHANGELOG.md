@@ -6,6 +6,16 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+### Changed
+- Adopted a pinned required-dependency set (`jsonschema`, `pydantic`, `pydantic-settings`, `httpx`, `typer`, `jinja2`); the core package is no longer stdlib-only.
+- `crk-ledger validate` now enforces the full JSON Schemas (enums, types, nested shapes) with line-addressed errors, replacing required-field-only checks.
+- Environment configuration is resolved once at CLI/MCP startup via `CrkSettings`; all `CRK_*` variable names and defaults are unchanged.
+- Setting an env var to an empty string is now a validation error for integer settings (e.g. `CRK_QDRANT_PORT=""` fails at startup) instead of silently falling back to the default.
+
+### Added
+- Typed pydantic models for all twelve ledger record types (`core.models.records`), drift-tested against the canonical schemas.
+- Record schemas ship as package data, so installed packages validate without a repo checkout.
+
 ## [0.12.0] - 2026-07-02
 
 ### Added

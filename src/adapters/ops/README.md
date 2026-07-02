@@ -6,7 +6,7 @@ never touch `crk-ledger`, the JSONL ledger, or local-stack modules directly.
 
 | Module | Responsibility |
 | --- | --- |
-| `result.py` | `OpResult` dataclass and `local_op` wrapper for Python-native ops. |
+| `result.py` | `OpResult` pydantic model and `local_op` wrapper for Python-native ops. |
 | `runner.py` | `CrkRunner` subprocess executor around the repo-local `crk-ledger`. |
 | `policy.py` | Safety contract as code: staged-write classification, privacy filtering, automation defaults, guilt-label lint. |
 | `case.py` | Case lifecycle: init, info, validate, report. |
