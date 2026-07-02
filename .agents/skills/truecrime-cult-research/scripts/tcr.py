@@ -128,6 +128,7 @@ from adapters.ops.evidence.reports.analysis.command.builders.facets.boundary imp
     build_boundary_rows,
     build_readiness_products,
 )
+from adapters.ops.evidence.reports.analysis.command.builders.facets.relationships import build_relation_type_counts  # noqa: E402
 from adapters.ops.evidence.reports.analysis.command.builders.facets.timelines import build_swimlanes  # noqa: E402
 from adapters.ops.evidence.reports.analysis.command.builders.layered import build_layered_graphs  # noqa: E402
 from adapters.ops.evidence.reports.analysis.command.builders.paths import build_path_atlas  # noqa: E402
@@ -228,79 +229,7 @@ def export_analysis_charts(args: argparse.Namespace) -> None:
 
     swimlanes = build_swimlanes(ctx)
 
-    relation_counts: dict[tuple[str, str, str, str], dict[str, Any]] = {}
-    for rel in relationships:
-        relation_type = str(rel.get("relation_type", ""))
-        rel_class = relationship_class(rel)
-        status = str(rel.get("status", ""))
-        family = relation_family(relation_type)
-        public_scope = "public" if rel.get("public_export", True) is not False else "internal"
-        key = ("relationship", rel_class, family, relation_type, status + "/" + public_scope)
-        bucket = relation_counts.setdefault(key, {
-            "record_kind": "relationship",
-            "relationship_class": rel_class,
-            "relationship_class_label": RELATIONSHIP_CLASS_TITLES.get(rel_class, rel_class),
-            "relation_family": family,
-            "relation_type": relation_type,
-            "status": status,
-            "public_scope": public_scope,
-            "row_count": 0,
-            "weighted_count": 0.0,
-            "source_count": 0,
-            "claim_count": 0,
-            "boundary_count": 0,
-            "lead_only_count": 0,
-            "sample_record_ids": [],
-        })
-        bucket["row_count"] += 1
-        weight = STATUS_SCORE.get(status, 0.3)
-        if "co_mentioned" in relation_type:
-            weight *= 0.1
-            bucket["lead_only_count"] += 1
-        bucket["weighted_count"] = round(float(bucket["weighted_count"]) + weight, 3)
-        bucket["source_count"] += len(parse_cell_list(rel.get("source_ids")))
-        bucket["claim_count"] += len(parse_cell_list(rel.get("claim_ids")))
-        bucket["boundary_count"] += 1 if boundary_signal(rel) else 0
-        if len(bucket["sample_record_ids"]) < 8:
-            bucket["sample_record_ids"].append(rel.get("rel_id", ""))
-    for link in event_links:
-        relation_type = str(link.get("relation_type", ""))
-        rel_class = relationship_class(link, "event_link")
-        status = str(link.get("status", ""))
-        family = relation_family(relation_type, "event_link")
-        public_scope = "public" if link.get("public_export", True) is not False else "internal"
-        key = ("event_link", rel_class, family, relation_type, status + "/" + public_scope)
-        bucket = relation_counts.setdefault(key, {
-            "record_kind": "event_link",
-            "relationship_class": rel_class,
-            "relationship_class_label": RELATIONSHIP_CLASS_TITLES.get(rel_class, rel_class),
-            "relation_family": family,
-            "relation_type": relation_type,
-            "status": status,
-            "public_scope": public_scope,
-            "row_count": 0,
-            "weighted_count": 0.0,
-            "source_count": 0,
-            "claim_count": 0,
-            "boundary_count": 0,
-            "lead_only_count": 0,
-            "sample_record_ids": [],
-        })
-        bucket["row_count"] += 1
-        weight = STATUS_SCORE.get(status, 0.3)
-        if "co_mentioned" in relation_type:
-            weight *= 0.1
-            bucket["lead_only_count"] += 1
-        bucket["weighted_count"] = round(float(bucket["weighted_count"]) + weight, 3)
-        bucket["source_count"] += len(parse_cell_list(link.get("source_ids")))
-        bucket["claim_count"] += len(parse_cell_list(link.get("claim_ids")))
-        bucket["boundary_count"] += 1 if boundary_signal(link) else 0
-        if len(bucket["sample_record_ids"]) < 8:
-            bucket["sample_record_ids"].append(link.get("event_link_id", ""))
-    relation_type_counts = [
-        row
-        for row in sorted(relation_counts.values(), key=lambda item: (-float(item["weighted_count"]), str(item["relation_type"])))
-    ]
+    relation_type_counts = build_relation_type_counts(ctx)
 
     person_source_map: dict[tuple[str, str], set[str]] = {}
     for person in people:
