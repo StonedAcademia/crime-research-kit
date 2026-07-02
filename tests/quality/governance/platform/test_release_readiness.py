@@ -25,15 +25,24 @@ def test_changelog_has_unreleased_and_current_version():
 
     sections = rr.changelog_sections(text)
     assert "Unreleased" in sections
-    rr.check_changelog(text, "0.1.0")
+    rr.check_changelog(text, "0.11.0")
 
 
 def test_tag_must_match_pyproject_version():
     rr = load_release_readiness()
 
-    rr.check_tag_matches_version("v0.1.0", "0.1.0")
+    rr.check_tag_matches_version("v0.11.0", "0.11.0")
     with pytest.raises(rr.ReleaseError):
-        rr.check_tag_matches_version("v0.2.0", "0.1.0")
+        rr.check_tag_matches_version("v0.12.0", "0.11.0")
+
+
+def test_version_and_tag_must_be_semver():
+    rr = load_release_readiness()
+
+    with pytest.raises(rr.ReleaseError):
+        rr.check_tag_matches_version("v0.10", "0.10.0")
+    with pytest.raises(rr.ReleaseError):
+        rr.check_tag_matches_version("v0.10.0", "0.10")
 
 
 def test_changelog_requires_dated_release_section():
@@ -44,9 +53,29 @@ def test_changelog_requires_dated_release_section():
 
         ## [Unreleased]
 
-        ## [0.1.0]
+        ## [0.11.0]
         """
     )
 
     with pytest.raises(rr.ReleaseError):
-        rr.check_changelog(text, "0.1.0")
+        rr.check_changelog(text, "0.11.0")
+
+
+def test_changelog_requires_substantial_release_coverage():
+    rr = load_release_readiness()
+    text = textwrap.dedent(
+        """\
+        # Changelog
+
+        ## [Unreleased]
+
+        ## [0.11.0] - 2026-07-02
+
+        ### Added
+
+        - One placeholder entry.
+        """
+    )
+
+    with pytest.raises(rr.ReleaseError):
+        rr.check_changelog(text, "0.11.0")

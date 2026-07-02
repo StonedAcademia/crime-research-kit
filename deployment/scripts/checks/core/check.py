@@ -27,7 +27,7 @@ def main() -> int:
     if not python.exists():
         raise SystemExit("Virtualenv not found. Run `moon run crk:install-dev` first.")
 
-    run([str(python), "-m", "compileall", "src/case_builder", ".agents/skills/truecrime-cult-research/scripts"])
+    run([str(python), "-m", "compileall", "src", ".agents/skills/truecrime-cult-research/scripts"])
     run([str(python), ".agents/skills/truecrime-cult-research/scripts/tcr.py", "validate", "data/examples/synthetic_case"])
     return 0
 

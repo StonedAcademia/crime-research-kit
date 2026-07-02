@@ -43,13 +43,23 @@ pytest
 - Keep branch hygiene tight: branch before substantial edits, keep commit messages specific, and run the applicable branch gate before pushing or merging.
 - Explicit user direction can override this workflow, but note the branch choice and keep the commit scope clear.
 
+## Versioning and changelog
+
+- Keep the project pre-1.0 until the public API and operator contract are intentionally declared stable.
+- Use SemVer with pre-1.0 release bands: patch bumps for compatible fixes after an existing tag, minor bumps for new feature bands or public contract changes, and `1.0.0` only for the first stable public release.
+- Before preparing a release, inspect git history since the last tag. If there is no prior tag, treat the accumulated history as one consolidated pre-1.0 release and choose a release-band version from the commit history.
+- Update `pyproject.toml` and `CHANGELOG.md` together. The changelog must have `## [Unreleased]` and a dated `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD` section with real `Added`, `Changed`, `Security`, and `Fixed` coverage when those categories apply.
+- Do not invent patch versions for untagged historical fixes. Record those fixes in the current release section; use patch versions only after a real release tag exists.
+- Release tags are annotated `vMAJOR.MINOR.PATCH` tags. Do not push release tags unless the user explicitly asks.
+- After version or changelog changes, run the release-readiness governance tests and `make release-check` against the intended local tag.
+
 ## Directory routing
 
 - Skill instructions live in `.agents/skills/truecrime-cult-research/SKILL.md`.
 - Case-builder app code lives in `src/`; keep each Python module under 200 non-comment LOC and keep a `README.md` in each Python-bearing directory.
 - Source and entity schemas live in `docs/schemas/`, grouped by ledger domain.
 - Name directories and files by the workflow, contract, or domain they serve. Do not use vague buckets such as `misc`, `stuff`, `old`, or catch-all holding areas to satisfy governance.
-- Before and after moving files in a target directory, run the repository governance check for the affected paths with `pytest tests/governance/test_repository_shape.py -q` and inspect the reported file/dir counts.
+- Before and after moving files in a target directory, run the repository governance check for the affected paths with `pytest tests/quality/governance/test_repository_shape.py -q` and inspect the reported file/dir counts.
 - Case workspaces live in `data/cases/`, which is ignored except for `data/cases/.gitkeep`.
 - Staged extraction JSON goes in `data/cases/<case>/staging/extractions/`.
 - Public-safe exports go in `data/cases/<case>/exports/`; cross-case generated exports go in `data/exports/`. Both are local/generated artifacts.

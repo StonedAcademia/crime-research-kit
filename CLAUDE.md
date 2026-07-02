@@ -17,9 +17,9 @@ make check
 
 # Tests (grouped by directory; conftest.py auto-applies the matching marker)
 .venv/bin/python -m pytest                      # full suite
-.venv/bin/python -m pytest tests/unit -v        # or: -m unit
+.venv/bin/python -m pytest tests/runtime/unit -v        # or: -m unit
 .venv/bin/python -m pytest -m governance        # policy/schema/doc-drift checks
-.venv/bin/python -m pytest tests/integration/test_ops_runner.py::test_name  # single test
+.venv/bin/python -m pytest tests/runtime/integration/operations/case/test_runner.py::test_name  # single test
 ```
 
 Test categories: `unit`, `integration`, `e2e` (optional extras may skip), `governance` (repo policy, schema, and generated-doc drift), `smoke`.
@@ -35,6 +35,30 @@ cr-kit <plan|parse-source|ocr-source|index-case|query-case|discover-sources|...>
 ```
 
 Self-hosted container stack (SearXNG, Qdrant, Ollama, MCP, …): `make docker-build`, `make docker-up`, `make docker-pull-model`, `make docker-smoke`. See `deployment/README.md`.
+
+## Versioning and changelog workflow
+
+CRK is still pre-1.0. Use SemVer, but treat minor versions as release bands until the public API and operator contract are intentionally stabilized. Patch bumps are only for compatible fixes after a real tag exists; do not invent patch history for untagged fixes.
+
+For release prep:
+
+```bash
+git log --oneline --reverse <last_tag>..HEAD   # or all history if no tags exist
+git tag --list 'v<version>'
+git ls-remote --tags origin 'v<version>'
+```
+
+Update `pyproject.toml` and `CHANGELOG.md` together. Keep `## [Unreleased]`, add a dated `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD` section, and summarize real user/operator-facing changes under Keep a Changelog categories such as `Added`, `Changed`, `Security`, and `Fixed`. Avoid placeholder release notes.
+
+Validate and tag locally:
+
+```bash
+.venv/bin/python -m pytest tests/quality/governance/platform/test_release_readiness.py -q
+git tag -a v<version> -m "CRK v<version>"
+make release-check
+```
+
+Release tags are annotated `vMAJOR.MINOR.PATCH` tags. Do not push release tags unless explicitly asked.
 
 ## Architecture
 
@@ -52,7 +76,7 @@ Lane/template vocabulary is canonical in `docs/registry/`; the tables in `.agent
 - Most work should start on `dev` or a focused sub-branch such as `feat/*`, `fix/*`, `docs/*`, `gov/*`, `test/*`, `chore/*`, or `ci/*`. Treat `canary` and `hotfix/*` as stabilization lanes for tidy-up, release polish, gate fixes, small regressions, and last-mile corrections. Keep `main` for primary deployments, release integration, and mainline maintenance unless the user explicitly directs otherwise.
 - Keep branch and commit hygiene visible: check `git status --short --branch` before work and before staging, branch before substantial edits, stage only intended paths, and commit frequently in cohesive reviewable slices after relevant checks pass. Do not include unrelated dirty files or revert work you did not create.
 - Every Python module in `src/` stays under 200 non-comment LOC, and every Python-bearing directory keeps a `README.md` — both enforced by `tests/quality/governance/test_repository_shape.py`.
-- Repository shape is governed by `tests/governance/test_repository_shape.py`: each governed directory has 1-4 direct files and 0-3 direct child directories, and governed files stay under 200 non-comment LOC. Only `data/` and `docs/superpowers/` are skipped.
+- Repository shape is governed by `tests/quality/governance/test_repository_shape.py`: each governed directory has 1-4 direct files and 0-3 direct child directories, and governed files stay under 200 non-comment LOC. Only `data/` and `docs/superpowers/` are skipped.
 - Name files and directories by intent. Use domain/workflow names such as `schemas/evidence`, `runbooks/setup`, or `scripts/checks`; do not create vague catch-all folders to pass the counts. Check the governance output for every target directory before and after restructuring.
 - The package has no required dependencies: core `tcr.py` and the base CLI run on the standard library. Heavier features go behind the optional extras in `pyproject.toml` (`dev`, `agentic`, `mcp`, `documents`, `retrieval`, `memory-local`, `web-local`) and must degrade gracefully (import lazily, skip tests) when absent.
 
