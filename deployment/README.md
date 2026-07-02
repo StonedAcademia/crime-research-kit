@@ -74,9 +74,9 @@ OLLAMA_HOST=http://ollama:11434
 TRCR_EMBED_MODEL=BAAI/bge-small-en-v1.5
 ```
 
-No LangSmith, hosted vector store, or managed model-provider configuration is
-part of this deployment. Future model-provider additions must expose
-self-hosted local APIs.
+No managed tracing, hosted vector store, or managed model-provider
+configuration is part of this deployment. Future model-provider additions must
+expose self-hosted local APIs.
 
 SearXNG is bound to localhost by default. If you expose it beyond localhost,
 change `server.secret_key` in `deployment/searxng/settings.yml` first.
