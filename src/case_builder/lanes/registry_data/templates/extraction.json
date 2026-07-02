@@ -1,0 +1,74 @@
+{
+  "claim-contradiction": {
+    "notes": "Use for contradictions, denials, corrections, retractions, disputed claims, and court-finding-versus-allegation reviews.",
+    "template_file": "extraction_packet_claim_contradiction.json"
+  },
+  "criminal-research": {
+    "notes": "Use for source-backed M.O., victimology, offense-pattern, behavioral-signature, escalation, and academic forensic context packets.",
+    "template_file": "extraction_packet_criminal_research.json"
+  },
+  "corporate": {
+    "notes": "Use for corporations, nonprofits, investments, bankruptcies, officers, directors, board members, ownership, contracts, and securities or court filings.",
+    "template_file": "extraction_packet_corporate.json"
+  },
+  "education": {
+    "notes": "Use for schools attended, degrees, credentials, academic appointments, training, student-era events, alumni claims, and institution affiliations.",
+    "template_file": "extraction_packet_education.json"
+  },
+  "foia-open-records": {
+    "notes": "Use for FOIA, open-records, sunshine-law, public-records request planning, agency scope, request wording, exemptions, fee waivers, and appeal trackers.",
+    "template_file": "extraction_packet_foia_open_records.json"
+  },
+  "generic": {
+    "notes": "Use for general case/source extraction.",
+    "template_file": "extraction_packet.json"
+  },
+  "geographical-location": {
+    "notes": "Use for evidence-item locations, event geography, routes, sightings, map/exhibit locators, locations of interest, and public-safe map packets.",
+    "template_file": "extraction_packet_geographical_location.json"
+  },
+  "identity-resolution": {
+    "notes": "Use for aliases, duplicate entities, ambiguous public-record identities, entity match evidence, and non-mutating merge-review packets.",
+    "template_file": "extraction_packet_identity_resolution.json"
+  },
+  "legal-court": {
+    "notes": "Use for public dockets, filings, orders, testimony, opinions, court findings, allegations, denials, parties, attorneys, judges, and hearing timelines.",
+    "template_file": "extraction_packet_legal_court.json"
+  },
+  "licensing-professional": {
+    "notes": "Use for professional licenses, board certifications, disciplinary records, sanctions, employment eligibility, and credential-status public records.",
+    "template_file": "extraction_packet_licensing_professional.json"
+  },
+  "media-transcript": {
+    "notes": "Use for interviews, videos, podcasts, hearings, documentaries, broadcast transcripts, speaker turns, timestamps, quotes, and media provenance.",
+    "template_file": "extraction_packet_media_transcript.json"
+  },
+  "missing-persons": {
+    "notes": "Use for missing-person, unidentified-person, last-seen, reported-missing, located, recovered, candidate-match, and status-update records.",
+    "template_file": "extraction_packet_missing_persons.json"
+  },
+  "narrative-readiness": {
+    "notes": "Use for public script, report, timeline, evidence-board, or bundle readiness review before public use.",
+    "template_file": "extraction_packet_narrative_readiness.json"
+  },
+  "privacy-redaction": {
+    "notes": "Use for redaction logs, private-person review, minors, addresses, contact details, weak allegations, and public-export blockers.",
+    "template_file": "extraction_packet_privacy_redaction.json"
+  },
+  "property-location": {
+    "notes": "Use for property records, parcels, deeds, land records, permits, maps, facility locations, and address-sensitive public-location records.",
+    "template_file": "extraction_packet_property_location.json"
+  },
+  "public-records-router": {
+    "notes": "Use for routing a subject or question across court, corporate, education, licensing, property, media, archive, and other public-record lanes.",
+    "template_file": "extraction_packet_public_records_router.json"
+  },
+  "source-capture": {
+    "notes": "Use for source preservation checks, capture metadata, archive URLs, raw/text paths, hashes, and source provenance gaps.",
+    "template_file": "extraction_packet_source_capture.json"
+  },
+  "source-independence": {
+    "notes": "Use for source-chain, wire-copy, press-release repetition, same-source-chain, and corroboration independence review.",
+    "template_file": "extraction_packet_source_independence.json"
+  }
+}

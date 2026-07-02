@@ -2,7 +2,7 @@
 set -eu
 
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-"$SCRIPT_DIR/wait-for-local-stack.sh"
+"$SCRIPT_DIR/../../local/wait-for-local-stack.sh"
 
 python -m case_builder.cli --help >/dev/null
 cr-kit plan /tmp/trcr_install_smoke \

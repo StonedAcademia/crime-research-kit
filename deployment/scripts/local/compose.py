@@ -22,7 +22,7 @@ COMMANDS: dict[str, list[str]] = {
     "logs": ["logs", "-f"],
     "shell": ["exec", "trcr", "/bin/bash"],
     "pull-model": ["exec", "trcr", "deployment/scripts/local/bootstrap-ollama.sh"],
-    "smoke": ["exec", "trcr", "deployment/scripts/checks/smoke-test.sh"],
+    "smoke": ["exec", "trcr", "deployment/scripts/checks/smoke/smoke-test.sh"],
 }
 
 

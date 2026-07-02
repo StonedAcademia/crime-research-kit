@@ -1,0 +1,130 @@
+{
+  "env_vars": [
+    {
+      "name": "TRCR_CASES_ROOT",
+      "purpose": "Root directory for case workspaces served by MCP and deployment containers.",
+      "scope": "runtime",
+      "default": "<repo-root>/data/cases or /app/data/cases in containers",
+      "prefix_class": "TRCR_"
+    },
+    {
+      "name": "TRCR_SKILL_ROOT",
+      "purpose": "Override path for the repo-local truecrime-cult-research skill copy.",
+      "scope": "runtime",
+      "default": "<repo-root>/.agents/skills/truecrime-cult-research",
+      "prefix_class": "TRCR_"
+    },
+    {
+      "name": "TRCR_MODEL",
+      "purpose": "Self-hosted model spec in provider:model form.",
+      "scope": "runtime",
+      "default": "ollama:llama3.1",
+      "prefix_class": "TRCR_"
+    },
+    {
+      "name": "TRCR_SEARXNG_URL",
+      "purpose": "Local SearXNG endpoint used for source discovery.",
+      "scope": "runtime",
+      "default": "http://localhost:8080 or http://searxng:8080 in containers",
+      "prefix_class": "TRCR_"
+    },
+    {
+      "name": "TRCR_QDRANT_URL",
+      "purpose": "Local Qdrant HTTP endpoint for retrieval indexes.",
+      "scope": "runtime",
+      "default": "http://localhost:6333 or http://qdrant:6333 in containers",
+      "prefix_class": "TRCR_"
+    },
+    {
+      "name": "TRCR_QDRANT_HOST",
+      "purpose": "Qdrant host used by the local memory provider.",
+      "scope": "runtime",
+      "default": "localhost or qdrant in containers",
+      "prefix_class": "TRCR_"
+    },
+    {
+      "name": "TRCR_QDRANT_PORT",
+      "purpose": "Qdrant port used by the local memory provider.",
+      "scope": "runtime",
+      "default": "6333",
+      "prefix_class": "TRCR_"
+    },
+    {
+      "name": "TRCR_EMBED_MODEL",
+      "purpose": "Local embedding model for retrieval and memory.",
+      "scope": "runtime",
+      "default": "BAAI/bge-small-en-v1.5",
+      "prefix_class": "TRCR_"
+    },
+    {
+      "name": "TRCR_MEM0_LLM_PROVIDER",
+      "purpose": "Self-hosted LLM provider for local Mem0 workflows.",
+      "scope": "runtime",
+      "default": "ollama",
+      "prefix_class": "TRCR_"
+    },
+    {
+      "name": "TRCR_MEM0_LLM_MODEL",
+      "purpose": "Model name for local Mem0 workflows.",
+      "scope": "runtime",
+      "default": "llama3.1",
+      "prefix_class": "TRCR_"
+    },
+    {
+      "name": "TRCR_EMBEDDER_PROVIDER",
+      "purpose": "Local embedder provider for memory workflows.",
+      "scope": "runtime",
+      "default": "huggingface",
+      "prefix_class": "TRCR_"
+    },
+    {
+      "name": "TRCR_HOOK_BRANCH",
+      "purpose": "Branch-gate override used by local hook tests and CI dry runs.",
+      "scope": "ci",
+      "default": "",
+      "prefix_class": "TRCR_"
+    },
+    {
+      "name": "TRCR_REPO_ROOT",
+      "purpose": "Deployment compose root override for mounted repo paths.",
+      "scope": "deployment",
+      "default": "..",
+      "prefix_class": "TRCR_"
+    },
+    {
+      "name": "OLLAMA_HOST",
+      "purpose": "Local Ollama endpoint for deployment smoke checks and containers.",
+      "scope": "deployment",
+      "default": "http://ollama:11434",
+      "prefix_class": "OLLAMA_"
+    },
+    {
+      "name": "SEARXNG_BASE_URL",
+      "purpose": "SearXNG service base URL used by the local compose stack.",
+      "scope": "deployment",
+      "default": "http://127.0.0.1:8080/",
+      "prefix_class": "SEARXNG_"
+    },
+    {
+      "name": "HF_HOME",
+      "purpose": "Container cache directory for Hugging Face model artifacts.",
+      "scope": "deployment",
+      "default": "/app/.cache/huggingface",
+      "prefix_class": "singleton"
+    },
+    {
+      "name": "TRANSFORMERS_CACHE",
+      "purpose": "Container cache directory for Transformers artifacts.",
+      "scope": "deployment",
+      "default": "/app/.cache/huggingface",
+      "prefix_class": "singleton"
+    },
+    {
+      "name": "SOURCE_DATE_EPOCH",
+      "purpose": "Pinned build timestamp for reproducible release artifacts.",
+      "scope": "ci",
+      "default": "1735689600",
+      "prefix_class": "singleton"
+    }
+  ]
+}

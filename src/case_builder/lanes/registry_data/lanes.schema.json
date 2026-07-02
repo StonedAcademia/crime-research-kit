@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TRCR lane registry",
+  "type": "object",
+  "required": ["version", "fallback_source_lanes", "fallback_public_record_lanes", "lanes", "templates"],
+  "properties": {
+    "version": {"type": "integer", "const": 1},
+    "fallback_source_lanes": {"type": "array", "items": {"type": "string"}},
+    "fallback_public_record_lanes": {"type": "array", "items": {"type": "string"}},
+    "lanes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "label",
+          "category",
+          "skill",
+          "template",
+          "public_record_plan",
+          "source_lane_inference",
+          "triggers",
+          "source_types",
+          "notes"
+        ],
+        "properties": {
+          "label": {"type": "string"},
+          "category": {"type": "string", "enum": ["public_record", "support", "review"]},
+          "skill": {"type": "string"},
+          "template": {"type": "string"},
+          "public_record_plan": {"type": "boolean"},
+          "source_lane_inference": {"type": "boolean"},
+          "triggers": {"type": "array", "items": {"type": "string"}},
+          "source_types": {"type": "array", "items": {"type": "string"}},
+          "notes": {"type": "string"},
+          "tool_ops": {"type": "object", "additionalProperties": {"type": "string"}}
+        },
+        "additionalProperties": false
+      }
+    },
+    "templates": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["template_file", "notes"],
+        "properties": {
+          "template_file": {"type": "string"},
+          "notes": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

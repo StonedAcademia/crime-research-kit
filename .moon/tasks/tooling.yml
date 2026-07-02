@@ -27,8 +27,8 @@ tasks:
   audit-licenses:
     description: "List installed licenses for the governance policy lane."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/fetch_governance_tools.py", "audit-licenses"]
-    inputs: ["pyproject.toml", "deployment/scripts/tools/fetch_governance_tools.py"]
+    args: ["run", "python", "--", "deployment/scripts/checks/license_policy.py"]
+    inputs: ["pyproject.toml", "deployment/scripts/checks/license_policy.py"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
@@ -51,7 +51,7 @@ tasks:
   build-dist:
     description: "Build sdist and wheel artifacts."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/fetch_governance_tools.py", "build-dist"]
-    inputs: ["@group(python)", "pyproject.toml"]
+    args: ["run", "python", "--", "deployment/scripts/checks/fresh_build.py"]
+    inputs: ["@group(python)", "pyproject.toml", "README.md", "LICENSE", "deployment/scripts/checks/fresh_build.py"]
     options: { cache: false, outputStyle: stream }
     toolchains: system

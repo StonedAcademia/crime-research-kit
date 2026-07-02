@@ -1,0 +1,132 @@
+{
+  "geographical-location": {
+    "category": "public_record",
+    "label": "Geographical location intelligence",
+    "notes": "Use for evidence-item locations, event maps, routes, sightings, map/exhibit locators, and locations-of-interest clusters.",
+    "public_record_plan": true,
+    "skill": "geographical-location-intelligence",
+    "source_lane_inference": true,
+    "source_types": [
+      "government_record",
+      "court_record",
+      "archive",
+      "news_article",
+      "interview",
+      "documentary",
+      "other"
+    ],
+    "template": "geographical-location",
+    "tool_ops": {
+      "draft_packet": "draft_extraction",
+      "plan_records": "plan_public_records"
+    },
+    "triggers": [
+      "geographical",
+      "geographic",
+      "geospatial",
+      "map",
+      "route",
+      "coordinates",
+      "gps",
+      "location of interest",
+      "evidence location",
+      "sighting",
+      "search area",
+      "last seen",
+      "exhibit map"
+    ]
+  },
+  "media-transcript": {
+    "category": "public_record",
+    "label": "Media and transcript intelligence",
+    "notes": "Use for timestamped media, speaker turns, transcript claims, quote locators, and media provenance.",
+    "public_record_plan": true,
+    "skill": "media-transcript-intelligence",
+    "source_lane_inference": true,
+    "source_types": [
+      "interview",
+      "documentary",
+      "official_report",
+      "news_article",
+      "other"
+    ],
+    "template": "media-transcript",
+    "tool_ops": {
+      "draft_packet": "draft_extraction",
+      "plan_records": "plan_public_records"
+    },
+    "triggers": [
+      "video",
+      "audio",
+      "podcast",
+      "interview",
+      "transcript",
+      "hearing",
+      "broadcast",
+      "documentary",
+      "timestamp"
+    ]
+  },
+  "missing-persons": {
+    "category": "public_record",
+    "label": "Missing-person and unidentified-person records",
+    "notes": "Use for missing-person candidates, last-seen/location-time matching, status updates, unidentified-person comparisons, and privacy-sensitive lead review.",
+    "public_record_plan": true,
+    "skill": "missing-persons-case",
+    "source_lane_inference": true,
+    "source_types": [
+      "government_record",
+      "official_report",
+      "news_article",
+      "archive",
+      "other"
+    ],
+    "template": "missing-persons",
+    "tool_ops": {
+      "draft_packet": "draft_extraction",
+      "plan_records": "plan_public_records"
+    },
+    "triggers": [
+      "missing person",
+      "missing-person",
+      "reported missing",
+      "last seen",
+      "last contact",
+      "unidentified",
+      "found remains",
+      "located",
+      "recovered",
+      "namus",
+      "ncmec"
+    ]
+  },
+  "property-location": {
+    "category": "public_record",
+    "label": "Property and location records",
+    "notes": "Use for parcels, deeds, permits, maps, facility locations, and address-sensitive location records.",
+    "public_record_plan": true,
+    "skill": "property-location-records",
+    "source_lane_inference": true,
+    "source_types": [
+      "government_record",
+      "archive",
+      "news_article",
+      "other"
+    ],
+    "template": "property-location",
+    "tool_ops": {
+      "draft_packet": "draft_extraction",
+      "plan_records": "plan_public_records"
+    },
+    "triggers": [
+      "property",
+      "parcel",
+      "deed",
+      "address",
+      "permit",
+      "land",
+      "building",
+      "zoning"
+    ]
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "corporate": {
+    "category": "public_record",
+    "label": "Corporate and financial records",
+    "notes": "Use for corporate registries, securities filings, bankruptcy, ownership, finance, boards, and officers.",
+    "public_record_plan": true,
+    "skill": "corporate-financial-records",
+    "source_lane_inference": true,
+    "source_types": [
+      "government_record",
+      "court_record",
+      "official_report",
+      "news_article"
+    ],
+    "template": "corporate",
+    "tool_ops": {
+      "draft_packet": "draft_extraction",
+      "plan_records": "plan_public_records"
+    },
+    "triggers": [
+      "company",
+      "corporation",
+      "nonprofit",
+      "bankruptcy",
+      "investment",
+      "board",
+      "officer",
+      "director",
+      "sec",
+      "filing"
+    ]
+  },
+  "education": {
+    "category": "public_record",
+    "label": "Education path records",
+    "notes": "Use for education paths, degrees, attendance, credentials, and academic appointments.",
+    "public_record_plan": true,
+    "skill": "educational-path-records",
+    "source_lane_inference": true,
+    "source_types": [
+      "government_record",
+      "official_report",
+      "academic",
+      "news_article"
+    ],
+    "template": "education",
+    "tool_ops": {
+      "draft_packet": "draft_extraction",
+      "plan_records": "plan_public_records"
+    },
+    "triggers": [
+      "school",
+      "college",
+      "university",
+      "degree",
+      "alumni",
+      "credential",
+      "faculty",
+      "training"
+    ]
+  },
+  "legal-court": {
+    "category": "public_record",
+    "label": "Legal and court records",
+    "notes": "Use for dockets, filings, orders, hearings, allegations, denials, and court findings.",
+    "public_record_plan": true,
+    "skill": "legal-court-records",
+    "source_lane_inference": true,
+    "source_types": [
+      "court_record",
+      "government_record",
+      "news_article"
+    ],
+    "template": "legal-court",
+    "tool_ops": {
+      "draft_packet": "draft_extraction",
+      "plan_records": "plan_public_records"
+    },
+    "triggers": [
+      "court",
+      "docket",
+      "filing",
+      "lawsuit",
+      "charge",
+      "judgment",
+      "hearing",
+      "appeal",
+      "bankruptcy"
+    ]
+  },
+  "licensing-professional": {
+    "category": "public_record",
+    "label": "Licensing and professional records",
+    "notes": "Use for professional licenses, board actions, certifications, discipline, sanctions, and credential status.",
+    "public_record_plan": true,
+    "skill": "licensing-professional-records",
+    "source_lane_inference": true,
+    "source_types": [
+      "government_record",
+      "official_report",
+      "news_article"
+    ],
+    "template": "licensing-professional",
+    "tool_ops": {
+      "draft_packet": "draft_extraction",
+      "plan_records": "plan_public_records"
+    },
+    "triggers": [
+      "license",
+      "licensing",
+      "certification",
+      "board",
+      "disciplinary",
+      "sanction",
+      "credential",
+      "professional"
+    ]
+  }
+}

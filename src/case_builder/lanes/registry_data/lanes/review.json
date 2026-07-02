@@ -1,0 +1,120 @@
+{
+  "contradiction": {
+    "category": "review",
+    "label": "Claim contradiction review",
+    "notes": "Use for corrections, denials, retractions, court-finding conflicts, and claim-status review.",
+    "public_record_plan": true,
+    "skill": "claim-contradiction-audit",
+    "source_lane_inference": true,
+    "source_types": [
+      "court_record",
+      "government_record",
+      "news_article",
+      "official_report",
+      "interview"
+    ],
+    "template": "claim-contradiction",
+    "tool_ops": {
+      "draft_packet": "draft_extraction",
+      "plan_records": "plan_public_records"
+    },
+    "triggers": [
+      "contradiction",
+      "correction",
+      "retraction",
+      "denial",
+      "disputed",
+      "conflict",
+      "misidentified"
+    ]
+  },
+  "foia-open-records": {
+    "category": "review",
+    "label": "FOIA and open-records planning",
+    "notes": "Use for open-records request planning, agency scope, request wording, exemptions, fee waivers, and appeals.",
+    "public_record_plan": true,
+    "skill": "foia-open-records-planning",
+    "source_lane_inference": true,
+    "source_types": [
+      "government_record",
+      "official_report",
+      "archive",
+      "other"
+    ],
+    "template": "foia-open-records",
+    "tool_ops": {
+      "draft_packet": "draft_extraction",
+      "plan_records": "plan_public_records"
+    },
+    "triggers": [
+      "foia",
+      "open records",
+      "public records request",
+      "sunshine",
+      "freedom of information",
+      "agency records",
+      "records request"
+    ]
+  },
+  "narrative-readiness": {
+    "category": "review",
+    "label": "Narrative readiness review",
+    "notes": "Use for public script, report, timeline, evidence-board, or bundle readiness review before public use.",
+    "public_record_plan": false,
+    "skill": "narrative-readiness-review",
+    "source_lane_inference": false,
+    "source_types": [],
+    "template": "narrative-readiness",
+    "tool_ops": {
+      "draft_packet": "draft_extraction"
+    },
+    "triggers": [
+      "narrative",
+      "script",
+      "episode",
+      "readiness",
+      "public output"
+    ]
+  },
+  "privacy-redaction": {
+    "category": "review",
+    "label": "Privacy and redaction audit",
+    "notes": "Use for redaction logs, private-person review, minors, addresses, contact details, weak allegations, and public-export blockers.",
+    "public_record_plan": false,
+    "skill": "privacy-redaction-audit",
+    "source_lane_inference": false,
+    "source_types": [],
+    "template": "privacy-redaction",
+    "tool_ops": {
+      "draft_packet": "draft_extraction"
+    },
+    "triggers": [
+      "privacy",
+      "redaction",
+      "minor",
+      "address",
+      "contact",
+      "public export"
+    ]
+  },
+  "source-independence": {
+    "category": "review",
+    "label": "Source independence audit",
+    "notes": "Use for source-chain, wire-copy, press-release repetition, same-source-chain, and corroboration independence review.",
+    "public_record_plan": false,
+    "skill": "source-independence-audit",
+    "source_lane_inference": false,
+    "source_types": [],
+    "template": "source-independence",
+    "tool_ops": {
+      "draft_packet": "draft_extraction"
+    },
+    "triggers": [
+      "source independence",
+      "wire copy",
+      "press release",
+      "same source",
+      "corroboration"
+    ]
+  }
+}
