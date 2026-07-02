@@ -21,7 +21,7 @@ Valkey, Qdrant, Ollama, OCRmyPDF, Tesseract, Ghostscript, Make, pytest.
 
 ## Global Constraints
 
-- Repo root: `<projects-root>/true-crime-research/tc-c-kit`.
+- Repo root: `<project_root>/`.
 - Preserve the existing TRCR safety model: canonical records are still written
   only through reviewed extraction import paths.
 - Treat all runtime extras as mandatory in the deployment image:

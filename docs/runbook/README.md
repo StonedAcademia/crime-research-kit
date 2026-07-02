@@ -4,7 +4,7 @@ Operational runbooks assume commands are run from the `tc-c-kit` repository
 root:
 
 ```text
-<projects-root>/true-crime-research/tc-c-kit
+<project_root>/
 ```
 
 Use these when moving from README examples to repeatable operator workflows.

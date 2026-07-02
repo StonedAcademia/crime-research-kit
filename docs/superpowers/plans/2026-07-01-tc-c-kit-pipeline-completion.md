@@ -10,12 +10,12 @@
 
 ## Global Constraints
 
-- All paths relative to the repo root `<projects-root>/true-crime-research/tc-c-kit` (the kit is now a self-contained git repo; `.agents/`, `src/`, `tests/`, `docs/`, `data/` all live here). `REPO_ROOT` in test snippets is the kit root (`parents[1]` from a test file), which is also the `TrcrRunner` repo root — `tcr.py` resolves to `.agents/skills/truecrime-cult-research/scripts/tcr.py` inside it.
+- All paths relative to the repo root `<project_root>/` (the kit is now a self-contained git repo; `.agents/`, `src/`, `tests/`, `docs/`, `data/` all live here). `REPO_ROOT` in test snippets is the kit root (`parents[1]` from a test file), which is also the `TrcrRunner` repo root — `tcr.py` resolves to `.agents/skills/truecrime-cult-research/scripts/tcr.py` inside it.
 - Every Python module stays under **200 non-comment LOC**; every package dir under `src/case_builder/` has a `README.md` (enforced by `tests/test_case_builder_structure.py`).
 - `[project] dependencies = []` stays empty — LangGraph additions go in the `agentic` optional extra only.
 - Nodes call **ops functions only** — never `tcr.py`, ledger files, or local-stack modules directly (spec: single safety-enforcement point).
 - `import_extraction` is called with `confirm=True` **only** downstream of a review gate (human approval flows through the gate).
-- Run tests with: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest <path> -v` (baseline: 79 passed).
+- Run tests with: `cd <project_root>/ && .venv/bin/python -m pytest <path> -v` (baseline: 79 passed).
 - Behavior preservation: `tests/test_case_builder.py` (sequential dry run stops at the packet gate with `status="waiting_for_human_review"`, `tool_results` names `["init_case", "plan_public_records"]`) must pass **unmodified**.
 - LangGraph-dependent tests start with `pytest.importorskip("langgraph")` so the suite passes with or without the extra.
 - Commit after every task, conventional-commit style, ending with:
@@ -130,7 +130,7 @@ def test_round_trip_preserves_pipeline_fields():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_pipeline_state.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_pipeline_state.py -v`
 Expected: FAIL with `TypeError: CaseBuilderState.__init__() got an unexpected keyword argument 'source_urls'` (or attribute errors)
 
 - [ ] **Step 3: Extend the models**
@@ -211,14 +211,14 @@ agentic = [
 - [ ] **Step 4: Install the agentic extra into the venv**
 
 ```bash
-cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/pip install -e '.[agentic]' -q && .venv/bin/python -c "from langgraph.checkpoint.sqlite import SqliteSaver; from langgraph.types import Command, interrupt; print('agentic stack OK')"
+cd <project_root>/ && .venv/bin/pip install -e '.[agentic]' -q && .venv/bin/python -c "from langgraph.checkpoint.sqlite import SqliteSaver; from langgraph.types import Command, interrupt; print('agentic stack OK')"
 ```
 
 Expected: `agentic stack OK`
 
 - [ ] **Step 5: Run tests to verify pass (including full-suite regression)**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_pipeline_state.py -v && .venv/bin/python -m pytest -q`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_pipeline_state.py -v && .venv/bin/python -m pytest -q`
 Expected: new tests PASS; full suite PASS. Note: with langgraph now installed, `run_case_builder(..., runner="auto")` takes the langgraph path — `tests/test_case_builder.py` pins `runner="sequential"`, so it is unaffected.
 
 - [ ] **Step 6: Commit**
@@ -288,7 +288,7 @@ def test_export_gate_passes_when_approved():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_pipeline_gates.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_pipeline_gates.py -v`
 Expected: FAIL with `ModuleNotFoundError` for `case_builder.graph.gates`
 
 - [ ] **Step 3: Write minimal implementation**
@@ -352,7 +352,7 @@ def export_review_gate_node(use_interrupt: bool):
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_pipeline_gates.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_pipeline_gates.py -v`
 Expected: PASS (4 tests)
 
 - [ ] **Step 5: Commit**
@@ -480,7 +480,7 @@ def test_parse_or_ocr_records_runtime_errors_per_source(synthetic_case_copy):
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_pipeline_nodes.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_pipeline_nodes.py -v`
 Expected: FAIL with `ModuleNotFoundError` for `case_builder.graph.pipeline_nodes`
 
 - [ ] **Step 3: Write minimal implementation**
@@ -585,7 +585,7 @@ def draft_packets_node(runner: TrcrRunner):
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_pipeline_nodes.py -v && .venv/bin/python -m pytest tests/test_case_builder_structure.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_pipeline_nodes.py -v && .venv/bin/python -m pytest tests/test_case_builder_structure.py -v`
 Expected: PASS
 
 - [ ] **Step 5: Commit**
@@ -693,7 +693,7 @@ def test_export_bundle_exports_manim_and_report():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_pipeline_nodes.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_pipeline_nodes.py -v`
 Expected: new tests FAIL with `ImportError` (factories not defined); Task 3 tests still PASS
 
 - [ ] **Step 3: Write minimal implementation**
@@ -766,7 +766,7 @@ def export_bundle_node(runner: TrcrRunner):
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_pipeline_nodes.py tests/test_case_builder_structure.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_pipeline_nodes.py tests/test_case_builder_structure.py -v`
 Expected: PASS (structure test guards the 200-LOC ceiling — `pipeline_nodes.py` lands around 160 non-comment LOC)
 
 - [ ] **Step 5: Commit**
@@ -874,7 +874,7 @@ def test_checkpointer_creates_runs_db(tmp_path):
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_pipeline_runner.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_pipeline_runner.py -v`
 Expected: FAIL — `run_sequential` still runs the 4-node bootstrap (first test fails on planned command content; second fails with wrong status; third fails with `ModuleNotFoundError` for `checkpoint`)
 
 - [ ] **Step 3: Write the implementation**
@@ -1000,12 +1000,12 @@ def langgraph_available() -> bool:
 
 - [ ] **Step 4: Run tests to verify pass, including the canary**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_pipeline_runner.py tests/test_case_builder.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_pipeline_runner.py tests/test_case_builder.py -v`
 Expected: PASS. The canary (`test_case_builder.py`) still sees `status="waiting_for_human_review"`, `review_required=True`, and `tool_results` names exactly `["init_case", "plan_public_records"]` — capture/parse/draft all skip in a dry run with no URLs or source IDs.
 
 - [ ] **Step 5: Run the full suite**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest -q`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest -q`
 Expected: all PASS
 
 - [ ] **Step 6: Commit**
@@ -1108,7 +1108,7 @@ def test_rejecting_all_packets_ends_the_run(tmp_path):
 
 - [ ] **Step 2: Run the test**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_langgraph_resume.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_langgraph_resume.py -v`
 Expected: PASS. If `snapshot.next` assertions fail, debug the gate/conditional-edge wiring from Task 5 — do not weaken the assertions; the pause points are the contract the resume CLI depends on.
 
 - [ ] **Step 3: Commit**
@@ -1232,7 +1232,7 @@ def test_service_checkpoint_pause_and_resume(tmp_path):
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_service_resume.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_service_resume.py -v`
 Expected: FAIL — parser rejects `--source-url` (unrecognized argument), `run_case_builder` rejects `checkpoint` kwarg
 
 - [ ] **Step 3: Rewrite `app/service.py`**
@@ -1388,7 +1388,7 @@ from .app.service import resume_case_builder, run_case_builder
 
 - [ ] **Step 5: Run tests to verify pass**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_service_resume.py tests/test_local_stack.py tests/test_case_builder.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_service_resume.py tests/test_local_stack.py tests/test_case_builder.py -v`
 Expected: PASS (service resume test exercises checkpoint → pause → two resumes end-to-end in dry-run mode)
 
 - [ ] **Step 6: Commit**

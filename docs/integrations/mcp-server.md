@@ -8,11 +8,11 @@
 uv pip install -p .venv/bin/python -e '.[mcp]'
 
 # Claude Code:
-claude mcp add trcr -- <projects-root>/true-crime-research/tc-c-kit/.venv/bin/trcr-mcp
+claude mcp add trcr -- <project_root>/.venv/bin/trcr-mcp
 ```
 
 For other hosts, use command
-`<projects-root>/true-crime-research/tc-c-kit/.venv/bin/trcr-mcp`
+`<project_root>/.venv/bin/trcr-mcp`
 with stdio transport. If the venv is activated, `trcr-mcp` is equivalent.
 
 Optional environment:

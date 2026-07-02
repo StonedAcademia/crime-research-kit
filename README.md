@@ -37,15 +37,18 @@ contradiction review, source-independence review, and privacy review.
 | Operate the self-hosted local stack | [Self-Hosted Deployment](docs/runbook/self-hosted-deployment.md) |
 | Check public-output blockers | [Public Output Readiness](docs/runbook/public-output-readiness.md) |
 | Generate evidence boards, Manim CSVs, charts, timelines, or bundles | [Export Artifacts](docs/runbook/export-artifacts.md) |
-| Integrate the MCP server | [MCP Server](docs/mcp-server.md) |
-| Understand the LangGraph case-builder boundary | [Case Builder LangGraph](docs/case-builder-langgraph.md) |
-| Build against the machine-facing contract | [Skill API Spec](docs/skill-api-spec.md) |
+| Integrate the MCP server | [MCP Server](docs/integrations/mcp-server.md) |
+| Understand the LangGraph case-builder boundary | [Case Builder LangGraph](docs/architecture/case-builder-langgraph.md) |
+| Build against the machine-facing contract | [Skill API Spec](docs/reference/skill-api-spec.md) |
 
 ## Document Structure
 
 | Path | Purpose |
 | --- | --- |
 | `README.md` | Project orientation, safety boundary, capability summary, and links. |
+| `docs/architecture/` | System architecture, ownership boundaries, and orchestration design. |
+| `docs/integrations/` | Host, protocol, and external-tool integration guides. |
+| `docs/reference/` | Stable machine-facing contracts and API/reference material. |
 | `docs/runbook/` | Operator procedures and repeatable workflows. Long command sequences belong here. |
 | `docs/schemas/` | JSON Schemas for case-ledger records. |
 | `docs/lanes.json` | Canonical lane and extraction-template vocabulary. |
@@ -185,8 +188,8 @@ artifacts, and notes back into the same TRCR case structure.
 
 | Surface | Reference |
 | --- | --- |
-| Case-builder and LangGraph workflow | [docs/case-builder-langgraph.md](docs/case-builder-langgraph.md) |
-| MCP server for Codex, Claude Code, and Claude Desktop | [docs/mcp-server.md](docs/mcp-server.md) |
+| Case-builder and LangGraph workflow | [docs/architecture/case-builder-langgraph.md](docs/architecture/case-builder-langgraph.md) |
+| MCP server for Codex, Claude Code, and Claude Desktop | [docs/integrations/mcp-server.md](docs/integrations/mcp-server.md) |
 | Local parsing, OCR, retrieval, and memory setup | [docs/runbook/install.md](docs/runbook/install.md) |
 | Self-hosted SearXNG, Qdrant, Ollama, OCR, MCP, and app runtime | [docs/runbook/self-hosted-deployment.md](docs/runbook/self-hosted-deployment.md) |
 | Case workspace layout and full source workflow | [docs/runbook/case-workflow.md](docs/runbook/case-workflow.md) |
@@ -201,7 +204,8 @@ artifacts, and notes back into the same TRCR case structure.
 - Use JSON Schemas from `docs/schemas/` when validating machine-facing records.
 - Before public output, run `validate`, review `public_export` and `privacy_review`, and use `audit-public-export` when available. `report` and `export-analysis-charts` provide the fallback public-readiness review surface.
 
-See `docs/skill-api-spec.md` for the machine-facing CLI and JSONL contract.
+See `docs/reference/skill-api-spec.md` for the machine-facing CLI and JSONL
+contract.
 
 ## Key principle
 

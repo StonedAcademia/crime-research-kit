@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- Repo root: `<projects-root>/true-crime-research/tc-c-kit`. All paths relative to it. Run tests with `cd <repo root> && .venv/bin/python -m pytest <path> -v`.
+- Repo root: `<project_root>/`. All paths relative to it. Run tests with `cd <repo root> && .venv/bin/python -m pytest <path> -v`.
 - Modules stay under **200 non-comment LOC**; every package dir under `src/case_builder/` has a `README.md` (enforced by `tests/test_case_builder_structure.py`).
 - `[project] dependencies = []` stays empty — the SDK goes in the new `mcp` optional extra. Install with `uv pip install -p .venv/bin/python -e '.[mcp]' -q` (the venv has no pip).
 - Spec tool-tier contract: read/query tools never mutate canonical records; `run_report` is treated as safe derived-report generation through `ops.case.report`; staged writes are limited to `staging/`, raw source intake, and source registration; `import_extraction` refuses without `confirm=true` (enforced by `ops.extraction.import_extraction`, already landed); `export_*` accept `include_private` but default public-safe and echo what was filtered.
@@ -66,7 +66,7 @@ has not landed yet.
 Run:
 
 ```bash
-cd <projects-root>/true-crime-research/tc-c-kit
+cd <project_root>/
 rg -n "def get_source_text" src/case_builder/ops/query.py tests
 ```
 
@@ -86,7 +86,7 @@ unimplemented LLM-egress assertion in the MCP commit.
 Run:
 
 ```bash
-cd <projects-root>/true-crime-research/tc-c-kit
+cd <project_root>/
 .venv/bin/python -m pytest tests/test_ops_query_review_exports.py -v
 ```
 
@@ -187,7 +187,7 @@ def test_error_dict_shape():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_mcp_context.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_mcp_context.py -v`
 Expected: FAIL with `ModuleNotFoundError` for `case_builder.mcp`
 
 - [ ] **Step 3: Write minimal implementation**
@@ -321,7 +321,7 @@ Then install: `uv pip install -p .venv/bin/python -e '.[mcp]' -q`
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_mcp_context.py tests/test_case_builder_structure.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_mcp_context.py tests/test_case_builder_structure.py -v`
 Expected: PASS
 
 - [ ] **Step 5: Commit**
@@ -428,7 +428,7 @@ def test_query_case_tool_degrades_to_error_dict(synthetic_case_copy):
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_mcp_tools_read.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_mcp_tools_read.py -v`
 Expected: FAIL with `ImportError` for `tools_read`
 
 - [ ] **Step 3: Write minimal implementation**
@@ -549,7 +549,7 @@ def register(mcp: Any, ctx: ServerContext) -> None:
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_mcp_tools_read.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_mcp_tools_read.py -v`
 Expected: PASS
 
 - [ ] **Step 5: Commit**
@@ -662,7 +662,7 @@ def test_exports_echo_privacy_mode(synthetic_case_copy):
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_mcp_tools_write_gated.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_mcp_tools_write_gated.py -v`
 Expected: FAIL with `ImportError`
 
 - [ ] **Step 3: Write minimal implementation**
@@ -910,7 +910,7 @@ def register(mcp: Any, ctx: ServerContext) -> None:
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_mcp_tools_write_gated.py tests/test_case_builder_structure.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_mcp_tools_write_gated.py tests/test_case_builder_structure.py -v`
 Expected: PASS
 
 - [ ] **Step 5: Commit**
@@ -982,7 +982,7 @@ def test_prompts_cover_safety_workflow():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_mcp_tools_read.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_mcp_tools_read.py -v`
 Expected: new tests FAIL with `ImportError`
 
 - [ ] **Step 3: Write minimal implementation**
@@ -1124,7 +1124,7 @@ def register(mcp: Any, ctx: ServerContext) -> None:
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_mcp_tools_read.py tests/test_case_builder_structure.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_mcp_tools_read.py tests/test_case_builder_structure.py -v`
 Expected: PASS
 
 - [ ] **Step 5: Commit**
@@ -1217,7 +1217,7 @@ server attribute and update `low_level_server` — do not weaken the test.
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_mcp_server.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_mcp_server.py -v`
 Expected: FAIL with `ImportError` for `case_builder.mcp.server` (or SKIP if the `[mcp]` extra was not installed — install it per Task 1 before proceeding)
 
 - [ ] **Step 3: Write minimal implementation**
@@ -1272,7 +1272,7 @@ if __name__ == "__main__":
 
 - [ ] **Step 4: Run tests to verify pass**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_mcp_server.py -v && .venv/bin/python -c "from case_builder.mcp.server import create_server; create_server()" && echo "server builds"`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_mcp_server.py -v && .venv/bin/python -c "from case_builder.mcp.server import create_server; create_server()" && echo "server builds"`
 Expected: test PASS; `server builds`
 
 - [ ] **Step 5: Commit**
@@ -1306,9 +1306,9 @@ Claude Desktop) over stdio.
 uv pip install -p .venv/bin/python -e '.[mcp]'
 
 # Claude Code:
-claude mcp add trcr -- <projects-root>/true-crime-research/tc-c-kit/.venv/bin/trcr-mcp
+claude mcp add trcr -- <project_root>/.venv/bin/trcr-mcp
 
-# Any other host: command `<projects-root>/true-crime-research/tc-c-kit/.venv/bin/trcr-mcp`,
+# Any other host: command `<project_root>/.venv/bin/trcr-mcp`,
 # transport stdio.
 # If your shell has the venv activated, `trcr-mcp` is equivalent.
 # Optional env: TRCR_CASES_ROOT (default <repo>/data/cases),
@@ -1353,7 +1353,7 @@ Expose the same ops surface to Claude Code, Codex, or Claude Desktop:
 
 ```bash
 uv pip install -p .venv/bin/python -e '.[mcp]'
-claude mcp add trcr -- <projects-root>/true-crime-research/tc-c-kit/.venv/bin/trcr-mcp
+claude mcp add trcr -- <project_root>/.venv/bin/trcr-mcp
 ```
 
 Read/query tools are always safe; write tools stage drafts only; canonical
@@ -1364,7 +1364,7 @@ exports stay public-safe by default. See `docs/mcp-server.md`.
 - [ ] **Step 3: Final verification sweep**
 
 ```bash
-cd <projects-root>/true-crime-research/tc-c-kit
+cd <project_root>/
 .venv/bin/python -m compileall -q src
 .venv/bin/python -m pytest -q
 grep -rn "tcr.py\|records/.*jsonl" src/case_builder/mcp --include="*.py" | grep -v "staging" ; echo "grep exit: $?"

@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- Repo root: `<projects-root>/true-crime-research/tc-c-kit`. All paths below are relative to it.
+- Repo root: `<project_root>/`. All paths below are relative to it.
 - Modules stay under **200 non-comment LOC**; every package dir under `src/case_builder/` has a `README.md` (enforced by `tests/test_case_builder_structure.py`).
 - `docs/lanes.json` is data, not evidence. It never creates case claims, sources, relationships, or public-ready narrative assertions.
 - Preserve current safety defaults: route suggestions remain lead-only; unknown or ambiguous lanes fail closed where a CLI/MCP tool is about to act; public exports stay public-safe by default.
@@ -176,7 +176,7 @@ Create tests that assert:
 Run:
 
 ```bash
-cd <projects-root>/true-crime-research/tc-c-kit
+cd <project_root>/
 .venv/bin/python -m pytest tests/test_lanes_json.py -v
 ```
 
@@ -193,7 +193,7 @@ The schema is intentionally lightweight. It documents required fields and enum v
 Run:
 
 ```bash
-cd <projects-root>/true-crime-research/tc-c-kit
+cd <project_root>/
 .venv/bin/python -m pytest tests/test_lanes_json.py -v
 ```
 
@@ -259,7 +259,7 @@ Keep `registry.py` under 200 non-comment LOC. If it grows, split rendering into 
 Run:
 
 ```bash
-cd <projects-root>/true-crime-research/tc-c-kit
+cd <project_root>/
 .venv/bin/python -m pytest tests/test_lanes_registry.py tests/test_case_builder_structure.py -v
 ```
 
@@ -321,7 +321,7 @@ In `tcr.py`, keep the derived constants near the current constants so the rest o
 Run:
 
 ```bash
-cd <projects-root>/true-crime-research/tc-c-kit
+cd <project_root>/
 .venv/bin/python -m pytest tests/test_lanes_json.py tests/test_lanes_registry.py tests/test_case_builder.py -v
 .venv/bin/python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction --help >/tmp/trcr-draft-help.txt
 .venv/bin/python .agents/skills/truecrime-cult-research/scripts/tcr.py plan-public-records --help >/tmp/trcr-plan-help.txt
@@ -376,7 +376,7 @@ Keep `docs.py` under 200 non-comment LOC. Prefer simple string assembly with sor
 Run:
 
 ```bash
-cd <projects-root>/true-crime-research/tc-c-kit
+cd <project_root>/
 .venv/bin/python -m pytest tests/test_lanes_docs_generation.py tests/test_case_builder_structure.py -v
 .venv/bin/python -m case_builder.lanes.docs --check
 ```
@@ -447,7 +447,7 @@ Use targeted edits. Do not rewrite adjacent skills wholesale; they contain domai
 Run:
 
 ```bash
-cd <projects-root>/true-crime-research/tc-c-kit
+cd <project_root>/
 .venv/bin/python -m pytest tests/test_skill_docs_tool_access.py -v
 ```
 
@@ -486,7 +486,7 @@ Keep this task docs-only. If you discover missing MCP docs because Phase 4 is no
 Run:
 
 ```bash
-cd <projects-root>/true-crime-research/tc-c-kit
+cd <project_root>/
 rg -n "CLI `draft-extraction --template` supports|legal-court.*corporate.*education" docs README.md .agents/skills/truecrime-cult-research/SKILL.md
 .venv/bin/python -m pytest tests/test_lanes_json.py tests/test_lanes_docs_generation.py tests/test_skill_docs_tool_access.py -v
 ```
@@ -512,7 +512,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 **Checks:**
 
 ```bash
-cd <projects-root>/true-crime-research/tc-c-kit
+cd <project_root>/
 .venv/bin/python -m compileall -q src .agents/skills/truecrime-cult-research/scripts
 .venv/bin/python -m pytest -q
 .venv/bin/python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction --help >/tmp/trcr-draft-help.txt

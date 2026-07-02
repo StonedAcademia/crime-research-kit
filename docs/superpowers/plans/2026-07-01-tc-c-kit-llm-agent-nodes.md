@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- Repo root: `<projects-root>/true-crime-research/tc-c-kit`. All paths relative to it. Run tests with `cd <repo root> && .venv/bin/python -m pytest <path> -v` (baseline after Phase 2: 110 passed).
+- Repo root: `<project_root>/`. All paths relative to it. Run tests with `cd <repo root> && .venv/bin/python -m pytest <path> -v` (baseline after Phase 2: 110 passed).
 - Modules stay under **200 non-comment LOC**; every package dir under `src/case_builder/` has a `README.md` (enforced by `tests/test_case_builder_structure.py`).
 - `[project] dependencies = []` stays empty — langchain goes in the new `llm` optional extra. Install into the venv with `uv pip install -p .venv/bin/python -e '.[llm]' -q` (the venv has no pip).
 - Agent functions are **bounded, single-purpose calls with structured output** — no tool use, no loops beyond one retry-with-feedback (spec: "not free-roaming agents").
@@ -144,7 +144,7 @@ def test_record_llm_egress_appends_audit_row(synthetic_case_copy):
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_ops_source_text.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_ops_source_text.py -v`
 Expected: FAIL with `AttributeError` (`get_source_text` / `record_llm_egress` not defined)
 
 - [ ] **Step 3: Write minimal implementation**
@@ -199,7 +199,7 @@ def record_llm_egress(case_dir: str | Path, provider: str, context: str) -> None
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_ops_source_text.py tests/test_case_builder_structure.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_ops_source_text.py tests/test_case_builder_structure.py -v`
 Expected: PASS
 
 - [ ] **Step 5: Commit**
@@ -290,7 +290,7 @@ def test_get_chat_model_hints_at_llm_extra_when_langchain_missing(monkeypatch):
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_llm_provider.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_llm_provider.py -v`
 Expected: FAIL with `ModuleNotFoundError` for `case_builder.llm`
 
 - [ ] **Step 3: Write minimal implementation**
@@ -382,7 +382,7 @@ llm = [
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_llm_provider.py tests/test_case_builder_structure.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_llm_provider.py tests/test_case_builder_structure.py -v`
 Expected: PASS (no need to install the `llm` extra — tests never import langchain)
 
 - [ ] **Step 5: Commit**
@@ -542,7 +542,7 @@ def test_bounded_context_keeps_head_and_tail():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_packet_agent.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_packet_agent.py -v`
 Expected: FAIL with `ModuleNotFoundError` for `case_builder.llm.packet_agent`
 
 - [ ] **Step 3: Write minimal implementation**
@@ -674,7 +674,7 @@ assertion fails on boundary math, adjust the head/tail split, not the test.
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_packet_agent.py tests/test_case_builder_structure.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_packet_agent.py tests/test_case_builder_structure.py -v`
 Expected: PASS (9 tests)
 
 - [ ] **Step 5: Commit**
@@ -768,7 +768,7 @@ def test_write_readiness_brief_stages_markdown_and_logs(synthetic_case_copy):
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_llm_helpers.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_llm_helpers.py -v`
 Expected: FAIL with `ModuleNotFoundError`
 
 - [ ] **Step 3: Write minimal implementation**
@@ -866,7 +866,7 @@ def write_readiness_brief(model: Any, case_dir: str, audit_results: Sequence[dic
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_llm_helpers.py tests/test_case_builder_structure.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_llm_helpers.py tests/test_case_builder_structure.py -v`
 Expected: PASS
 
 - [ ] **Step 5: Commit**
@@ -1039,7 +1039,7 @@ def test_pipeline_list_includes_llm_nodes_in_order():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_llm_nodes.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_llm_nodes.py -v`
 Expected: FAIL with `ModuleNotFoundError` for `case_builder.graph.llm_nodes`
 
 - [ ] **Step 3: Write the nodes**
@@ -1214,7 +1214,7 @@ def build_case_builder_graph(runner: TrcrRunner, *, checkpointer=None, use_inter
 
 - [ ] **Step 5: Run tests to verify pass, including Phase 2 canaries**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_llm_nodes.py tests/test_pipeline_runner.py tests/test_case_builder.py tests/test_langgraph_resume.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_llm_nodes.py tests/test_pipeline_runner.py tests/test_case_builder.py tests/test_langgraph_resume.py -v`
 Expected: PASS — the canaries are unaffected because both new nodes return only a skip status in dry runs / without a factory, and Phase 2's `test_sequential_full_pass...` asserts `planned_commands` (which skip statuses never touch).
 
 Note: the full-pass test asserts the exact planned-command sequence, not statuses between nodes, so inserting skipping nodes is invisible to it. If any canary fails, fix the node skip conditions — do not touch the canary.
@@ -1271,7 +1271,7 @@ def test_llm_disabled_state_never_builds_a_model(monkeypatch):
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `cd <projects-root>/true-crime-research/tc-c-kit && .venv/bin/python -m pytest tests/test_service_resume.py -v`
+Run: `cd <project_root>/ && .venv/bin/python -m pytest tests/test_service_resume.py -v`
 Expected: FAIL — `--llm` unrecognized; `service._model_factory` missing
 
 - [ ] **Step 3: Update service and CLI**
@@ -1367,7 +1367,7 @@ In `src/case_builder/graph/README.md`, add a row to the module table:
 - [ ] **Step 5: Run the full suite and sweep**
 
 ```bash
-cd <projects-root>/true-crime-research/tc-c-kit
+cd <project_root>/
 .venv/bin/python -m compileall -q src
 .venv/bin/python -m pytest -q
 .venv/bin/python -m case_builder.cli plan data/cases/example_case --subject "missing person map" 2>/dev/null | grep '"status"'
