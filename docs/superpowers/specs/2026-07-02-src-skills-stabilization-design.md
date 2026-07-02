@@ -27,7 +27,13 @@ which means it also preserved two classes of debt:
 ## Decisions (made with the operator)
 
 - **Dependency policy is relaxed.** The package moves from zero required dependencies to a
-  small required set: `jsonschema`, `pydantic` (v2), `httpx`, `typer`, `jinja2`.
+  small required set: `jsonschema`, `pydantic` (v2), `pydantic-settings`, `httpx`, `typer`,
+  `jinja2`.
+- **Pydantic usage contract.** `BaseModel` is the typed in-memory representation for CRK
+  evidence records, extraction packets, manifests, schema-backed payloads, and serialized
+  artifacts. `BaseSettings` appears only at process boundaries — CLI startup, MCP server
+  startup, deployment/runtime config — instantiated once, with values passed inward; core
+  logic never calls `Settings()` itself.
 - **Vocabulary lives in the registry with per-case overrides.** Neutral default packs ship
   as `docs/registry/` shards; case-specific terms leave the codebase and become per-case
   override packs.
@@ -55,8 +61,9 @@ governance, and passes `moon run crk:test-governance` before merge.
 
 ### Stage 1 — Dependency policy + core stabilization
 
-- `pyproject.toml`: add required dependencies `jsonschema`, `pydantic>=2`, `httpx`,
-  `typer`, `jinja2`. Deduplicate extras that currently pull these transitively.
+- `pyproject.toml`: add required dependencies `jsonschema`, `pydantic>=2`,
+  `pydantic-settings`, `httpx`, `typer`, `jinja2`. Deduplicate extras that currently pull
+  these transitively.
 - Update `tests/quality/governance/platform/test_packaging_policy.py` (line 62,
   `test_core_package_has_no_runtime_dependencies_and_declares_license` asserts
   `dependencies == []`) to assert the new allowlist instead — the test still pins the set so
@@ -70,10 +77,16 @@ governance, and passes `moon run crk:test-governance` before merge.
   `src/adapters/ops/casework/records/validation.py` with `jsonschema` validation against
   the real schema files. Error output stays line-addressed (`records/<file>.jsonl:<n>`) so
   existing operator workflows and tests keep working.
-- Convert `core/config.py` to a pydantic `BaseModel` populated from `CRK_*` env vars (same
-  vars, same defaults; plain pydantic — the separate `pydantic-settings` package is not
-  added). Type `OpResult` and extraction packet payloads as pydantic models at the ops
-  boundary; internal dict plumbing converts opportunistically, not exhaustively.
+- Convert `core/config.py` to a `pydantic-settings` `BaseSettings` class (same `CRK_*` env
+  vars, same defaults). Settings objects are constructed once at process boundaries — CLI
+  startup (`cr-kit`, `crk-ledger`), MCP server startup, deployment/runtime config — and
+  their values are passed inward as plain arguments or models; nothing under `core/`,
+  `pipeline/`, or `adapters/ops/` calls `Settings()` directly. Introduce `BaseModel` classes for the typed in-memory surface: CRK evidence
+  records (sources, claims, entities, events, relationships, …), extraction packets,
+  manifests, `OpResult`, and other serialized artifacts. The JSON Schema files in
+  `docs/schemas/` remain the canonical on-disk ledger contract; the pydantic models mirror
+  them and a governance drift test keeps model fields aligned with schema fields. Internal
+  dict plumbing converts to models opportunistically, not exhaustively.
 
 ### Stage 2 — Vocabulary externalization
 
