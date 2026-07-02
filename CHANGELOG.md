@@ -11,10 +11,14 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 - `crk-ledger validate` now enforces the full JSON Schemas (enums, types, nested shapes) with line-addressed errors, replacing required-field-only checks.
 - Environment configuration is resolved once at CLI/MCP startup via `CrkSettings`; all `CRK_*` variable names and defaults are unchanged.
 - Setting an env var to an empty string is now a validation error for integer settings (e.g. `CRK_QDRANT_PORT=""` fails at startup) instead of silently falling back to the default.
+- Analysis relationship/family/bridge classification is now driven by vocabulary packs from `docs/registry/analysis/`; records matching no pack or structural rule surface as `unclassified` instead of silently defaulting to `personnel_bridge`.
+- Status/grade score tables and layer ordering moved from code constants to the `analysis/scoring.json` and `analysis/vocabulary.json` registry shards.
 
 ### Added
 - Typed pydantic models for all twelve ledger record types (`core.models.records`), drift-tested against the canonical schemas.
 - Record schemas ship as package data, so installed packages validate without a repo checkout.
+- Per-case vocabulary overrides: `data/cases/<slug>/analysis_vocabulary.json` extends or prepends the default packs, with a worked example in `data/examples/synthetic_case/`.
+- Governance tests banning case-specific vocabulary from `src/` and validating the new registry shards.
 
 ## [0.12.0] - 2026-07-02
 
