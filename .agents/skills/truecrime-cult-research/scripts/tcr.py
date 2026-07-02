@@ -123,6 +123,7 @@ from adapters.ops.evidence.quality.safety.readiness import (  # noqa: E402
 )
 from adapters.ops.evidence.quality.safety.source_independence import source_independence  # noqa: E402
 from adapters.ops.evidence.reports.analysis.command.builders.bridges import build_cluster_bridges  # noqa: E402
+from adapters.ops.evidence.reports.analysis.command.builders.evidence import build_evidence_products  # noqa: E402
 from adapters.ops.evidence.reports.analysis.command.builders.layered import build_layered_graphs  # noqa: E402
 from adapters.ops.evidence.reports.analysis.command.builders.paths import build_path_atlas  # noqa: E402
 from adapters.ops.evidence.reports.analysis.command.context import load_analysis_context  # noqa: E402
@@ -210,181 +211,13 @@ def export_analysis_charts(args: argparse.Namespace) -> None:
     layered_v2_edges = layered_products["layered_v2_edges"]
     layered_v2_layers = layered_products["layered_v2_layers"]
 
-    claim_heatmap: list[dict[str, Any]] = []
-    claim_matrix: list[dict[str, Any]] = []
-    claim_edge_rows: list[dict[str, Any]] = []
-    for claim in sorted(claims, key=lambda row: str(row.get("claim_id", ""))):
-        source_ids = [sid for sid in parse_cell_list(claim.get("source_ids")) if sid in source_by_id]
-        source_rows = [source_by_id[sid] for sid in source_ids]
-        independent_count = len({source_independence_key(src) for src in source_rows})
-        claim_heatmap.append({
-            "claim_id": claim.get("claim_id", ""),
-            "claim": claim.get("claim", ""),
-            "claim_type": claim.get("claim_type", ""),
-            "status": claim.get("status", ""),
-            "confidence": claim.get("confidence", ""),
-            "status_score": STATUS_SCORE.get(str(claim.get("status", "")), 0.0),
-            "source_count": len(source_rows),
-            "independent_source_count": independent_count,
-            "best_source_grade": best_grade(source_rows),
-            "source_grade_counts": source_grade_counts(source_rows),
-            "source_grade_score": source_grade_score(source_rows),
-            "privacy_review": claim.get("privacy_review", ""),
-            "public_export": claim.get("public_export", True),
-            "boundary_flag": boundary_signal(claim),
-            "readiness": readiness_label(claim, source_rows),
-        })
-        for source in source_rows:
-            claim_matrix.append({
-                "claim_id": claim.get("claim_id", ""),
-                "claim_label": str(claim.get("claim", ""))[:160],
-                "source_id": source.get("source_id", ""),
-                "source_title": source.get("title", ""),
-                "source_grade": source.get("reliability_grade", ""),
-                "source_type": source.get("source_type", ""),
-                "source_publisher": source.get("publisher", ""),
-                "claim_status": claim.get("status", ""),
-                "claim_confidence": claim.get("confidence", ""),
-                "claim_type": claim.get("claim_type", ""),
-                "source_role": "boundary_source" if boundary_signal(claim) else "direct_support",
-                "safe_public_cell": public_ready_record(claim) and source.get("public_export", True) is not False,
-                "boundary_flag": boundary_signal(claim),
-                "contradiction_flag": bool(parse_cell_list(claim.get("contradicts"))),
-                "contradicts": claim.get("contradicts", []),
-                "supports": claim.get("supports", []),
-            })
-        for edge_type, linked_ids in [("supports", parse_cell_list(claim.get("supports"))), ("contradicts", parse_cell_list(claim.get("contradicts")))]:
-            for linked_id in linked_ids:
-                linked = claim_by_id.get(linked_id, {})
-                claim_edge_rows.append({
-                    "from_claim_id": claim.get("claim_id", ""),
-                    "to_claim_id": linked_id,
-                    "edge_type": edge_type,
-                    "from_claim_status": claim.get("status", ""),
-                    "to_claim_status": linked.get("status", ""),
-                    "from_confidence": claim.get("confidence", ""),
-                    "to_confidence": linked.get("confidence", ""),
-                    "shared_source_count": len(set(source_ids) & set(parse_cell_list(linked.get("source_ids")))),
-                    "from_source_ids": source_ids,
-                    "to_source_ids": parse_cell_list(linked.get("source_ids")),
-                    "boundary_flag": edge_type == "contradicts" or boundary_signal(claim) or boundary_signal(linked),
-                    "safe_public_pair": public_ready_record(claim) and (not linked or public_ready_record(linked)),
-                })
-
-    heatmap_groups: dict[tuple[str, str], dict[str, Any]] = {}
-    for row in claim_heatmap:
-        key = (str(row.get("claim_type") or "unknown"), str(row.get("status") or "unknown"))
-        group = heatmap_groups.setdefault(key, {
-            "claim_type": key[0],
-            "status": key[1],
-            "claim_count": 0,
-            "public_claim_count": 0,
-            "internal_only_count": 0,
-            "needs_review_count": 0,
-            "confidence_total": 0.0,
-            "source_count_total": 0,
-            "a_sources": 0,
-            "b_sources": 0,
-            "c_sources": 0,
-            "d_sources": 0,
-            "boundary_claim_count": 0,
-            "claim_ids": [],
-        })
-        group["claim_count"] += 1
-        group["public_claim_count"] += 1 if row.get("public_export") is not False else 0
-        group["internal_only_count"] += 1 if row.get("public_export") is False else 0
-        group["needs_review_count"] += 1 if row.get("privacy_review") and row.get("privacy_review") != "clear" else 0
-        group["confidence_total"] += parse_float(row.get("confidence"), 0.0)
-        group["source_count_total"] += int(row.get("source_count") or 0)
-        group["boundary_claim_count"] += 1 if row.get("boundary_flag") else 0
-        group["claim_ids"].append(row.get("claim_id", ""))
-        grade_map = dict(part.split(":", 1) for part in str(row.get("source_grade_counts", "")).split(";") if ":" in part)
-        group["a_sources"] += int(grade_map.get("A", "0"))
-        group["b_sources"] += int(grade_map.get("B", "0"))
-        group["c_sources"] += int(grade_map.get("C", "0"))
-        group["d_sources"] += int(grade_map.get("D", "0"))
-    heatmap_aggregate = []
-    for group in heatmap_groups.values():
-        count = max(1, int(group["claim_count"]))
-        group["avg_confidence"] = round(float(group.pop("confidence_total")) / count, 3)
-        group["avg_source_count"] = round(float(group["source_count_total"]) / count, 3)
-        heatmap_aggregate.append(group)
-    heatmap_aggregate.sort(key=lambda row: (str(row["claim_type"]), str(row["status"])))
-
-    source_counter: dict[str, dict[str, Any]] = {
-        sid: {
-            "source_id": sid,
-            "title": source.get("title", ""),
-            "reliability_grade": source.get("reliability_grade", ""),
-            "source_type": source.get("source_type", ""),
-            "publisher": source.get("publisher", ""),
-            "date_published": source.get("date_published", ""),
-            "date_accessed": source.get("date_accessed", ""),
-            "url": source.get("url", ""),
-            "independence_group": source.get("independence_group", ""),
-            "claim_count": 0,
-            "event_count": 0,
-            "event_link_count": 0,
-            "relationship_count": 0,
-            "entity_count": 0,
-            "person_count": 0,
-            "verified_claim_count": 0,
-            "corroborated_claim_count": 0,
-            "single_source_claim_count": 0,
-            "disputed_claim_count": 0,
-            "unverified_claim_count": 0,
-            "needs_privacy_review_count": 0,
-            "nonpublic_record_count": 0,
-            "source_quality_notes": source.get("notes", ""),
-            "public_export": source.get("public_export", True),
-        }
-        for sid, source in source_by_id.items()
-    }
-    for claim in claims:
-        for sid in parse_cell_list(claim.get("source_ids")):
-            if sid in source_counter:
-                source_counter[sid]["claim_count"] += 1
-                status_key = f"{claim.get('status', 'unknown')}_claim_count"
-                if status_key in source_counter[sid]:
-                    source_counter[sid][status_key] += 1
-                if claim.get("privacy_review") and claim.get("privacy_review") != "clear":
-                    source_counter[sid]["needs_privacy_review_count"] += 1
-                if claim.get("public_export", True) is False:
-                    source_counter[sid]["nonpublic_record_count"] += 1
-    for event in events:
-        for sid in parse_cell_list(event.get("source_ids")):
-            if sid in source_counter:
-                source_counter[sid]["event_count"] += 1
-                if event.get("public_export", True) is False:
-                    source_counter[sid]["nonpublic_record_count"] += 1
-    for link in event_links:
-        for sid in parse_cell_list(link.get("source_ids")):
-            if sid in source_counter:
-                source_counter[sid]["event_link_count"] += 1
-                if link.get("public_export", True) is False:
-                    source_counter[sid]["nonpublic_record_count"] += 1
-    for rel in relationships:
-        for sid in parse_cell_list(rel.get("source_ids")):
-            if sid in source_counter:
-                source_counter[sid]["relationship_count"] += 1
-                if rel.get("public_export", True) is False:
-                    source_counter[sid]["nonpublic_record_count"] += 1
-    for entity in entities:
-        for sid in parse_cell_list(entity.get("source_ids")):
-            if sid in source_counter:
-                source_counter[sid]["entity_count"] += 1
-                if entity.get("public_export", True) is False:
-                    source_counter[sid]["nonpublic_record_count"] += 1
-    for person in people:
-        for sid in parse_cell_list(person.get("source_ids")):
-            if sid in source_counter:
-                source_counter[sid]["person_count"] += 1
-    source_dashboard = sorted(source_counter.values(), key=lambda row: (str(row["reliability_grade"]), str(row["source_id"])))
-    grade_counts: dict[str, int] = {}
-    for source in source_dashboard:
-        grade = str(source.get("reliability_grade", ""))
-        grade_counts[grade] = grade_counts.get(grade, 0) + 1
-    source_grade_count_rows = [{"grade": grade, "count": count} for grade, count in sorted(grade_counts.items())]
+    evidence_products = build_evidence_products(ctx)
+    claim_heatmap = evidence_products["claim_heatmap"]
+    claim_matrix = evidence_products["claim_matrix"]
+    claim_edge_rows = evidence_products["claim_edge_rows"]
+    heatmap_aggregate = evidence_products["heatmap_aggregate"]
+    source_dashboard = evidence_products["source_dashboard"]
+    source_grade_count_rows = evidence_products["source_grade_count_rows"]
 
     boundary_rows: list[dict[str, Any]] = []
     for claim in claims:
