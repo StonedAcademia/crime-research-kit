@@ -6,6 +6,8 @@ useDefault = true
 [allowlist]
 description = "Local case workspaces and synthetic fixtures are governed by CRK privacy tests."
 paths = [
+  '''^\.moon/cache/''',
+  '''^\.worktrees/''',
   '''^data/cases/''',
   '''^data/exports/''',
   '''^data/examples/''',
