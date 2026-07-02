@@ -21,7 +21,7 @@ This repository supports public-interest, documentary-style research into true c
 Run these after modifying scripts or schemas:
 
 ```bash
-python -m compileall src/case_builder .agents/skills/truecrime-cult-research/scripts
+python -m compileall src .agents/skills/truecrime-cult-research/scripts
 python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/examples/synthetic_case
 ```
 
@@ -34,7 +34,7 @@ pytest
 ## Directory routing
 
 - Skill instructions live in `.agents/skills/truecrime-cult-research/SKILL.md`.
-- Case-builder app code lives in `src/case_builder/`; keep each Python module under 200 non-comment LOC and keep a `README.md` in each package directory.
+- Case-builder app code lives in `src/`; keep each Python module under 200 non-comment LOC and keep a `README.md` in each Python-bearing directory.
 - Source and entity schemas live in `docs/schemas/`, grouped by ledger domain.
 - Name directories and files by the workflow, contract, or domain they serve. Do not use vague buckets such as `misc`, `stuff`, `old`, or catch-all holding areas to satisfy governance.
 - Before and after moving files in a target directory, run the repository governance check for the affected paths with `pytest tests/governance/test_repository_shape.py -q` and inspect the reported file/dir counts.

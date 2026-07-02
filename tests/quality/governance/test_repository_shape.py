@@ -18,7 +18,7 @@ MIN_DIRS_PER_DIR = 0
 MAX_DIRS_PER_DIR = 3
 MAX_NON_COMMENT_LOC = 200
 SKIPPED_ROOTS = (Path(".agents"), Path("data"), Path("docs/superpowers"))
-CASE_BUILDER_ROOT = Path("src/case_builder")
+SRC_ROOT = Path("src")
 
 HASH_COMMENT_SUFFIXES = {".py", ".sh", ".yml", ".yaml", ".toml"}
 HASH_COMMENT_NAMES = {"Dockerfile", "Makefile", ".dockerignore", ".gitignore", ".prototools"}
@@ -72,19 +72,19 @@ def test_directories_keep_small_bounded_shape():
     assert offenders == []
 
 
-def case_builder_package_dirs() -> list[Path]:
-    package_dirs = {
+def src_python_dirs() -> list[Path]:
+    python_dirs = {
         path.parent
         for path in tracked_paths()
-        if path.name == "__init__.py" and (path == CASE_BUILDER_ROOT / "__init__.py" or CASE_BUILDER_ROOT in path.parents)
+        if path.suffix == ".py" and (path == SRC_ROOT / path.name or SRC_ROOT in path.parents)
     }
-    return sorted(package_dirs)
+    return sorted(python_dirs)
 
 
-def test_case_builder_package_dirs_have_inline_readmes():
+def test_src_python_dirs_have_inline_readmes():
     missing = [
         path.as_posix()
-        for path in case_builder_package_dirs()
+        for path in src_python_dirs()
         if not (KIT_ROOT / path / "README.md").exists()
     ]
 

@@ -17,7 +17,7 @@ ledger, and neither is allowed to bypass its contract:
    `.agents/skills/` (legal-court-records, missing-persons-case,
    privacy-redaction-audit, …) extend the same case ledger with
    domain-specific packets. See [Agent Skills](../integrations/agent-skills.md).
-2. **`src/case_builder/`** — the agent app. Its frontends (CLI, LangGraph
+2. **`src/`** — the agent app. Its frontends (CLI, LangGraph
    workflow, MCP server) never touch `tcr.py` or the ledger directly; they go
    through the typed ops core in `ops/` (`OpResult`, `CrkRunner`, and the
    safety `policy`). The graph runner stops at a human review gate. See
@@ -34,7 +34,7 @@ flowchart TB
     ADJ["16 adjacent skills<br/>legal · missing-persons · FOIA · privacy · ..."]
   end
 
-  subgraph APP["Layer 2 · case_builder agent app"]
+  subgraph APP["Layer 2 · case-builder agent app"]
     CLI2["CLI"]
     GRAPH["LangGraph graph<br/>+ sequential fallback"]
     MCP["MCP server"]

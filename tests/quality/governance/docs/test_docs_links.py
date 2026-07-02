@@ -20,8 +20,14 @@ EXTERNAL_SCHEMES = ("http://", "https://", "mailto:", "tel:")
 
 
 def tracked_markdown_files() -> list[str]:
-    out = subprocess.run(["git", "ls-files", "*.md"], cwd=KIT_ROOT, check=True, capture_output=True, text=True).stdout
-    return [line for line in out.splitlines() if line]
+    out = subprocess.run(
+        ["git", "ls-files", "--cached", "--others", "--exclude-standard", "*.md"],
+        cwd=KIT_ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout
+    return [line for line in out.splitlines() if line and (KIT_ROOT / line).exists()]
 
 
 def iter_doc_lines(path: Path):

@@ -2,7 +2,7 @@ import re
 import subprocess
 import sys
 
-from case_builder.core.lanes.registry import load_lanes
+from core.lanes.registry import load_lanes
 from tests.helpers import KIT_ROOT
 
 ROOT = KIT_ROOT

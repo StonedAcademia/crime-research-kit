@@ -1,9 +1,9 @@
 import json
 from pathlib import Path
 
-from case_builder.adapters.interfaces.mcp import tools_read
-from case_builder.adapters.interfaces.mcp.context import ServerContext
-from case_builder.adapters.ops.runner import CrkRunner
+from adapters.interfaces.mcp import tools_read
+from adapters.interfaces.mcp.context import ServerContext
+from adapters.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT
 
 
@@ -87,7 +87,7 @@ def test_query_case_tool_degrades_to_error_dict(synthetic_case_copy):
 def test_records_resource_is_public_safe_jsonl(synthetic_case_copy):
     import json as json_module
 
-    from case_builder.adapters.interfaces.mcp import resources
+    from adapters.interfaces.mcp import resources
 
     claims = synthetic_case_copy / "records" / "claims.jsonl"
     private_row = {
@@ -111,7 +111,7 @@ def test_records_resource_is_public_safe_jsonl(synthetic_case_copy):
 def test_reference_resource_allow_list(synthetic_case_copy):
     import pytest
 
-    from case_builder.adapters.interfaces.mcp import resources
+    from adapters.interfaces.mcp import resources
 
     ctx = make_ctx(synthetic_case_copy.parent)
 
@@ -123,7 +123,7 @@ def test_reference_resource_allow_list(synthetic_case_copy):
 
 
 def test_prompts_cover_safety_workflow():
-    from case_builder.adapters.interfaces.mcp import prompts
+    from adapters.interfaces.mcp import prompts
 
     assert "review" in prompts.REVIEW_PACKET.lower()
     assert "confirm" in prompts.REVIEW_PACKET.lower()

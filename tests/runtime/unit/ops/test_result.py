@@ -1,7 +1,7 @@
 import pytest
 
-from case_builder.core.casefile import CasefileError
-from case_builder.adapters.ops.result import OpResult, local_op
+from core.casefile import CasefileError
+from adapters.ops.result import OpResult, local_op
 
 
 def test_op_result_defaults_and_dict_roundtrip():

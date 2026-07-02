@@ -11,7 +11,7 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/examp
 Check that the case-builder app can plan a dry run:
 
 ```bash
-PYTHONPATH=src python -m case_builder.cli plan data/cases/install_smoke \
+PYTHONPATH=src python -m cli plan data/cases/install_smoke \
   --title "Install Smoke Test" \
   --subject "Synthetic public-source smoke test for setup verification"
 ```

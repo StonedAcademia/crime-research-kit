@@ -31,7 +31,7 @@ def subcommands_from_help(output: str) -> list[str]:
 
 
 def cr_kit_commands() -> set[str]:
-    output = run_help([sys.executable, "-m", "case_builder.cli", "--help"])
+    output = run_help([sys.executable, "-m", "cli", "--help"])
     return {f"cr-kit {name}" for name in subcommands_from_help(output)}
 
 

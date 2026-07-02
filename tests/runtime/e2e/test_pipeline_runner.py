@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from case_builder.pipeline.graph.runner import run_sequential
-from case_builder.core.models.state import CaseBuilderState
-from case_builder.adapters.ops.runner import CrkRunner
+from pipeline.graph.runner import run_sequential
+from core.models.state import CaseBuilderState
+from adapters.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT
 
 REPO_ROOT = KIT_ROOT
@@ -63,7 +63,7 @@ def test_checkpointer_creates_runs_db(tmp_path):
     import pytest
 
     pytest.importorskip("langgraph")
-    from case_builder.pipeline.graph.persistence.checkpoint import case_checkpointer
+    from pipeline.graph.persistence.checkpoint import case_checkpointer
 
     saver = case_checkpointer(str(tmp_path / "some_case"))
 

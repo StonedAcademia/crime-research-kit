@@ -12,8 +12,8 @@ Spec: `docs/superpowers/specs/2026-07-02-governance-hardening-spec.md` (policies
 
 ## Global Constraints
 
-- Repo-shape governance applies to everything you add outside `.agents/`, `data/`, `docs/superpowers/`: 1-4 direct files and 0-3 child dirs per governed dir; every governed file < 200 non-comment LOC (`tests/quality/governance/test_repository_shape.py`). `.github/`, `src/case_builder/`, and `tests/` are all governed by the same shape rule.
-- Every new `src/case_builder/` package dir with `__init__.py` needs `README.md` (enforced by `tests/quality/governance/test_repository_shape.py`).
+- Repo-shape governance applies to everything you add outside `.agents/`, `data/`, `docs/superpowers/`: 1-4 direct files and 0-3 child dirs per governed dir; every governed file < 200 non-comment LOC (`tests/quality/governance/test_repository_shape.py`). `.github/`, `src/`, and `tests/` are all governed by the same shape rule.
+- Every new Python-bearing directory under `src/` needs `README.md` (enforced by `tests/quality/governance/test_repository_shape.py`).
 - No new required dependencies: core stays stdlib. New tooling goes in the `governance` optional extra or as fetched pinned binaries.
 - Governance tests must not use the network. Audit-lane targets may; they must degrade with a clear skip message offline.
 - Every CI job step must be expressible as a `make <target>` (which delegates to `moon run crk:<task>`).
@@ -160,7 +160,7 @@ def test_workflow_dirs_have_readmes():
 **Files:**
 - Create: `tests/quality/governance/test_import_boundaries.py`
 
-**Interfaces:** policy constants exactly as spec §5 (frontend roots: `src/case_builder/cli.py`, `src/case_builder/adapters/interfaces/mcp/`, `src/case_builder/pipeline/graph/`, `src/case_builder/pipeline/app/`; forbidden: `case_builder.core.casefile`, direct `tcr.py` refs outside `ops/runner.py`; optional packages list; network modules list with allowed roots `src/case_builder/adapters/io/acquisition/`).
+**Interfaces:** policy constants exactly as spec §5 (frontend roots: `src/cli.py`, `src/adapters/interfaces/mcp/`, `src/pipeline/graph/`, `src/pipeline/app/`; forbidden: `core.casefile`, direct `tcr.py` refs outside `ops/runner.py`; optional packages list; network modules list with allowed roots `src/adapters/io/acquisition/`).
 
 **Steps:**
 
@@ -174,7 +174,7 @@ from tests.helpers import KIT_ROOT
 
 SRC = KIT_ROOT / "src" / "case_builder"
 FRONTEND_ROOTS = [SRC / "cli.py", SRC / "mcp", SRC / "graph", SRC / "app"]
-FORBIDDEN_FOR_FRONTENDS = {"case_builder.core.casefile"}
+FORBIDDEN_FOR_FRONTENDS = {"core.casefile"}
 OPTIONAL_PACKAGES = {"langgraph", "langchain", "langchain_ollama", "llama_index",
                      "qdrant_client", "mem0", "docling", "ocrmypdf", "fitz",
                      "playwright", "scrapy", "trafilatura", "mcp",
@@ -229,7 +229,7 @@ def test_optional_packages_import_lazily():
     assert not offenders, offenders
 
 def test_base_cli_import_pulls_no_optional_packages():
-    code = ("import sys, case_builder.cli; "
+    code = ("import sys, cli; "
             "hits = sorted({m.split('.')[0] for m in sys.modules} & "
             f"{OPTIONAL_PACKAGES!r}); "
             "print(','.join(hits)); sys.exit(1 if hits else 0)")
@@ -249,8 +249,8 @@ def test_network_modules_confined_to_acquisition():
     assert not offenders, offenders
 ```
 
-- [ ] **Step 3.2:** Run it. Expect surprises (e.g., `mcp` package imports at top level inside `src/case_builder/adapters/interfaces/mcp/` — that is the *frontend for* the extra, so refine: allow an optional package at top level inside the subsystem dir that exists only for it: `mcp/` may import `mcp`, `graph/` may import `langgraph` ONLY inside `try/except ImportError` — detect by checking the import's enclosing `Try` node; parsing note: walk `tree.body` `ast.Try` handlers too). Iterate until the rules encode reality without weakening the boundary; every exemption gets a comment.
-- [ ] **Step 3.3:** Prove each test can fail (temporarily add `import case_builder.core.casefile` to `cli.py`, a top-level `import langgraph` to `ops/case.py`, `import requests` to `models/state.py` → each test fails → revert).
+- [ ] **Step 3.2:** Run it. Expect surprises (e.g., `mcp` package imports at top level inside `src/adapters/interfaces/mcp/` — that is the *frontend for* the extra, so refine: allow an optional package at top level inside the subsystem dir that exists only for it: `mcp/` may import `mcp`, `graph/` may import `langgraph` ONLY inside `try/except ImportError` — detect by checking the import's enclosing `Try` node; parsing note: walk `tree.body` `ast.Try` handlers too). Iterate until the rules encode reality without weakening the boundary; every exemption gets a comment.
+- [ ] **Step 3.3:** Prove each test can fail (temporarily add `import core.casefile` to `cli.py`, a top-level `import langgraph` to `ops/case.py`, `import requests` to `models/state.py` → each test fails → revert).
 - [ ] **Step 3.4:** Full suite green; commit: `test(governance): enforce ops boundary, lazy optional imports, and network confinement`
 
 ## Phase 4 — Branch `gov/env-provider-policy`
@@ -262,7 +262,7 @@ def test_network_modules_confined_to_acquisition():
 
 **Steps:**
 
-- [ ] **Step 4.1:** Build `docs/registry/env_vars.json` from the survey's inventory: `CRK_CASES_ROOT, CRK_SKILL_ROOT, CRK_MODEL, CRK_SEARXNG_URL, CRK_QDRANT_URL, CRK_QDRANT_HOST, CRK_QDRANT_PORT, CRK_EMBED_MODEL, CRK_MEM0_LLM_PROVIDER, CRK_MEM0_LLM_MODEL, CRK_EMBEDDER_PROVIDER, CRK_HOOK_BRANCH, CRK_REPO_ROOT, OLLAMA_HOST, SEARXNG_BASE_URL, HF_HOME, TRANSFORMERS_CACHE` — each with real purpose/default read from the code (`src/case_builder/core/config.py`, `deployment/`).
+- [ ] **Step 4.1:** Build `docs/registry/env_vars.json` from the survey's inventory: `CRK_CASES_ROOT, CRK_SKILL_ROOT, CRK_MODEL, CRK_SEARXNG_URL, CRK_QDRANT_URL, CRK_QDRANT_HOST, CRK_QDRANT_PORT, CRK_EMBED_MODEL, CRK_MEM0_LLM_PROVIDER, CRK_MEM0_LLM_MODEL, CRK_EMBEDDER_PROVIDER, CRK_HOOK_BRANCH, CRK_REPO_ROOT, OLLAMA_HOST, SEARXNG_BASE_URL, HF_HOME, TRANSFORMERS_CACHE` — each with real purpose/default read from the code (`src/core/config.py`, `deployment/`).
 - [ ] **Step 4.2:** Write the test: AST scan of `src/**/*.py` + `.agents/skills/*/scripts/*.py` for `os.environ[...]`/`os.environ.get(...)`/`os.getenv(...)`; regex scan of `deployment/**` shell/yaml/compose for `${VAR}`/`environment:` keys. Assert (a) every discovered literal key is registered, (b) non-literal env keys are absent, (c) every registered key matches an approved prefix or is an approved singleton, (d) every registered `runtime`-scope key is actually read somewhere (no dead registry entries).
 - [ ] **Step 4.3:** Same file, SaaS denylist test: case-insensitive substring scan of tracked files under `src/`, `deployment/`, `.agents/skills/`, plus `pyproject.toml` for the spec §5 denylist terms; exempt paths: this test file, the spec/plan docs. Prove it fails on a planted `import langsmith`.
 - [ ] **Step 4.4:** Green; commits: `feat(registry): add canonical env var registry`, `test(governance): enforce env var registry and local-only provider policy`
@@ -303,7 +303,7 @@ def test_network_modules_confined_to_acquisition():
 **Steps:**
 
 - [ ] **Step 7.1:** `test_docs_links.py`: for every tracked `*.md`, resolve relative links/images (`[..](path)`, excluding `http(s)://`, `mailto:`, `#anchors`) against the tree; assert all targets exist. Also assert intra-doc anchors referenced as `file.md#heading` match a heading slug in the target.
-- [ ] **Step 7.2:** `test_runbook_coverage.py`: enumerate public commands — `cr-kit` subcommands via `argparse` introspection (`python -m case_builder.cli --help` subprocess, parse the subcommand list), `tcr.py` subcommands the same way, `make docker-*` targets from the Makefile — assert each appears in at least one file under `docs/guides/runbooks/`. Maintain an explicit `RUNBOOK_EXEMPT` set (internal/dev-only commands) with justification comments.
+- [ ] **Step 7.2:** `test_runbook_coverage.py`: enumerate public commands — `cr-kit` subcommands via `argparse` introspection (`python -m cli --help` subprocess, parse the subcommand list), `tcr.py` subcommands the same way, `make docker-*` targets from the Makefile — assert each appears in at least one file under `docs/guides/runbooks/`. Maintain an explicit `RUNBOOK_EXEMPT` set (internal/dev-only commands) with justification comments.
 - [ ] **Step 7.3:** CLI-help drift: extend the existing pattern from `test_lanes_json.py` — any doc that embeds a `--help` snippet (marked by a `<!-- cli-help: <command> -->` comment convention; add the convention to the two docs that quote CLI help) must match live `--help` output. If no docs quote help verbatim today, add the convention doc-side where snippets exist, else record N/A in the commit message.
 - [ ] **Step 7.4:** Fix every broken link / uncovered command this reveals (expect several — budget for it). Green. Commits: `test(governance): internal link and anchor checker`, `test(governance): runbook coverage for public commands`, `docs: repair links and runbook gaps found by new gates`
 

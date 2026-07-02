@@ -23,6 +23,6 @@ starts collecting unrelated procedures, split it into a named runbook group.
 | `docs/registry/` | Canonical lane and extraction-template vocabulary. |
 | `docs/superpowers/` | Planning/spec history for larger implementation phases. |
 | `.agents/skills/` | Repo-local skills and reusable workflow instructions. |
-| `src/case_builder/` | Optional case-builder app, LangGraph runner, MCP surface, retrieval, memory, and ops wrappers. |
+| `src/` | Case-builder app modules, LangGraph runner, MCP surface, retrieval, memory, and ops wrappers. |
 | `deployment/` | Self-hosted stack, deployment scripts, and local-service configuration. |
 | `data/examples/` | Tracked synthetic fixtures. Generated case work belongs in ignored `data/cases/`. |

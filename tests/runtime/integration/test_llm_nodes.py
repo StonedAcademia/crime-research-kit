@@ -1,12 +1,12 @@
 import json
 from pathlib import Path
 
-from case_builder.pipeline.graph.nodes.llm import (
+from pipeline.graph.nodes.llm import (
     fill_packets_node,
     readiness_brief_node,
     suggest_lanes_node,
 )
-from case_builder.adapters.ops.runner import CrkRunner
+from adapters.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT
 
 
@@ -125,7 +125,7 @@ def test_readiness_brief_node_writes_brief_from_audit_results(synthetic_case_cop
 
 
 def test_pipeline_list_includes_llm_nodes_in_order():
-    from case_builder.pipeline.graph.runner import pipeline_nodes_list
+    from pipeline.graph.runner import pipeline_nodes_list
 
     names = [name for name, _ in pipeline_nodes_list(execute_runner(), use_interrupt=False, model_factory=None)]
 

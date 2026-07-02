@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from case_builder.adapters.interfaces.llm.packet_agent import PacketAgentError, bounded_context, fill_packet
+from adapters.interfaces.llm.packet_agent import PacketAgentError, bounded_context, fill_packet
 
 
 class FakeModel:

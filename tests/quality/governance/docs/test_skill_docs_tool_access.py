@@ -1,6 +1,6 @@
 import re
 
-from case_builder.core.lanes.registry import load_lanes
+from core.lanes.registry import load_lanes
 from tests.helpers import KIT_ROOT as ROOT
 
 SKILLS_ROOT = ROOT / ".agents" / "skills"

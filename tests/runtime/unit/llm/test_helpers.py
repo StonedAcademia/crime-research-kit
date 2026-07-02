@@ -1,7 +1,7 @@
 import json
 
-from case_builder.adapters.interfaces.llm.briefs.audit_brief import write_readiness_brief
-from case_builder.adapters.interfaces.llm.briefs.lane_suggest import suggest_lanes
+from adapters.interfaces.llm.briefs.audit_brief import write_readiness_brief
+from adapters.interfaces.llm.briefs.lane_suggest import suggest_lanes
 
 
 class FakeModel:

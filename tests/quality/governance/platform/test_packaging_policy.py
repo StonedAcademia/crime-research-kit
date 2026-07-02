@@ -28,8 +28,8 @@ EXPECTED_EXTRAS = {
     "governance": {"pip-audit", "pip-licenses", "cyclonedx-bom", "build"},
 }
 EXPECTED_SCRIPTS = {
-    "cr-kit": "case_builder.cli:main",
-    "crk-mcp": "case_builder.adapters.interfaces.mcp.server:main",
+    "cr-kit": "cli:main",
+    "crk-mcp": "adapters.interfaces.mcp.server:main",
 }
 REGISTRY_SHARDS = (
     "index.json",
@@ -73,7 +73,7 @@ def test_console_scripts_stay_stable():
 
 def test_packaged_registry_data_matches_canonical_docs_registry():
     docs_registry = KIT_ROOT / "docs" / "registry"
-    package_registry = KIT_ROOT / "src" / "case_builder" / "core" / "lanes" / "registry_data"
+    package_registry = KIT_ROOT / "src" / "core" / "lanes" / "registry_data"
 
     for rel in REGISTRY_SHARDS:
         assert json.loads((package_registry / rel).read_text(encoding="utf-8")) == json.loads(

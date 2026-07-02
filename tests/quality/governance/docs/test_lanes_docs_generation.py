@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from case_builder.core.lanes import docs as lane_docs
-from case_builder.core.lanes.registry import load_lanes
+from core.lanes import docs as lane_docs
+from core.lanes.registry import load_lanes
 from tests.helpers import KIT_ROOT
 
 ROOT = KIT_ROOT

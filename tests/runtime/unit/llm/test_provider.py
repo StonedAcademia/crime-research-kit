@@ -1,6 +1,6 @@
 import pytest
 
-from case_builder.adapters.interfaces.llm.provider import (
+from adapters.interfaces.llm.provider import (
     DEFAULT_MODEL_SPEC,
     active_model_spec,
     is_local_provider,
@@ -44,7 +44,7 @@ def test_active_model_spec_reads_self_hosted_env(monkeypatch):
 def test_get_chat_model_hints_at_llm_extra_when_langchain_missing(monkeypatch):
     import builtins
 
-    from case_builder.adapters.interfaces.llm import provider as provider_module
+    from adapters.interfaces.llm import provider as provider_module
 
     real_import = builtins.__import__
 

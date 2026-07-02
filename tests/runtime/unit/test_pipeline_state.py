@@ -1,4 +1,4 @@
-from case_builder.core.models.state import CaseBuilderState
+from core.models.state import CaseBuilderState
 
 
 def test_state_defaults_new_pipeline_fields():

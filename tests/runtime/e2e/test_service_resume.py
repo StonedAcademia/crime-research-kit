@@ -1,6 +1,6 @@
 import pytest
 
-from case_builder.cli import build_parser
+from cli import build_parser
 
 
 def test_plan_parser_accepts_pipeline_flags():
@@ -64,8 +64,8 @@ def test_plan_parser_accepts_llm_flag():
 
 
 def test_llm_disabled_state_never_builds_a_model(monkeypatch):
-    from case_builder.pipeline.app import service
-    from case_builder.core.models.state import CaseBuilderState
+    from pipeline.app import service
+    from core.models.state import CaseBuilderState
 
     def explode():
         raise AssertionError("model factory must not be constructed when llm is disabled")
@@ -81,8 +81,8 @@ def test_llm_disabled_state_never_builds_a_model(monkeypatch):
 
 
 def test_checkpoint_requires_langgraph_runner():
-    from case_builder.pipeline.app.service import run_case_builder
-    from case_builder.core.models.state import CaseBuilderState
+    from pipeline.app.service import run_case_builder
+    from core.models.state import CaseBuilderState
 
     with pytest.raises(RuntimeError):
         run_case_builder(CaseBuilderState(case_dir="data/cases/x"), runner="sequential", checkpoint=True)
@@ -90,8 +90,8 @@ def test_checkpoint_requires_langgraph_runner():
 
 def test_service_checkpoint_pause_and_resume(tmp_path):
     pytest.importorskip("langgraph")
-    from case_builder.pipeline.app.service import resume_case_builder, run_case_builder
-    from case_builder.core.models.state import CaseBuilderState
+    from pipeline.app.service import resume_case_builder, run_case_builder
+    from core.models.state import CaseBuilderState
 
     case_dir = str(tmp_path / "svc_case")
     state = CaseBuilderState(case_dir=case_dir, subject="missing person map", thread_id="svc-t1")

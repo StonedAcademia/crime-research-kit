@@ -12,14 +12,14 @@ from tests.helpers import KIT_ROOT
 
 
 # Policy source: docs/superpowers/specs/2026-07-02-governance-hardening-spec.md §5.
-SRC = KIT_ROOT / "src" / "case_builder"
+SRC = KIT_ROOT / "src"
 FRONTEND_ROOTS = [
     SRC / "cli.py",
     SRC / "adapters" / "interfaces" / "mcp",
     SRC / "pipeline" / "graph",
     SRC / "pipeline" / "app",
 ]
-FORBIDDEN_FOR_FRONTENDS = {"case_builder.core.casefile"}
+FORBIDDEN_FOR_FRONTENDS = {"core.casefile"}
 OPTIONAL_PACKAGES = {
     "langgraph",
     "langchain",
@@ -55,7 +55,7 @@ def imports_of(path: Path):
         elif isinstance(node, ast.ImportFrom) and node.module:
             mod = node.module
             if node.level:
-                pkg = path.relative_to(SRC.parent).parts[:-node.level]
+                pkg = path.relative_to(SRC).parts[:-node.level]
                 mod = ".".join((*pkg, node.module))
             yield mod, node.lineno, node
 
@@ -100,7 +100,7 @@ def test_optional_packages_import_lazily():
 
 def test_base_cli_import_pulls_no_optional_packages():
     code = (
-        "import sys, case_builder.cli; "
+        "import sys, cli; "
         f"hits = sorted({{m.split('.')[0] for m in sys.modules}} & {OPTIONAL_PACKAGES!r}); "
         "print(','.join(hits)); sys.exit(1 if hits else 0)"
     )

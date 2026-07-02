@@ -2,10 +2,10 @@ import json
 import shutil
 from pathlib import Path
 
-from case_builder.cli import build_parser
-from case_builder import config
-from case_builder.core.memory import remember_research_actions
-from case_builder.adapters.io.retrieval import build_evidence_documents
+from cli import build_parser
+from core import config
+from core.memory import remember_research_actions
+from adapters.io.retrieval import build_evidence_documents
 from tests.helpers import KIT_ROOT
 
 
@@ -108,7 +108,7 @@ def test_self_hosted_service_defaults_read_env(monkeypatch):
 def test_cli_parse_source_reports_clean_error_for_non_case(tmp_path, capsys):
     import pytest
 
-    from case_builder.cli import main
+    from cli import main
 
     with pytest.raises(SystemExit) as excinfo:
         main(["parse-source", str(tmp_path / "not_a_case"), "S1"])

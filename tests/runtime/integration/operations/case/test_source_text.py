@@ -1,7 +1,7 @@
 import json
 
-from case_builder.adapters.ops import query as query_ops
-from case_builder.adapters.ops.safety.policy import record_llm_egress
+from adapters.ops import query as query_ops
+from adapters.ops.safety.policy import record_llm_egress
 
 
 def register_text_source(case_dir, source_id="STEXT001", public_export=True):

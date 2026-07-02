@@ -9,7 +9,7 @@ def find_repo_root(start: Path | None = None) -> Path:
     current = (start or Path(__file__)).resolve()
     search_from = current if current.is_dir() else current.parent
     for path in (search_from, *search_from.parents):
-        if (path / "pyproject.toml").exists() and (path / "src" / "case_builder").exists():
+        if (path / "pyproject.toml").exists() and (path / "src" / "cli.py").exists():
             return path
     raise RuntimeError(f"Could not find tc-c-kit repo root from {current}")
 

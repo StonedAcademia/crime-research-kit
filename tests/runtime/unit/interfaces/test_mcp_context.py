@@ -2,14 +2,14 @@ from pathlib import Path
 
 import pytest
 
-from case_builder.adapters.interfaces.mcp.context import (
+from adapters.interfaces.mcp.context import (
     ServerContext,
     default_skill_root,
     error_dict,
     list_case_slugs,
     resolve_case,
 )
-from case_builder.adapters.ops.runner import CrkRunner
+from adapters.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT
 
 

@@ -71,7 +71,7 @@ local workspace:
 
 | Symptom | Check |
 |---|---|
-| `ModuleNotFoundError: case_builder` | Run `moon run crk:install-dev`, activate `.venv`, or run with `PYTHONPATH=src`. |
+| `ModuleNotFoundError: cli` | Run `moon run crk:install-dev`, activate `.venv`, or run with `PYTHONPATH=src`. |
 | `.agents/.../tcr.py` not found | Run from the `tc-c-kit` repository root. |
 | Case files appear in the wrong directory | Use `data/cases/<case_slug>` from the repository root. |
 | LangGraph imports fail | Install `python -m pip install -e '.[agentic]'` inside `.venv`. |

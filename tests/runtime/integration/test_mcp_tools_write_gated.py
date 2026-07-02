@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from case_builder.adapters.interfaces.mcp import tools_gated, tools_write
-from case_builder.adapters.interfaces.mcp.context import ServerContext
-from case_builder.adapters.ops.runner import CrkRunner
+from adapters.interfaces.mcp import tools_gated, tools_write
+from adapters.interfaces.mcp.context import ServerContext
+from adapters.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT
 
 

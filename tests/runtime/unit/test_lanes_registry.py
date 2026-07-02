@@ -1,6 +1,6 @@
 import pytest
 
-from case_builder.core.lanes import registry as lanes_registry
+from core.lanes import registry as lanes_registry
 from tests.helpers import KIT_ROOT
 
 ROOT = KIT_ROOT
@@ -57,7 +57,7 @@ def test_public_record_plan_rejects_non_planning_lane():
 
 
 def test_source_lanes_exports_match_registry():
-    from case_builder.pipeline.agents import source_lanes
+    from pipeline.agents import source_lanes
 
     assert source_lanes.FALLBACK_LANES == lanes_registry.fallback_source_lanes()
     assert source_lanes.LANE_TRIGGERS == lanes_registry.lane_triggers()

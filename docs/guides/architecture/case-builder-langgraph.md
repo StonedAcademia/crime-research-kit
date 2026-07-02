@@ -10,7 +10,7 @@ the existing CRK import and validation commands.
 | Layer | Owner | Notes |
 | --- | --- | --- |
 | Case ledger | `data/cases/<case>/records/*.jsonl` | Canonical source, entity, event, claim, relationship, quote, redaction, and action records. |
-| Workflow state | `case_builder.CaseBuilderState` | Serializable run state for planning, command outputs, errors, and review gates. |
+| Workflow state | `core.models.state.CaseBuilderState` | Serializable run state for planning, command outputs, errors, and review gates. |
 | Orchestration | LangGraph | Optional runtime for resumable step graphs. The sequential runner remains available for tests and local dry runs. |
 | Observability | Local logs and `research_actions.jsonl` | No managed tracing service is configured for the self-hosted stack. |
 | Analysis surface | Phanestead Apothecary | Consumes exported bundles and reports readiness, source quality, timelines, and graph metrics. |
@@ -19,11 +19,11 @@ the existing CRK import and validation commands.
 
 | Directory | Responsibility |
 | --- | --- |
-| `src/case_builder/core/` | Case ledger helpers, configuration, lane registry, state models, and workflow memory. |
-| `src/case_builder/pipeline/` | Deterministic agents, service boundary, and LangGraph/sequential workflow execution. |
-| `src/case_builder/adapters/io/` | Local source discovery, parsing/OCR, and rebuildable evidence retrieval indexes. |
-| `src/case_builder/adapters/ops/` | Typed operations, runner/result contracts, and safety policy shared by frontends. |
-| `src/case_builder/adapters/interfaces/` | LLM and MCP interface adapters that call ops instead of touching ledger internals. |
+| `src/core/` | Case ledger helpers, configuration, lane registry, state models, and workflow memory. |
+| `src/pipeline/` | Deterministic agents, service boundary, and LangGraph/sequential workflow execution. |
+| `src/adapters/io/` | Local source discovery, parsing/OCR, and rebuildable evidence retrieval indexes. |
+| `src/adapters/ops/` | Typed operations, runner/result contracts, and safety policy shared by frontends. |
+| `src/adapters/interfaces/` | LLM and MCP interface adapters that call ops instead of touching ledger internals. |
 
 Each package directory has a local `README.md`. Python modules are kept under
 200 non-comment LOC by `tests/quality/governance/test_repository_shape.py`.
@@ -69,7 +69,7 @@ Checkpoints persist in `data/cases/<case>/.runs/checkpoints.db`.
 Dry run with no optional dependencies:
 
 ```bash
-PYTHONPATH=src python -m case_builder.cli plan data/cases/example_case \
+PYTHONPATH=src python -m cli plan data/cases/example_case \
   --title "Example Case" \
   --subject "Jane Doe missing person last seen near Riverside Park map"
 ```
@@ -77,7 +77,7 @@ PYTHONPATH=src python -m case_builder.cli plan data/cases/example_case \
 Execute the CRK commands:
 
 ```bash
-PYTHONPATH=src python -m case_builder.cli plan data/cases/example_case \
+PYTHONPATH=src python -m cli plan data/cases/example_case \
   --title "Example Case" \
   --subject "Jane Doe missing person last seen near Riverside Park map" \
   --execute

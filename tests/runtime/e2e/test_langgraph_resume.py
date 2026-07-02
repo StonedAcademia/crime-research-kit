@@ -8,9 +8,9 @@ pytest.importorskip("langgraph")
 from langgraph.checkpoint.sqlite import SqliteSaver
 from langgraph.types import Command
 
-from case_builder.pipeline.graph.runner import build_case_builder_graph
-from case_builder.core.models.state import CaseBuilderState
-from case_builder.adapters.ops.runner import CrkRunner
+from pipeline.graph.runner import build_case_builder_graph
+from core.models.state import CaseBuilderState
+from adapters.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT
 
 REPO_ROOT = KIT_ROOT

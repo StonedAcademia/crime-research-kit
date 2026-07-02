@@ -1,6 +1,6 @@
 import pytest
 
-from case_builder.adapters.ops.safety.policy import (
+from adapters.ops.safety.policy import (
     PolicyError,
     apply_automation_defaults,
     ensure_staged_write,

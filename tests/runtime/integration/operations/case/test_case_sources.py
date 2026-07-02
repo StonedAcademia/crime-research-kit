@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from case_builder.adapters.ops import case as case_ops
-from case_builder.adapters.ops import sources as source_ops
-from case_builder.adapters.ops.runner import CrkRunner
+from adapters.ops import case as case_ops
+from adapters.ops import sources as source_ops
+from adapters.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT
 
 REPO_ROOT = KIT_ROOT

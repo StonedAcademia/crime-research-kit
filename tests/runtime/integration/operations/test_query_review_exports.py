@@ -1,10 +1,10 @@
 import json
 from pathlib import Path
 
-from case_builder.adapters.ops import exports as export_ops
-from case_builder.adapters.ops import query as query_ops
-from case_builder.adapters.ops import review as review_ops
-from case_builder.adapters.ops.runner import CrkRunner
+from adapters.ops import exports as export_ops
+from adapters.ops import query as query_ops
+from adapters.ops import review as review_ops
+from adapters.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT
 
 REPO_ROOT = KIT_ROOT

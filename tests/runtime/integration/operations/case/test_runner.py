@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-from case_builder.adapters.ops.runner import CrkRunner
+from adapters.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT
 
 REPO_ROOT = KIT_ROOT

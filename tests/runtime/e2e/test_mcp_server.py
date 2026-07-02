@@ -6,9 +6,9 @@ import pytest
 
 pytest.importorskip("mcp")
 
-from case_builder.adapters.interfaces.mcp.context import ServerContext
-from case_builder.adapters.interfaces.mcp.server import create_server
-from case_builder.adapters.ops.runner import CrkRunner
+from adapters.interfaces.mcp.context import ServerContext
+from adapters.interfaces.mcp.server import create_server
+from adapters.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT
 
 

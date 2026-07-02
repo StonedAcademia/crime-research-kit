@@ -1,4 +1,5 @@
 # Source Tree
 
-This directory contains importable Python packages for the CRK toolkit. The main
-runtime package is `case_builder`.
+This directory contains the CRK case-building app modules. The CLI entrypoint
+is `cli.py`; runtime code is grouped under `core/`, `pipeline/`, and
+`adapters/`.

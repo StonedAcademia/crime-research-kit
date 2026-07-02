@@ -56,7 +56,7 @@ skills.
 
 ## Safety
 
-The safety contract lives in `case_builder.adapters.ops`: staged-write classification,
+The safety contract lives in `adapters.ops`: staged-write classification,
 privacy filtering, guilt-label lint, and gated import. The server adds
 slug-rooted case resolution and never touches `tcr.py` or ledger files directly.
 Records with `public_export: false` never appear in default reads, resources, or

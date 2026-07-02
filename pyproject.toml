@@ -61,14 +61,19 @@ governance = [
 ]
 
 [project.scripts]
-cr-kit = "case_builder.cli:main"
-crk-mcp = "case_builder.adapters.interfaces.mcp.server:main"
+cr-kit = "cli:main"
+crk-mcp = "adapters.interfaces.mcp.server:main"
+
+[tool.setuptools]
+py-modules = ["cli"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+include = ["adapters*", "core*", "pipeline*"]
+namespaces = true
 
 [tool.setuptools.package-data]
-"case_builder.core.lanes" = [
+"core.lanes" = [
   "registry_data/*.json",
   "registry_data/lanes/*.json",
   "registry_data/templates/*.json",

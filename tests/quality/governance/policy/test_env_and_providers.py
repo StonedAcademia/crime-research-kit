@@ -35,8 +35,14 @@ SAAS_EXEMPT_PATHS = {"tests/quality/governance/policy/test_env_and_providers.py"
 
 
 def tracked_files() -> list[str]:
-    out = subprocess.run(["git", "ls-files"], cwd=KIT_ROOT, check=True, capture_output=True, text=True).stdout
-    return [line for line in out.splitlines() if line]
+    out = subprocess.run(
+        ["git", "ls-files", "--cached", "--others", "--exclude-standard"],
+        cwd=KIT_ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout
+    return [line for line in out.splitlines() if line and (KIT_ROOT / line).exists()]
 
 
 def registry_entries() -> dict[str, dict[str, str]]:
@@ -67,7 +73,7 @@ def py_env_reads(path: Path) -> tuple[set[str], list[str]]:
                 if isinstance(owner, ast.Attribute) and isinstance(owner.value, ast.Name):
                     if owner.value.id == "os" and owner.attr == "environ" and node.args:
                         key = literal_arg(node.args[0])
-                        is_config_helper = rel_path == "src/case_builder/core/config.py" and isinstance(node.args[0], ast.Name)
+                        is_config_helper = rel_path == "src/core/config.py" and isinstance(node.args[0], ast.Name)
                         if key is None and not is_config_helper:
                             dynamic.append(f"{rel_path}:{node.lineno}")
             elif isinstance(func, ast.Attribute) and isinstance(func.value, ast.Name):
