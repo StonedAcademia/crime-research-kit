@@ -9,6 +9,8 @@ from importlib.resources import files
 from pathlib import Path
 from typing import Any
 
+import jsonschema
+
 from core.casefile import RECORD_FILES, case_path, ensure_case, read_jsonl, record_path
 
 try:
@@ -53,47 +55,28 @@ def load_schema(schema_name: str) -> dict[str, Any] | None:
     return None
 
 
-def required_errors(record_name: str, row: dict[str, Any], idx: int) -> list[str]:
-    required = {
-        "sources": ["source_id", "title", "source_type", "reliability_grade", "date_accessed"],
-        "entities": ["entity_id", "entity_type", "name", "status", "source_ids"],
-        "places": ["place_id", "name", "source_ids"],
-        "artifacts": ["artifact_id", "artifact_type", "name", "source_ids"],
-        "claims": ["claim_id", "claim", "status", "confidence", "source_ids"],
-        "events": ["event_id", "title", "event_type", "source_ids"],
-        "event_links": ["event_link_id", "entity_id", "event_id", "relation_type", "source_ids"],
-        "relationships": ["rel_id", "src_entity_id", "dst_entity_id", "relation_type", "source_ids"],
-        "source_spans": ["source_span_id", "source_id", "locator_type", "locator"],
-        "quotes": ["quote_id", "source_id", "exact_quote"],
-        "research_actions": ["timestamp", "action", "details"],
-        "redactions": ["redaction_id", "record_id", "reason"],
-    }.get(record_name, [])
-    return [
-        f"{record_name}[{idx}] missing required field: {field}"
-        for field in required
-        if field not in row or row.get(field) in (None, "")
-    ]
+def _row_errors(
+    record_name: str, validator: jsonschema.Draft202012Validator, row: dict[str, Any], idx: int
+) -> list[str]:
+    errors = []
+    for error in sorted(validator.iter_errors(row), key=lambda e: list(e.absolute_path)):
+        path = ".".join(str(part) for part in error.absolute_path) or "<record>"
+        errors.append(f"{record_name}[{idx}] {path}: {error.message}")
+    return errors
 
 
 def validate_case(case_dir: str | Path) -> list[str]:
     ensure_case(case_dir)
     errors: list[str] = []
-    try:
-        import jsonschema  # type: ignore
-    except Exception:
-        jsonschema = None
-
     for record_name in RECORD_FILES:
         rows = read_jsonl(record_path(case_dir, record_name))
-        schema_name = SCHEMA_BY_RECORD.get(record_name, "")
-        schema = load_schema(schema_name) if schema_name else None
+        schema = load_schema(SCHEMA_BY_RECORD[record_name])
+        if schema is None:
+            errors.append(f"{record_name}: schema {SCHEMA_BY_RECORD[record_name]} not found")
+            continue
+        validator = jsonschema.Draft202012Validator(schema)
         for idx, row in enumerate(rows, start=1):
-            errors.extend(required_errors(record_name, row, idx))
-            if jsonschema and schema:
-                try:
-                    jsonschema.validate(instance=row, schema=schema)
-                except Exception as exc:
-                    errors.append(f"{record_name}[{idx}] schema error: {exc}")
+            errors.extend(_row_errors(record_name, validator, row, idx))
     return errors
 
 
