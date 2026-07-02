@@ -40,6 +40,13 @@ def venv_bin(root: Path, name: str) -> Path:
     return root / ".venv" / scripts / f"{name}{suffix}"
 
 
+def executable(root: Path, name: str) -> str:
+    found = shutil.which(name)
+    if found:
+        return found
+    return str(venv_bin(root, name))
+
+
 def project_metadata(root: Path) -> dict:
     return tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))["project"]
 
@@ -128,7 +135,7 @@ def build_once(root: Path, dest: Path) -> Path:
     out_dir = dest / "dist"
     out_dir.mkdir()
     env = {**os.environ, "SOURCE_DATE_EPOCH": os.environ.get("SOURCE_DATE_EPOCH", DEFAULT_EPOCH)}
-    run([str(venv_bin(root, "python")), "-m", "build", "--outdir", str(out_dir)], cwd=source, env=env)
+    run([sys.executable, "-m", "build", "--outdir", str(out_dir)], cwd=source, env=env)
     return out_dir
 
 
@@ -186,12 +193,12 @@ def write_extra_requirements(metadata: dict, tmp: Path) -> dict[str, Path]:
 
 
 def emit_sboms(root: Path, out_dir: Path, metadata: dict, tmp: Path) -> None:
-    cyclonedx = venv_bin(root, "cyclonedx-py")
-    if not cyclonedx.exists():
-        raise ReleaseError("cyclonedx-py is missing. Run `make install-governance` first.")
-    run([str(cyclonedx), "environment", "--output-file", str(out_dir / "sbom.json")], cwd=root)
+    cyclonedx = executable(root, "cyclonedx-py")
+    if not Path(cyclonedx).exists():
+        raise ReleaseError("cyclonedx-py is missing. Run through `moon run crk:release-check` or `moon run crk:install-governance` first.")
+    run([cyclonedx, "environment", "--output-file", str(out_dir / "sbom.json")], cwd=root)
     for extra, req_file in write_extra_requirements(metadata, tmp).items():
-        run([str(cyclonedx), "requirements", str(req_file), "--output-file", str(out_dir / f"sbom-{extra}.json")], cwd=root)
+        run([cyclonedx, "requirements", str(req_file), "--output-file", str(out_dir / f"sbom-{extra}.json")], cwd=root)
 
 
 def main(argv: list[str]) -> int:

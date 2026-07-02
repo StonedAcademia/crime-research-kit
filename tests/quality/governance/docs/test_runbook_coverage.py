@@ -7,7 +7,7 @@ import re
 import subprocess
 import sys
 
-from tests.helpers import KIT_ROOT
+from tests.helpers import KIT_ROOT, moon_task_names
 
 
 RUNBOOK_ROOT = KIT_ROOT / "docs" / "guides" / "runbooks"
@@ -40,9 +40,8 @@ def tcr_commands() -> set[str]:
     return {f"tcr.py {name}" for name in subcommands_from_help(output)}
 
 
-def docker_make_targets() -> set[str]:
-    makefile = (KIT_ROOT / "Makefile").read_text(encoding="utf-8")
-    return {f"make {match.group(1)}" for match in re.finditer(r"^(docker-[A-Za-z0-9_-]+):", makefile, re.MULTILINE)}
+def docker_moon_targets() -> set[str]:
+    return {f"moon run crk:{name}" for name in moon_task_names() if name.startswith("docker-")}
 
 
 def runbook_text() -> str:
@@ -50,7 +49,7 @@ def runbook_text() -> str:
 
 
 def test_public_commands_are_covered_by_runbooks():
-    commands = cr_kit_commands() | tcr_commands() | docker_make_targets()
+    commands = cr_kit_commands() | tcr_commands() | docker_moon_targets()
     docs = runbook_text()
     missing = sorted(command for command in commands if command not in RUNBOOK_EXEMPT and command not in docs)
     assert not missing, "public commands missing from runbooks:\n" + "\n".join(missing)

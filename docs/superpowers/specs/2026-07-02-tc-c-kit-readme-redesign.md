@@ -51,4 +51,4 @@ public-interest boundaries → docs map pointer.
 Parallel independent design passes (deep-reasoner + Codex) synthesized by the
 orchestrator; fast-worker performs mechanical content extraction; orchestrator
 writes the final README, `system-overview.md` polish, and diagrams; verify with
-`pytest -m governance` (no new offenders), `make check`, and a link sweep.
+`pytest -m governance` (no new offenders), `moon run crk:check`, and a link sweep.

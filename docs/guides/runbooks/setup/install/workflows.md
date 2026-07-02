@@ -5,13 +5,13 @@
 Run the synthetic fixture through the core validator:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/examples/synthetic_case
+moon run crk:check
 ```
 
 Check that the case-builder app can plan a dry run:
 
 ```bash
-PYTHONPATH=src python -m cli plan data/cases/install_smoke \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- python -m cli plan data/cases/install_smoke \
   --title "Install Smoke Test" \
   --subject "Synthetic public-source smoke test for setup verification"
 ```
@@ -19,7 +19,7 @@ PYTHONPATH=src python -m cli plan data/cases/install_smoke \
 If the package entry point is installed, the same app is available as:
 
 ```bash
-cr-kit plan data/cases/install_smoke \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- cr-kit plan data/cases/install_smoke \
   --title "Install Smoke Test" \
   --subject "Synthetic public-source smoke test for setup verification"
 ```
@@ -32,14 +32,14 @@ only when you want the app to create or modify the case workspace.
 Initialize a local case workspace:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case data/cases/<case_slug> \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case data/cases/<case_slug> \
   --title "<Case Title>"
 ```
 
 Register a source manually when it should be tracked before extraction:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source data/cases/<case_slug> \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source data/cases/<case_slug> \
   --title "<Source Title>" \
   --url "<URL or local path>" \
   --source-type news_article \
@@ -50,7 +50,7 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py add-source data/cas
 Or capture a public URL directly:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url data/cases/<case_slug> \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url data/cases/<case_slug> \
   "<URL>" \
   --source-type news_article \
   --reliability-grade B
@@ -59,17 +59,17 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py ingest-url data/cas
 Draft an extraction packet for review:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction data/cases/<case_slug> <SOURCE_ID>
+uv run --cache-dir .uv-cache --no-project --with-editable . -- python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction data/cases/<case_slug> <SOURCE_ID>
 ```
 
 After the packet is filled and reviewed, import and validate it:
 
 ```bash
-python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction data/cases/<case_slug> \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- python .agents/skills/truecrime-cult-research/scripts/tcr.py import-extraction data/cases/<case_slug> \
   data/cases/<case_slug>/staging/extractions/<SOURCE_ID>_extraction.json
 
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/cases/<case_slug>
-python .agents/skills/truecrime-cult-research/scripts/tcr.py report data/cases/<case_slug>
+uv run --cache-dir .uv-cache --no-project --with-editable . -- python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/cases/<case_slug>
+uv run --cache-dir .uv-cache --no-project --with-editable . -- python .agents/skills/truecrime-cult-research/scripts/tcr.py report data/cases/<case_slug>
 ```
 
 ## Run The Case-Builder App
@@ -80,7 +80,7 @@ The ledger under `records/*.jsonl` remains the source of truth.
 Dry run:
 
 ```bash
-cr-kit plan data/cases/<case_slug> \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- cr-kit plan data/cases/<case_slug> \
   --title "<Case Title>" \
   --subject "<case subject, source question, names, dates, and places>"
 ```
@@ -88,7 +88,7 @@ cr-kit plan data/cases/<case_slug> \
 Execute deterministic commands:
 
 ```bash
-cr-kit plan data/cases/<case_slug> \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- cr-kit plan data/cases/<case_slug> \
   --title "<Case Title>" \
   --subject "<case subject, source question, names, dates, and places>" \
   --execute
@@ -97,7 +97,7 @@ cr-kit plan data/cases/<case_slug> \
 Run with LangGraph checkpoints:
 
 ```bash
-cr-kit plan data/cases/<case_slug> \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- cr-kit plan data/cases/<case_slug> \
   --title "<Case Title>" \
   --subject "<case subject, source question, names, dates, and places>" \
   --runner langgraph \
@@ -108,7 +108,7 @@ cr-kit plan data/cases/<case_slug> \
 Resume after human packet review:
 
 ```bash
-cr-kit resume data/cases/<case_slug> \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- cr-kit resume data/cases/<case_slug> \
   --thread <thread_id> \
   --approve-packet <SOURCE_ID>_extraction.json \
   --execute
@@ -117,7 +117,7 @@ cr-kit resume data/cases/<case_slug> \
 Resume after public-export review:
 
 ```bash
-cr-kit resume data/cases/<case_slug> \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- cr-kit resume data/cases/<case_slug> \
   --thread <thread_id> \
   --approve-export \
   --execute

@@ -121,7 +121,7 @@ deployment/
     wait-for-local-stack.sh
     smoke-test.sh
 .dockerignore
-Makefile
+moon.yml
 docs/runbook/install.md
 docs/runbook/case-workflow.md
 docs/case-builder-langgraph.md
@@ -215,15 +215,15 @@ The deployment design must enforce this policy:
 
 ## Bootstrap and Operations
 
-Required Make targets:
+Required Moon tasks:
 
-- `make docker-build`
-- `make docker-up`
-- `make docker-down`
-- `make docker-logs`
-- `make docker-smoke`
-- `make docker-pull-model`
-- `make docker-shell`
+- `moon run crk:docker-build`
+- `moon run crk:docker-up`
+- `moon run crk:docker-down`
+- `moon run crk:docker-logs`
+- `moon run crk:docker-smoke`
+- `moon run crk:docker-pull-model`
+- `moon run crk:docker-shell`
 
 Required bootstrap behavior:
 
@@ -240,12 +240,12 @@ The deployment is done when these checks pass:
 
 ```bash
 docker compose -f deployment/docker-compose.yml config
-make docker-build
-make docker-up
-make docker-pull-model
-make docker-smoke
-make docker-down
-make check
+moon run crk:docker-build
+moon run crk:docker-up
+moon run crk:docker-pull-model
+moon run crk:docker-smoke
+moon run crk:docker-down
+moon run crk:check
 ```
 
 The smoke test should verify:

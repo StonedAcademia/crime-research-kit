@@ -8,7 +8,7 @@ Companion plan: `docs/superpowers/plans/2026-07-02-governance-hardening-plan.md`
 Turn the requirement list (repo structure, code boundaries, security/local-only,
 data safety, docs drift, packaging, CI/release) into enforced, locally runnable
 gates. Philosophy, confirmed against the existing suite: **governance is pytest,
-stdlib-first, offline-first**. External tools are pinned, wrapped in `make`/moon
+stdlib-first, offline-first**. External tools are pinned, wrapped in Moon
 targets, and isolated to an explicit audit lane so the dev inner loop never
 needs the network.
 
@@ -19,7 +19,7 @@ needs the network.
   duplicate.
 - CI is **moonrepo**, not GitHub Actions: `moon.yml` tasks, `.moon` pre-push hook
   running `deployment/scripts/checks/branch_gate.py` (dev → check+smoke;
-  canary → +governance; main → full suite). The Makefile delegates to moon.
+  canary → +governance; main → full suite).
 - `.github/` does not exist yet and **is governed** by the repo-shape test
   (≤4 direct files, ≤3 child dirs, YAML < 200 non-comment LOC). CI layout must
   fit that budget.
@@ -40,13 +40,13 @@ needs the network.
 
 | Concern | Layer |
 |---|---|
-| Naming, doc paths, README coverage, import boundaries, lazy imports, network ban, env vars, SaaS denylist, fixture schemas, privacy/provenance, docs drift, runbook coverage, extras grouping, secret-pattern floor, CI/make parity | pytest `-m governance` (stdlib only) |
-| gitleaks, pip-audit, pip-licenses, lychee external links | `make audit`-lane targets + CI jobs (pinned external tools; network allowed here only) |
-| SBOM, reproducible build, changelog gate | release lane (`make sbom` / tag-triggered CI) |
+| Naming, doc paths, README coverage, import boundaries, lazy imports, network ban, env vars, SaaS denylist, fixture schemas, privacy/provenance, docs drift, runbook coverage, extras grouping, secret-pattern floor, CI/Moon parity | pytest `-m governance` (stdlib only) |
+| gitleaks, pip-audit, pip-licenses, lychee external links | `moon run crk:audit-*` targets + CI jobs (pinned external tools; network allowed here only) |
+| SBOM, reproducible build, changelog gate | release lane (`moon run crk:sbom` / tag-triggered CI) |
 
 Rule: if it is decidable from tracked files with stdlib, it is a governance
 test. If it needs a binary or a remote DB, it lives in the audit/release lane
-with a `make` mirror that degrades gracefully offline.
+with a Moon task that degrades gracefully offline.
 
 ## 4. Tool pins (external resources — acquired in Phase 1)
 
@@ -118,7 +118,7 @@ Binaries land in a gitignored `deployment/tooling/bin/`.
 | # | Branch | Delivers | Depends on |
 |---|---|---|---|
 | 0 | (main, preflight) | register `criminal-research` template, commit WIP tree green | — |
-| 1 | `gov/tooling-baseline` | manifest, fetcher, `governance` extra, make/moon audit-lane targets, `.gitleaks.toml`, LICENSE | — |
+| 1 | `gov/tooling-baseline` | manifest, fetcher, `governance` extra, Moon audit-lane targets, `.gitleaks.toml`, LICENSE | — |
 | 2 | `gov/repo-shape-naming` | vague-dir denylist, README coverage, generic-doc-path tests | — |
 | 3 | `gov/import-boundaries` | import-boundary, lazy-import, network-ban tests | — |
 | 4 | `gov/env-provider-policy` | env-var registry + test, SaaS denylist test | — |
@@ -126,7 +126,7 @@ Binaries land in a gitignored `deployment/tooling/bin/`.
 | 6 | `gov/data-safety-gates` | fixture schema validation, export round-trip privacy/provenance tests, negative fixture, aggregate gate | — |
 | 7 | `gov/docs-drift` | internal link checker, CLI-help drift, runbook coverage | — |
 | 8 | `gov/packaging-policy` | extras-grouping test, license check, fresh-build check | 1 |
-| 9 | `ci/github-actions` | `ci.yml`/`audit.yml`/`release.yml` thin make-callers, branch-gate extension, CI/make parity test | 1, all gov/* merged |
+| 9 | `ci/github-actions` | `ci.yml`/`audit.yml`/`release.yml` thin Moon callers, branch-gate extension, CI/Moon parity test | 1, all gov/* merged |
 | 10 | `ci/release-readiness` | CHANGELOG + gate, reproducible-build check, SBOM in release | 1, 9 |
 
 Branches 2, 3, 4, 6, 7 are independent and parallelizable across agents.

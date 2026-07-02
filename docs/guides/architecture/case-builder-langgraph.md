@@ -69,7 +69,7 @@ Checkpoints persist in `data/cases/<case>/.runs/checkpoints.db`.
 Dry run with no optional dependencies:
 
 ```bash
-PYTHONPATH=src python -m cli plan data/cases/example_case \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- python -m cli plan data/cases/example_case \
   --title "Example Case" \
   --subject "Jane Doe missing person last seen near Riverside Park map"
 ```
@@ -77,7 +77,7 @@ PYTHONPATH=src python -m cli plan data/cases/example_case \
 Execute the CRK commands:
 
 ```bash
-PYTHONPATH=src python -m cli plan data/cases/example_case \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- python -m cli plan data/cases/example_case \
   --title "Example Case" \
   --subject "Jane Doe missing person last seen near Riverside Park map" \
   --execute
@@ -86,8 +86,7 @@ PYTHONPATH=src python -m cli plan data/cases/example_case \
 Use LangGraph explicitly:
 
 ```bash
-pip install -e '.[agentic]'
-cr-kit plan data/cases/example_case \
+uv run --cache-dir .uv-cache --no-project --with-editable '.[agentic]' -- cr-kit plan data/cases/example_case \
   --title "Example Case" \
   --subject "Jane Doe missing person last seen near Riverside Park map" \
   --runner langgraph
@@ -106,9 +105,9 @@ cr-kit plan data/cases/example_case \
 ## LLM Agent Nodes
 
 Optional nodes activate with `--llm` (plus `--execute`) and the `CRK_MODEL`
-environment variable (`provider:model`, default `ollama:llama3.1`; install
-`pip install -e '.[llm]'`). The self-hosted deployment supports Ollama as the
-runtime provider.
+environment variable (`provider:model`, default `ollama:llama3.1`; sync with
+`uv run --cache-dir .uv-cache --no-project --with-editable '.[llm]' -- ...`).
+The self-hosted deployment supports Ollama as the runtime provider.
 
 - `suggest_lanes`: lane suggestions with rationale, recorded in
   `lane_suggestions`; never silently applied.

@@ -101,7 +101,7 @@ data/cases/<case_slug>/exports/charts/subcase_summary.csv
 Run evidence-weighted Leiden clustering and graph-kernel/KDE analysis:
 
 ```bash
-uv run --extra dev --with igraph --with leidenalg \
+uv run --cache-dir .uv-cache --no-project --with-editable '.[dev]' --with igraph --with leidenalg \
   python .agents/skills/truecrime-cult-research/scripts/tcr.py export-people-clusters data/cases/<case_slug> --include-private
 ```
 

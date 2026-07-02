@@ -53,18 +53,8 @@ moon run crk:docker-pull-model
 moon run crk:docker-smoke
 ```
 
-The Makefile mirrors the same container operations for local shells and CI:
-
-```bash
-make docker-config
-make docker-build
-make docker-up
-make docker-pull-model
-make docker-smoke
-make docker-logs
-make docker-shell
-make docker-down
-```
+Moon is the canonical task runner for container operations in local shells and
+CI.
 
 The first image build and model pull require network access. Model files,
 Qdrant data, Hugging Face embedding cache, and SearXNG cache persist in Docker

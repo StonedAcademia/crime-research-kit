@@ -5,15 +5,13 @@
 ## Install and Register
 
 ```bash
-uv pip install -p .venv/bin/python -e '.[mcp]'
-
 # Claude Code:
-claude mcp add crk -- <project_root>/.venv/bin/crk-mcp
+claude mcp add crk -- uv run --directory <project_root> --cache-dir .uv-cache --no-project --with-editable '.[mcp]' -- crk-mcp
 ```
 
-For other hosts, use command
-`<project_root>/.venv/bin/crk-mcp`
-with stdio transport. If the venv is activated, `crk-mcp` is equivalent.
+For other hosts, use command `uv` with args
+`run --directory <project_root> --cache-dir .uv-cache --no-project
+--with-editable '.[mcp]' -- crk-mcp` and stdio transport.
 
 Optional environment:
 

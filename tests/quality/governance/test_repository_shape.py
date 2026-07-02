@@ -21,7 +21,7 @@ SKIPPED_ROOTS = (Path(".agents"), Path("data"), Path("docs/superpowers"))
 SRC_ROOT = Path("src")
 
 HASH_COMMENT_SUFFIXES = {".py", ".sh", ".yml", ".yaml", ".toml"}
-HASH_COMMENT_NAMES = {"Dockerfile", "Makefile", ".dockerignore", ".gitignore", ".prototools"}
+HASH_COMMENT_NAMES = {"Dockerfile", ".dockerignore", ".gitignore", ".prototools"}
 SLASH_COMMENT_SUFFIXES = {".css", ".js", ".mjs", ".ts", ".tsx"}
 
 

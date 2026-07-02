@@ -11,24 +11,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[4]
 
 
-def venv_python() -> Path:
-    if sys.platform == "win32":
-        return ROOT / ".venv" / "Scripts" / "python.exe"
-    return ROOT / ".venv" / "bin" / "python"
-
-
 def run(command: list[str]) -> None:
     print("+", " ".join(command))
     subprocess.run(command, cwd=ROOT, check=True)
 
 
 def main() -> int:
-    python = venv_python()
-    if not python.exists():
-        raise SystemExit("Virtualenv not found. Run `moon run crk:install-dev` first.")
-
-    run([str(python), "-m", "compileall", "src", ".agents/skills/truecrime-cult-research/scripts"])
-    run([str(python), ".agents/skills/truecrime-cult-research/scripts/tcr.py", "validate", "data/examples/synthetic_case"])
+    run([sys.executable, "-m", "compileall", "src", ".agents/skills/truecrime-cult-research/scripts"])
+    run([sys.executable, ".agents/skills/truecrime-cult-research/scripts/tcr.py", "validate", "data/examples/synthetic_case"])
     return 0
 
 

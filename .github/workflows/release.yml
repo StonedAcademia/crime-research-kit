@@ -16,9 +16,9 @@ jobs:
         with:
           python-version: "3.12"
       - uses: moonrepo/setup-toolchain@v0
-      - run: make install-governance
-      - run: make test
-      - run: make build-dist
-      - run: make sbom
-      - run: make release-check
-      - run: make audit-secrets audit-deps
+      - run: moon run crk:install-governance
+      - run: moon run crk:test
+      - run: moon run crk:build-dist
+      - run: moon run crk:sbom
+      - run: moon run crk:release-check
+      - run: moon run crk:audit-secrets crk:audit-deps

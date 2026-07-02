@@ -1,4 +1,4 @@
-"""Governance: GitHub workflows stay thin make callers and match branch gates."""
+"""Governance: GitHub workflows stay thin Moon callers and match branch gates."""
 
 from __future__ import annotations
 
@@ -9,15 +9,10 @@ import subprocess
 import sys
 from pathlib import Path
 
-from tests.helpers import KIT_ROOT
+from tests.helpers import KIT_ROOT, moon_task_names
 
 
 WORKFLOWS = KIT_ROOT / ".github" / "workflows"
-
-
-def make_targets() -> set[str]:
-    text = (KIT_ROOT / "Makefile").read_text(encoding="utf-8")
-    return {match.group(1) for match in re.finditer(r"^([A-Za-z0-9_-]+):", text, re.MULTILINE)}
 
 
 def workflow_run_commands() -> list[tuple[str, int, str]]:
@@ -39,17 +34,25 @@ def load_branch_gate():
     return module
 
 
-def test_workflow_run_steps_are_make_targets():
-    targets = make_targets()
+def target_name(arg: str) -> str:
+    if ":" not in arg:
+        return arg
+    project, task = arg.split(":", 1)
+    assert project == "crk", f"unexpected moon project: {arg}"
+    return task
+
+
+def test_workflow_run_steps_are_moon_targets():
+    targets = moon_task_names()
     failures: list[str] = []
     for workflow, lineno, command in workflow_run_commands():
         parts = command.split()
-        if not parts or parts[0] != "make":
-            failures.append(f"{workflow}:{lineno} does not start with make: {command}")
+        if parts[:2] != ["moon", "run"]:
+            failures.append(f"{workflow}:{lineno} does not start with moon run: {command}")
             continue
-        for target in parts[1:]:
-            if target not in targets:
-                failures.append(f"{workflow}:{lineno} unknown make target: {target}")
+        for target in parts[2:]:
+            if target_name(target) not in targets:
+                failures.append(f"{workflow}:{lineno} unknown moon target: {target}")
     assert not failures, "\n".join(failures)
 
 

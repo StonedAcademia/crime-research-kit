@@ -12,12 +12,12 @@ while keeping Codex and Claude Code as supported user-facing operators over
 CLI/MCP.
 
 **Architecture:** A full-featured `crk` toolbox image runs the CLI, graph, and
-MCP surfaces. Compose starts the complete local service set by default. Operators
-use Make targets to build, start, bootstrap models, run smoke tests, and shell
-into the app container.
+MCP surfaces. Compose starts the complete local service set by default.
+Operators use Moon tasks to build, start, bootstrap models, run smoke tests,
+and shell into the app container.
 
 **Tech Stack:** Docker Compose, Python 3.11+, Debian slim app image, SearXNG,
-Valkey, Qdrant, Ollama, OCRmyPDF, Tesseract, Ghostscript, Make, pytest.
+Valkey, Qdrant, Ollama, OCRmyPDF, Tesseract, Ghostscript, Moon, pytest.
 
 ## Global Constraints
 
@@ -37,7 +37,7 @@ Valkey, Qdrant, Ollama, OCRmyPDF, Tesseract, Ghostscript, Make, pytest.
   start in the base Compose file.
 - Avoid introducing new top-level app dependencies unless required by the
   deployment implementation.
-- Run `make check` before completing the phase.
+- Run `moon run crk:check` before completing the phase.
 
 ## File Structure
 
@@ -57,7 +57,7 @@ deployment/
     wait-for-local-stack.sh
     smoke-test.sh
 .dockerignore
-Makefile
+moon.yml
 docs/runbook/install.md
 docs/runbook/case-workflow.md
 docs/case-builder-langgraph.md
@@ -309,28 +309,26 @@ git commit -m "feat(deploy): add local stack bootstrap checks"
 
 ---
 
-## Task 6: Add Make Targets
+## Task 6: Add Moon Docker Tasks
 
 **Files:**
-- Modify: `Makefile`
+- Modify: `moon.yml`
 
 **Targets:**
 
-- `docker-build`
-- `docker-up`
-- `docker-down`
-- `docker-logs`
-- `docker-shell`
-- `docker-pull-model`
-- `docker-smoke`
-- `docker-clean` if it only stops/removes containers and clearly warns before
+- `crk:docker-build`
+- `crk:docker-up`
+- `crk:docker-down`
+- `crk:docker-logs`
+- `crk:docker-shell`
+- `crk:docker-pull-model`
+- `crk:docker-smoke`
+- `crk:docker-clean` if it only stops/removes containers and clearly warns before
   deleting volumes. Do not delete volumes by default.
 
 **Requirements:**
 
-- Default Compose file variable:
-  `COMPOSE_FILE ?= deployment/docker-compose.yml`
-- All targets use `docker compose -f $(COMPOSE_FILE)`.
+- Compose operations route through `deployment/scripts/local/compose.py`.
 - `docker-smoke` depends on the stack being up and runs the app smoke script
   inside the `crk` service.
 - `docker-pull-model` runs the bootstrap script inside the `crk` service.
@@ -338,18 +336,18 @@ git commit -m "feat(deploy): add local stack bootstrap checks"
 **Validation:**
 
 ```bash
-make -n docker-build
-make -n docker-up
-make -n docker-pull-model
-make -n docker-smoke
-make -n docker-down
+moon run crk:docker-build
+moon run crk:docker-up
+moon run crk:docker-pull-model
+moon run crk:docker-smoke
+moon run crk:docker-down
 ```
 
 Commit:
 
 ```bash
-git add Makefile
-git commit -m "feat(deploy): add local stack make targets"
+git add moon.yml
+git commit -m "feat(deploy): add local stack moon tasks"
 ```
 
 ---
@@ -369,16 +367,16 @@ git commit -m "feat(deploy): add local stack make targets"
 
 ```bash
 cp deployment/.env.example deployment/.env
-make docker-build
-make docker-up
-make docker-pull-model
-make docker-smoke
+moon run crk:docker-build
+moon run crk:docker-up
+moon run crk:docker-pull-model
+moon run crk:docker-smoke
 ```
 
 - Document daily use:
 
 ```bash
-make docker-shell
+moon run crk:docker-shell
 docker compose -f deployment/docker-compose.yml exec crk cr-kit --help
 ```
 
@@ -416,12 +414,12 @@ Run:
 
 ```bash
 docker compose -f deployment/docker-compose.yml config
-make docker-build
-make docker-up
-make docker-pull-model
-make docker-smoke
-make check
-make docker-down
+moon run crk:docker-build
+moon run crk:docker-up
+moon run crk:docker-pull-model
+moon run crk:docker-smoke
+moon run crk:check
+moon run crk:docker-down
 git status --short --branch
 ```
 
@@ -432,7 +430,7 @@ Expected:
 - All five services start.
 - Ollama model is present.
 - Smoke script passes.
-- `make check` passes.
+- `moon run crk:check` passes.
 - Worktree contains only intended deployment/docs/code changes.
 
 Final commit if any validation fixes were needed:

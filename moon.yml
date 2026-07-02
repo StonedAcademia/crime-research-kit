@@ -8,89 +8,89 @@ fileGroups:
 
 tasks:
   install:
-    description: "Create .venv and install the core package."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/install.py"]
-    inputs: ["pyproject.toml", "deployment/scripts/tools/install.py"]
+    description: "Warm the core package command environment."
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "python", "-c", "import cli"]
+    inputs: ["pyproject.toml"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   install-dev:
-    description: "Create .venv and install the package with dev dependencies."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/install.py", "--dev"]
-    inputs: ["pyproject.toml", "deployment/scripts/tools/install.py"]
+    description: "Warm the package command environment with dev dependencies."
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".[dev]", "--", "python", "-c", "import pytest; import cli"]
+    inputs: ["pyproject.toml"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   install-governance:
-    description: "Create .venv and install dev plus governance audit dependencies."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/install.py", "--dev", "--extras", "governance"]
-    inputs: ["pyproject.toml", "deployment/scripts/tools/install.py"]
+    description: "Warm the package command environment with dev and governance dependencies."
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".[dev,governance]", "--", "python", "-c", "import pytest; import pip_audit"]
+    inputs: ["pyproject.toml"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   check:
     description: "Compile Python sources and validate the synthetic fixture."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/checks/core/check.py"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "python", "deployment/scripts/checks/core/check.py"]
     inputs: ["@group(python)", "data/examples/synthetic_case/**/*", "pyproject.toml", "deployment/scripts/checks/core/check.py"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   test:
     description: "Run the full pytest suite."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "-q"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".[dev]", "--", "python", "-m", "pytest", "-q"]
     inputs: ["@group(python)", "@group(tests)", "pyproject.toml"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   test-unit:
     description: "Run unit tests."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/runtime/unit", "-q"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".[dev]", "--", "python", "-m", "pytest", "tests/runtime/unit", "-q"]
     inputs: ["@group(python)", "@group(tests)", "pyproject.toml"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   test-integration:
     description: "Run integration tests."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/runtime/integration", "-q"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".[dev]", "--", "python", "-m", "pytest", "tests/runtime/integration", "-q"]
     inputs: ["@group(python)", "@group(tests)", "pyproject.toml"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   test-e2e:
     description: "Run end-to-end tests."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/runtime/e2e", "-q"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".[dev]", "--", "python", "-m", "pytest", "tests/runtime/e2e", "-q"]
     inputs: ["@group(python)", "@group(tests)", "pyproject.toml"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   test-governance:
     description: "Run governance tests."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/quality/governance", "-q"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".[dev]", "--", "python", "-m", "pytest", "tests/quality/governance", "-q"]
     inputs: ["@group(python)", "@group(tests)", "pyproject.toml"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   test-smoke:
     description: "Run smoke tests."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/quality/smoke", "-q"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".[dev]", "--", "python", "-m", "pytest", "tests/quality/smoke", "-q"]
     inputs: ["@group(python)", "@group(tests)", "pyproject.toml"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   branch-gate:
     description: "Run branch-specific push gates for dev, canary, and main."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/checks/branch_gate.py"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "python", "deployment/scripts/checks/branch_gate.py"]
     inputs: ["@group(python)", "@group(tests)", "pyproject.toml", "deployment/scripts/checks/branch_gate.py"]
     options: { cache: false, outputStyle: stream }
     preset: utility
@@ -98,87 +98,87 @@ tasks:
 
   docker-config:
     description: "Render the Docker Compose configuration."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/local/compose.py", "config"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "python", "deployment/scripts/local/compose.py", "config"]
     inputs: ["@group(deployment)"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   docker-build:
     description: "Build the CRK app image."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/local/compose.py", "build"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "python", "deployment/scripts/local/compose.py", "build"]
     inputs: ["@group(deployment)"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   docker-up:
     description: "Start the self-hosted deployment stack."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/local/compose.py", "up"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "python", "deployment/scripts/local/compose.py", "up"]
     inputs: ["@group(deployment)"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   docker-down:
     description: "Stop the self-hosted deployment stack without deleting volumes."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/local/compose.py", "down"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "python", "deployment/scripts/local/compose.py", "down"]
     inputs: ["@group(deployment)"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   docker-logs:
     description: "Follow self-hosted deployment logs."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/local/compose.py", "logs"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "python", "deployment/scripts/local/compose.py", "logs"]
     inputs: ["@group(deployment)"]
     preset: utility
     toolchains: system
 
   docker-shell:
     description: "Open a shell in the CRK app container."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/local/compose.py", "shell"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "python", "deployment/scripts/local/compose.py", "shell"]
     inputs: ["@group(deployment)"]
     preset: utility
     toolchains: system
 
   docker-pull-model:
     description: "Pull the configured Ollama model inside the deployment stack."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/local/compose.py", "pull-model"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "python", "deployment/scripts/local/compose.py", "pull-model"]
     inputs: ["@group(deployment)"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   docker-smoke:
     description: "Run the self-hosted deployment smoke test."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/local/compose.py", "smoke"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "python", "deployment/scripts/local/compose.py", "smoke"]
     inputs: ["@group(deployment)"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   init-sample:
     description: "Create the sample case workspace."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", ".agents/skills/truecrime-cult-research/scripts/tcr.py", "init-case", "data/cases/sample_case", "--title", "Sample Case"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "python", ".agents/skills/truecrime-cult-research/scripts/tcr.py", "init-case", "data/cases/sample_case", "--title", "Sample Case"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   validate-sample:
     description: "Validate the sample case workspace."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", ".agents/skills/truecrime-cult-research/scripts/tcr.py", "validate", "data/cases/sample_case"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "python", ".agents/skills/truecrime-cult-research/scripts/tcr.py", "validate", "data/cases/sample_case"]
     inputs: ["data/cases/sample_case/**/*"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
   export-sample:
     description: "Export Manim CSVs and an evidence board for the sample case."
-    command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", ".agents/skills/truecrime-cult-research/scripts/tcr.py", "export-manim", "data/cases/sample_case"]
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "python", ".agents/skills/truecrime-cult-research/scripts/tcr.py", "export-manim", "data/cases/sample_case"]
     deps: ["~:validate-sample"]
     outputs: ["data/cases/sample_case/exports/manim/**/*"]
     options: { cache: false, outputStyle: stream }

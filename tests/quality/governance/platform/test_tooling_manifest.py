@@ -1,9 +1,9 @@
-"""Governance: pinned tooling manifest stays consistent with pyproject and make targets."""
+"""Governance: pinned tooling manifest stays consistent with pyproject and Moon targets."""
 
 import json
 import re
 
-from tests.helpers import KIT_ROOT
+from tests.helpers import KIT_ROOT, moon_task_names
 
 
 MANIFEST = KIT_ROOT / "deployment" / "tooling" / "manifest.json"
@@ -28,7 +28,5 @@ def test_python_pins_match_governance_extra():
     assert REQUIRED_PYTHON_PINS <= set(data["python_pins"])
 
 
-def test_make_exposes_audit_lane_targets():
-    makefile = (KIT_ROOT / "Makefile").read_text()
-    for target in AUDIT_TARGETS:
-        assert f"\n{target}:" in makefile, f"make target {target} missing"
+def test_moon_exposes_audit_lane_targets():
+    assert AUDIT_TARGETS <= moon_task_names()

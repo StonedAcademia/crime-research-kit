@@ -56,7 +56,7 @@ cr-kit plan /app/data/cases/example_case \
 ```
 
 Run the MCP server from a host agent configuration by pointing the host at
-`crk-mcp` inside the app image, or by using the local virtualenv install for
+`crk-mcp` inside the app image, or by using the local `uv run` MCP command for
 stdio hosts such as Codex and Claude Code.
 
 ## Environment
@@ -103,5 +103,4 @@ moon run crk:docker-smoke
 moon run crk:docker-down
 ```
 
-`moon run crk:docker-down` stops containers without deleting volumes. The
-Makefile still provides compatibility wrappers such as `make docker-up`.
+`moon run crk:docker-down` stops containers without deleting volumes.

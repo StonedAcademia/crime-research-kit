@@ -25,7 +25,7 @@ def create_server(ctx: ServerContext | None = None):
     except ImportError as exc:
         raise RuntimeError(
             "The MCP server requires the mcp extra. Install with "
-            "`uv pip install -p .venv/bin/python -e '.[mcp]'`."
+            "`uv run --cache-dir .uv-cache --no-project --with-editable '.[mcp]' -- crk-mcp --help`."
         ) from exc
     context = ctx or default_context()
     mcp = FastMCP("cr-kit", instructions=SERVER_INSTRUCTIONS)

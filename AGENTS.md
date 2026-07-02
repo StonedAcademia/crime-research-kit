@@ -21,14 +21,13 @@ This repository supports public-interest, documentary-style research into true c
 Run these after modifying scripts or schemas:
 
 ```bash
-python -m compileall src .agents/skills/truecrime-cult-research/scripts
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/examples/synthetic_case
+moon run crk:check
 ```
 
-Optional when dev dependencies are installed:
+Run the relevant test lane through Moon:
 
 ```bash
-pytest
+moon run crk:test
 ```
 
 ## Branch workflow
@@ -51,7 +50,7 @@ pytest
 - Update `pyproject.toml` and `CHANGELOG.md` together. The changelog must have `## [Unreleased]` and a dated `## [MAJOR.MINOR.PATCH] - YYYY-MM-DD` section with real `Added`, `Changed`, `Security`, and `Fixed` coverage when those categories apply.
 - Do not invent patch versions for untagged historical fixes. Record those fixes in the current release section; use patch versions only after a real release tag exists.
 - Release tags are annotated `vMAJOR.MINOR.PATCH` tags. Do not push release tags unless the user explicitly asks.
-- After version or changelog changes, run the release-readiness governance tests and `make release-check` against the intended local tag.
+- After version or changelog changes, run the release-readiness governance tests and `moon run crk:release-check` against the intended local tag.
 
 ## Directory routing
 
@@ -59,7 +58,7 @@ pytest
 - Case-builder app code lives in `src/`; keep each Python module under 200 non-comment LOC and keep a `README.md` in each Python-bearing directory.
 - Source and entity schemas live in `docs/schemas/`, grouped by ledger domain.
 - Name directories and files by the workflow, contract, or domain they serve. Do not use vague buckets such as `misc`, `stuff`, `old`, or catch-all holding areas to satisfy governance.
-- Before and after moving files in a target directory, run the repository governance check for the affected paths with `pytest tests/quality/governance/test_repository_shape.py -q` and inspect the reported file/dir counts.
+- Before and after moving files in a target directory, run the repository governance check for the affected paths with `uv run --cache-dir .uv-cache --no-project --with-editable '.[dev]' -- python -m pytest tests/quality/governance/test_repository_shape.py -q` and inspect the reported file/dir counts.
 - Case workspaces live in `data/cases/`, which is ignored except for `data/cases/.gitkeep`.
 - Staged extraction JSON goes in `data/cases/<case>/staging/extractions/`.
 - Public-safe exports go in `data/cases/<case>/exports/`; cross-case generated exports go in `data/exports/`. Both are local/generated artifacts.

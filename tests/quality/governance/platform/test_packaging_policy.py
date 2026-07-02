@@ -6,7 +6,7 @@ import re
 import tomllib
 import json
 
-from tests.helpers import KIT_ROOT
+from tests.helpers import KIT_ROOT, moon_task_names
 
 
 EXPECTED_EXTRAS = {
@@ -81,11 +81,9 @@ def test_packaged_registry_data_matches_canonical_docs_registry():
         )
 
 
-def test_make_and_moon_use_packaging_check_scripts():
-    makefile = (KIT_ROOT / "Makefile").read_text(encoding="utf-8")
+def test_moon_uses_packaging_check_scripts():
     tooling = (KIT_ROOT / ".moon" / "tasks" / "tooling.yml").read_text(encoding="utf-8")
 
-    assert "\naudit-licenses:" in makefile
-    assert "\nbuild-dist:" in makefile
+    assert {"audit-licenses", "build-dist"} <= moon_task_names()
     assert "deployment/scripts/checks/license_policy.py" in tooling
     assert "deployment/scripts/checks/fresh_build.py" in tooling

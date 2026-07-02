@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - uses: moonrepo/setup-toolchain@v0
-      - run: make install-dev
-      - run: make check test-governance test-smoke
+      - run: moon run crk:install-dev
+      - run: moon run crk:check crk:test-governance crk:test-smoke
       - if: github.ref == 'refs/heads/main'
-        run: make test
+        run: moon run crk:test

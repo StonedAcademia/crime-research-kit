@@ -69,13 +69,13 @@ create your first case:
 
 ```bash
 moon run crk:install-dev
-python .agents/skills/truecrime-cult-research/scripts/tcr.py validate data/examples/synthetic_case
-python .agents/skills/truecrime-cult-research/scripts/tcr.py init-case data/cases/sample_case --title "Sample Case"
+moon run crk:check
+moon run crk:init-sample
 ```
 
-Missing `moon`? Bootstrap the minimum toolchain first — it installs
-[proto](https://moonrepo.dev/proto) plus the `moon` and `python` versions
-pinned in `.prototools`:
+Missing `moon` or `uv`? Bootstrap the minimum toolchain first — it installs
+[proto](https://moonrepo.dev/proto) plus the `moon`, `python`, and `uv`
+versions pinned in `.prototools`:
 
 ```bash
 ./deployment/scripts/bootstrap.sh      # Linux / macOS
@@ -154,5 +154,7 @@ notes and the [ledger contract](docs/guides/architecture/case-ledger.md) under
 lane/template registry under `docs/registry/`. Persistent agent rules live in
 `AGENTS.md`.
 
-Validate changes with `make check` (compile + ledger validation) and
-`.venv/bin/python -m pytest` (unit, integration, e2e, governance, smoke).
+Validate changes with `moon run crk:check` (compile + ledger validation) and
+`moon run crk:test` (unit, integration, e2e, governance, smoke). For ad hoc
+test paths, use
+`uv run --cache-dir .uv-cache --no-project --with-editable '.[dev]' -- python -m pytest <path>`.

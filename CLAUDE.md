@@ -9,17 +9,17 @@ CRK is a local-first research kit for public-interest true crime / cult-origin r
 ## Commands
 
 ```bash
-# Setup (run from repo root; a .venv already exists in this checkout)
-python3 -m venv .venv && source .venv/bin/activate && pip install -e '.[dev]'
+# Setup (run from repo root; proto/moon use the pinned .prototools versions)
+moon run crk:install-dev
 
 # Quick check after modifying scripts or schemas (compileall + ledger validation)
-make check
+moon run crk:check
 
 # Tests (grouped by directory; conftest.py auto-applies the matching marker)
-.venv/bin/python -m pytest                      # full suite
-.venv/bin/python -m pytest tests/runtime/unit -v        # or: -m unit
-.venv/bin/python -m pytest -m governance        # policy/schema/doc-drift checks
-.venv/bin/python -m pytest tests/runtime/integration/operations/case/test_runner.py::test_name  # single test
+moon run crk:test                               # full suite
+moon run crk:test-unit                          # unit lane
+moon run crk:test-governance                    # policy/schema/doc-drift checks
+uv run --cache-dir .uv-cache --no-project --with-editable '.[dev]' -- python -m pytest tests/runtime/integration/operations/case/test_runner.py::test_name  # single test
 ```
 
 Test categories: `unit`, `integration`, `e2e` (optional extras may skip), `governance` (repo policy, schema, and generated-doc drift), `smoke`.
@@ -28,13 +28,13 @@ The two CLIs:
 
 ```bash
 # Canonical ledger CLI (single-file skill script)
-python .agents/skills/truecrime-cult-research/scripts/tcr.py <init-case|ingest-url|draft-extraction|import-extraction|validate|report|export-manim|...> data/cases/<case_slug>
+uv run --cache-dir .uv-cache --no-project --with-editable . -- python .agents/skills/truecrime-cult-research/scripts/tcr.py <init-case|ingest-url|draft-extraction|import-extraction|validate|report|export-manim|...> data/cases/<case_slug>
 
 # Case-builder agent app (installed entry point, or PYTHONPATH=src python -m cli)
 cr-kit <plan|parse-source|ocr-source|index-case|query-case|discover-sources|...> data/cases/<case_slug>
 ```
 
-Self-hosted container stack (SearXNG, Qdrant, Ollama, MCP, …): `make docker-build`, `make docker-up`, `make docker-pull-model`, `make docker-smoke`. See `deployment/README.md`.
+Self-hosted container stack (SearXNG, Qdrant, Ollama, MCP, ...): `moon run crk:docker-build`, `moon run crk:docker-up`, `moon run crk:docker-pull-model`, `moon run crk:docker-smoke`. See `deployment/README.md`.
 
 ## Versioning and changelog workflow
 
@@ -53,9 +53,9 @@ Update `pyproject.toml` and `CHANGELOG.md` together. Keep `## [Unreleased]`, add
 Validate and tag locally:
 
 ```bash
-.venv/bin/python -m pytest tests/quality/governance/platform/test_release_readiness.py -q
+uv run --cache-dir .uv-cache --no-project --with-editable '.[dev]' -- python -m pytest tests/quality/governance/platform/test_release_readiness.py -q
 git tag -a v<version> -m "CRK v<version>"
-make release-check
+moon run crk:release-check
 ```
 
 Release tags are annotated `vMAJOR.MINOR.PATCH` tags. Do not push release tags unless explicitly asked.

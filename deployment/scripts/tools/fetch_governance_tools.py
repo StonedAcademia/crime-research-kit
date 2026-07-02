@@ -120,6 +120,13 @@ def venv_python() -> Path:
     return venv_bin("python")
 
 
+def python_tool(name: str) -> Path | str:
+    found = shutil.which(name)
+    if found:
+        return found
+    return venv_bin(name)
+
+
 def run_checked(command: list[str], skip_missing: bool = True) -> int:
     if skip_missing and not Path(command[0]).exists():
         print(f"SKIP (missing tool): {command[0]}")
@@ -143,21 +150,21 @@ def run_binary(name: str, args: list[str], offline: bool) -> int:
 
 
 def audit_deps() -> int:
-    return run_checked([str(venv_python()), "-m", "pip_audit", "--progress-spinner", "off"])
+    return run_checked([sys.executable, "-m", "pip_audit", "--progress-spinner", "off"])
 
 
 def audit_licenses() -> int:
-    return run_checked([str(venv_bin("pip-licenses")), "--format=json", "--with-system"])
+    return run_checked([str(python_tool("pip-licenses")), "--format=json", "--with-system"])
 
 
 def sbom() -> int:
     (ROOT / "dist").mkdir(exist_ok=True)
-    return run_checked([str(venv_bin("cyclonedx-py")), "environment", "--output-file", "dist/sbom.json"])
+    return run_checked([str(python_tool("cyclonedx-py")), "environment", "--output-file", "dist/sbom.json"])
 
 
 def build_dist() -> int:
     env = {**os.environ, "SOURCE_DATE_EPOCH": os.environ.get("SOURCE_DATE_EPOCH", "1735689600")}
-    return subprocess.run([str(venv_python()), "-m", "build"], cwd=ROOT, env=env).returncode
+    return subprocess.run([sys.executable, "-m", "build"], cwd=ROOT, env=env).returncode
 
 
 def main(argv: list[str]) -> int:

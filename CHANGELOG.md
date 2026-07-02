@@ -6,6 +6,10 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+### Changed
+
+- Retired the legacy wrapper command surface in favor of direct `moon run crk:<task>` usage across CI, governance checks, and operator docs.
+
 ## [0.11.0] - 2026-07-02
 
 ### Added
@@ -19,7 +23,7 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 - Self-hosted local deployment stack for Ollama, SearXNG, Qdrant, OCR/document tooling, retrieval, memory, Docker Compose, bootstrap scripts, and container smoke checks.
 - UFB bundle exporter, public artifact export wording, and operator runbooks for setup, case workflows, output readiness, and deployment operations.
 - Governance program with repository-shape checks, import/network boundaries, env-var registry, local-provider policy, secret scanning, fixture provenance checks, data-safety gates, docs drift checks, packaging policy, and license/SBOM tooling.
-- GitHub Actions, moon/proto Make targets, branch gates, governance install path, reproducible release builds, per-extra SBOM generation, and release-readiness validation.
+- GitHub Actions, Moon/proto task targets, branch gates, governance install path, reproducible release builds, per-extra SBOM generation, and release-readiness validation.
 
 ### Changed
 

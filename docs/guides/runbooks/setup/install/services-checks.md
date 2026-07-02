@@ -71,10 +71,10 @@ local workspace:
 
 | Symptom | Check |
 |---|---|
-| `ModuleNotFoundError: cli` | Run `moon run crk:install-dev`, activate `.venv`, or run with `PYTHONPATH=src`. |
+| `ModuleNotFoundError: cli` | Run commands through `moon run crk:<task>` or `uv run --cache-dir .uv-cache --no-project --with-editable . -- python -m cli ...`. |
 | `.agents/.../tcr.py` not found | Run from the `tc-c-kit` repository root. |
 | Case files appear in the wrong directory | Use `data/cases/<case_slug>` from the repository root. |
-| LangGraph imports fail | Install `python -m pip install -e '.[agentic]'` inside `.venv`. |
-| LLM node imports fail | Install `python -m pip install -e '.[llm]'` inside `.venv` and set `CRK_MODEL`. |
+| LangGraph imports fail | Run with `uv run --cache-dir .uv-cache --no-project --with-editable '.[agentic]' -- ...`. |
+| LLM node imports fail | Run with `uv run --cache-dir .uv-cache --no-project --with-editable '.[llm]' -- ...` and set `CRK_MODEL`. |
 | Parse, OCR, retrieval, or memory commands fail | Install the matching optional extra and start any required local services. |
 | A claim is blocked from public export | Keep it internal until source support, contradiction review, source-independence review, and privacy review are complete. |

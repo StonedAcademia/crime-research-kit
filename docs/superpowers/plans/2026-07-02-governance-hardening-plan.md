@@ -4,7 +4,7 @@
 
 **Goal:** Enforce the full governance program (structure, boundaries, security/local-only, data safety, docs drift, packaging, CI/release) as locally runnable pytest gates plus a pinned external-tool audit lane and thin CI mirrors.
 
-**Architecture:** Extend the existing `tests/quality/governance/` stdlib-pytest suite for everything statically decidable; acquire and pin external tools (gitleaks, lychee, pip-audit, pip-licenses, cyclonedx-bom) behind `make`/moon targets in an isolated audit lane; add GitHub Actions workflows that only call those targets, mirroring the existing moon `branch_gate.py`.
+**Architecture:** Extend the existing `tests/quality/governance/` stdlib-pytest suite for everything statically decidable; acquire and pin external tools (gitleaks, lychee, pip-audit, pip-licenses, cyclonedx-bom) behind Moon targets in an isolated audit lane; add GitHub Actions workflows that only call those targets, mirroring the existing moon `branch_gate.py`.
 
 **Tech Stack:** Python stdlib (`ast`, `tokenize`, `json`, `re`, `subprocess`), pytest, moonrepo tasks, GitHub Actions, gitleaks v8.30.1, lychee 0.23.0, pip-audit 2.10.1, pip-licenses 5.5.5, cyclonedx-bom 7.3.0.
 
@@ -16,7 +16,7 @@ Spec: `docs/superpowers/specs/2026-07-02-governance-hardening-spec.md` (policies
 - Every new Python-bearing directory under `src/` needs `README.md` (enforced by `tests/quality/governance/test_repository_shape.py`).
 - No new required dependencies: core stays stdlib. New tooling goes in the `governance` optional extra or as fetched pinned binaries.
 - Governance tests must not use the network. Audit-lane targets may; they must degrade with a clear skip message offline.
-- Every CI job step must be expressible as a `make <target>` (which delegates to `moon run crk:<task>`).
+- Every CI job step must be expressible as a direct `moon run crk:<task>` call.
 - Test files follow existing conventions: `tests/helpers.py` `KIT_ROOT`/`TCR_PATH`, markers auto-applied by directory, `git ls-files` for tracked-file enumeration.
 - Conventional commit messages (`test:`, `feat:`, `chore:`, `ci:`, `docs:`); commit after every green step; end commits with the Claude Code trailer.
 - New policy constants (denylists, allowlists) live at module top of their test file with a comment pointing at the spec.
@@ -45,12 +45,12 @@ Spec: `docs/superpowers/specs/2026-07-02-governance-hardening-spec.md` (policies
 - Create: `deployment/tooling/manifest.json`, `deployment/tooling/README.md`
 - Create: `deployment/scripts/tools/fetch_governance_tools.py` (stdlib fetch+sha256-verify → gitignored `deployment/tooling/bin/`)
 - Create: `.gitleaks.toml`, `LICENSE` (MIT), 
-- Modify: `pyproject.toml` (add `governance` extra), `moon.yml` + `Makefile` (targets: `audit-secrets`, `audit-deps`, `audit-licenses`, `audit-links`, `sbom`, `build-dist`), `.gitignore` (`deployment/tooling/bin/`)
+- Modify: `pyproject.toml` (add `governance` extra), `moon.yml` (targets: `audit-secrets`, `audit-deps`, `audit-licenses`, `audit-links`, `sbom`, `build-dist`), `.gitignore` (`deployment/tooling/bin/`)
 - Test: `tests/quality/governance/test_tooling_manifest.py`
 
 **Interfaces (later phases consume):**
-- `make audit-secrets` → runs gitleaks via fetched binary; exit 0 clean.
-- `make audit-deps` → `pip-audit`; prints `SKIP (offline)` and exits 0 when the advisory DB is unreachable.
+- `moon run crk:audit-secrets` -> runs gitleaks via fetched binary; exit 0 clean.
+- `moon run crk:audit-deps` -> `pip-audit`; prints `SKIP (offline)` and exits 0 when the advisory DB is unreachable.
 - `manifest.json` shape: `{"tools": {"gitleaks": {"version": "8.30.1", "sha256": {"linux_x64": "<real hash>"}, "url_template": "..."}, ...}, "python_pins": {"pip-audit": "2.10.1", "pip-licenses": "5.5.5", "cyclonedx-bom": "7.3.0"}}`
 
 **Steps:**
@@ -58,7 +58,7 @@ Spec: `docs/superpowers/specs/2026-07-02-governance-hardening-spec.md` (policies
 - [ ] **Step 1.1:** Write failing test `tests/quality/governance/test_tooling_manifest.py`:
 
 ```python
-"""Governance: pinned tooling manifest stays consistent with pyproject and make targets."""
+"""Governance: pinned tooling manifest stays consistent with pyproject and Moon targets."""
 import json, re
 from tests.helpers import KIT_ROOT
 
@@ -81,20 +81,22 @@ def test_python_pins_match_governance_extra():
         assert f"{pkg}=={version}" in pyproject, f"{pkg} pin drift"
     assert REQUIRED_PYTHON_PINS <= set(data["python_pins"])
 
-def test_make_exposes_audit_lane_targets():
-    makefile = (KIT_ROOT / "Makefile").read_text()
+def test_moon_exposes_audit_lane_targets():
+    moon = (KIT_ROOT / "moon.yml").read_text()
+    tooling = (KIT_ROOT / ".moon" / "tasks" / "tooling.yml").read_text()
+    combined = moon + "\n" + tooling
     for target in AUDIT_TARGETS:
-        assert f"\n{target}:" in makefile, f"make target {target} missing"
+        assert f"\n  {target}:" in combined, f"Moon target {target} missing"
 ```
 
 - [ ] **Step 1.2:** Run `pytest tests/quality/governance/test_tooling_manifest.py -q` — expect FAIL (no manifest).
-- [ ] **Step 1.3:** Create `manifest.json` with real upstream sha256 checksums (fetch release checksums for gitleaks v8.30.1 and lychee 0.23.0 from their GitHub releases — network step, do it now), `governance` extra in pyproject (`pip-audit==2.10.1`, `pip-licenses==5.5.5`, `cyclonedx-bom==7.3.0`, `build>=1.2`), Makefile+moon targets delegating per existing pattern (`moon run crk:<task>`; moon tasks call `deployment/scripts/tools/venv_exec.py` or the fetcher).
+- [ ] **Step 1.3:** Create `manifest.json` with real upstream sha256 checksums (fetch release checksums for gitleaks v8.30.1 and lychee 0.23.0 from their GitHub releases — network step, do it now), `governance` extra in pyproject (`pip-audit==2.10.1`, `pip-licenses==5.5.5`, `cyclonedx-bom==7.3.0`, `build>=1.2`), and Moon targets (`moon run crk:<task>`) that call `deployment/scripts/tools/venv_exec.py` or the fetcher.
 - [ ] **Step 1.4:** Write `fetch_governance_tools.py`: reads manifest, downloads each tool for the host platform into `deployment/tooling/bin/`, verifies sha256, `chmod +x`; idempotent; `--offline` flag exits 0 with a notice when binaries already present. Keep < 200 non-comment LOC.
 - [ ] **Step 1.5:** Run the fetcher for real: `python deployment/scripts/tools/fetch_governance_tools.py` — binaries verified present. Then `pip install -e '.[governance]'` into `.venv`. **This is the resource-acquisition gate: do not proceed to later phases until both succeed.**
-- [ ] **Step 1.6:** `.gitleaks.toml`: default ruleset + `[allowlist]` paths for `data/cases/`, `data/exports/` (gitignored anyway), synthetic fixture pseudo-data. Run `make audit-secrets` on the repo — triage any hits (expected: none; fixtures are synthetic).
+- [ ] **Step 1.6:** `.gitleaks.toml`: default ruleset + `[allowlist]` paths for `data/cases/`, `data/exports/` (gitignored anyway), synthetic fixture pseudo-data. Run `moon run crk:audit-secrets` on the repo — triage any hits (expected: none; fixtures are synthetic).
 - [ ] **Step 1.7:** Add `LICENSE` (MIT, copyright 2026 StonedAcademia contributors).
-- [ ] **Step 1.8:** Full check: `pytest tests/quality/governance -q && make check` — green.
-- [ ] **Step 1.9:** Commits (split logically): `feat(tooling): add pinned governance tool manifest and fetcher`, `chore: add gitleaks config and MIT license`, `feat(tooling): add audit-lane make and moon targets`.
+- [ ] **Step 1.8:** Full check: `pytest tests/quality/governance -q && moon run crk:check` — green.
+- [ ] **Step 1.9:** Commits (split logically): `feat(tooling): add pinned governance tool manifest and fetcher`, `chore: add gitleaks config and MIT license`, `feat(tooling): add audit-lane moon targets`.
 
 ## Phase 2 — Branch `gov/repo-shape-naming`
 
@@ -276,7 +278,7 @@ def test_network_modules_confined_to_acquisition():
 
 - [ ] **Step 5.1:** Write the stdlib secret-floor test: regexes for AWS key IDs (`AKIA[0-9A-Z]{16}`), PEM blocks (`-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----`), GitHub tokens (`ghp_[A-Za-z0-9]{36}`, `github_pat_`), Slack (`xox[bpars]-`), and assignments `(api_key|apikey|secret|token|password)\s*[=:]\s*["'][A-Za-z0-9+/_-]{20,}["']` over all tracked text files; allowlist: test file itself, gitleaks config, obvious placeholders (`<...>`, `changeme`, `example`, `synthetic`).
 - [ ] **Step 5.2:** Plant `aws_key = "AKIA` + 16 caps in a scratch tracked file → FAIL → remove. Suite green.
-- [ ] **Step 5.3:** Verify `make audit-secrets` (gitleaks from Phase 1) runs clean; wire it into `branch_gate.py`'s canary/main target lists.
+- [ ] **Step 5.3:** Verify `moon run crk:audit-secrets` (gitleaks from Phase 1) runs clean; wire it into `branch_gate.py`'s canary/main target lists.
 - [ ] **Step 5.4:** Commit: `test(governance): add stdlib secret floor and gate gitleaks in canary/main`
 
 ## Phase 6 — Branch `gov/data-safety-gates`
@@ -303,7 +305,7 @@ def test_network_modules_confined_to_acquisition():
 **Steps:**
 
 - [ ] **Step 7.1:** `test_docs_links.py`: for every tracked `*.md`, resolve relative links/images (`[..](path)`, excluding `http(s)://`, `mailto:`, `#anchors`) against the tree; assert all targets exist. Also assert intra-doc anchors referenced as `file.md#heading` match a heading slug in the target.
-- [ ] **Step 7.2:** `test_runbook_coverage.py`: enumerate public commands — `cr-kit` subcommands via `argparse` introspection (`python -m cli --help` subprocess, parse the subcommand list), `tcr.py` subcommands the same way, `make docker-*` targets from the Makefile — assert each appears in at least one file under `docs/guides/runbooks/`. Maintain an explicit `RUNBOOK_EXEMPT` set (internal/dev-only commands) with justification comments.
+- [ ] **Step 7.2:** `test_runbook_coverage.py`: enumerate public commands — `cr-kit` subcommands via `argparse` introspection (`python -m cli --help` subprocess, parse the subcommand list), `tcr.py` subcommands the same way, `moon run crk:docker-*` targets from Moon config — assert each appears in at least one file under `docs/guides/runbooks/`. Maintain an explicit `RUNBOOK_EXEMPT` set (internal/dev-only commands) with justification comments.
 - [ ] **Step 7.3:** CLI-help drift: extend the existing pattern from `test_lanes_json.py` — any doc that embeds a `--help` snippet (marked by a `<!-- cli-help: <command> -->` comment convention; add the convention to the two docs that quote CLI help) must match live `--help` output. If no docs quote help verbatim today, add the convention doc-side where snippets exist, else record N/A in the commit message.
 - [ ] **Step 7.4:** Fix every broken link / uncovered command this reveals (expect several — budget for it). Green. Commits: `test(governance): internal link and anchor checker`, `test(governance): runbook coverage for public commands`, `docs: repair links and runbook gaps found by new gates`
 
@@ -315,7 +317,7 @@ def test_network_modules_confined_to_acquisition():
 **Steps:**
 
 - [ ] **Step 8.1:** `test_packaging_policy.py`: parse `pyproject.toml` (tomllib): core `dependencies == []`; every extra's packages map to its capability (assert known groups exactly: dev/agentic/llm/mcp/web-local/documents/retrieval/memory-local/governance; no new extra without a spec edit — encode current grouping as the expected constant); `LICENSE` file exists and `project.license` declared; console scripts unchanged.
-- [ ] **Step 8.2:** Wire `make audit-licenses` → `license_policy.py` (skip-with-notice if pip-licenses absent) and `make build-dist` → `fresh_build.py`. Run both for real; fix fallout (missing `license` field, MANIFEST gaps).
+- [ ] **Step 8.2:** Wire `moon run crk:audit-licenses` -> `license_policy.py` (skip-with-notice if pip-licenses absent) and `moon run crk:build-dist` -> `fresh_build.py`. Run both for real; fix fallout (missing `license` field, MANIFEST gaps).
 - [ ] **Step 8.3:** Green. Commits: `test(governance): packaging and extras grouping policy`, `feat(checks): license policy and fresh-build verification scripts`
 
 ## Phase 9 — Branch `ci/github-actions` (after 1-8 merged to main)
@@ -327,22 +329,22 @@ def test_network_modules_confined_to_acquisition():
 
 **Steps:**
 
-- [ ] **Step 9.1:** `ci.yml`: on PR + push to dev/canary/main; single job matrix `python: [3.10, 3.12]` for `make check test-governance test-smoke`, full `make test` on main only; every `run:` line is a make target; ~60 LOC. `audit.yml`: weekly cron + manual + dependency-file paths trigger; jobs: `make audit-secrets audit-deps audit-licenses audit-links`; `continue-on-error: true` for links; network-permitted lane. `release.yml`: on `v*` tags; `make test build-dist sbom audit-secrets audit-deps` + changelog gate (Phase 10 adds it).
-- [ ] **Step 9.2:** `test_ci_parity.py`: parse each workflow YAML with a small stdlib parser (line-regex for `run:` steps is acceptable — no pyyaml dep): assert every `run:` invokes `make <target>` and each target exists in the Makefile; assert `.github` stays within shape budget (belt-and-braces with repo-shape test).
+- [ ] **Step 9.1:** `ci.yml`: on PR + push to dev/canary/main; single job matrix `python: [3.10, 3.12]` for `moon run crk:check crk:test-governance crk:test-smoke`, full `moon run crk:test` on main only; every `run:` line invokes Moon directly; ~60 LOC. `audit.yml`: weekly cron + manual + dependency-file paths trigger; jobs: `moon run crk:audit-secrets crk:audit-deps crk:audit-licenses crk:audit-links`; `continue-on-error: true` for links; network-permitted lane. `release.yml`: on `v*` tags; `moon run crk:test crk:build-dist crk:sbom crk:audit-secrets crk:audit-deps` + changelog gate (Phase 10 adds it).
+- [ ] **Step 9.2:** `test_ci_parity.py`: parse each workflow YAML with a small stdlib parser (line-regex for `run:` steps is acceptable — no pyyaml dep): assert every `run:` invokes `moon run` and each target exists in Moon config; assert `.github` stays within shape budget (belt-and-braces with repo-shape test).
 - [ ] **Step 9.3:** Extend `branch_gate.py` + its unit tests (`tests/` has existing coverage of the gate — extend in place). Verify with `CRK_HOOK_BRANCH=gov/example python deployment/scripts/checks/branch_gate.py --dry-run` style invocation (add `--dry-run` printing resolved targets if absent).
-- [ ] **Step 9.4:** Push branch, confirm the workflows actually run green on GitHub (this is the one step needing the remote). Commits: `ci: add thin make-calling workflows for ci, audit, release lanes`, `feat(checks): branch-type prefixes in branch gate`, `test(governance): ci/make parity`
+- [ ] **Step 9.4:** Push branch, confirm the workflows actually run green on GitHub (this is the one step needing the remote). Commits: `ci: add thin moon workflows for ci, audit, release lanes`, `feat(checks): branch-type prefixes in branch gate`, `test(governance): ci moon parity`
 
 ## Phase 10 — Branch `ci/release-readiness` (after 9)
 
 **Files:**
 - Create: `CHANGELOG.md` (Keep-a-Changelog format, `## [Unreleased]` + backfilled `## [0.1.0]` from git history), `deployment/scripts/checks/release_readiness.py` (asserts: tag matches `pyproject.toml` version, CHANGELOG has a dated section for it, reproducible double-build per spec §5 definition with `SOURCE_DATE_EPOCH`, SBOM emitted per extra + aggregate via cyclonedx-bom)
-- Modify: `.github/workflows/release.yml` (call it), `Makefile`/`moon.yml` (`release-check` target)
+- Modify: `.github/workflows/release.yml` (call it), `moon.yml` (`release-check` target)
 - Test: `tests/quality/governance/test_release_readiness.py` (CHANGELOG format parses; unreleased section exists; script's tag/version/changelog logic unit-tested with tmp fixtures)
 
 **Steps:**
 
 - [ ] **Step 10.1:** TDD `release_readiness.py` logic via the governance test (feed it tmp pyproject/CHANGELOG/tag combinations; assert pass/fail matrix).
-- [ ] **Step 10.2:** Run `make release-check` for real against a throwaway local tag `v0.1.0` — double-build comparison must pass; fix nondeterminism via `SOURCE_DATE_EPOCH` and stable file ordering.
+- [ ] **Step 10.2:** Run `moon run crk:release-check` for real against a throwaway local tag `v0.1.0` — double-build comparison must pass; fix nondeterminism via `SOURCE_DATE_EPOCH` and stable file ordering.
 - [ ] **Step 10.3:** Green; commits: `docs: add changelog`, `feat(release): release readiness gate with reproducible build and sbom`
 
 ## Delegation map

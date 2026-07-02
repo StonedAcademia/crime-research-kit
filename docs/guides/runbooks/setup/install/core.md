@@ -3,9 +3,8 @@
 ## Prerequisites
 
 - Python 3.10 or newer.
-- A shell with `python3` and `pip`.
-- `proto` for the preferred cross-platform task workflow. `moon`, Python, and
-  Bun are pinned in `.prototools` and installed through proto.
+- `proto` for the preferred cross-platform task workflow. `moon`, Python,
+  `uv`, and Bun are pinned in `.prototools` and installed through proto.
 - Optional: `bun` for Phanestead UFB bundle exports.
 - Optional local services: SearXNG for source discovery and Qdrant for local
   retrieval or memory.
@@ -29,7 +28,7 @@ irm https://moonrepo.dev/install/proto.ps1 | iex
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 ```
 
-Then install the pinned proto toolchain and run the moon install task from the
+Then install the pinned proto toolchain and run the Moon install task from the
 repository root:
 
 ```bash
@@ -37,9 +36,10 @@ proto install
 moon run crk:install-dev
 ```
 
-`moon run crk:install-dev` uses `deployment/scripts/tools/install.py` to create
-`.venv`, upgrade pip, and install the package in editable mode with the `dev`
-extra.
+`moon run crk:install-dev` warms the dev command environment with
+`uv run --cache-dir .uv-cache --no-project --with-editable '.[dev]' ...`.
+New worktrees do not need to copy an existing virtualenv; Moon invokes `uv`
+and `uv` prepares the selected editable package environment as needed.
 
 For a minimum runtime install without dev dependencies:
 
@@ -47,24 +47,14 @@ For a minimum runtime install without dev dependencies:
 moon run crk:install
 ```
 
-The Makefile remains as a compatibility wrapper:
-
-```bash
-make install
-make install-dev
-make install-windows
-```
-
-All three route through moon; `install-windows` is an alias for the same
-cross-platform installer rather than a separate PowerShell implementation.
+Moon is the canonical task runner for installs and local operations. The old
+wrapper command surface has been retired so CI, docs, and local shells all use
+the same `moon run crk:<task>` form.
 
 Manual fallback without moon:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -e .
+uv run --cache-dir .uv-cache --no-project --with-editable '.[dev]' -- python -c "import pytest; import cli"
 ```
 
 The minimum install uses the core package only. The `dev` extra installs the
@@ -74,16 +64,16 @@ case paths.
 
 ## Optional Extras
 
-Install only the surfaces you need:
+Run commands with only the extra surface they need:
 
 ```bash
-python -m pip install -e '.[agentic]'
-python -m pip install -e '.[llm]'
-python -m pip install -e '.[mcp]'
-python -m pip install -e '.[web-local]'
-python -m pip install -e '.[documents]'
-python -m pip install -e '.[retrieval]'
-python -m pip install -e '.[memory-local]'
+uv run --cache-dir .uv-cache --no-project --with-editable '.[agentic]' -- cr-kit --help
+uv run --cache-dir .uv-cache --no-project --with-editable '.[llm]' -- cr-kit --help
+uv run --cache-dir .uv-cache --no-project --with-editable '.[mcp]' -- crk-mcp --help
+uv run --cache-dir .uv-cache --no-project --with-editable '.[web-local]' -- cr-kit --help
+uv run --cache-dir .uv-cache --no-project --with-editable '.[documents]' -- cr-kit --help
+uv run --cache-dir .uv-cache --no-project --with-editable '.[retrieval]' -- cr-kit --help
+uv run --cache-dir .uv-cache --no-project --with-editable '.[memory-local]' -- cr-kit --help
 ```
 
 Use `agentic` for the LangGraph runner, `llm` for optional LLM packet helpers,
