@@ -1,18 +1,57 @@
+# Local Python environments and dependency caches.
 .venv/
 .venv
 .uv-cache/
-.worktrees/
+
+# Repo-local task and agent workspaces.
 .moon/cache/
-deployment/tooling/bin/
-dist/
+.worktrees/
+
+# Python bytecode and test/tool caches.
 __pycache__/
-*.pyc
-.DS_Store
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pyright/
+.coverage
+.coverage.*
+htmlcov/
+.hypothesis/
+
+# Build, packaging, and editable-install artifacts.
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Local secrets, environment overrides, and logs.
+.env
+.env.*
+!.env.example
+!.env.sample
+*.log
+
+# Downloaded governance tool binaries are reproducible from the manifest.
+deployment/tooling/bin/
+
+# uv is used as an ephemeral command runner here; do not commit per-worktree locks.
 uv.lock
+
+# Case workspaces contain local/raw research material and generated ledgers.
 data/cases/**
 !data/cases/
 !data/cases/.gitkeep
+
+# Cross-case public-safe exports are generated locally.
 data/exports/**
 !data/exports/
 !data/exports/.gitkeep
-*.egg-info/
+
+# OS/editor noise.
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
