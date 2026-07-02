@@ -4,6 +4,7 @@ from pathlib import Path
 from adapters.interfaces.mcp import tools_read
 from adapters.interfaces.mcp.context import ServerContext
 from adapters.ops.runner import CrkRunner
+from core.config import CrkSettings
 from tests.helpers import KIT_ROOT, ledger_subcommand
 
 
@@ -12,6 +13,7 @@ def make_ctx(cases_root: Path, dry_run: bool = True) -> ServerContext:
         repo_root=KIT_ROOT,
         cases_root=cases_root,
         runner=CrkRunner(repo_root=KIT_ROOT, dry_run=dry_run),
+        settings=CrkSettings(),
     )
 
 

@@ -1,8 +1,9 @@
-"""Runtime defaults for self-hosted CRK services."""
+"""Runtime defaults for self-hosted CRK services, resolved once at process boundaries."""
 
 from __future__ import annotations
 
-import os
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 DEFAULT_MODEL_SPEC = "ollama:llama3.1"
 DEFAULT_SEARXNG_URL = "http://localhost:8080"
@@ -15,46 +16,17 @@ DEFAULT_MEM0_LLM_MODEL = "llama3.1"
 DEFAULT_EMBEDDER_PROVIDER = "huggingface"
 
 
-def env_str(name: str, default: str) -> str:
-    return os.environ.get(name) or default
+class CrkSettings(BaseSettings):
+    """Environment-backed service configuration. Construct once at CLI/MCP startup."""
 
+    model_config = SettingsConfigDict(protected_namespaces=(), extra="ignore")
 
-def env_int(name: str, default: int) -> int:
-    raw = os.environ.get(name)
-    return int(raw) if raw else default
-
-
-def model_spec(value: str | None = None) -> str:
-    return value or env_str("CRK_MODEL", DEFAULT_MODEL_SPEC)
-
-
-def searxng_url(value: str | None = None) -> str:
-    return value or env_str("CRK_SEARXNG_URL", DEFAULT_SEARXNG_URL)
-
-
-def qdrant_url(value: str | None = None) -> str:
-    return value or env_str("CRK_QDRANT_URL", DEFAULT_QDRANT_URL)
-
-
-def qdrant_host(value: str | None = None) -> str:
-    return value or env_str("CRK_QDRANT_HOST", DEFAULT_QDRANT_HOST)
-
-
-def qdrant_port(value: int | None = None) -> int:
-    return value if value is not None else env_int("CRK_QDRANT_PORT", DEFAULT_QDRANT_PORT)
-
-
-def embed_model(value: str | None = None) -> str:
-    return value or env_str("CRK_EMBED_MODEL", DEFAULT_EMBED_MODEL)
-
-
-def mem0_llm_provider(value: str | None = None) -> str:
-    return value or env_str("CRK_MEM0_LLM_PROVIDER", DEFAULT_MEM0_LLM_PROVIDER)
-
-
-def mem0_llm_model(value: str | None = None) -> str:
-    return value or env_str("CRK_MEM0_LLM_MODEL", DEFAULT_MEM0_LLM_MODEL)
-
-
-def embedder_provider(value: str | None = None) -> str:
-    return value or env_str("CRK_EMBEDDER_PROVIDER", DEFAULT_EMBEDDER_PROVIDER)
+    model_spec: str = Field(default=DEFAULT_MODEL_SPEC, validation_alias="CRK_MODEL")
+    searxng_url: str = Field(default=DEFAULT_SEARXNG_URL, validation_alias="CRK_SEARXNG_URL")
+    qdrant_url: str = Field(default=DEFAULT_QDRANT_URL, validation_alias="CRK_QDRANT_URL")
+    qdrant_host: str = Field(default=DEFAULT_QDRANT_HOST, validation_alias="CRK_QDRANT_HOST")
+    qdrant_port: int = Field(default=DEFAULT_QDRANT_PORT, validation_alias="CRK_QDRANT_PORT")
+    embed_model: str = Field(default=DEFAULT_EMBED_MODEL, validation_alias="CRK_EMBED_MODEL")
+    mem0_llm_provider: str = Field(default=DEFAULT_MEM0_LLM_PROVIDER, validation_alias="CRK_MEM0_LLM_PROVIDER")
+    mem0_llm_model: str = Field(default=DEFAULT_MEM0_LLM_MODEL, validation_alias="CRK_MEM0_LLM_MODEL")
+    embedder_provider: str = Field(default=DEFAULT_EMBEDDER_PROVIDER, validation_alias="CRK_EMBEDDER_PROVIDER")

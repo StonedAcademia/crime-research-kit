@@ -3,7 +3,7 @@ import shutil
 from pathlib import Path
 
 from cli import build_parser
-from core import config
+from core.config import CrkSettings
 from core.memory import remember_research_actions
 from adapters.io.retrieval import build_evidence_documents
 from tests.helpers import KIT_ROOT
@@ -98,11 +98,13 @@ def test_self_hosted_service_defaults_read_env(monkeypatch):
     monkeypatch.setenv("CRK_QDRANT_PORT", "6333")
     monkeypatch.setenv("CRK_EMBED_MODEL", "local-embed")
 
-    assert config.searxng_url() == "http://searxng:8080"
-    assert config.qdrant_url() == "http://qdrant:6333"
-    assert config.qdrant_host() == "qdrant"
-    assert config.qdrant_port() == 6333
-    assert config.embed_model() == "local-embed"
+    settings = CrkSettings()
+
+    assert settings.searxng_url == "http://searxng:8080"
+    assert settings.qdrant_url == "http://qdrant:6333"
+    assert settings.qdrant_host == "qdrant"
+    assert settings.qdrant_port == 6333
+    assert settings.embed_model == "local-embed"
 
 
 def test_cli_parse_source_reports_clean_error_for_non_case(tmp_path, capsys):

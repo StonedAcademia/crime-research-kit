@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from adapters.ops.runner import CrkRunner, default_repo_root
+from core.config import CrkSettings
 
 CASE_SLUG_RE = re.compile(r"[a-zA-Z0-9][a-zA-Z0-9_-]{0,80}")
 
@@ -18,6 +19,7 @@ class ServerContext:
     repo_root: Path
     cases_root: Path
     runner: CrkRunner
+    settings: CrkSettings
     skill_root: Path | None = None
 
 
@@ -28,6 +30,7 @@ def default_context() -> ServerContext:
         repo_root=repo_root,
         cases_root=cases_root,
         runner=CrkRunner(repo_root=repo_root, dry_run=False),
+        settings=CrkSettings(),
         skill_root=default_skill_root(repo_root),
     )
 

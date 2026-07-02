@@ -12,7 +12,12 @@ from adapters.ops import sources as source_ops
 
 def discover_sources_tool(ctx: ServerContext, case: str, query: str, limit: int = 10) -> dict[str, Any]:
     try:
-        return source_ops.discover_sources(resolve_case(ctx, case), query=query, limit=limit).to_dict()
+        return source_ops.discover_sources(
+            resolve_case(ctx, case),
+            query=query,
+            searxng_url=ctx.settings.searxng_url,
+            limit=limit,
+        ).to_dict()
     except ValueError as exc:
         return error_dict(str(exc))
     except Exception as exc:

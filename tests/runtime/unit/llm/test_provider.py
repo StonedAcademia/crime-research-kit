@@ -24,17 +24,15 @@ def test_parse_model_spec_rejects_managed_providers():
             parse_model_spec(spec)
 
 
-def test_active_model_spec_defaults_local(monkeypatch):
-    monkeypatch.delenv("CRK_MODEL", raising=False)
-
+def test_active_model_spec_defaults_local():
     assert active_model_spec() == parse_model_spec(DEFAULT_MODEL_SPEC)
     assert is_local_provider(active_model_spec()[0]) is True
 
 
-def test_active_model_spec_reads_self_hosted_env(monkeypatch):
-    monkeypatch.setenv("CRK_MODEL", "ollama:qwen2.5")
-
-    provider, model = active_model_spec()
+def test_active_model_spec_accepts_explicit_spec():
+    # core.provider is env-free; callers resolve CRK_MODEL via CrkSettings
+    # at the process boundary and pass it in explicitly.
+    provider, model = active_model_spec("ollama:qwen2.5")
 
     assert provider == "ollama"
     assert model == "qwen2.5"

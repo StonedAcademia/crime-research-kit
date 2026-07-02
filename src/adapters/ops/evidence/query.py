@@ -10,8 +10,7 @@ from adapters.ops.result import OpResult, local_op
 from adapters.ops.runner import CrkRunner
 from adapters.ops.safety.policy import filter_public
 from core.casefile import RECORD_FILES, CasefileError, find_source, load_records, resolve_case_path
-from core.config import embed_model as default_embed_model
-from core.config import qdrant_url as default_qdrant_url
+from core.config import DEFAULT_EMBED_MODEL, DEFAULT_QDRANT_URL
 
 
 def get_records(case_dir: str, record_type: str, *, include_private: bool = False) -> OpResult:
@@ -80,9 +79,9 @@ def index_case(
         _index_case,
         case_dir,
         include_private=include_private,
-        qdrant_url=default_qdrant_url(qdrant_url),
+        qdrant_url=qdrant_url or DEFAULT_QDRANT_URL,
         collection=collection,
-        embed_model=default_embed_model(embed_model),
+        embed_model=embed_model or DEFAULT_EMBED_MODEL,
     )
 
 
@@ -102,9 +101,9 @@ def query_case(
         case_dir,
         query_text,
         include_private=include_private,
-        qdrant_url=default_qdrant_url(qdrant_url),
+        qdrant_url=qdrant_url or DEFAULT_QDRANT_URL,
         collection=collection,
-        embed_model=default_embed_model(embed_model),
+        embed_model=embed_model or DEFAULT_EMBED_MODEL,
         top_k=top_k,
     )
 

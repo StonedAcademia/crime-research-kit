@@ -70,7 +70,9 @@ def test_llm_disabled_state_never_builds_a_model(monkeypatch):
     def explode():
         raise AssertionError("model factory must not be constructed when llm is disabled")
 
-    monkeypatch.setattr(service, "_model_factory", lambda enabled: explode() if enabled else None)
+    monkeypatch.setattr(
+        service, "_model_factory", lambda enabled, model_spec=None: explode() if enabled else None
+    )
 
     result = service.run_case_builder(
         CaseBuilderState(case_dir="data/cases/x", subject="s"),

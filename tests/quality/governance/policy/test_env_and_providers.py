@@ -83,6 +83,11 @@ def py_env_reads(path: Path) -> tuple[set[str], list[str]]:
                         dynamic.append(f"{rel_path}:{node.lineno}")
             elif isinstance(func, ast.Name) and func.id in {"env_str", "env_int"} and node.args:
                 key = literal_arg(node.args[0])
+            elif isinstance(func, ast.Name) and func.id == "Field" and node.keywords:
+                # pydantic BaseSettings field: env name lives in validation_alias=.
+                for kw in node.keywords:
+                    if kw.arg == "validation_alias":
+                        key = literal_arg(kw.value)
         if key:
             keys.add(key)
     return keys, dynamic

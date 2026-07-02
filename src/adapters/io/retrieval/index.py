@@ -6,9 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from core.casefile import case_id
-from core.config import DEFAULT_EMBED_MODEL
-from core.config import embed_model as default_embed_model
-from core.config import qdrant_url as default_qdrant_url
+from core.config import DEFAULT_EMBED_MODEL, DEFAULT_QDRANT_URL
 from .documents import build_evidence_documents, to_llama_documents
 
 
@@ -21,11 +19,11 @@ def index_case(
     embed_model: str | None = None,
 ) -> dict[str, Any]:
     documents = build_evidence_documents(case_dir, include_private=include_private)
-    embed_name = default_embed_model(embed_model)
+    embed_name = embed_model or DEFAULT_EMBED_MODEL
     index = _build_index(
         case_dir,
         documents,
-        qdrant_url=default_qdrant_url(qdrant_url),
+        qdrant_url=qdrant_url or DEFAULT_QDRANT_URL,
         collection=collection,
         embed_model=embed_name,
     )
@@ -52,9 +50,9 @@ def query_case(
     index = _build_index(
         case_dir,
         documents,
-        qdrant_url=default_qdrant_url(qdrant_url),
+        qdrant_url=qdrant_url or DEFAULT_QDRANT_URL,
         collection=collection,
-        embed_model=default_embed_model(embed_model),
+        embed_model=embed_model or DEFAULT_EMBED_MODEL,
     )
     retriever = index.as_retriever(similarity_top_k=top_k)
     results = []

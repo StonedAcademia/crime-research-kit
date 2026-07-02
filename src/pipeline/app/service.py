@@ -13,12 +13,15 @@ RunnerName = Literal["auto", "langgraph", "sequential"]
 LANGGRAPH_HINT = "LangGraph is not installed. Install with `pip install -e '.[agentic]'`."
 
 
-def _model_factory(llm_enabled: bool):
+def _model_factory(llm_enabled: bool, model_spec: str | None = None):
     if not llm_enabled:
         return None
     from adapters.interfaces.llm.provider import get_chat_model
 
-    return get_chat_model
+    def factory(spec: str | None = None):
+        return get_chat_model(spec or model_spec)
+
+    return factory
 
 
 def run_case_builder(
@@ -27,6 +30,7 @@ def run_case_builder(
     execute: bool = False,
     runner: RunnerName = "auto",
     checkpoint: bool = False,
+    model_spec: str | None = None,
 ) -> dict[str, Any]:
     """Run a case-builder plan and return serializable state.
 
@@ -34,7 +38,7 @@ def run_case_builder(
     runs still stop at human review gates before canonical import or export.
     """
     crk = CrkRunner(dry_run=not execute)
-    model_factory = _model_factory(state.llm_enabled)
+    model_factory = _model_factory(state.llm_enabled, model_spec)
     use_langgraph = runner in {"auto", "langgraph"} and langgraph_available()
     if runner == "langgraph" and not langgraph_available():
         raise RuntimeError(LANGGRAPH_HINT)
@@ -70,6 +74,7 @@ def resume_case_builder(
     export_approved: bool = False,
     execute: bool = False,
     llm: bool = False,
+    model_spec: str | None = None,
 ) -> dict[str, Any]:
     """Resume a checkpointed run with human review decisions."""
     if not langgraph_available():
@@ -81,7 +86,7 @@ def resume_case_builder(
         crk,
         checkpointer=case_checkpointer(case_dir),
         use_interrupt=True,
-        model_factory=_model_factory(llm),
+        model_factory=_model_factory(llm, model_spec),
     )
     config = {"configurable": {"thread_id": thread_id}}
     payload = {
