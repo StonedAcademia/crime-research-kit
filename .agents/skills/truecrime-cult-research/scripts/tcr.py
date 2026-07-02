@@ -122,6 +122,7 @@ from adapters.ops.evidence.quality.safety.readiness import (  # noqa: E402
     review_narrative_readiness,
 )
 from adapters.ops.evidence.quality.safety.source_independence import source_independence  # noqa: E402
+from adapters.ops.evidence.reports.analysis.command.context import load_analysis_context  # noqa: E402
 from adapters.ops.evidence.reports.analysis.classifiers import (  # noqa: E402
     GRADE_SCORE,
     STATUS_SCORE,
@@ -164,60 +165,31 @@ from adapters.ops.evidence.reports.weights import (  # noqa: E402
     parse_float,
 )
 
-def ensure_case(case_dir: str | Path) -> None:
-    cdir = case_path(case_dir)
-    if not (cdir / "case.json").exists():
-        raise SystemExit(f"Not a case workspace: {cdir}. Run init-case first.")
-
-
-
 def export_analysis_charts(args: argparse.Namespace) -> None:
-    ensure_case(args.case_dir)
-    enforce_public_output_gate(args.case_dir, "export-analysis-charts", args.include_private)
-    cdir = case_path(args.case_dir)
-    include_private = args.include_private
-    out = Path(args.out_dir).expanduser().resolve() if args.out_dir else cdir / "exports" / "analysis_charts"
-    out.mkdir(parents=True, exist_ok=True)
-
-    case_meta = json.loads((cdir / "case.json").read_text(encoding="utf-8"))
-    case_title = str(case_meta.get("title", cdir.name))
-    sources = public_rows(read_jsonl(record_path(cdir, "sources")), include_private)
-    entities = public_rows(read_jsonl(record_path(cdir, "entities")), include_private)
-    claims = public_rows(read_jsonl(record_path(cdir, "claims")), include_private)
-    events = public_rows(read_jsonl(record_path(cdir, "events")), include_private)
-    event_links = public_rows(read_jsonl(record_path(cdir, "event_links")), include_private)
-    relationships = public_rows(read_jsonl(record_path(cdir, "relationships")), include_private)
-
-    source_by_id = {str(source.get("source_id")): source for source in sources}
-    claim_by_id = {str(claim.get("claim_id")): claim for claim in claims}
-    entity_by_id = {str(entity.get("entity_id")): entity for entity in entities}
-    people = [entity for entity in entities if entity.get("entity_type") == "person"]
-    people_by_id = {str(person.get("entity_id")): person for person in people}
-
-    clusters_dir = Path(args.clusters_dir).expanduser().resolve() if args.clusters_dir else cdir / "exports" / "clusters"
-    cluster_by_person: dict[str, str] = {}
-    if (clusters_dir / "people_clusters.csv").exists():
-        for row in read_csv_dicts(clusters_dir / "people_clusters.csv"):
-            cluster_by_person[str(row.get("entity_id"))] = str(row.get("cluster_id") or "")
-    if not cluster_by_person:
-        for idx, person in enumerate(sorted(people, key=entity_display), start=1):
-            cluster_by_person[str(person.get("entity_id"))] = f"P{idx}"
-
-    cluster_summary, cluster_labels = read_cluster_metadata(clusters_dir)
-    audit_cluster_labels, audit_bridges = parse_cluster_bridge_audit(cdir)
-    cluster_labels.update(audit_cluster_labels)
-
-    graph, graph_meta = analysis_graph(entities, events, event_links, relationships)
-    for person_id, cluster_id in cluster_by_person.items():
-        if person_id in graph_meta:
-            graph_meta[person_id]["cluster_id"] = cluster_id
-
-    cluster_members: dict[str, list[str]] = {}
-    for person_id, cluster_id in cluster_by_person.items():
-        if person_id in people_by_id:
-            cluster_members.setdefault(cluster_id, []).append(person_id)
-
-    cluster_ids = sorted(cluster_members)
+    ctx = load_analysis_context(args)
+    cdir = ctx.cdir
+    include_private = ctx.include_private
+    out = ctx.out
+    case_title = ctx.case_title
+    sources = ctx.sources
+    entities = ctx.entities
+    claims = ctx.claims
+    events = ctx.events
+    event_links = ctx.event_links
+    relationships = ctx.relationships
+    source_by_id = ctx.source_by_id
+    claim_by_id = ctx.claim_by_id
+    entity_by_id = ctx.entity_by_id
+    people = ctx.people
+    people_by_id = ctx.people_by_id
+    cluster_by_person = ctx.cluster_by_person
+    cluster_summary = ctx.cluster_summary
+    cluster_labels = ctx.cluster_labels
+    audit_bridges = ctx.audit_bridges
+    graph = ctx.graph
+    graph_meta = ctx.graph_meta
+    cluster_members = ctx.cluster_members
+    cluster_ids = ctx.cluster_ids
     sankey_nodes: list[dict[str, Any]] = []
     for cluster_id in cluster_ids:
         members = sorted(cluster_members[cluster_id], key=lambda person_id: entity_display(people_by_id.get(person_id)))
