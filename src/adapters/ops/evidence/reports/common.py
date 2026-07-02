@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import csv
 import re
+from pathlib import Path
 from typing import Any
 
 SUBCASE_TITLES = {
@@ -43,6 +45,13 @@ def parse_cell_list(value: Any) -> list[str]:
     if isinstance(value, list):
         return [str(item) for item in value if str(item)]
     return [part for part in str(value).split(";") if part]
+
+
+def read_csv_dicts(path: Path) -> list[dict[str, str]]:
+    if not path.exists():
+        raise SystemExit(f"Missing CSV: {path}")
+    with path.open(encoding="utf-8", newline="") as handle:
+        return list(csv.DictReader(handle))
 
 
 def infer_subcase(event: dict[str, Any], claims: list[dict[str, Any]]) -> str:

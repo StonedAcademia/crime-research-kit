@@ -132,6 +132,7 @@ from adapters.ops.evidence.reports.common import (  # noqa: E402
     RELATIONSHIP_CLASS_TITLES,
     entity_display,
     parse_cell_list,
+    read_csv_dicts,
     truncate_label,
 )
 from adapters.ops.evidence.reports.timeline import export_timeline  # noqa: E402
@@ -147,13 +148,6 @@ def ensure_case(case_dir: str | Path) -> None:
     cdir = case_path(case_dir)
     if not (cdir / "case.json").exists():
         raise SystemExit(f"Not a case workspace: {cdir}. Run init-case first.")
-
-
-def read_csv_dicts(path: Path) -> list[dict[str, str]]:
-    if not path.exists():
-        raise SystemExit(f"Missing CSV: {path}")
-    with path.open(encoding="utf-8", newline="") as f:
-        return list(csv.DictReader(f))
 
 
 def render_people_clusters_html(
