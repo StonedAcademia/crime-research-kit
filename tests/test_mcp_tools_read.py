@@ -83,3 +83,49 @@ def test_query_case_tool_degrades_to_error_dict(synthetic_case_copy):
 
     assert isinstance(result, dict)
     assert "ok" in result
+
+
+def test_records_resource_is_public_safe_jsonl(synthetic_case_copy):
+    import json as json_module
+
+    from case_builder.mcp import resources
+
+    claims = synthetic_case_copy / "records" / "claims.jsonl"
+    private_row = {
+        "claim_id": "CPRIV2",
+        "claim": "private",
+        "source_ids": ["SDEMO0001"],
+        "public_export": False,
+    }
+    claims.write_text(
+        claims.read_text(encoding="utf-8") + json_module.dumps(private_row) + "\n",
+        encoding="utf-8",
+    )
+    ctx = make_ctx(synthetic_case_copy.parent)
+
+    text = resources.records_resource(ctx, "synthetic_case", "claims")
+
+    assert "CPRIV2" not in text
+    assert text.strip()
+
+
+def test_reference_resource_allow_list(synthetic_case_copy):
+    import pytest
+
+    from case_builder.mcp import resources
+
+    ctx = make_ctx(synthetic_case_copy.parent)
+
+    vocab = resources.reference_resource(ctx, "controlled_vocabularies")
+    assert vocab.strip()
+
+    with pytest.raises(ValueError):
+        resources.reference_resource(ctx, "../SKILL")
+
+
+def test_prompts_cover_safety_workflow():
+    from case_builder.mcp import prompts
+
+    assert "review" in prompts.REVIEW_PACKET.lower()
+    assert "confirm" in prompts.REVIEW_PACKET.lower()
+    assert "privacy" in prompts.PUBLIC_READINESS.lower()
