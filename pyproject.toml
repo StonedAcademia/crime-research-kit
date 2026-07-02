@@ -7,6 +7,7 @@ name = "truecrime-cult-research-kit"
 version = "0.1.0"
 description = "Codex skill and CLI scaffolding for data-first true crime and cult-origin research organization."
 requires-python = ">=3.10"
+license = {text = "MIT"}
 dependencies = []
 
 [project.optional-dependencies]
@@ -51,6 +52,12 @@ retrieval = [
 memory-local = [
   "mem0ai>=2.0.0",
   "qdrant-client>=1.18.0",
+]
+governance = [
+  "pip-audit==2.10.1",
+  "pip-licenses==5.5.5",
+  "cyclonedx-bom==7.3.0",
+  "build>=1.2",
 ]
 
 [project.scripts]
