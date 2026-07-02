@@ -5,10 +5,16 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from importlib.resources import files
 from pathlib import Path
 from typing import Any
 
 from core.casefile import RECORD_FILES, case_path, ensure_case, read_jsonl, record_path
+
+try:
+    from importlib.resources.abc import Traversable
+except ImportError:  # Python 3.10 exposes Traversable from importlib.abc.
+    from importlib.abc import Traversable
 
 SCHEMA_BY_RECORD = {
     "sources": "source.schema.json",
@@ -26,24 +32,24 @@ SCHEMA_BY_RECORD = {
 }
 
 
+_SCHEMA_GROUPS = ("case", "evidence", "review")
+
+
+def _schema_roots() -> list[Path | Traversable]:
+    checkout = Path(__file__).resolve().parents[5] / "docs" / "schemas"
+    roots: list[Path | Traversable] = []
+    if checkout.exists():
+        roots.append(checkout)
+    roots.append(files("core.models").joinpath("schemas_data"))
+    return roots
+
+
 def load_schema(schema_name: str) -> dict[str, Any] | None:
-    roots = [Path.cwd(), *Path(__file__).resolve().parents]
-    schema_dirs = [
-        candidate / rel
-        for candidate in roots
-        for rel in (Path("docs/schemas"), Path("schemas"), Path("tc-c-kit/docs/schemas"), Path("tc-c-kit/schemas"))
-    ]
-    seen: set[Path] = set()
-    for schema_dir in schema_dirs:
-        if schema_dir in seen:
-            continue
-        seen.add(schema_dir)
-        candidates = [schema_dir / schema_name]
-        if schema_dir.exists():
-            candidates.extend(sorted(schema_dir.glob(f"*/{schema_name}")))
-        for path in candidates:
-            if path.exists():
-                return json.loads(path.read_text(encoding="utf-8"))
+    for root in _schema_roots():
+        for group in _SCHEMA_GROUPS:
+            candidate = root.joinpath(group).joinpath(schema_name)
+            if candidate.is_file():
+                return json.loads(candidate.read_text(encoding="utf-8"))
     return None
 
 
