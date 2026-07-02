@@ -71,15 +71,15 @@ DEFAULT_EXTRACTION = {
 def lane_registry_path() -> Path:
     script = Path(__file__).resolve()
     candidates = [
-        script.parents[4] / "docs" / "lanes.json",
-        Path.cwd() / "docs" / "lanes.json",
-        Path.cwd() / "tc-c-kit" / "docs" / "lanes.json",
+        script.parents[4] / "docs" / "registry" / "lanes.json",
+        Path.cwd() / "docs" / "registry" / "lanes.json",
+        Path.cwd() / "tc-c-kit" / "docs" / "registry" / "lanes.json",
     ]
     for candidate in candidates:
         if candidate.exists():
             return candidate
     searched = ", ".join(str(candidate) for candidate in candidates)
-    raise SystemExit(f"Missing docs/lanes.json lane registry. Searched: {searched}")
+    raise SystemExit(f"Missing docs/registry/lanes.json lane registry. Searched: {searched}")
 
 
 def load_lanes_registry() -> dict[str, Any]:
@@ -1188,12 +1188,15 @@ def load_schema(schema_name: str) -> dict[str, Any] | None:
     ])
     seen: set[Path] = set()
     for schema_dir in schema_dirs:
-        p = schema_dir / schema_name
-        if p in seen:
+        if schema_dir in seen:
             continue
-        seen.add(p)
-        if p.exists():
-            return json.loads(p.read_text(encoding="utf-8"))
+        seen.add(schema_dir)
+        candidates = [schema_dir / schema_name]
+        if schema_dir.exists():
+            candidates.extend(sorted(schema_dir.glob(f"*/{schema_name}")))
+        for p in candidates:
+            if p.exists():
+                return json.loads(p.read_text(encoding="utf-8"))
     return None
 
 

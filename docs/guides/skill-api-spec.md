@@ -20,7 +20,7 @@ same case ledger for domain-specific source packets. Phase 3 review skills
 `privacy-redaction-audit`, and `source-independence-audit` add request planning
 and public-output review workflows over the same ledger.
 
-Lane and template vocabulary is canonical in `docs/lanes.json`. Generated
+Lane and template vocabulary is canonical in `docs/registry/lanes.json`. Generated
 human reference tables live in
 `.agents/skills/truecrime-cult-research/references/lane_registry.md` and
 `.agents/skills/public-records-router/references/routing_matrix.md`; public
@@ -49,18 +49,18 @@ Records are append-oriented JSONL files under `records/`:
 
 | Record | File | Schema |
 |---|---|---|
-| Source | `records/sources.jsonl` | `docs/schemas/source.schema.json` |
-| Entity | `records/entities.jsonl` | `docs/schemas/entity.schema.json` |
-| Place | `records/places.jsonl` | `docs/schemas/place.schema.json` |
-| Artifact | `records/artifacts.jsonl` | `docs/schemas/artifact.schema.json` |
-| Claim | `records/claims.jsonl` | `docs/schemas/claim.schema.json` |
-| Event | `records/events.jsonl` | `docs/schemas/event.schema.json` |
-| Event link | `records/event_links.jsonl` | `docs/schemas/event_link.schema.json` |
-| Relationship | `records/relationships.jsonl` | `docs/schemas/relationship.schema.json` |
-| Source span | `records/source_spans.jsonl` | `docs/schemas/source_span.schema.json` |
-| Quote | `records/quotes.jsonl` | `docs/schemas/quote.schema.json` |
-| Redaction | `records/redactions.jsonl` | `docs/schemas/redaction.schema.json` |
-| Research action | `records/research_actions.jsonl` | `docs/schemas/research_action.schema.json` |
+| Source | `records/sources.jsonl` | `docs/schemas/case/source.schema.json` |
+| Entity | `records/entities.jsonl` | `docs/schemas/case/entity.schema.json` |
+| Place | `records/places.jsonl` | `docs/schemas/case/place.schema.json` |
+| Artifact | `records/artifacts.jsonl` | `docs/schemas/case/artifact.schema.json` |
+| Claim | `records/claims.jsonl` | `docs/schemas/evidence/claim.schema.json` |
+| Event | `records/events.jsonl` | `docs/schemas/evidence/event.schema.json` |
+| Event link | `records/event_links.jsonl` | `docs/schemas/evidence/event_link.schema.json` |
+| Relationship | `records/relationships.jsonl` | `docs/schemas/evidence/relationship.schema.json` |
+| Source span | `records/source_spans.jsonl` | `docs/schemas/review/source_span.schema.json` |
+| Quote | `records/quotes.jsonl` | `docs/schemas/review/quote.schema.json` |
+| Redaction | `records/redactions.jsonl` | `docs/schemas/review/redaction.schema.json` |
+| Research action | `records/research_actions.jsonl` | `docs/schemas/review/research_action.schema.json` |
 
 Generated files are written under:
 
@@ -115,7 +115,7 @@ packets to `corporate-financial-records`; route education-path packets to
 `source-independence-audit`.
 
 `draft-extraction --template <template>` accepts template IDs from
-`docs/lanes.json` (`templates` keys). The generated human index is
+`docs/registry/lanes.json` (`templates` keys). The generated human index is
 `.agents/skills/truecrime-cult-research/references/lane_registry.md`.
 
 ### Source preservation metadata
@@ -752,7 +752,7 @@ Payload:
 }
 ```
 
-Supported `lane` values are lane IDs from `docs/lanes.json` where
+Supported `lane` values are lane IDs from `docs/registry/lanes.json` where
 `public_record_plan` is defined. The generated routing table is
 `.agents/skills/public-records-router/references/routing_matrix.md`.
 

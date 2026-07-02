@@ -54,7 +54,7 @@ Prefer MCP tools when `trcr-mcp` is registered:
 | Import canonical records | `import_extraction(confirm=true)` after explicit user approval | `tcr.py import-extraction` after explicit user approval |
 | Public exports | `export_manim`, `export_case_charts`, `export_analysis_charts` | matching `tcr.py export-*` commands |
 
-Lane and template names come from `docs/lanes.json`; generated reference tables
+Lane and template names come from `docs/registry/lanes.json`; generated reference tables
 live in `references/lane_registry.md` and
 `public-records-router/references/routing_matrix.md`.
 
@@ -141,7 +141,7 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py draft-extraction tc
 Then read the source text and fill the staged JSON packet. Extract only what the source directly supports. Use `references/controlled_vocabularies.md` and add `source_spans` locators when a claim, quote, event, relationship, or event link needs page/paragraph/timestamp support.
 
 Use operation `draft_extraction` with the lane-specific template from
-`docs/lanes.json` when the source is primarily in one of those adjacent lanes.
+`docs/registry/lanes.json` when the source is primarily in one of those adjacent lanes.
 CLI fallback: `tcr.py draft-extraction ... --template <template>`.
 
 ### 5. Extract structured records

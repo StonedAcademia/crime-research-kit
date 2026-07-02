@@ -5,7 +5,11 @@ from tests.helpers import KIT_ROOT
 
 
 def test_schemas_parse():
-    for path in (KIT_ROOT / "docs" / "schemas").glob("*.schema.json"):
+    schema_paths = [
+        *(KIT_ROOT / "docs" / "schemas").rglob("*.schema.json"),
+        *(KIT_ROOT / "docs" / "registry").glob("*.schema.json"),
+    ]
+    for path in schema_paths:
         json.loads(path.read_text())
 
 

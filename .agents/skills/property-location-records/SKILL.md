@@ -7,7 +7,7 @@ description: Public-record workflow for researching property, parcel, deed, perm
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `property-location` for this lane; CLI fallback: `tcr.py draft-extraction ... --template property-location`.
+Lane/template metadata is generated from `docs/registry/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `property-location` for this lane; CLI fallback: `tcr.py draft-extraction ... --template property-location`.
 
 
 ## Purpose

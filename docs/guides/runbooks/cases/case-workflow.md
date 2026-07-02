@@ -332,7 +332,7 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py export-manim data/c
 Export a public-safe Phanestead bundle:
 
 ```bash
-bun deployment/scripts/export_trcr_ufb.mjs data/cases/harbor_study_circle \
+bun deployment/scripts/tools/export_trcr_ufb.mjs data/cases/harbor_study_circle \
   --out data/cases/harbor_study_circle/exports/ufb/harbor_study_circle.ufb_v2
 ```
 

@@ -7,7 +7,7 @@ description: Privacy and redaction workflow for TRCR cases. Use when Codex needs
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `privacy-redaction` for this lane; CLI fallback: `tcr.py draft-extraction ... --template privacy-redaction`.
+Lane/template metadata is generated from `docs/registry/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `privacy-redaction` for this lane; CLI fallback: `tcr.py draft-extraction ... --template privacy-redaction`.
 
 
 ## Purpose

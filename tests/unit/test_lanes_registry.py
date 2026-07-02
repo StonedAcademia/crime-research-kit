@@ -10,11 +10,11 @@ ROOT = KIT_ROOT
 
 
 def load_json() -> dict:
-    return json.loads((ROOT / "docs" / "lanes.json").read_text(encoding="utf-8"))
+    return json.loads((ROOT / "docs" / "registry" / "lanes.json").read_text(encoding="utf-8"))
 
 
 def test_default_lanes_path_resolves_from_repo_root():
-    assert lanes_registry.default_lanes_path(ROOT) == ROOT / "docs" / "lanes.json"
+    assert lanes_registry.default_lanes_path(ROOT) == ROOT / "docs" / "registry" / "lanes.json"
 
 
 def test_fallback_lists_match_registry():

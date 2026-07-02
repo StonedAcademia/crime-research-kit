@@ -12,7 +12,7 @@ const SCAVENGE_OBJECT_GRAPH_SCHEMA_V1 = "scavenge-object-graph-v1";
 
 function usage() {
   return `Usage:
-  bun deployment/scripts/export_trcr_ufb.mjs <case_dir> --out <bundle.ufb_v2> [options]
+  bun deployment/scripts/tools/export_trcr_ufb.mjs <case_dir> --out <bundle.ufb_v2> [options]
 
 Options:
   --include-private           Include records marked non-public/private. Default is public-safe.

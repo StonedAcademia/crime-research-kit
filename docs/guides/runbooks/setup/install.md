@@ -48,7 +48,7 @@ proto install
 moon run trcr:install-dev
 ```
 
-`moon run trcr:install-dev` uses `deployment/scripts/install.py` to create
+`moon run trcr:install-dev` uses `deployment/scripts/tools/install.py` to create
 `.venv`, upgrade pip, and install the package in editable mode with the `dev`
 extra.
 

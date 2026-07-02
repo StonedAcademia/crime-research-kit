@@ -1,4 +1,4 @@
-<!-- Generated from docs/lanes.json; edit the registry, not this table. -->
+<!-- Generated from docs/registry/lanes.json; edit the registry, not this table. -->
 
 # Lane Registry
 

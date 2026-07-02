@@ -9,7 +9,7 @@ import subprocess
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 COMPOSE_FILE = ROOT / "deployment" / "docker-compose.yml"
 ENV_FILE = ROOT / "deployment" / ".env"
 
@@ -21,8 +21,8 @@ COMMANDS: dict[str, list[str]] = {
     "down": ["down"],
     "logs": ["logs", "-f"],
     "shell": ["exec", "trcr", "/bin/bash"],
-    "pull-model": ["exec", "trcr", "deployment/scripts/bootstrap-ollama.sh"],
-    "smoke": ["exec", "trcr", "deployment/scripts/smoke-test.sh"],
+    "pull-model": ["exec", "trcr", "deployment/scripts/local/bootstrap-ollama.sh"],
+    "smoke": ["exec", "trcr", "deployment/scripts/checks/smoke-test.sh"],
 }
 
 

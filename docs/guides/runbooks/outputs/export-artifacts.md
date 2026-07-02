@@ -148,16 +148,16 @@ structure as evidence unless the underlying ledger rows are source-supported.
 Export a public-safe Phanestead-readable UFB v2 bundle:
 
 ```bash
-bun deployment/scripts/export_trcr_ufb.mjs data/cases/<case_slug> \
+bun deployment/scripts/tools/export_trcr_ufb.mjs data/cases/<case_slug> \
   --out data/cases/<case_slug>/exports/ufb/<case_slug>.ufb_v2
 ```
 
-The exporter lives under `deployment/scripts/` because it is a deployment and
-interop artifact. From the `tc-c-kit` root, the default Phanestead checkout path
-is `../../phanestead-full`. Override it when needed:
+The exporter lives under `deployment/scripts/tools/` because it is a deployment
+and interop helper. From the `tc-c-kit` root, the default Phanestead checkout
+path is `../../phanestead-full`. Override it when needed:
 
 ```bash
-bun deployment/scripts/export_trcr_ufb.mjs data/cases/<case_slug> \
+bun deployment/scripts/tools/export_trcr_ufb.mjs data/cases/<case_slug> \
   --out data/cases/<case_slug>/exports/ufb/<case_slug>.ufb_v2 \
   --phanestead-root /path/to/phanestead-full
 ```

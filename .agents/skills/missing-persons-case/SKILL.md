@@ -7,7 +7,7 @@ description: "TRCR workflow for identifying source-supported missing-person cand
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `missing-persons` for this lane; CLI fallback: `tcr.py draft-extraction ... --template missing-persons`.
+Lane/template metadata is generated from `docs/registry/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `missing-persons` for this lane; CLI fallback: `tcr.py draft-extraction ... --template missing-persons`.
 
 
 ## Purpose

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/trcr-banner.svg" alt="TRCR Kit banner" width="100%">
+  <img src="docs/trcr-banner.svg" alt="TRCR Kit banner" width="100%">
 </p>
 
 <h1 align="center">True Crime / Cult-Origin Research Kit</h1>
@@ -32,26 +32,27 @@ contradiction review, source-independence review, and privacy review.
 
 | Need | Start here |
 | --- | --- |
-| Install the kit or troubleshoot setup | [Initial App Install](docs/runbook/install.md) |
-| Walk through a source-backed case workflow | [Case Workflow](docs/runbook/case-workflow.md) |
-| Operate the self-hosted local stack | [Self-Hosted Deployment](docs/runbook/self-hosted-deployment.md) |
-| Check public-output blockers | [Public Output Readiness](docs/runbook/public-output-readiness.md) |
-| Generate evidence boards, Manim CSVs, charts, timelines, or bundles | [Export Artifacts](docs/runbook/export-artifacts.md) |
-| Integrate the MCP server | [MCP Server](docs/integrations/mcp-server.md) |
-| Understand the LangGraph case-builder boundary | [Case Builder LangGraph](docs/architecture/case-builder-langgraph.md) |
-| Build against the machine-facing contract | [Skill API Spec](docs/reference/skill-api-spec.md) |
+| Install the kit or troubleshoot setup | [Initial App Install](docs/guides/runbooks/setup/install.md) |
+| Walk through a source-backed case workflow | [Case Workflow](docs/guides/runbooks/cases/case-workflow.md) |
+| Operate the self-hosted local stack | [Self-Hosted Deployment](docs/guides/runbooks/setup/self-hosted-deployment.md) |
+| Check public-output blockers | [Public Output Readiness](docs/guides/runbooks/cases/public-output-readiness.md) |
+| Generate evidence boards, Manim CSVs, charts, timelines, or bundles | [Export Artifacts](docs/guides/runbooks/outputs/export-artifacts.md) |
+| Integrate the MCP server | [MCP Server](docs/guides/integrations/mcp-server.md) |
+| Understand the LangGraph case-builder boundary | [Case Builder LangGraph](docs/guides/architecture/case-builder-langgraph.md) |
+| Build against the machine-facing contract | [Skill API Spec](docs/guides/skill-api-spec.md) |
 
 ## Document Structure
 
 | Path | Purpose |
 | --- | --- |
 | `README.md` | Project orientation, safety boundary, capability summary, and links. |
-| `docs/architecture/` | System architecture, ownership boundaries, and orchestration design. |
-| `docs/integrations/` | Host, protocol, and external-tool integration guides. |
-| `docs/reference/` | Stable machine-facing contracts and API/reference material. |
-| `docs/runbook/` | Operator procedures and repeatable workflows. Long command sequences belong here. |
-| `docs/schemas/` | JSON Schemas for case-ledger records. |
-| `docs/lanes.json` | Canonical lane and extraction-template vocabulary. |
+| `docs/README.md` | Documentation map and grouping rules. |
+| `docs/guides/architecture/` | System architecture, ownership boundaries, and orchestration design. |
+| `docs/guides/integrations/` | Host, protocol, and external-tool integration guides. |
+| `docs/guides/skill-api-spec.md` | Stable machine-facing contracts and API/reference material. |
+| `docs/guides/runbooks/` | Operator procedures and repeatable workflows. Long command sequences belong here. |
+| `docs/schemas/` | JSON Schemas grouped by case, evidence, and review records. |
+| `docs/registry/lanes.json` | Canonical lane and extraction-template vocabulary. |
 | `docs/superpowers/` | Planning/spec history for larger implementation phases. |
 | `.agents/skills/` | Repo-local skills and reusable workflow instructions. |
 | `src/case_builder/` | Optional case-builder app, LangGraph runner, MCP surface, retrieval, memory, and ops wrappers. |
@@ -108,7 +109,7 @@ Core guardrails:
   OCRmyPDF OCR, LlamaIndex/Qdrant retrieval, and Mem0 OSS workflow memory.
 - Templates for case briefs, source notes, extraction packets, redaction logs,
   public-record plans, source-independence reviews, and evidence boards.
-- Operator runbooks under `docs/runbook/` for install, case workflow,
+- Operator runbooks under `docs/guides/runbooks/` for install, case workflow,
   self-hosted deployment, public-output readiness, and artifact exports.
 - Repeatable workflows for news articles, eyewitness accounts, court/public
   records, transcripts, archives, property/location records, FOIA planning,
@@ -152,9 +153,9 @@ python .agents/skills/truecrime-cult-research/scripts/tcr.py export-manim data/c
 python .agents/skills/truecrime-cult-research/scripts/tcr.py report data/cases/sample_case
 ```
 
-Use [Case Workflow](docs/runbook/case-workflow.md) for the full source-review
-loop, [Export Artifacts](docs/runbook/export-artifacts.md) for every export
-command, and [Initial App Install](docs/runbook/install.md) for manual install,
+Use [Case Workflow](docs/guides/runbooks/cases/case-workflow.md) for the full
+source-review loop, [Export Artifacts](docs/guides/runbooks/outputs/export-artifacts.md)
+for every export command, and [Initial App Install](docs/guides/runbooks/setup/install.md) for manual install,
 optional extras, case-builder, local retrieval, OCR, and memory setup.
 
 ## How to invoke the skill in Codex
@@ -176,7 +177,7 @@ Use the truecrime-cult-research skill to create a data-first source map for the 
 Use `truecrime-cult-research` as the case ledger and safety baseline. Route
 domain-heavy packets to adjacent skills only when their lane applies.
 
-Canonical lane/template metadata lives in `docs/lanes.json`. Generated
+Canonical lane/template metadata lives in `docs/registry/lanes.json`. Generated
 reference tables live in
 `.agents/skills/truecrime-cult-research/references/lane_registry.md` and
 `.agents/skills/public-records-router/references/routing_matrix.md`.
@@ -188,11 +189,11 @@ artifacts, and notes back into the same TRCR case structure.
 
 | Surface | Reference |
 | --- | --- |
-| Case-builder and LangGraph workflow | [docs/architecture/case-builder-langgraph.md](docs/architecture/case-builder-langgraph.md) |
-| MCP server for Codex, Claude Code, and Claude Desktop | [docs/integrations/mcp-server.md](docs/integrations/mcp-server.md) |
-| Local parsing, OCR, retrieval, and memory setup | [docs/runbook/install.md](docs/runbook/install.md) |
-| Self-hosted SearXNG, Qdrant, Ollama, OCR, MCP, and app runtime | [docs/runbook/self-hosted-deployment.md](docs/runbook/self-hosted-deployment.md) |
-| Case workspace layout and full source workflow | [docs/runbook/case-workflow.md](docs/runbook/case-workflow.md) |
+| Case-builder and LangGraph workflow | [docs/guides/architecture/case-builder-langgraph.md](docs/guides/architecture/case-builder-langgraph.md) |
+| MCP server for Codex, Claude Code, and Claude Desktop | [docs/guides/integrations/mcp-server.md](docs/guides/integrations/mcp-server.md) |
+| Local parsing, OCR, retrieval, and memory setup | [docs/guides/runbooks/setup/install.md](docs/guides/runbooks/setup/install.md) |
+| Self-hosted SearXNG, Qdrant, Ollama, OCR, MCP, and app runtime | [docs/guides/runbooks/setup/self-hosted-deployment.md](docs/guides/runbooks/setup/self-hosted-deployment.md) |
+| Case workspace layout and full source workflow | [docs/guides/runbooks/cases/case-workflow.md](docs/guides/runbooks/cases/case-workflow.md) |
 
 ## Key conventions
 
@@ -204,7 +205,7 @@ artifacts, and notes back into the same TRCR case structure.
 - Use JSON Schemas from `docs/schemas/` when validating machine-facing records.
 - Before public output, run `validate`, review `public_export` and `privacy_review`, and use `audit-public-export` when available. `report` and `export-analysis-charts` provide the fallback public-readiness review surface.
 
-See `docs/reference/skill-api-spec.md` for the machine-facing CLI and JSONL
+See `docs/guides/skill-api-spec.md` for the machine-facing CLI and JSONL
 contract.
 
 ## Key principle

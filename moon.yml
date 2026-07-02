@@ -17,10 +17,10 @@ tasks:
   install:
     description: "Create .venv and install the core package."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/install.py"]
+    args: ["run", "python", "--", "deployment/scripts/tools/install.py"]
     inputs:
       - "pyproject.toml"
-      - "deployment/scripts/install.py"
+      - "deployment/scripts/tools/install.py"
     options:
       cache: false
       outputStyle: stream
@@ -29,10 +29,10 @@ tasks:
   install-dev:
     description: "Create .venv and install the package with dev dependencies."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/install.py", "--dev"]
+    args: ["run", "python", "--", "deployment/scripts/tools/install.py", "--dev"]
     inputs:
       - "pyproject.toml"
-      - "deployment/scripts/install.py"
+      - "deployment/scripts/tools/install.py"
     options:
       cache: false
       outputStyle: stream
@@ -41,12 +41,12 @@ tasks:
   check:
     description: "Compile Python sources and validate the synthetic fixture."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/check.py"]
+    args: ["run", "python", "--", "deployment/scripts/checks/check.py"]
     inputs:
       - "@group(python)"
       - "data/examples/synthetic_case/**/*"
       - "pyproject.toml"
-      - "deployment/scripts/check.py"
+      - "deployment/scripts/checks/check.py"
     options:
       cache: false
       outputStyle: stream
@@ -55,7 +55,7 @@ tasks:
   test:
     description: "Run the full pytest suite."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/venv_exec.py", "-m", "pytest", "-q"]
+    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "-q"]
     inputs:
       - "@group(python)"
       - "@group(tests)"
@@ -68,7 +68,7 @@ tasks:
   test-unit:
     description: "Run unit tests."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/venv_exec.py", "-m", "pytest", "tests/unit", "-q"]
+    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/unit", "-q"]
     inputs:
       - "@group(python)"
       - "@group(tests)"
@@ -81,7 +81,7 @@ tasks:
   test-integration:
     description: "Run integration tests."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/venv_exec.py", "-m", "pytest", "tests/integration", "-q"]
+    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/integration", "-q"]
     inputs:
       - "@group(python)"
       - "@group(tests)"
@@ -94,7 +94,7 @@ tasks:
   test-e2e:
     description: "Run end-to-end tests."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/venv_exec.py", "-m", "pytest", "tests/e2e", "-q"]
+    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/e2e", "-q"]
     inputs:
       - "@group(python)"
       - "@group(tests)"
@@ -107,7 +107,7 @@ tasks:
   test-governance:
     description: "Run governance tests."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/venv_exec.py", "-m", "pytest", "tests/governance", "-q"]
+    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/governance", "-q"]
     inputs:
       - "@group(python)"
       - "@group(tests)"
@@ -120,7 +120,7 @@ tasks:
   test-smoke:
     description: "Run smoke tests."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/venv_exec.py", "-m", "pytest", "tests/smoke", "-q"]
+    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", "-m", "pytest", "tests/smoke", "-q"]
     inputs:
       - "@group(python)"
       - "@group(tests)"
@@ -133,12 +133,12 @@ tasks:
   branch-gate:
     description: "Run branch-specific push gates for dev, canary, and main."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/branch_gate.py"]
+    args: ["run", "python", "--", "deployment/scripts/checks/branch_gate.py"]
     inputs:
       - "@group(python)"
       - "@group(tests)"
       - "pyproject.toml"
-      - "deployment/scripts/branch_gate.py"
+      - "deployment/scripts/checks/branch_gate.py"
     options:
       cache: false
       outputStyle: stream
@@ -148,7 +148,7 @@ tasks:
   docker-config:
     description: "Render the Docker Compose configuration."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/compose.py", "config"]
+    args: ["run", "python", "--", "deployment/scripts/local/compose.py", "config"]
     inputs:
       - "@group(deployment)"
     options:
@@ -159,7 +159,7 @@ tasks:
   docker-build:
     description: "Build the TRCR app image."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/compose.py", "build"]
+    args: ["run", "python", "--", "deployment/scripts/local/compose.py", "build"]
     inputs:
       - "@group(deployment)"
     options:
@@ -170,7 +170,7 @@ tasks:
   docker-up:
     description: "Start the self-hosted deployment stack."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/compose.py", "up"]
+    args: ["run", "python", "--", "deployment/scripts/local/compose.py", "up"]
     inputs:
       - "@group(deployment)"
     options:
@@ -181,7 +181,7 @@ tasks:
   docker-down:
     description: "Stop the self-hosted deployment stack without deleting volumes."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/compose.py", "down"]
+    args: ["run", "python", "--", "deployment/scripts/local/compose.py", "down"]
     inputs:
       - "@group(deployment)"
     options:
@@ -192,7 +192,7 @@ tasks:
   docker-logs:
     description: "Follow self-hosted deployment logs."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/compose.py", "logs"]
+    args: ["run", "python", "--", "deployment/scripts/local/compose.py", "logs"]
     inputs:
       - "@group(deployment)"
     preset: utility
@@ -201,7 +201,7 @@ tasks:
   docker-shell:
     description: "Open a shell in the TRCR app container."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/compose.py", "shell"]
+    args: ["run", "python", "--", "deployment/scripts/local/compose.py", "shell"]
     inputs:
       - "@group(deployment)"
     preset: utility
@@ -210,7 +210,7 @@ tasks:
   docker-pull-model:
     description: "Pull the configured Ollama model inside the deployment stack."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/compose.py", "pull-model"]
+    args: ["run", "python", "--", "deployment/scripts/local/compose.py", "pull-model"]
     inputs:
       - "@group(deployment)"
     options:
@@ -221,7 +221,7 @@ tasks:
   docker-smoke:
     description: "Run the self-hosted deployment smoke test."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/compose.py", "smoke"]
+    args: ["run", "python", "--", "deployment/scripts/local/compose.py", "smoke"]
     inputs:
       - "@group(deployment)"
     options:
@@ -232,7 +232,7 @@ tasks:
   init-sample:
     description: "Create the sample case workspace."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/venv_exec.py", ".agents/skills/truecrime-cult-research/scripts/tcr.py", "init-case", "data/cases/sample_case", "--title", "Sample Case"]
+    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", ".agents/skills/truecrime-cult-research/scripts/tcr.py", "init-case", "data/cases/sample_case", "--title", "Sample Case"]
     options:
       cache: false
       outputStyle: stream
@@ -241,7 +241,7 @@ tasks:
   validate-sample:
     description: "Validate the sample case workspace."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/venv_exec.py", ".agents/skills/truecrime-cult-research/scripts/tcr.py", "validate", "data/cases/sample_case"]
+    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", ".agents/skills/truecrime-cult-research/scripts/tcr.py", "validate", "data/cases/sample_case"]
     inputs:
       - "data/cases/sample_case/**/*"
     options:
@@ -252,7 +252,7 @@ tasks:
   export-sample:
     description: "Export Manim CSVs and an evidence board for the sample case."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/venv_exec.py", ".agents/skills/truecrime-cult-research/scripts/tcr.py", "export-manim", "data/cases/sample_case"]
+    args: ["run", "python", "--", "deployment/scripts/tools/venv_exec.py", ".agents/skills/truecrime-cult-research/scripts/tcr.py", "export-manim", "data/cases/sample_case"]
     deps:
       - "~:validate-sample"
     outputs:

@@ -142,7 +142,7 @@ def append_entity(tcr, case_dir, entity_id, **overrides):
 
 def validate_schema(schema_name, row):
     jsonschema = pytest.importorskip("jsonschema")
-    schema = json.loads((KIT_ROOT / "docs" / "schemas" / schema_name).read_text(encoding="utf-8"))
+    schema = json.loads(next((KIT_ROOT / "docs" / "schemas").rglob(schema_name)).read_text(encoding="utf-8"))
     jsonschema.validate(instance=row, schema=schema)
 
 
@@ -207,7 +207,7 @@ def test_public_schemas_validate_independence_groups_and_bridge_classes():
 
 def test_public_schemas_reject_unknown_bridge_class():
     jsonschema = pytest.importorskip("jsonschema")
-    schema = json.loads((KIT_ROOT / "docs" / "schemas" / "relationship.schema.json").read_text(encoding="utf-8"))
+    schema = json.loads(next((KIT_ROOT / "docs" / "schemas").rglob("relationship.schema.json")).read_text(encoding="utf-8"))
     invalid_relationship = {
         "rel_id": "R_BAD",
         "src_entity_id": "E_A",

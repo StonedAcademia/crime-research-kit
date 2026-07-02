@@ -7,7 +7,7 @@ description: Public-source workflow for analyzing interviews, videos, audio, pod
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `media-transcript` for this lane; CLI fallback: `tcr.py draft-extraction ... --template media-transcript`.
+Lane/template metadata is generated from `docs/registry/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `media-transcript` for this lane; CLI fallback: `tcr.py draft-extraction ... --template media-transcript`.
 
 
 ## Purpose

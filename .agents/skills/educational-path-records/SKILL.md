@@ -7,7 +7,7 @@ description: Public-record workflow for researching an individual's education hi
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `education` for this lane; CLI fallback: `tcr.py draft-extraction ... --template education`.
+Lane/template metadata is generated from `docs/registry/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `education` for this lane; CLI fallback: `tcr.py draft-extraction ... --template education`.
 
 
 ## Purpose

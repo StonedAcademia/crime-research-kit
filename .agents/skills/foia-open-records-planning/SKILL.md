@@ -7,7 +7,7 @@ description: Public-records request planning workflow for FOIA, state open-recor
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `foia-open-records` for this lane; CLI fallback: `tcr.py draft-extraction ... --template foia-open-records`.
+Lane/template metadata is generated from `docs/registry/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `foia-open-records` for this lane; CLI fallback: `tcr.py draft-extraction ... --template foia-open-records`.
 
 
 ## Purpose

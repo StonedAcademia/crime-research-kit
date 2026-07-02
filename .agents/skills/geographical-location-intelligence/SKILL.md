@@ -7,7 +7,7 @@ description: "TRCR workflow for identifying, reconciling, and mapping locations 
 
 ## Operation vocabulary
 
-Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `geographical-location` for this lane; CLI fallback: `tcr.py draft-extraction ... --template geographical-location`.
+Lane/template metadata is generated from `docs/registry/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `geographical-location` for this lane; CLI fallback: `tcr.py draft-extraction ... --template geographical-location`.
 
 
 ## Purpose

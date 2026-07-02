@@ -7,7 +7,7 @@ from pathlib import Path
 from tests.helpers import KIT_ROOT
 
 ROOT = KIT_ROOT
-LANES_PATH = ROOT / "docs" / "lanes.json"
+LANES_PATH = ROOT / "docs" / "registry" / "lanes.json"
 TEMPLATES_ROOT = ROOT / ".agents" / "skills" / "truecrime-cult-research" / "assets" / "templates"
 SLUG_RE = re.compile(r"[a-z0-9][a-z0-9-]*")
 

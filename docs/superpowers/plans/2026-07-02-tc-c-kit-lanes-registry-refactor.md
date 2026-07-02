@@ -1,6 +1,6 @@
 # Move Lane Registry Under `docs/registry/`
 
-**Status:** Planned
+**Status:** Implemented
 **Date:** 2026-07-02
 **Goal:** Move the canonical lane/template registry from `docs/lanes.json` to
 `docs/registry/lanes.json` without creating a second source of truth or
@@ -22,7 +22,7 @@ Do not leave a duplicate `docs/lanes.json` copy behind. If compatibility is
 needed, add an explicit error message that points callers to the new path rather
 than silently loading stale data.
 
-## Current Consumers
+## Pre-Refactor Consumers
 
 | Surface | Current dependency |
 | --- | --- |
@@ -42,8 +42,8 @@ than silently loading stale data.
 
 - Create `docs/registry/`.
 - Move `docs/lanes.json` to `docs/registry/lanes.json` with `git mv`.
-- Keep `docs/schemas/lanes.schema.json` in `docs/schemas/`; it is a schema,
-  not registry data.
+- Keep `docs/registry/lanes.schema.json` beside the registry data so registry
+  shape validation stays in the same docs namespace.
 
 Validation:
 
@@ -129,7 +129,7 @@ Use one commit for the full registry move because loader, docs, generated
 references, and governance tests must stay in sync:
 
 ```bash
-git add docs/registry/lanes.json docs/schemas/lanes.schema.json \
+git add docs/registry/lanes.json docs/registry/lanes.schema.json \
   src/case_builder/lanes .agents/skills tests README.md docs/integrations \
   docs/reference
 git add -u docs/lanes.json

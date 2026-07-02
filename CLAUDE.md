@@ -42,19 +42,21 @@ Self-hosted container stack (SearXNG, Qdrant, Ollama, MCP, …): `make docker-bu
 
 Two implementation layers share that ledger:
 
-1. **Skill scripts** — `.agents/skills/truecrime-cult-research/scripts/tcr.py` is a large stdlib-only single-file CLI implementing the full ledger contract (init, ingest, extraction staging/import, validate, audits, exports). `docs/skill-api-spec.md` is the machine-facing contract for its operations and payload shapes. Sixteen adjacent skills under `.agents/skills/` (legal-court-records, missing-persons-case, privacy-redaction-audit, …) extend the same case ledger for domain-specific packets.
+1. **Skill scripts** — `.agents/skills/truecrime-cult-research/scripts/tcr.py` is a large stdlib-only single-file CLI implementing the full ledger contract (init, ingest, extraction staging/import, validate, audits, exports). `docs/guides/skill-api-spec.md` is the machine-facing contract for its operations and payload shapes. Sixteen adjacent skills under `.agents/skills/` (legal-court-records, missing-persons-case, privacy-redaction-audit, …) extend the same case ledger for domain-specific packets.
 2. **`src/case_builder/`** — the agent app. Frontends (CLI in `cli.py`, LangGraph workflow in `graph/`, MCP server in `mcp/`) never touch `tcr.py` or the ledger directly; they go through the typed ops core in `ops/` (`OpResult`, `TrcrRunner`, safety `policy`). `graph/` has a LangGraph build plus a sequential fallback and stops at a human review gate. Optional-dependency subsystems: `parsing/` (Docling/OCRmyPDF), `retrieval/` (LlamaIndex/Qdrant), `memory/` (Mem0/local), `acquisition/` (SearXNG discovery).
 
-Lane/template vocabulary is canonical in `docs/lanes.json`; the tables in `.agents/skills/truecrime-cult-research/references/lane_registry.md` and `.agents/skills/public-records-router/references/routing_matrix.md` are generated from it, and governance tests catch drift between them — update `lanes.json` first.
+Lane/template vocabulary is canonical in `docs/registry/lanes.json`; the tables in `.agents/skills/truecrime-cult-research/references/lane_registry.md` and `.agents/skills/public-records-router/references/routing_matrix.md` are generated from it, and governance tests catch drift between them — update `lanes.json` first.
 
 ## Repo constraints
 
 - Every Python module in `src/case_builder/` stays under 200 non-comment LOC, and every package directory keeps a `README.md` — both enforced by `tests/governance/test_case_builder_structure.py`.
+- Repository shape is governed by `tests/governance/test_repository_shape.py`: each governed directory has 1-4 direct files and 0-3 direct child directories, and governed files stay under 200 non-comment LOC. Only `data/` and `docs/superpowers/` are skipped.
+- Name files and directories by intent. Use domain/workflow names such as `schemas/evidence`, `runbooks/setup`, or `scripts/checks`; do not create vague catch-all folders to pass the counts. Check the governance output for every target directory before and after restructuring.
 - The package has no required dependencies: core `tcr.py` and the base CLI run on the standard library. Heavier features go behind the optional extras in `pyproject.toml` (`dev`, `agentic`, `mcp`, `documents`, `retrieval`, `memory-local`, `web-local`) and must degrade gracefully (import lazily, skip tests) when absent.
 
 ## Research-content rules
 
-When writing or generating case data, code paths, prompts, or docs, preserve the safety contract (full version in `AGENTS.md` and `docs/skill-api-spec.md`):
+When writing or generating case data, code paths, prompts, or docs, preserve the safety contract (full version in `AGENTS.md` and `docs/guides/skill-api-spec.md`):
 
 - Every claim traces `claim → source_ids → reliability_grade → confidence/status → privacy_review` before public export; AI-generated summaries are never evidence.
 - Never infer guilt, membership, motive, or participation from proximity/co-mention; automation-created co-mention records must be `status: unverified`, low confidence, `public_export: false`.

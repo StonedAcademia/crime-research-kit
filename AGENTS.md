@@ -35,7 +35,9 @@ pytest
 
 - Skill instructions live in `.agents/skills/truecrime-cult-research/SKILL.md`.
 - Case-builder app code lives in `src/case_builder/`; keep each Python module under 200 non-comment LOC and keep a `README.md` in each package directory.
-- Source and entity schemas live in `docs/schemas/`.
+- Source and entity schemas live in `docs/schemas/`, grouped by ledger domain.
+- Name directories and files by the workflow, contract, or domain they serve. Do not use vague buckets such as `misc`, `stuff`, `old`, or catch-all holding areas to satisfy governance.
+- Before and after moving files in a target directory, run the repository governance check for the affected paths with `pytest tests/governance/test_repository_shape.py -q` and inspect the reported file/dir counts.
 - Case workspaces live in `data/cases/`, which is ignored except for `data/cases/.gitkeep`.
 - Staged extraction JSON goes in `data/cases/<case>/staging/extractions/`.
 - Public-safe exports go in `data/cases/<case>/exports/`; cross-case generated exports go in `data/exports/`. Both are local/generated artifacts.

@@ -16,5 +16,5 @@ never touch `tcr.py`, the JSONL ledger, or local-stack modules directly.
 | `review.py` | Deterministic audits: contradictions, narrative readiness, privacy, public export, source independence. |
 | `exports.py` | Public-safe-by-default export commands. |
 
-The safety contract (`docs/reference/skill-api-spec.md`) is enforced here,
+The safety contract (`docs/guides/skill-api-spec.md`) is enforced here,
 once, so the frontends cannot disagree about what is gated.

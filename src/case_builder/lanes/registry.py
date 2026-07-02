@@ -11,7 +11,7 @@ from typing import Any, Sequence
 
 def default_lanes_path(repo_root: Path | None = None) -> Path:
     root = repo_root or Path(__file__).resolve().parents[3]
-    return root / "docs" / "lanes.json"
+    return root / "docs" / "registry" / "lanes.json"
 
 
 def load_lanes(path: Path | None = None) -> dict[str, Any]:
