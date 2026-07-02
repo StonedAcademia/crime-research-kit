@@ -3,8 +3,9 @@ from pathlib import Path
 from case_builder.graph.runner import run_sequential
 from case_builder.models.state import CaseBuilderState
 from case_builder.ops.runner import TrcrRunner
+from tests.helpers import KIT_ROOT
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = KIT_ROOT
 
 
 def dry_runner() -> TrcrRunner:

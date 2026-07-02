@@ -4,8 +4,9 @@ from pathlib import Path
 import pytest
 
 from case_builder.lanes import registry as lanes_registry
+from tests.helpers import KIT_ROOT
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = KIT_ROOT
 
 
 def load_json() -> dict:

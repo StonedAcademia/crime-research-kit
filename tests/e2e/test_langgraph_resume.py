@@ -11,8 +11,9 @@ from langgraph.types import Command
 from case_builder.graph.runner import build_case_builder_graph
 from case_builder.models.state import CaseBuilderState
 from case_builder.ops.runner import TrcrRunner
+from tests.helpers import KIT_ROOT
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = KIT_ROOT
 
 
 def make_graph(db_path: Path):

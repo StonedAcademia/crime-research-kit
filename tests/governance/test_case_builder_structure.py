@@ -1,7 +1,7 @@
 from pathlib import Path
 
+from tests.helpers import KIT_ROOT
 
-KIT_ROOT = Path(__file__).resolve().parents[1]
 CASE_BUILDER_ROOT = KIT_ROOT / "src" / "case_builder"
 MAX_NON_COMMENT_LOC = 200
 

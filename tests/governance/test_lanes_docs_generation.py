@@ -2,8 +2,9 @@ from pathlib import Path
 
 from case_builder.lanes import docs as lane_docs
 from case_builder.lanes.registry import load_lanes
+from tests.helpers import KIT_ROOT
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = KIT_ROOT
 LANE_REGISTRY_DOC = ROOT / ".agents" / "skills" / "truecrime-cult-research" / "references" / "lane_registry.md"
 ROUTING_MATRIX_DOC = ROOT / ".agents" / "skills" / "public-records-router" / "references" / "routing_matrix.md"
 

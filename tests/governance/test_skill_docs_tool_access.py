@@ -2,7 +2,8 @@ import json
 import re
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+from tests.helpers import KIT_ROOT as ROOT
+
 SKILLS_ROOT = ROOT / ".agents" / "skills"
 MAIN_SKILL = SKILLS_ROOT / "truecrime-cult-research" / "SKILL.md"
 
