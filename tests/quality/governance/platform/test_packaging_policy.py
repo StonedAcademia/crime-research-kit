@@ -15,8 +15,16 @@ except ModuleNotFoundError:
     import tomli as tomllib
 
 
+EXPECTED_REQUIRED_DEPENDENCIES = {
+    "jsonschema",
+    "pydantic",
+    "pydantic-settings",
+    "httpx",
+    "typer",
+    "jinja2",
+}
 EXPECTED_EXTRAS = {
-    "dev": {"pytest", "jsonschema", "beautifulsoup4", "trafilatura", "pandas", "networkx", "tomli"},
+    "dev": {"pytest", "beautifulsoup4", "trafilatura", "pandas", "networkx", "tomli"},
     "agentic": {"langgraph", "langgraph-checkpoint-sqlite"},
     "llm": {"langchain", "langchain-ollama"},
     "mcp": {"mcp"},
@@ -59,10 +67,10 @@ def package_name(requirement: str) -> str:
     return name.replace("_", "-").lower()
 
 
-def test_core_package_has_no_runtime_dependencies_and_declares_license():
+def test_required_dependencies_stay_pinned_to_the_allowlist():
     project = load_pyproject()["project"]
 
-    assert project["dependencies"] == []
+    assert {package_name(req) for req in project["dependencies"]} == EXPECTED_REQUIRED_DEPENDENCIES
     assert project["license"]["text"] == "AGPL-3.0-only"
     assert (KIT_ROOT / "LICENSE").exists()
 
