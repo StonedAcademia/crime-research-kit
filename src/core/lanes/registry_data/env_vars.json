@@ -44,7 +44,7 @@
     },
     {
       "name": "CRK_QDRANT_PORT",
-      "purpose": "Qdrant port used by the local memory provider.",
+      "purpose": "Qdrant port used by the local memory provider; must not be set to an empty string (validation error at startup for integer settings).",
       "scope": "runtime",
       "default": "6333",
       "prefix_class": "CRK_"

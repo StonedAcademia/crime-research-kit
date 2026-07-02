@@ -5,12 +5,14 @@ from __future__ import annotations
 from typing import Any
 
 from core.casefile import case_id
-from core.config import embed_model as default_embed_model
-from core.config import embedder_provider as default_embedder_provider
-from core.config import mem0_llm_model as default_mem0_llm_model
-from core.config import mem0_llm_provider as default_mem0_llm_provider
-from core.config import qdrant_host as default_qdrant_host
-from core.config import qdrant_port as default_qdrant_port
+from core.config import (
+    DEFAULT_EMBED_MODEL,
+    DEFAULT_EMBEDDER_PROVIDER,
+    DEFAULT_MEM0_LLM_MODEL,
+    DEFAULT_MEM0_LLM_PROVIDER,
+    DEFAULT_QDRANT_HOST,
+    DEFAULT_QDRANT_PORT,
+)
 from core.memory.base import MemoryEntry
 
 
@@ -37,18 +39,18 @@ class Mem0LocalProvider:
             "vector_store": {
                 "provider": "qdrant",
                 "config": {
-                    "host": default_qdrant_host(qdrant_host),
-                    "port": default_qdrant_port(qdrant_port),
+                    "host": qdrant_host or DEFAULT_QDRANT_HOST,
+                    "port": qdrant_port if qdrant_port is not None else DEFAULT_QDRANT_PORT,
                     "collection_name": f"crk_memory_{self.user_id}",
                 },
             },
             "llm": {
-                "provider": default_mem0_llm_provider(llm_provider),
-                "config": {"model": default_mem0_llm_model(llm_model), "temperature": 0.1},
+                "provider": llm_provider or DEFAULT_MEM0_LLM_PROVIDER,
+                "config": {"model": llm_model or DEFAULT_MEM0_LLM_MODEL, "temperature": 0.1},
             },
             "embedder": {
-                "provider": default_embedder_provider(embedder_provider),
-                "config": {"model": default_embed_model(embedder_model)},
+                "provider": embedder_provider or DEFAULT_EMBEDDER_PROVIDER,
+                "config": {"model": embedder_model or DEFAULT_EMBED_MODEL},
             },
         }
         self.memory = Memory.from_config(config)

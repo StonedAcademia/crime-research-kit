@@ -33,6 +33,8 @@ class CaseBuilderState:
     export_approved: bool = False
     index_enabled: bool = False
     llm_enabled: bool = False
+    qdrant_url: str | None = None
+    embed_model: str | None = None
     lane_suggestions: list[dict[str, Any]] = field(default_factory=list)
     planned_commands: list[list[str]] = field(default_factory=list)
     tool_results: list[dict[str, Any]] = field(default_factory=list)

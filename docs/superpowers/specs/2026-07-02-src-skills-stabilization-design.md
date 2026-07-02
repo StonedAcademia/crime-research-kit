@@ -65,9 +65,8 @@ governance, and passes `moon run crk:test-governance` before merge.
   `pydantic-settings`, `httpx`, `typer`, `jinja2`. Deduplicate extras that currently pull
   these transitively.
 - Update `tests/quality/governance/platform/test_packaging_policy.py` (line 62,
-  `test_core_package_has_no_runtime_dependencies_and_declares_license` asserts
-  `dependencies == []`) to assert the new allowlist instead — the test still pins the set so
-  dependencies cannot grow silently.
+  `test_required_dependencies_stay_pinned_to_the_allowlist` asserts the required dependencies
+  allowlist) to pin the set so dependencies cannot grow silently.
 - Update CLAUDE.md and AGENTS.md "no required dependencies" language to describe the new
   contract: small pinned required set, heavier features still behind extras with graceful
   degradation.

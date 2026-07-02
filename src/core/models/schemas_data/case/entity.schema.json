@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Entity",
+  "type": "object",
+  "required": [
+    "entity_id",
+    "entity_type",
+    "name",
+    "status",
+    "source_ids"
+  ],
+  "properties": {
+    "entity_id": {
+      "type": "string"
+    },
+    "entity_type": {
+      "type": "string",
+      "enum": [
+        "person",
+        "organization",
+        "group",
+        "institution",
+        "publication",
+        "place_alias",
+        "object",
+        "vehicle",
+        "document",
+        "recording",
+        "event_series",
+        "other"
+      ]
+    },
+    "name": {
+      "type": "string"
+    },
+    "display_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "aliases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "confirmed",
+        "candidate",
+        "excluded",
+        "merged"
+      ]
+    },
+    "role_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "privacy_level": {
+      "type": "string",
+      "enum": [
+        "public_figure",
+        "limited_purpose_public",
+        "private_person",
+        "minor",
+        "not_applicable",
+        "unknown"
+      ]
+    },
+    "living_status": {
+      "type": "string",
+      "enum": [
+        "living",
+        "deceased",
+        "unknown",
+        "not_applicable"
+      ]
+    },
+    "source_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "claim_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "public_export": {
+      "type": "boolean"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

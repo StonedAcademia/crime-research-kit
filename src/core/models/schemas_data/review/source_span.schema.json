@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SourceSpan",
+  "description": "A citation locator for a specific passage, page, timestamp, or range inside a source. Other records can reference these rows through source_span_ids when source_ids alone are not precise enough.",
+  "type": "object",
+  "required": [
+    "source_span_id",
+    "source_id",
+    "locator_type",
+    "locator"
+  ],
+  "properties": {
+    "source_span_id": {
+      "type": "string",
+      "description": "Stable ID for this source span, intended for source_span_ids references."
+    },
+    "source_id": {
+      "type": "string",
+      "description": "ID of the source record that contains this passage or locator."
+    },
+    "locator_type": {
+      "type": "string",
+      "enum": [
+        "page",
+        "page_range",
+        "timestamp",
+        "timestamp_range",
+        "line_range",
+        "paragraph",
+        "section",
+        "char_range",
+        "byte_range",
+        "url_fragment",
+        "other"
+      ],
+      "description": "Primary locator style. Use other only when the locator object needs a source-specific scheme."
+    },
+    "locator": {
+      "$ref": "#/$defs/citation_locator"
+    },
+    "exact_text": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Short exact excerpt when lawful and useful for traceability. Avoid copying long copyrighted passages."
+    },
+    "summary": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Brief paraphrase of what this span supports."
+    },
+    "public_export": {
+      "type": "boolean"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "citation_locator": {
+      "type": "object",
+      "description": "Structured locator fields for source-specific citation details. At least one field should identify the passage, page, timestamp, range, or anchor.",
+      "properties": {
+        "page": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ]
+        },
+        "page_start": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ]
+        },
+        "page_end": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ]
+        },
+        "section": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "paragraph": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ]
+        },
+        "line_start": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "line_end": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "timestamp": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Single audio/video timestamp, preferably HH:MM:SS or a source-native equivalent."
+        },
+        "timestamp_start": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "timestamp_end": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "char_start": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "char_end": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "byte_start": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "byte_end": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "url_fragment": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "quote_hint": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Short phrase used to locate the passage when numeric locators are unavailable."
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

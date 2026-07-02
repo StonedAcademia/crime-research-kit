@@ -13,12 +13,15 @@ RunnerName = Literal["auto", "langgraph", "sequential"]
 LANGGRAPH_HINT = "LangGraph is not installed. Install with `pip install -e '.[agentic]'`."
 
 
-def _model_factory(llm_enabled: bool):
+def _model_factory(llm_enabled: bool, model_spec: str | None = None):
     if not llm_enabled:
         return None
     from adapters.interfaces.llm.provider import get_chat_model
 
-    return get_chat_model
+    def factory(spec: str | None = None):
+        return get_chat_model(spec or model_spec)
+
+    return factory
 
 
 def run_case_builder(
@@ -27,6 +30,9 @@ def run_case_builder(
     execute: bool = False,
     runner: RunnerName = "auto",
     checkpoint: bool = False,
+    model_spec: str | None = None,
+    qdrant_url: str | None = None,
+    embed_model: str | None = None,
 ) -> dict[str, Any]:
     """Run a case-builder plan and return serializable state.
 
@@ -34,7 +40,9 @@ def run_case_builder(
     runs still stop at human review gates before canonical import or export.
     """
     crk = CrkRunner(dry_run=not execute)
-    model_factory = _model_factory(state.llm_enabled)
+    state.qdrant_url = qdrant_url or state.qdrant_url
+    state.embed_model = embed_model or state.embed_model
+    model_factory = _model_factory(state.llm_enabled, model_spec)
     use_langgraph = runner in {"auto", "langgraph"} and langgraph_available()
     if runner == "langgraph" and not langgraph_available():
         raise RuntimeError(LANGGRAPH_HINT)
@@ -70,6 +78,9 @@ def resume_case_builder(
     export_approved: bool = False,
     execute: bool = False,
     llm: bool = False,
+    model_spec: str | None = None,
+    qdrant_url: str | None = None,
+    embed_model: str | None = None,
 ) -> dict[str, Any]:
     """Resume a checkpointed run with human review decisions."""
     if not langgraph_available():
@@ -81,7 +92,7 @@ def resume_case_builder(
         crk,
         checkpointer=case_checkpointer(case_dir),
         use_interrupt=True,
-        model_factory=_model_factory(llm),
+        model_factory=_model_factory(llm, model_spec),
     )
     config = {"configurable": {"thread_id": thread_id}}
     payload = {
@@ -89,7 +100,8 @@ def resume_case_builder(
         "rejected_packets": [dict(item) for item in rejected_packets],
         "export_approved": export_approved,
     }
-    result = dict(graph.invoke(Command(resume=payload), config))
+    state_update = {k: v for k, v in {"qdrant_url": qdrant_url, "embed_model": embed_model}.items() if v is not None}
+    result = dict(graph.invoke(Command(resume=payload, update=state_update or None), config))
     return _annotate(result, graph, config, thread_id)
 
 

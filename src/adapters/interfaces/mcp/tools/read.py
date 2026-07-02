@@ -68,6 +68,8 @@ def query_case_tool(
             resolve_case(ctx, case),
             query,
             include_private=include_private,
+            qdrant_url=ctx.settings.qdrant_url,
+            embed_model=ctx.settings.embed_model,
             top_k=top_k,
         ).to_dict()
     except ValueError as exc:

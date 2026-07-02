@@ -120,7 +120,11 @@ def index_case_node(runner: CrkRunner):
             return {"status": "index_skipped"}
         case_dir = required_case_dir(state)
         try:
-            result = query_ops.index_case(case_dir)
+            result = query_ops.index_case(
+                case_dir,
+                qdrant_url=state.get("qdrant_url"),
+                embed_model=state.get("embed_model"),
+            )
         except Exception as exc:  # optional retrieval deps or Qdrant may be absent
             return {
                 "status": "index_failed",

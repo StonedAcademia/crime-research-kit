@@ -9,6 +9,7 @@ pytest.importorskip("mcp")
 from adapters.interfaces.mcp.context import ServerContext
 from adapters.interfaces.mcp.server import create_server
 from adapters.ops.runner import CrkRunner
+from core.config import CrkSettings
 from tests.helpers import KIT_ROOT
 
 
@@ -17,6 +18,7 @@ def make_server(cases_root: Path):
         repo_root=KIT_ROOT,
         cases_root=cases_root,
         runner=CrkRunner(repo_root=KIT_ROOT, dry_run=True),
+        settings=CrkSettings(),
     )
     return create_server(ctx)
 

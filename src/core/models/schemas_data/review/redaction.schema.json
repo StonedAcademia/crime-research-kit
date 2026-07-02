@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Redaction",
+  "type": "object",
+  "required": [
+    "redaction_id",
+    "record_id",
+    "reason"
+  ],
+  "properties": {
+    "redaction_id": {
+      "type": "string"
+    },
+    "record_id": {
+      "type": "string"
+    },
+    "field": {
+      "type": "string"
+    },
+    "reason": {
+      "type": "string"
+    },
+    "public_replacement": {
+      "type": "string"
+    },
+    "source_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

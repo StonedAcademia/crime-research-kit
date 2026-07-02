@@ -10,6 +10,7 @@ from adapters.interfaces.mcp.context import (
     resolve_case,
 )
 from adapters.ops.runner import CrkRunner
+from core.config import CrkSettings
 from tests.helpers import KIT_ROOT
 
 
@@ -18,6 +19,7 @@ def make_ctx(cases_root: Path) -> ServerContext:
         repo_root=KIT_ROOT,
         cases_root=cases_root,
         runner=CrkRunner(repo_root=KIT_ROOT, dry_run=True),
+        settings=CrkSettings(),
     )
 
 

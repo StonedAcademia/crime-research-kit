@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Relationship",
+  "type": "object",
+  "required": [
+    "rel_id",
+    "src_entity_id",
+    "dst_entity_id",
+    "relation_type",
+    "source_ids"
+  ],
+  "properties": {
+    "rel_id": {
+      "type": "string"
+    },
+    "src_entity_id": {
+      "type": "string"
+    },
+    "dst_entity_id": {
+      "type": "string"
+    },
+    "relation_type": {
+      "type": "string",
+      "description": "Specific relationship predicate. This remains open because current case records use many source-specific predicates; use relationship_class for the controlled high-level category when available."
+    },
+    "relationship_class": {
+      "type": "string",
+      "description": "Controlled high-level relationship category for graph grouping and compatibility across cases.",
+      "enum": [
+        "documented_successor",
+        "method_diffusion",
+        "personnel_bridge",
+        "narrative_inheritance",
+        "contested_overlap",
+        "hypothesis_requires_more_sources"
+      ]
+    },
+    "start_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "end_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "claim_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_span_ids": {
+      "type": "array",
+      "description": "Optional precise citation span IDs supporting this relationship.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "description": "Numeric confidence from 0 to 1. This is intentionally a score, not a categorical enum.",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "verified",
+        "corroborated",
+        "single_source",
+        "disputed",
+        "unverified",
+        "excluded"
+      ]
+    },
+    "public_export": {
+      "type": "boolean"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

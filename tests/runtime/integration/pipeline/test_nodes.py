@@ -142,6 +142,36 @@ def test_index_node_reports_failure_without_raising(synthetic_case_copy):
     assert update["status"] in {"case_indexed", "index_failed"}
 
 
+def test_index_node_threads_state_qdrant_url_and_embed_model(monkeypatch, synthetic_case_copy):
+    from pipeline.graph.nodes.pipeline import index_case_node
+    from adapters.ops import query as query_ops
+    from adapters.ops.result import OpResult
+    from adapters.ops.runner import CrkRunner
+
+    captured = {}
+
+    def fake_index_case(case_dir, **kwargs):
+        captured["case_dir"] = case_dir
+        captured.update(kwargs)
+        return OpResult(name="index_case", command=["index-case"])
+
+    monkeypatch.setattr(query_ops, "index_case", fake_index_case)
+
+    node = index_case_node(CrkRunner(repo_root=REPO_ROOT, dry_run=False))
+    update = node(
+        {
+            "case_dir": str(synthetic_case_copy),
+            "index_enabled": True,
+            "qdrant_url": "http://custom-qdrant:6333",
+            "embed_model": "custom/embed-model",
+        }
+    )
+
+    assert captured["qdrant_url"] == "http://custom-qdrant:6333"
+    assert captured["embed_model"] == "custom/embed-model"
+    assert update["status"] == "case_indexed"
+
+
 def test_readiness_audit_runs_four_audits():
     from pipeline.graph.nodes.pipeline import readiness_audit_node
 

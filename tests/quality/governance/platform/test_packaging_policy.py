@@ -15,8 +15,16 @@ except ModuleNotFoundError:
     import tomli as tomllib
 
 
+EXPECTED_REQUIRED_DEPENDENCIES = {
+    "jsonschema",
+    "pydantic",
+    "pydantic-settings",
+    "httpx",
+    "typer",
+    "jinja2",
+}
 EXPECTED_EXTRAS = {
-    "dev": {"pytest", "jsonschema", "beautifulsoup4", "trafilatura", "pandas", "networkx", "tomli"},
+    "dev": {"pytest", "beautifulsoup4", "trafilatura", "pandas", "networkx", "tomli"},
     "agentic": {"langgraph", "langgraph-checkpoint-sqlite"},
     "llm": {"langchain", "langchain-ollama"},
     "mcp": {"mcp"},
@@ -48,6 +56,20 @@ REGISTRY_SHARDS = (
     "lanes/support.json",
     "templates/extraction.json",
 )
+SCHEMA_SHARDS = (
+    "case/artifact.schema.json",
+    "case/entity.schema.json",
+    "case/place.schema.json",
+    "case/source.schema.json",
+    "evidence/claim.schema.json",
+    "evidence/event.schema.json",
+    "evidence/event_link.schema.json",
+    "evidence/relationship.schema.json",
+    "review/quote.schema.json",
+    "review/redaction.schema.json",
+    "review/research_action.schema.json",
+    "review/source_span.schema.json",
+)
 
 
 def load_pyproject() -> dict:
@@ -59,10 +81,10 @@ def package_name(requirement: str) -> str:
     return name.replace("_", "-").lower()
 
 
-def test_core_package_has_no_runtime_dependencies_and_declares_license():
+def test_required_dependencies_stay_pinned_to_the_allowlist():
     project = load_pyproject()["project"]
 
-    assert project["dependencies"] == []
+    assert {package_name(req) for req in project["dependencies"]} == EXPECTED_REQUIRED_DEPENDENCIES
     assert project["license"]["text"] == "AGPL-3.0-only"
     assert (KIT_ROOT / "LICENSE").exists()
 
@@ -85,6 +107,16 @@ def test_packaged_registry_data_matches_canonical_docs_registry():
     for rel in REGISTRY_SHARDS:
         assert json.loads((package_registry / rel).read_text(encoding="utf-8")) == json.loads(
             (docs_registry / rel).read_text(encoding="utf-8")
+        )
+
+
+def test_packaged_schema_data_matches_canonical_docs_schemas():
+    docs_schemas = KIT_ROOT / "docs" / "schemas"
+    package_schemas = KIT_ROOT / "src" / "core" / "models" / "schemas_data"
+
+    for rel in SCHEMA_SHARDS:
+        assert json.loads((package_schemas / rel).read_text(encoding="utf-8")) == json.loads(
+            (docs_schemas / rel).read_text(encoding="utf-8")
         )
 
 

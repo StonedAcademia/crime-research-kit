@@ -2,22 +2,22 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
 from typing import Any, Callable
+
+from pydantic import BaseModel, Field
 
 from core.casefile import CasefileError
 
 
-@dataclass
-class OpResult:
+class OpResult(BaseModel):
     """Uniform result for every case operation across CLI, graph, and MCP."""
 
     name: str
     ok: bool = True
-    data: dict[str, Any] = field(default_factory=dict)
-    errors: list[str] = field(default_factory=list)
-    warnings: list[str] = field(default_factory=list)
-    command: list[str] = field(default_factory=list)
+    data: dict[str, Any] = Field(default_factory=dict)
+    errors: list[str] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+    command: list[str] = Field(default_factory=list)
     dry_run: bool = False
     skipped: bool = False
     returncode: int = 0
@@ -25,7 +25,7 @@ class OpResult:
     stderr: str = ""
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        return self.model_dump()
 
 
 def local_op(

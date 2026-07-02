@@ -9,7 +9,7 @@ from adapters.io.parsing import ocr_source as _ocr_source
 from adapters.io.parsing import parse_source as _parse_source
 from adapters.ops.result import OpResult, local_op
 from adapters.ops.runner import CrkRunner
-from core.config import searxng_url as default_searxng_url
+from core.config import DEFAULT_SEARXNG_URL
 
 
 def plan_public_records(runner: CrkRunner, case_dir: str, subject: str, lanes: Sequence[str]) -> OpResult:
@@ -100,7 +100,7 @@ def discover_sources(
         _discover_sources,
         case_dir,
         query=query,
-        searxng_url=default_searxng_url(searxng_url),
+        searxng_url=searxng_url or DEFAULT_SEARXNG_URL,
         limit=limit,
         out=out,
     )

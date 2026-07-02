@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Artifact",
+  "type": "object",
+  "required": [
+    "artifact_id",
+    "artifact_type",
+    "name",
+    "source_ids"
+  ],
+  "properties": {
+    "artifact_id": {
+      "type": "string"
+    },
+    "artifact_type": {
+      "type": "string",
+      "enum": [
+        "document",
+        "letter",
+        "photo",
+        "recording",
+        "vehicle",
+        "object",
+        "weapon_public_record",
+        "digital_file",
+        "book",
+        "publication",
+        "other"
+      ]
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "source_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_span_ids": {
+      "type": "array",
+      "description": "Optional precise citation span IDs supporting this artifact record.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "claim_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sensitivity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "exclude"
+      ]
+    },
+    "public_export": {
+      "type": "boolean"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

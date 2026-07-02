@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from core.config import DEFAULT_MODEL_SPEC, model_spec
+from core.config import DEFAULT_MODEL_SPEC
 
 SUPPORTED_PROVIDERS = frozenset({"ollama"})
 
@@ -22,8 +22,8 @@ def parse_model_spec(spec: str, *, validate_provider: bool = True) -> tuple[str,
     return provider, model.strip()
 
 
-def active_model_spec() -> tuple[str, str]:
-    return parse_model_spec(model_spec())
+def active_model_spec(spec: str | None = None) -> tuple[str, str]:
+    return parse_model_spec(spec or DEFAULT_MODEL_SPEC)
 
 
 def is_local_provider(provider: str) -> bool:
@@ -32,7 +32,7 @@ def is_local_provider(provider: str) -> bool:
 
 def get_chat_model(spec: str | None = None):
     """Return a langchain chat model for the requested or configured spec."""
-    provider, model = parse_model_spec(spec) if spec else active_model_spec()
+    provider, model = parse_model_spec(spec or DEFAULT_MODEL_SPEC)
     try:
         from langchain.chat_models import init_chat_model
     except ImportError as exc:
