@@ -45,21 +45,7 @@ from core.casefile import (  # noqa: E402
     write_json,
     write_jsonl,
 )
-
-SCHEMA_BY_RECORD = {
-    "sources": "source.schema.json",
-    "entities": "entity.schema.json",
-    "places": "place.schema.json",
-    "artifacts": "artifact.schema.json",
-    "claims": "claim.schema.json",
-    "events": "event.schema.json",
-    "event_links": "event_link.schema.json",
-    "relationships": "relationship.schema.json",
-    "source_spans": "source_span.schema.json",
-    "quotes": "quote.schema.json",
-    "research_actions": "research_action.schema.json",
-    "redactions": "redaction.schema.json",
-}
+from adapters.ops.casework.records.validation import validate  # noqa: E402
 
 DEFAULT_EXTRACTION = {
     "source_id": "",
@@ -1102,85 +1088,6 @@ def import_extraction(args: argparse.Namespace) -> None:
         counts[key] = len(rows)
     log_action(args.case_dir, "import_extraction", {"source_id": source_id, "path": str(path), "counts": counts})
     print(json.dumps({"imported": counts}, indent=2))
-
-
-def load_schema(schema_name: str) -> dict[str, Any] | None:
-    # Search upward from script path for the canonical docs/schemas directory,
-    # while keeping the legacy schemas/ path as a compatibility fallback.
-    here = Path(__file__).resolve()
-    schema_dirs: list[Path] = []
-    for i in range(min(len(here.parents), 6)):
-        schema_dirs.append(here.parents[i] / "docs" / "schemas")
-        schema_dirs.append(here.parents[i] / "schemas")
-    cwd = Path.cwd()
-    schema_dirs.extend([
-        cwd / "tc-c-kit" / "docs" / "schemas",
-        cwd / "docs" / "schemas",
-        cwd / "tc-c-kit" / "schemas",
-        cwd / "schemas",
-    ])
-    seen: set[Path] = set()
-    for schema_dir in schema_dirs:
-        if schema_dir in seen:
-            continue
-        seen.add(schema_dir)
-        candidates = [schema_dir / schema_name]
-        if schema_dir.exists():
-            candidates.extend(sorted(schema_dir.glob(f"*/{schema_name}")))
-        for p in candidates:
-            if p.exists():
-                return json.loads(p.read_text(encoding="utf-8"))
-    return None
-
-
-def basic_required_validation(record_name: str, row: dict[str, Any], idx: int) -> list[str]:
-    required = {
-        "sources": ["source_id", "title", "source_type", "reliability_grade", "date_accessed"],
-        "entities": ["entity_id", "entity_type", "name", "status", "source_ids"],
-        "places": ["place_id", "name", "source_ids"],
-        "artifacts": ["artifact_id", "artifact_type", "name", "source_ids"],
-        "claims": ["claim_id", "claim", "status", "confidence", "source_ids"],
-        "events": ["event_id", "title", "event_type", "source_ids"],
-        "event_links": ["event_link_id", "entity_id", "event_id", "relation_type", "source_ids"],
-        "relationships": ["rel_id", "src_entity_id", "dst_entity_id", "relation_type", "source_ids"],
-        "source_spans": ["source_span_id", "source_id", "locator_type", "locator"],
-        "quotes": ["quote_id", "source_id", "exact_quote"],
-        "research_actions": ["timestamp", "action", "details"],
-        "redactions": ["redaction_id", "record_id", "reason"],
-    }.get(record_name, [])
-    errors = []
-    for field in required:
-        if field not in row or row.get(field) in (None, ""):
-            errors.append(f"{record_name}[{idx}] missing required field: {field}")
-    return errors
-
-
-def validate(args: argparse.Namespace) -> None:
-    ensure_case(args.case_dir)
-    errors: list[str] = []
-    jsonschema_validator = None
-    try:
-        import jsonschema  # type: ignore
-        jsonschema_validator = jsonschema
-    except Exception:
-        jsonschema_validator = None
-
-    for record_name, fname in RECORD_FILES.items():
-        rows = read_jsonl(record_path(args.case_dir, record_name))
-        schema = load_schema(SCHEMA_BY_RECORD.get(record_name, "")) if record_name in SCHEMA_BY_RECORD else None
-        for idx, row in enumerate(rows, start=1):
-            errors.extend(basic_required_validation(record_name, row, idx))
-            if jsonschema_validator and schema:
-                try:
-                    jsonschema_validator.validate(instance=row, schema=schema)
-                except Exception as exc:
-                    errors.append(f"{record_name}[{idx}] schema error: {exc}")
-    if errors:
-        print("Validation failed:", file=sys.stderr)
-        for err in errors:
-            print(f"- {err}", file=sys.stderr)
-        raise SystemExit(1)
-    print(f"Validation passed for {case_path(args.case_dir)}")
 
 
 def flatten(value: Any) -> str:
