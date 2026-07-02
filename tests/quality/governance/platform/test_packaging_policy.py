@@ -6,13 +6,17 @@ import json
 import re
 import subprocess
 import sys
-import tomllib
 
 from tests.helpers import KIT_ROOT, moon_task_names
 
+try:
+    import tomllib
+except ModuleNotFoundError:
+    import tomli as tomllib
+
 
 EXPECTED_EXTRAS = {
-    "dev": {"pytest", "jsonschema", "beautifulsoup4", "trafilatura", "pandas", "networkx"},
+    "dev": {"pytest", "jsonschema", "beautifulsoup4", "trafilatura", "pandas", "networkx", "tomli"},
     "agentic": {"langgraph", "langgraph-checkpoint-sqlite"},
     "llm": {"langchain", "langchain-ollama"},
     "mcp": {"mcp"},
@@ -27,7 +31,7 @@ EXPECTED_EXTRAS = {
         "sentence-transformers",
     },
     "memory-local": {"mem0ai", "qdrant-client"},
-    "governance": {"pip-audit", "pip-licenses", "cyclonedx-bom", "build"},
+    "governance": {"pip-audit", "pip-licenses", "cyclonedx-bom", "build", "tomli"},
 }
 EXPECTED_SCRIPTS = {
     "cr-kit": "cli:main",
