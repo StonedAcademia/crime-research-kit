@@ -1,0 +1,12 @@
+title = "TRCR gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Local case workspaces and synthetic fixtures are governed by TRCR privacy tests."
+paths = [
+  '''^data/cases/''',
+  '''^data/exports/''',
+  '''^data/examples/''',
+]

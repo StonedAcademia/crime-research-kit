@@ -7,6 +7,7 @@ name = "truecrime-cult-research-kit"
 version = "0.1.0"
 description = "Codex skill and CLI scaffolding for data-first true crime and cult-origin research organization."
 requires-python = ">=3.10"
+license = {text = "MIT"}
 dependencies = []
 
 [project.optional-dependencies]
