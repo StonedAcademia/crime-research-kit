@@ -22,6 +22,7 @@
 <p align="center">
   <a href="#the-evidence-chain">Evidence chain</a> |
   <a href="#choose-your-path">Choose your path</a> |
+  <a href="#hardware-requirements">Requirements</a> |
   <a href="#quick-start">Quick start</a> |
   <a href="#architecture-at-a-glance">Architecture</a> |
   <a href="#public-interest-boundaries">Safety</a> |
@@ -68,12 +69,29 @@ The record-level contract behind this chain is documented in
 | I am a…                          | What you get                                                                                                                     | Start here                                                                                                                                                                                                                                                                        |
 | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Researcher**                   | A local case workspace, the `crk-ledger` ledger CLI, repo-local skills, staged extraction packets, audits, and public-safe exports.  | [Case Workflow](docs/guides/runbooks/cases/case-workflow.md) · [Agent Skills](docs/guides/integrations/agent-skills.md) · [Export Artifacts](docs/guides/runbooks/outputs/export-artifacts.md) · [Public Output Readiness](docs/guides/runbooks/cases/public-output-readiness.md) |
-| **Operator**                     | A self-hosted local stack: SearXNG discovery, Qdrant retrieval, Ollama runtime, OCR, MCP, and the case-builder app.              | [Initial App Install](docs/guides/runbooks/setup/install.md) · [Self-Hosted Deployment](docs/guides/runbooks/setup/self-hosted-deployment.md)                                                                                                                                     |
+| **Operator**                     | A self-hosted local stack: SearXNG discovery, Qdrant retrieval, Ollama runtime, OCR, MCP, and the case-builder app.              | [Requirements](docs/guides/runbooks/setup/requirements.md) · [Initial App Install](docs/guides/runbooks/setup/install.md) · [Self-Hosted Deployment](docs/guides/runbooks/setup/self-hosted-deployment.md)                                                                                                                                     |
 | **Developer / agent integrator** | The MCP server, the `src/` app boundary and typed ops core, the skill API contract, and the skill invocation model. | [System Overview](docs/guides/architecture/system-overview.md) · [Case Builder & LangGraph](docs/guides/architecture/case-builder-langgraph.md) · [MCP Server](docs/guides/integrations/mcp-server.md) · [Skill API Spec](docs/guides/skill-api-spec.md)                                      |
 
 New to the kit? Read [the evidence chain](#the-evidence-chain) and
 [public-interest boundaries](#public-interest-boundaries) first as they define
 what CRK will and will not produce.
+
+## Hardware Requirements
+
+CRK can run as a lightweight ledger CLI or as a full local research stack. Start
+with the smallest tier that matches the work you intend to do.
+
+| Workload | Practical baseline |
+| --- | --- |
+| Ledger CLI, skills, validation, and JSONL case work | 2 CPU cores, 4 GB RAM, 2 GB free disk. |
+| Local development, tests, source extraction, and chart exports | 4 CPU cores, 8 GB RAM, 10 GB free disk. |
+| OCR, document parsing, retrieval, Qdrant, and the self-hosted stack | 4-8 CPU cores, 16-32 GB RAM, 25-100 GB free disk depending on PDFs, indexes, and model cache. |
+| Ollama-backed LLM workflows | 8+ CPU cores or a local GPU; reserve additional disk for downloaded models. |
+
+See the detailed
+[Setup Requirements](docs/guides/runbooks/setup/requirements.md) guide for OS,
+toolchain, optional services, OCR packages, Docker, storage, and network
+requirements.
 
 ## Quick start
 

@@ -19,6 +19,7 @@ starts collecting unrelated procedures, split it into a named runbook group.
 | `docs/guides/integrations/` | Host, protocol, and external-tool integration guides. |
 | `docs/guides/skill-api-spec.md` | Stable machine-facing contracts and API/reference material. |
 | `docs/guides/runbooks/` | Operator procedures and repeatable workflows. Long command sequences belong here. |
+| `docs/guides/runbooks/setup/requirements.md` | Hardware, OS, toolchain, optional-service, Docker, storage, and network requirements. |
 | `docs/schemas/` | JSON Schemas grouped by case, evidence, and review records. |
 | `docs/registry/` | Canonical lane and extraction-template vocabulary. |
 | `docs/superpowers/` | Planning/spec history for larger implementation phases. |
