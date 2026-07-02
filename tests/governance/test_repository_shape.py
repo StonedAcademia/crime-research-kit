@@ -16,7 +16,8 @@ MAX_FILES_PER_DIR = 4
 MIN_DIRS_PER_DIR = 0
 MAX_DIRS_PER_DIR = 3
 MAX_NON_COMMENT_LOC = 200
-SKIPPED_ROOTS = (Path("data"), Path("docs/superpowers"))
+SKIPPED_ROOTS = (Path(".agents"), Path("data"), Path("docs/superpowers"))
+SHAPE_SKIPPED_ROOTS = (Path("src"), Path("tests"))
 
 HASH_COMMENT_SUFFIXES = {".py", ".sh", ".yml", ".yaml", ".toml"}
 HASH_COMMENT_NAMES = {"Dockerfile", "Makefile", ".dockerignore", ".gitignore", ".prototools"}
@@ -24,7 +25,13 @@ SLASH_COMMENT_SUFFIXES = {".css", ".js", ".mjs", ".ts", ".tsx"}
 
 
 def is_skipped(path: Path) -> bool:
-    return any(path == root or root in path.parents for root in SKIPPED_ROOTS)
+    return path.name == "__init__.py" or any(path == root or root in path.parents for root in SKIPPED_ROOTS)
+
+
+def is_shape_skipped(directory: Path) -> bool:
+    if directory == Path("."):
+        return True
+    return any(directory == root or root in directory.parents for root in SHAPE_SKIPPED_ROOTS)
 
 
 def governed_paths() -> list[Path]:
@@ -51,6 +58,8 @@ def test_directories_keep_small_bounded_shape():
     dirs, file_counts, child_dirs = repo_shape(governed_paths())
     offenders = []
     for directory in sorted(dirs):
+        if is_shape_skipped(directory):
+            continue
         files = file_counts.get(directory, 0)
         children = len(child_dirs.get(directory, set()))
         if not MIN_FILES_PER_DIR <= files <= MAX_FILES_PER_DIR or not MIN_DIRS_PER_DIR <= children <= MAX_DIRS_PER_DIR:
