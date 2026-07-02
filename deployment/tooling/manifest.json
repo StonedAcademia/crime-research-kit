@@ -1,0 +1,35 @@
+{
+  "tools": {
+    "gitleaks": {
+      "version": "8.30.1",
+      "binary": "gitleaks",
+      "assets": {
+        "linux_x64": "gitleaks_8.30.1_linux_x64.tar.gz",
+        "linux_arm64": "gitleaks_8.30.1_linux_arm64.tar.gz"
+      },
+      "sha256": {
+        "linux_x64": "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb",
+        "linux_arm64": "e4a487ee7ccd7d3a7f7ec08657610aa3606637dab924210b3aee62570fb4b080"
+      },
+      "url_template": "https://github.com/gitleaks/gitleaks/releases/download/v{version}/{asset}"
+    },
+    "lychee": {
+      "version": "0.23.0",
+      "binary": "lychee",
+      "assets": {
+        "linux_x64": "lychee-x86_64-unknown-linux-gnu.tar.gz",
+        "linux_arm64": "lychee-aarch64-unknown-linux-gnu.tar.gz"
+      },
+      "sha256": {
+        "linux_x64": "1fcb6ccf10d04c22b8c5873c5b9cb7be32ee7423e12169d6f1a79a6f1962ef81",
+        "linux_arm64": "97eb93b02a7d78a752fc33e5b0983439ccaadbf3db952b68a0a4401acd92e6e0"
+      },
+      "url_template": "https://github.com/lycheeverse/lychee/releases/download/lychee-v{version}/{asset}"
+    }
+  },
+  "python_pins": {
+    "pip-audit": "2.10.1",
+    "pip-licenses": "5.5.5",
+    "cyclonedx-bom": "7.3.0"
+  }
+}

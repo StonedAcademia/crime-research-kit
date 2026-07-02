@@ -52,6 +52,12 @@ memory-local = [
   "mem0ai>=2.0.0",
   "qdrant-client>=1.18.0",
 ]
+governance = [
+  "pip-audit==2.10.1",
+  "pip-licenses==5.5.5",
+  "cyclonedx-bom==7.3.0",
+  "build>=1.2",
+]
 
 [project.scripts]
 cr-kit = "case_builder.cli:main"
