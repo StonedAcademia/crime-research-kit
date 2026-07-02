@@ -128,6 +128,10 @@ from adapters.ops.evidence.reports.analysis.command.builders.facets.boundary imp
     build_boundary_rows,
     build_readiness_products,
 )
+from adapters.ops.evidence.reports.analysis.command.builders.facets.people import (  # noqa: E402
+    build_fragility,
+    build_person_source_products,
+)
 from adapters.ops.evidence.reports.analysis.command.builders.facets.relationships import build_relation_type_counts  # noqa: E402
 from adapters.ops.evidence.reports.analysis.command.builders.facets.timelines import build_swimlanes  # noqa: E402
 from adapters.ops.evidence.reports.analysis.command.builders.layered import build_layered_graphs  # noqa: E402
@@ -231,141 +235,15 @@ def export_analysis_charts(args: argparse.Namespace) -> None:
 
     relation_type_counts = build_relation_type_counts(ctx)
 
-    person_source_map: dict[tuple[str, str], set[str]] = {}
-    for person in people:
-        person_id = str(person.get("entity_id", ""))
-        for sid in parse_cell_list(person.get("source_ids")):
-            person_source_map.setdefault((person_id, sid), set()).add("entity_source")
-        for claim_id in parse_cell_list(person.get("claim_ids")):
-            claim = claim_by_id.get(claim_id)
-            if claim:
-                for sid in parse_cell_list(claim.get("source_ids")):
-                    person_source_map.setdefault((person_id, sid), set()).add("entity_claim")
-    for rel in relationships:
-        for person_id in [str(rel.get("src_entity_id", "")), str(rel.get("dst_entity_id", ""))]:
-            if person_id in people_by_id:
-                for sid in parse_cell_list(rel.get("source_ids")):
-                    person_source_map.setdefault((person_id, sid), set()).add("relationship")
-                for claim_id in parse_cell_list(rel.get("claim_ids")):
-                    claim = claim_by_id.get(claim_id)
-                    if claim:
-                        for sid in parse_cell_list(claim.get("source_ids")):
-                            person_source_map.setdefault((person_id, sid), set()).add("relationship_claim")
-    for event in events:
-        for person_id in parse_cell_list(event.get("entity_ids")):
-            if person_id in people_by_id:
-                for sid in parse_cell_list(event.get("source_ids")):
-                    person_source_map.setdefault((person_id, sid), set()).add("event_entity")
-                for claim_id in parse_cell_list(event.get("claim_ids")):
-                    claim = claim_by_id.get(claim_id)
-                    if claim:
-                        for sid in parse_cell_list(claim.get("source_ids")):
-                            person_source_map.setdefault((person_id, sid), set()).add("event_claim")
-    for link in event_links:
-        person_id = str(link.get("entity_id", ""))
-        if person_id in people_by_id:
-            for sid in parse_cell_list(link.get("source_ids")):
-                person_source_map.setdefault((person_id, sid), set()).add("event_link")
-            for claim_id in parse_cell_list(link.get("claim_ids")):
-                claim = claim_by_id.get(claim_id)
-                if claim:
-                    for sid in parse_cell_list(claim.get("source_ids")):
-                        person_source_map.setdefault((person_id, sid), set()).add("event_link_claim")
-    person_source = []
-    for (person_id, sid), contexts in sorted(person_source_map.items(), key=lambda item: (entity_display(people_by_id.get(item[0][0])), item[0][1])):
-        source = source_by_id.get(sid, {})
-        person_source.append({
-            "edge_id": f"SP_{slugify(sid, 24).upper()}_{slugify(person_id, 24).upper()}",
-            "person_id": person_id,
-            "person_name": entity_display(people_by_id.get(person_id)),
-            "cluster_id": cluster_by_person.get(person_id, ""),
-            "source_id": sid,
-            "source_title": source.get("title", ""),
-            "source_grade": source.get("reliability_grade", ""),
-            "source_type": source.get("source_type", ""),
-            "publisher": source.get("publisher", ""),
-            "contexts": sorted(contexts),
-            "public_evidence_state": "public" if people_by_id.get(person_id, {}).get("public_export", True) is not False and source.get("public_export", True) is not False else "mixed",
-            "privacy_flag": people_by_id.get(person_id, {}).get("public_export", True) is False or source.get("public_export", True) is False,
-            "notes": "co-mention/context only" if contexts <= {"event_link", "event_link_claim"} else "",
-        })
-    person_source_nodes: list[dict[str, Any]] = []
-    source_node_ids = {row["source_id"] for row in person_source}
-    person_node_ids = {row["person_id"] for row in person_source}
-    for person_id in sorted(person_node_ids, key=lambda pid: entity_display(people_by_id.get(pid))):
-        person = people_by_id.get(person_id, {})
-        person_source_nodes.append({
-            "node_id": f"person:{person_id}",
-            "node_type": "person",
-            "label": entity_display(person),
-            "source_id": "",
-            "entity_id": person_id,
-            "reliability_grade": "",
-            "source_type": "",
-            "publisher": "",
-            "privacy_level": person.get("privacy_level", ""),
-            "living_status": person.get("living_status", ""),
-            "role_tags": person.get("role_tags", []),
-            "status": person.get("status", ""),
-            "public_export": person.get("public_export", True),
-            "degree": sum(1 for row in person_source if row["person_id"] == person_id),
-        })
-    for sid in sorted(source_node_ids):
-        source = source_by_id.get(sid, {})
-        person_source_nodes.append({
-            "node_id": f"source:{sid}",
-            "node_type": "source",
-            "label": source.get("title", sid),
-            "source_id": sid,
-            "entity_id": "",
-            "reliability_grade": source.get("reliability_grade", ""),
-            "source_type": source.get("source_type", ""),
-            "publisher": source.get("publisher", ""),
-            "privacy_level": "",
-            "living_status": "",
-            "role_tags": "",
-            "status": "",
-            "public_export": source.get("public_export", True),
-            "degree": sum(1 for row in person_source if row["source_id"] == sid),
-        })
+    person_products = build_person_source_products(ctx)
+    person_source = person_products["person_source"]
+    person_source_nodes = person_products["person_source_nodes"]
 
     readiness_products = build_readiness_products(ctx)
     readiness_rows = readiness_products["readiness_rows"]
     readiness_counts = readiness_products["readiness_counts"]
 
-    fragility = []
-    for row in edge_load.values():
-        status = str(row["status"])
-        load_score = int(row["load_bearing_score"])
-        support_score = STATUS_SCORE.get(status, 0.25)
-        if any(cls in {"category_bridge", "lead_context_bridge", "institutional_software_bridge"} for cls in row["bridge_classes"]):
-            support_score *= 0.7
-        fragility_score = round(max(0.0, min(1.0, 1.0 - support_score + min(0.25, load_score * 0.025))), 3)
-        if fragility_score <= 0.25:
-            tier = "stable"
-        elif fragility_score <= 0.5:
-            tier = "qualified"
-        elif fragility_score <= 0.75:
-            tier = "fragile"
-        else:
-            tier = "lead_only"
-        fragility.append({
-            "record_id": row["record_id"],
-            "edge_type": row["edge_type"],
-            "relation_type": row["relation_type"],
-            "relationship_class": ";".join(sorted(row.get("relationship_classes", []))),
-            "status": status,
-            "load_bearing_score": row["load_bearing_score"],
-            "bridge_class": ";".join(sorted(row["bridge_classes"])),
-            "source_ids": sorted(row["source_ids"]),
-            "claim_ids": sorted(row["claim_ids"]),
-            "support_score": round(support_score, 3),
-            "fragility_score": fragility_score,
-            "fragility_tier": tier,
-            "required_caveat": "Do not narrate as direct influence/contact." if tier in {"fragile", "lead_only"} else "",
-            "example_path": row["example_path"],
-        })
-    fragility.sort(key=lambda row: (-int(row["load_bearing_score"]), str(row["record_id"])))
+    fragility = build_fragility(edge_load)
 
     write_csv(out / "cluster_bridge_sankey_nodes.csv", sankey_nodes, [
         "cluster_id", "cluster_label", "member_entity_ids", "member_names", "size", "mean_kde_density",
