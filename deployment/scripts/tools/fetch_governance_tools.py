@@ -150,7 +150,11 @@ def run_binary(name: str, args: list[str], offline: bool) -> int:
 
 
 def audit_deps() -> int:
-    return run_checked([sys.executable, "-m", "pip_audit", "--progress-spinner", "off"])
+    cache_dir = ROOT / ".uv-cache" / "pip-audit"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    return run_checked(
+        [sys.executable, "-m", "pip_audit", "--progress-spinner", "off", "--cache-dir", str(cache_dir)]
+    )
 
 
 def audit_licenses() -> int:

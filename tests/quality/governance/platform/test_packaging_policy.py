@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
-import re
-import tomllib
 import json
+import re
+import subprocess
+import sys
+import tomllib
 
 from tests.helpers import KIT_ROOT, moon_task_names
 
@@ -87,3 +89,41 @@ def test_moon_uses_packaging_check_scripts():
     assert {"audit-licenses", "build-dist"} <= moon_task_names()
     assert "deployment/scripts/checks/license_policy.py" in tooling
     assert "deployment/scripts/checks/fresh_build.py" in tooling
+
+
+def test_license_policy_allows_agpl_project_and_copyleft_dependencies(tmp_path):
+    records = [
+        {"Name": "crime-research-kit", "Version": "0.11.0", "License": "AGPL-3.0-only"},
+        {"Name": "chardet", "Version": "5.2.0", "License": "GNU Lesser General Public License v2 or later"},
+        {"Name": "tld", "Version": "0.13.2", "License": "MPL-1.1 OR GPL-2.0-only OR LGPL-2.1-or-later"},
+    ]
+    input_path = tmp_path / "licenses.json"
+    input_path.write_text(json.dumps(records), encoding="utf-8")
+
+    proc = subprocess.run(
+        [sys.executable, "deployment/scripts/checks/license_policy.py", "--input", str(input_path)],
+        cwd=KIT_ROOT,
+        text=True,
+        capture_output=True,
+    )
+
+    assert proc.returncode == 0
+    assert "DENY" not in proc.stdout
+
+
+def test_license_policy_still_denies_sspl_family(tmp_path):
+    input_path = tmp_path / "licenses.json"
+    input_path.write_text(
+        json.dumps([{"Name": "example", "Version": "1.0.0", "License": "Server Side Public License"}]),
+        encoding="utf-8",
+    )
+
+    proc = subprocess.run(
+        [sys.executable, "deployment/scripts/checks/license_policy.py", "--input", str(input_path)],
+        cwd=KIT_ROOT,
+        text=True,
+        capture_output=True,
+    )
+
+    assert proc.returncode == 1
+    assert "SSPL-family" in proc.stdout

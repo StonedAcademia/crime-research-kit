@@ -20,9 +20,16 @@ ALLOW_MARKERS = (
     "psf",
     "isc",
     "mozilla public license",
+    "mpl-1.1",
     "mpl-2.0",
+    "agpl",
+    "affero general public license",
+    "gpl",
+    "general public license",
+    "lgpl",
+    "lesser general public license",
 )
-DENY_MARKERS = ("agpl", "gpl", "sspl")
+DENY_MARKERS = ("sspl", "server side public license")
 
 
 def venv_bin(name: str) -> Path:
@@ -78,7 +85,7 @@ def main(argv: list[str]) -> int:
             unknown.append(label)
 
     if denied:
-        print("DENY: packages with GPL/AGPL/SSPL-family licenses:")
+        print("DENY: packages with SSPL-family licenses:")
         print("\n".join(f"- {item}" for item in denied))
         return 1
     if unknown:

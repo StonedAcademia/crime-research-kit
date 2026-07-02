@@ -98,9 +98,10 @@ Binaries land in a gitignored `deployment/tooling/bin/`.
   blocks, `api_key`/`token`/`secret` assignments with high-entropy literals,
   GitHub/Slack token shapes. gitleaks (full ruleset) runs in the audit lane;
   scan excludes gitignored case workspaces, includes fixtures/docs/scripts.
-- **License policy**: allowlist MIT, BSD-2/3, Apache-2.0, PSF, ISC, MPL-2.0;
-  denylist GPL/AGPL/SSPL (fail); unknown → report for manual review. Scope:
-  installed optional-extra dependency trees (runtime core has zero deps).
+- **License policy**: allowlist MIT, BSD-2/3, Apache-2.0, PSF, ISC, MPL-1.1/2.0,
+  GPL, LGPL, and AGPL-compatible terms; denylist SSPL-family terms (fail);
+  unknown -> report for manual review. Scope: installed optional-extra
+  dependency trees (runtime core has zero deps).
 - **Branch types**: `gov/*`, `ci/*`, `feat/*`, `fix/*`, `docs/*`, `test/*`,
   `chore/*` plus existing `dev`/`canary`/`main` gates. `docs/*` may skip
   integration; everything runs governance + smoke minimum. Enforced in

@@ -317,7 +317,7 @@ def test_network_modules_confined_to_acquisition():
 **Steps:**
 
 - [ ] **Step 8.1:** `test_packaging_policy.py`: parse `pyproject.toml` (tomllib): core `dependencies == []`; every extra's packages map to its capability (assert known groups exactly: dev/agentic/llm/mcp/web-local/documents/retrieval/memory-local/governance; no new extra without a spec edit — encode current grouping as the expected constant); `LICENSE` file exists and `project.license` declared; console scripts unchanged.
-- [ ] **Step 8.2:** Wire `moon run crk:audit-licenses` -> `license_policy.py` (skip-with-notice if pip-licenses absent) and `moon run crk:build-dist` -> `fresh_build.py`. Run both for real; fix fallout (missing `license` field, MANIFEST gaps).
+- [ ] **Step 8.2:** Wire `moon run crk:audit-licenses` -> `license_policy.py` (skip-with-notice if pip-licenses absent; AGPL/GPL/LGPL-compatible licenses allowed after the AGPL project-license switch, SSPL-family terms denied) and `moon run crk:build-dist` -> `fresh_build.py`. Run both for real; fix fallout (missing `license` field, MANIFEST gaps).
 - [ ] **Step 8.3:** Green. Commits: `test(governance): packaging and extras grouping policy`, `feat(checks): license policy and fresh-build verification scripts`
 
 ## Phase 9 — Branch `ci/github-actions` (after 1-8 merged to main)
