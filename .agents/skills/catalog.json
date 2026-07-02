@@ -1,0 +1,196 @@
+{
+  "version": 1,
+  "layout": "flat",
+  "source_of_truth": {
+    "lanes": "docs/registry/",
+    "templates": ".agents/skills/truecrime-cult-research/assets/templates/",
+    "generated_references": [
+      ".agents/skills/truecrime-cult-research/references/lane_registry.md",
+      ".agents/skills/public-records-router/references/routing_matrix.md"
+    ]
+  },
+  "groups": [
+    {
+      "id": "core",
+      "title": "Core ledger and workflow",
+      "skills": ["truecrime-cult-research"]
+    },
+    {
+      "id": "public-record",
+      "title": "Public-record lanes",
+      "skills": [
+        "corporate-financial-records",
+        "educational-path-records",
+        "geographical-location-intelligence",
+        "legal-court-records",
+        "licensing-professional-records",
+        "media-transcript-intelligence",
+        "missing-persons-case",
+        "property-location-records"
+      ]
+    },
+    {
+      "id": "support",
+      "title": "Support lanes",
+      "skills": [
+        "criminal-research",
+        "identity-resolution",
+        "public-records-router",
+        "source-capture-preservation"
+      ]
+    },
+    {
+      "id": "review",
+      "title": "Review lanes",
+      "skills": [
+        "claim-contradiction-audit",
+        "foia-open-records-planning",
+        "narrative-readiness-review",
+        "privacy-redaction-audit",
+        "source-independence-audit"
+      ]
+    }
+  ],
+  "skills": {
+    "claim-contradiction-audit": {
+      "group": "review",
+      "registry_lanes": ["contradiction"],
+      "templates": ["claim-contradiction"],
+      "references": ["case_mapping.md", "source_lanes.md"]
+    },
+    "corporate-financial-records": {
+      "group": "public-record",
+      "registry_lanes": ["corporate"],
+      "templates": ["corporate"],
+      "references": ["case_mapping.md", "source_lanes.md"]
+    },
+    "criminal-research": {
+      "group": "support",
+      "registry_lanes": ["criminal-research"],
+      "templates": ["criminal-research"],
+      "references": ["case_mapping.md", "forensic_lenses.md"]
+    },
+    "educational-path-records": {
+      "group": "public-record",
+      "registry_lanes": ["education"],
+      "templates": ["education"],
+      "references": ["case_mapping.md", "source_lanes.md"]
+    },
+    "foia-open-records-planning": {
+      "group": "review",
+      "registry_lanes": ["foia-open-records"],
+      "templates": ["foia-open-records"],
+      "references": ["case_mapping.md", "request_checklist.md"]
+    },
+    "geographical-location-intelligence": {
+      "group": "public-record",
+      "registry_lanes": ["geographical-location"],
+      "templates": ["geographical-location"],
+      "references": ["case_mapping.md", "map_packet.md", "source_lanes.md"]
+    },
+    "identity-resolution": {
+      "group": "support",
+      "registry_lanes": ["identity-resolution"],
+      "templates": ["identity-resolution"],
+      "references": ["case_mapping.md", "source_lanes.md"]
+    },
+    "legal-court-records": {
+      "group": "public-record",
+      "registry_lanes": ["legal-court"],
+      "templates": ["legal-court"],
+      "references": ["case_mapping.md", "source_lanes.md"]
+    },
+    "licensing-professional-records": {
+      "group": "public-record",
+      "registry_lanes": ["licensing-professional"],
+      "templates": ["licensing-professional"],
+      "references": ["case_mapping.md", "source_lanes.md"]
+    },
+    "media-transcript-intelligence": {
+      "group": "public-record",
+      "registry_lanes": ["media-transcript"],
+      "templates": ["media-transcript"],
+      "references": ["case_mapping.md", "source_lanes.md"]
+    },
+    "missing-persons-case": {
+      "group": "public-record",
+      "registry_lanes": ["missing-persons"],
+      "templates": ["missing-persons"],
+      "references": ["candidate_matching.md", "case_mapping.md", "source_lanes.md"]
+    },
+    "narrative-readiness-review": {
+      "group": "review",
+      "registry_lanes": ["narrative-readiness"],
+      "templates": ["narrative-readiness"],
+      "references": ["case_mapping.md", "readiness_checklist.md"]
+    },
+    "privacy-redaction-audit": {
+      "group": "review",
+      "registry_lanes": ["privacy-redaction"],
+      "templates": ["privacy-redaction"],
+      "references": ["case_mapping.md", "redaction_rules.md"]
+    },
+    "property-location-records": {
+      "group": "public-record",
+      "registry_lanes": ["property-location"],
+      "templates": ["property-location"],
+      "references": ["case_mapping.md", "source_lanes.md"]
+    },
+    "public-records-router": {
+      "group": "support",
+      "registry_lanes": ["public-records-router"],
+      "templates": ["public-records-router"],
+      "references": ["case_mapping.md", "routing_matrix.md"]
+    },
+    "source-capture-preservation": {
+      "group": "support",
+      "registry_lanes": ["source-capture"],
+      "templates": ["source-capture"],
+      "references": ["case_mapping.md", "source_lanes.md"]
+    },
+    "source-independence-audit": {
+      "group": "review",
+      "registry_lanes": ["source-independence"],
+      "templates": ["source-independence"],
+      "references": ["case_mapping.md", "independence_rules.md"]
+    },
+    "truecrime-cult-research": {
+      "group": "core",
+      "registry_lanes": [],
+      "templates": [
+        "claim-contradiction",
+        "corporate",
+        "criminal-research",
+        "education",
+        "foia-open-records",
+        "generic",
+        "geographical-location",
+        "identity-resolution",
+        "legal-court",
+        "licensing-professional",
+        "media-transcript",
+        "missing-persons",
+        "narrative-readiness",
+        "privacy-redaction",
+        "property-location",
+        "public-records-router",
+        "source-capture",
+        "source-independence"
+      ],
+      "references": [
+        "controlled_vocabularies.md",
+        "entity_taxonomy.md",
+        "extraction_prompt.md",
+        "lane_registry.md",
+        "manim_export_spec.md",
+        "privacy_safety_rules.md",
+        "query_plans.md",
+        "research_workflow.md",
+        "source_quality_rubric.md",
+        "topic_extraction_templates.md"
+      ],
+      "scripts": ["tcr.py"],
+      "assets": ["templates"]
+    }
+  }
+}
