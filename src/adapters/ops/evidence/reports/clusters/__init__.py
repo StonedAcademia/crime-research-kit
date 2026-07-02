@@ -1,0 +1,1 @@
+"""People clustering report command."""
