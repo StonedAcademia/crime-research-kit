@@ -122,6 +122,7 @@ from adapters.ops.evidence.quality.safety.readiness import (  # noqa: E402
     review_narrative_readiness,
 )
 from adapters.ops.evidence.quality.safety.source_independence import source_independence  # noqa: E402
+from adapters.ops.evidence.reports.analysis.command.builders.bridges import build_cluster_bridges  # noqa: E402
 from adapters.ops.evidence.reports.analysis.command.context import load_analysis_context  # noqa: E402
 from adapters.ops.evidence.reports.analysis.classifiers import (  # noqa: E402
     GRADE_SCORE,
@@ -190,124 +191,16 @@ def export_analysis_charts(args: argparse.Namespace) -> None:
     graph_meta = ctx.graph_meta
     cluster_members = ctx.cluster_members
     cluster_ids = ctx.cluster_ids
-    sankey_nodes: list[dict[str, Any]] = []
-    for cluster_id in cluster_ids:
-        members = sorted(cluster_members[cluster_id], key=lambda person_id: entity_display(people_by_id.get(person_id)))
-        summary = cluster_summary.get(cluster_id, {})
-        sankey_nodes.append({
-            "cluster_id": cluster_id,
-            "cluster_label": cluster_labels.get(cluster_id, summary.get("label") or summary.get("members") or cluster_id),
-            "member_entity_ids": members,
-            "member_names": [entity_display(people_by_id.get(person_id)) for person_id in members],
-            "size": len(members),
-            "mean_kde_density": summary.get("mean_kde_density", ""),
-            "internal_edge_weight": summary.get("internal_edge_weight", ""),
-            "boundary_edge_weight": summary.get("boundary_edge_weight", ""),
-            "notes": "cluster from people_clusters.csv" if cluster_summary else "fallback one-person cluster",
-        })
-
-    cluster_bridge_rows: list[dict[str, Any]] = []
-    cluster_bridge_links: list[dict[str, Any]] = []
-    bridge_segment_rows: list[dict[str, Any]] = []
-    edge_load: dict[str, dict[str, Any]] = {}
+    bridge_products = build_cluster_bridges(ctx)
+    sankey_nodes = bridge_products["sankey_nodes"]
+    cluster_bridge_rows = bridge_products["cluster_bridge_rows"]
+    cluster_bridge_links = bridge_products["cluster_bridge_links"]
+    bridge_segment_rows = bridge_products["bridge_segment_rows"]
+    edge_load = bridge_products["edge_load"]
     path_atlas: list[dict[str, Any]] = []
     path_segments: list[dict[str, Any]] = []
-
-    def node_label(node_id: str) -> str:
-        return str(graph_meta.get(node_id, {}).get("label", node_id))
-
-    def path_label(steps: list[tuple[str, str, dict[str, Any]]]) -> str:
-        if not steps:
-            return ""
-        return " -> ".join([node_label(steps[0][0]), *[node_label(step[1]) for step in steps]])
-
-    audit_by_pair = {(row["src_cluster"], row["dst_cluster"]): row for row in audit_bridges}
-    bridge_pairs = list(audit_by_pair) if audit_by_pair else list(combinations(cluster_ids, 2))
-    for left, right in bridge_pairs:
-        steps = shortest_analysis_path(graph, cluster_members[left], cluster_members[right])
-        audit_row = audit_by_pair.get((left, right), {})
-        if steps is None and not audit_row:
-            continue
-        steps = steps or []
-        statuses = sorted({str(step[2].get("status", "")) for step in steps})
-        relationship_classes = sorted({
-            relationship_class(step[2], str(step[2].get("edge_type", "relationship")))
-            for step in steps
-        })
-        source_ids = sorted({sid for step in steps for sid in parse_cell_list(step[2].get("source_ids"))})
-        if audit_row.get("audit_source_ids"):
-            source_ids = sorted(set(source_ids) | set(parse_cell_list(audit_row.get("audit_source_ids"))))
-        claim_ids = sorted({cid for step in steps for cid in parse_cell_list(step[2].get("claim_ids"))})
-        source_rows = [source_by_id[sid] for sid in source_ids if sid in source_by_id]
-        boundary_claim_ids = sorted(
-            claim_id for claim_id in claim_ids
-            if claim_id in claim_by_id and boundary_signal(claim_by_id[claim_id])
-        )
-        bridge_class = audit_bridge_class(str(audit_row.get("capacity", ""))) if audit_row else classify_bridge_path(steps, graph_meta)
-        path_text = path_label(steps) or str(audit_row.get("audit_path", ""))
-        public_export = all(step[2].get("public_export", True) is not False for step in steps) if steps else bool(audit_row)
-        is_lead_bridge = "lead" in " ".join([str(audit_row.get("capacity", "")), str(audit_row.get("boundary_text", "")), bridge_class]).lower()
-        row = {
-            "bridge_id": audit_row.get("bridge_id") or f"B_{left}_{right}_{slugify(bridge_class, 32).upper()}",
-            "src_cluster": left,
-            "dst_cluster": right,
-            "src_cluster_label": cluster_labels.get(left, left),
-            "dst_cluster_label": cluster_labels.get(right, right),
-            "bridge_class": bridge_class,
-            "relationship_classes": relationship_classes,
-            "hops": len(steps),
-            "path": path_text,
-            "statuses": statuses,
-            "source_ids": source_ids,
-            "claim_ids": claim_ids,
-            "boundary_claim_ids": boundary_claim_ids,
-            "boundary_text": audit_row.get("boundary_text", ""),
-            "source_grade_counts": source_grade_counts(source_rows),
-            "public_readiness": "lead_or_disputed" if is_lead_bridge else readiness_label({"status": weakest_status(statuses) or "single_source", "public_export": public_export}, source_rows),
-            "public_export": public_export,
-            "notes": audit_row.get("capacity", ""),
-        }
-        cluster_bridge_rows.append(row)
-        cluster_bridge_links.append(row)
-        for src, dst, edge in steps:
-            record_id = str(edge.get("record_id", ""))
-            if not record_id:
-                continue
-            bridge_segment_rows.append({
-                "bridge_id": row["bridge_id"],
-                "segment_index": len([segment for segment in bridge_segment_rows if segment.get("bridge_id") == row["bridge_id"]]) + 1,
-                "src_id": src,
-                "src_label": node_label(src),
-                "dst_id": dst,
-                "dst_label": node_label(dst),
-                "record_type": edge.get("edge_type", ""),
-                "record_id": record_id,
-                "relation_type": edge.get("relation_type", ""),
-                "relationship_class": edge.get("relationship_class") or relationship_class(edge, str(edge.get("edge_type", "relationship"))),
-                "status": edge.get("status", ""),
-                "confidence": edge.get("confidence", ""),
-                "source_ids": parse_cell_list(edge.get("source_ids")),
-                "claim_ids": parse_cell_list(edge.get("claim_ids")),
-                "public_export": edge.get("public_export", True),
-                "guardrail_note": "lead/category/context edge; do not read as direct personal tie" if classify_bridge_path([(src, dst, edge)], graph_meta) != "direct_or_near_direct" else "",
-            })
-            load = edge_load.setdefault(record_id, {
-                "record_id": record_id,
-                "edge_type": edge.get("edge_type", ""),
-                "relation_type": edge.get("relation_type", ""),
-                "relationship_class": edge.get("relationship_class") or relationship_class(edge, str(edge.get("edge_type", "relationship"))),
-                "status": edge.get("status", ""),
-                "source_ids": set(),
-                "claim_ids": set(),
-                "load_bearing_score": 0,
-                "bridge_classes": set(),
-                "example_path": path_label(steps),
-            })
-            load["load_bearing_score"] += 1
-            load["bridge_classes"].add(bridge_class)
-            load.setdefault("relationship_classes", set()).add(edge.get("relationship_class") or relationship_class(edge, str(edge.get("edge_type", "relationship"))))
-            load["source_ids"].update(parse_cell_list(edge.get("source_ids")))
-            load["claim_ids"].update(parse_cell_list(edge.get("claim_ids")))
+    node_label = ctx.node_label
+    path_label = ctx.path_label
 
     anchor_id = "E_BILL_W" if "E_BILL_W" in people_by_id else (sorted(people_by_id, key=lambda eid: entity_display(people_by_id[eid]))[0] if people_by_id else "")
     if anchor_id:
