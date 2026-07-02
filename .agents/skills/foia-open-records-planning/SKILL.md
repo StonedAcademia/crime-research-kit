@@ -5,6 +5,11 @@ description: Public-records request planning workflow for FOIA, state open-recor
 
 # FOIA Open Records Planning
 
+## Operation vocabulary
+
+Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `foia-open-records` for this lane; CLI fallback: `tcr.py draft-extraction ... --template foia-open-records`.
+
+
 ## Purpose
 
 Use this skill to plan public-records requests for a TRCR case. A request plan is a lead and workflow artifact; it does not prove records exist or support factual claims until responsive records are received, registered, preserved, extracted, and cited.

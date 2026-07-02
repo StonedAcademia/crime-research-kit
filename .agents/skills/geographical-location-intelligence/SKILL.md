@@ -5,6 +5,11 @@ description: "TRCR workflow for identifying, reconciling, and mapping locations 
 
 # Geographical Location Intelligence
 
+## Operation vocabulary
+
+Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `geographical-location` for this lane; CLI fallback: `tcr.py draft-extraction ... --template geographical-location`.
+
+
 ## Purpose
 
 Use this skill to turn source-supported location references into a defensible case map. The focus is evidence geography: where events happened, where evidence items were found or referenced, how locations of interest relate to each other, and which map layers or place aliases are supported by sources.

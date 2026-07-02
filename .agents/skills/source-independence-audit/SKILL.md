@@ -5,6 +5,11 @@ description: Source-chain and corroboration workflow for detecting repeated wire
 
 # Source Independence Audit
 
+## Operation vocabulary
+
+Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `source-independence` for this lane; CLI fallback: `tcr.py draft-extraction ... --template source-independence`.
+
+
 ## Purpose
 
 Use this skill to check whether claims, events, event links, or relationships rely on genuinely independent sources. Multiple citations do not equal corroboration when they repeat the same wire story, press release, docket packet, author, publisher, or archive chain.

@@ -5,6 +5,11 @@ description: "TRCR workflow for identifying source-supported missing-person cand
 
 # Missing Persons Case
 
+## Operation vocabulary
+
+Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `missing-persons` for this lane; CLI fallback: `tcr.py draft-extraction ... --template missing-persons`.
+
+
 ## Purpose
 
 Use this skill to identify and structure missing-person candidates that may be relevant to a TRCR case. A candidate match is a lead until public sources support identity, date, location, and status. Do not contact relatives, witnesses, law enforcement, schools, employers, or private people.

@@ -5,6 +5,11 @@ description: TRCR workflow for finding and documenting conflicting claims, denia
 
 # Claim Contradiction Audit
 
+## Operation vocabulary
+
+Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `claim-contradiction` for this lane; CLI fallback: `tcr.py draft-extraction ... --template claim-contradiction`.
+
+
 ## Purpose
 
 Use this skill to identify and document conflicts in a TRCR case file. The output is a review packet that preserves uncertainty and points to source-backed next actions; it does not automatically resolve disputes or rewrite claim statuses.

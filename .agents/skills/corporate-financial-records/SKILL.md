@@ -5,6 +5,11 @@ description: Public-record workflow for researching corporations, nonprofits, ba
 
 # Corporate Financial Records
 
+## Operation vocabulary
+
+Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `corporate` for this lane; CLI fallback: `tcr.py draft-extraction ... --template corporate`.
+
+
 ## Purpose
 
 Use this skill to build a public, source-traceable corporate record packet for a TRCR case. Prioritize official filings and court/government records, preserve uncertainty, and add only source-supported corporate facts to the case ledgers.

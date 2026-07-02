@@ -5,6 +5,11 @@ description: Public-output readiness workflow for TRCR scripts, reports, episode
 
 # Narrative Readiness Review
 
+## Operation vocabulary
+
+Lane/template metadata is generated from `docs/lanes.json`; do not invent new lane IDs in this skill doc. Use operation `draft_extraction` with template `narrative-readiness` for this lane; CLI fallback: `tcr.py draft-extraction ... --template narrative-readiness`.
+
+
 ## Purpose
 
 Use this skill before turning a TRCR case ledger into a public script, report, video, timeline, or evidence board. The review identifies blockers and caveats; it does not rewrite claims automatically.
