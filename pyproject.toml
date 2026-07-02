@@ -67,6 +67,13 @@ trcr-mcp = "case_builder.mcp.server:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+"case_builder.lanes" = [
+  "registry_data/*.json",
+  "registry_data/lanes/*.json",
+  "registry_data/templates/*.json",
+]
+
 [tool.pytest.ini_options]
 testpaths = [
   "tests/unit",

@@ -4,14 +4,19 @@ from __future__ import annotations
 
 import copy
 import json
+from importlib.resources import files
+from importlib.resources.abc import Traversable
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Sequence
 
 
-def default_lanes_path(repo_root: Path | None = None) -> Path:
+def default_lanes_path(repo_root: Path | None = None) -> Path | Traversable:
     root = repo_root or Path(__file__).resolve().parents[3]
-    return root / "docs" / "registry"
+    checkout_path = root / "docs" / "registry"
+    if repo_root is not None or checkout_path.exists():
+        return checkout_path
+    return files("case_builder.lanes").joinpath("registry_data")
 
 
 def load_lanes(path: Path | None = None) -> dict[str, Any]:
@@ -25,20 +30,24 @@ def _load_default_lanes() -> dict[str, Any]:
     return _read_lanes(default_lanes_path())
 
 
-def _read_lanes(path: Path) -> dict[str, Any]:
+def _join(path: Any, name: str):
+    return path / name if isinstance(path, Path) else path.joinpath(name)
+
+
+def _read_lanes(path: Any) -> dict[str, Any]:
     if path.is_dir():
         return _read_sharded_lanes(path)
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _read_sharded_lanes(path: Path) -> dict[str, Any]:
-    index = json.loads((path / "index.json").read_text(encoding="utf-8"))
+def _read_sharded_lanes(path: Any) -> dict[str, Any]:
+    index = json.loads(_join(path, "index.json").read_text(encoding="utf-8"))
     lanes: dict[str, Any] = {}
     templates: dict[str, Any] = {}
     for shard in index["lane_shards"]:
-        lanes.update(json.loads((path / shard).read_text(encoding="utf-8")))
+        lanes.update(json.loads(_join(path, shard).read_text(encoding="utf-8")))
     for shard in index["template_shards"]:
-        templates.update(json.loads((path / shard).read_text(encoding="utf-8")))
+        templates.update(json.loads(_join(path, shard).read_text(encoding="utf-8")))
     return {
         "version": index["version"],
         "fallback_source_lanes": index["fallback_source_lanes"],

@@ -26,8 +26,8 @@ tasks:
   check:
     description: "Compile Python sources and validate the synthetic fixture."
     command: "proto"
-    args: ["run", "python", "--", "deployment/scripts/checks/check.py"]
-    inputs: ["@group(python)", "data/examples/synthetic_case/**/*", "pyproject.toml", "deployment/scripts/checks/check.py"]
+    args: ["run", "python", "--", "deployment/scripts/checks/core/check.py"]
+    inputs: ["@group(python)", "data/examples/synthetic_case/**/*", "pyproject.toml", "deployment/scripts/checks/core/check.py"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
