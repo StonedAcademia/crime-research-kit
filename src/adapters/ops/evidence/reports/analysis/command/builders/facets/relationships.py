@@ -4,18 +4,19 @@ from __future__ import annotations
 
 from typing import Any
 
-from adapters.ops.evidence.reports.analysis.classifiers import STATUS_SCORE, boundary_signal
+from adapters.ops.evidence.reports.analysis.classifiers import boundary_signal, status_score
 from adapters.ops.evidence.reports.analysis.command.context import AnalysisContext
 from adapters.ops.evidence.reports.analysis.relationships import relation_family, relationship_class
+from adapters.ops.evidence.reports.analysis.vocabulary import VocabPacks
 from adapters.ops.evidence.reports.common import RELATIONSHIP_CLASS_TITLES, parse_cell_list
 
 
 def build_relation_type_counts(ctx: AnalysisContext) -> list[dict[str, Any]]:
     relation_counts: dict[tuple[str, str, str, str], dict[str, Any]] = {}
     for rel in ctx.relationships:
-        _add_relation_count(relation_counts, rel, "relationship")
+        _add_relation_count(relation_counts, rel, "relationship", ctx.packs)
     for link in ctx.event_links:
-        _add_relation_count(relation_counts, link, "event_link")
+        _add_relation_count(relation_counts, link, "event_link", ctx.packs)
     return [
         row
         for row in sorted(relation_counts.values(), key=lambda item: (-float(item["weighted_count"]), str(item["relation_type"])))
@@ -26,11 +27,12 @@ def _add_relation_count(
     relation_counts: dict[tuple[str, str, str, str], dict[str, Any]],
     row: dict[str, Any],
     record_kind: str,
+    packs: VocabPacks,
 ) -> None:
     relation_type = str(row.get("relation_type", ""))
-    rel_class = relationship_class(row, record_kind if record_kind == "event_link" else "relationship")
+    rel_class = relationship_class(row, record_kind if record_kind == "event_link" else "relationship", packs=packs)
     status = str(row.get("status", ""))
-    family = relation_family(relation_type, record_kind)
+    family = relation_family(relation_type, record_kind, packs=packs)
     public_scope = "public" if row.get("public_export", True) is not False else "internal"
     key = (record_kind, rel_class, family, relation_type, status + "/" + public_scope)
     bucket = relation_counts.setdefault(key, {
@@ -50,7 +52,7 @@ def _add_relation_count(
         "sample_record_ids": [],
     })
     bucket["row_count"] += 1
-    weight = STATUS_SCORE.get(status, 0.3)
+    weight = status_score(status, packs=packs) or 0.3
     if "co_mentioned" in relation_type:
         weight *= 0.1
         bucket["lead_only_count"] += 1

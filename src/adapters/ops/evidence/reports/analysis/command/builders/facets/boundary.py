@@ -41,7 +41,7 @@ def build_boundary_rows(ctx: AnalysisContext) -> list[dict[str, Any]]:
                 "status": rel.get("status", ""),
                 "claim_type": "",
                 "boundary_kind": "relationship_note",
-                "relationship_class": relationship_class(rel),
+                "relationship_class": relationship_class(rel, packs=ctx.packs),
                 "summary": rel.get("notes", ""),
                 "source_ids": rel.get("source_ids", []),
                 "contradicts": "",
@@ -54,7 +54,7 @@ def build_boundary_rows(ctx: AnalysisContext) -> list[dict[str, Any]]:
                 "status": link.get("status", ""),
                 "claim_type": "",
                 "boundary_kind": "event_link_context",
-                "relationship_class": relationship_class(link, "event_link"),
+                "relationship_class": relationship_class(link, "event_link", packs=ctx.packs),
                 "summary": link.get("notes", "") or link.get("basis", ""),
                 "source_ids": link.get("source_ids", []),
                 "contradicts": "",
@@ -79,14 +79,16 @@ def build_readiness_products(ctx: AnalysisContext) -> dict[str, list[dict[str, A
                 "status": row.get("status", ""),
                 "confidence": row.get("confidence", ""),
                 "source_count": len(source_rows),
-                "best_source_grade": best_grade(source_rows),
+                "best_source_grade": best_grade(source_rows, packs=ctx.packs),
                 "source_grade_counts": source_grade_counts(source_rows),
                 "public_export": row.get("public_export", True),
                 "privacy_review": row.get("privacy_review", "clear"),
                 "readiness": readiness_label(row, source_rows),
                 "boundary_flag": boundary,
                 "required_caveat": "Boundary/lead/context wording required." if boundary else "",
-                "relationship_class": relationship_class(row, record_type) if record_type in {"event_link", "relationship"} else "",
+                "relationship_class": relationship_class(row, record_type, packs=ctx.packs)
+                if record_type in {"event_link", "relationship"}
+                else "",
                 "summary": row.get("claim") or row.get("title") or row.get("notes", ""),
             })
     readiness_count_map: dict[str, int] = {}

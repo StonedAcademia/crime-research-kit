@@ -50,7 +50,7 @@ def build_cluster_bridges(ctx: AnalysisContext) -> dict[str, Any]:
         steps = steps or []
         statuses = sorted({str(step[2].get("status", "")) for step in steps})
         relationship_classes = sorted({
-            relationship_class(step[2], str(step[2].get("edge_type", "relationship")))
+            relationship_class(step[2], str(step[2].get("edge_type", "relationship")), packs=ctx.packs)
             for step in steps
         })
         source_ids = sorted({sid for step in steps for sid in parse_cell_list(step[2].get("source_ids"))})
@@ -62,7 +62,11 @@ def build_cluster_bridges(ctx: AnalysisContext) -> dict[str, Any]:
             claim_id for claim_id in claim_ids
             if claim_id in ctx.claim_by_id and boundary_signal(ctx.claim_by_id[claim_id])
         )
-        bridge_class = audit_bridge_class(str(audit_row.get("capacity", ""))) if audit_row else classify_bridge_path(steps, ctx.graph_meta)
+        bridge_class = (
+            audit_bridge_class(str(audit_row.get("capacity", "")))
+            if audit_row
+            else classify_bridge_path(steps, ctx.graph_meta, packs=ctx.packs)
+        )
         path_text = ctx.path_label(steps) or str(audit_row.get("audit_path", ""))
         public_export = all(step[2].get("public_export", True) is not False for step in steps) if steps else bool(audit_row)
         is_lead_bridge = "lead" in " ".join([str(audit_row.get("capacity", "")), str(audit_row.get("boundary_text", "")), bridge_class]).lower()
@@ -82,7 +86,12 @@ def build_cluster_bridges(ctx: AnalysisContext) -> dict[str, Any]:
             "boundary_claim_ids": boundary_claim_ids,
             "boundary_text": audit_row.get("boundary_text", ""),
             "source_grade_counts": source_grade_counts(source_rows),
-            "public_readiness": "lead_or_disputed" if is_lead_bridge else readiness_label({"status": weakest_status(statuses) or "single_source", "public_export": public_export}, source_rows),
+            "public_readiness": "lead_or_disputed"
+            if is_lead_bridge
+            else readiness_label(
+                {"status": weakest_status(statuses, packs=ctx.packs) or "single_source", "public_export": public_export},
+                source_rows,
+            ),
             "public_export": public_export,
             "notes": audit_row.get("capacity", ""),
         }
@@ -120,19 +129,23 @@ def _append_bridge_segments(
             "record_type": edge.get("edge_type", ""),
             "record_id": record_id,
             "relation_type": edge.get("relation_type", ""),
-            "relationship_class": edge.get("relationship_class") or relationship_class(edge, str(edge.get("edge_type", "relationship"))),
+            "relationship_class": edge.get("relationship_class")
+            or relationship_class(edge, str(edge.get("edge_type", "relationship")), packs=ctx.packs),
             "status": edge.get("status", ""),
             "confidence": edge.get("confidence", ""),
             "source_ids": parse_cell_list(edge.get("source_ids")),
             "claim_ids": parse_cell_list(edge.get("claim_ids")),
             "public_export": edge.get("public_export", True),
-            "guardrail_note": "lead/category/context edge; do not read as direct personal tie" if classify_bridge_path([(src, dst, edge)], ctx.graph_meta) != "direct_or_near_direct" else "",
+            "guardrail_note": "lead/category/context edge; do not read as direct personal tie"
+            if classify_bridge_path([(src, dst, edge)], ctx.graph_meta, packs=ctx.packs) != "direct_or_near_direct"
+            else "",
         })
         load = edge_load.setdefault(record_id, {
             "record_id": record_id,
             "edge_type": edge.get("edge_type", ""),
             "relation_type": edge.get("relation_type", ""),
-            "relationship_class": edge.get("relationship_class") or relationship_class(edge, str(edge.get("edge_type", "relationship"))),
+            "relationship_class": edge.get("relationship_class")
+            or relationship_class(edge, str(edge.get("edge_type", "relationship")), packs=ctx.packs),
             "status": edge.get("status", ""),
             "source_ids": set(),
             "claim_ids": set(),
@@ -142,6 +155,9 @@ def _append_bridge_segments(
         })
         load["load_bearing_score"] += 1
         load["bridge_classes"].add(bridge_class)
-        load.setdefault("relationship_classes", set()).add(edge.get("relationship_class") or relationship_class(edge, str(edge.get("edge_type", "relationship"))))
+        load.setdefault("relationship_classes", set()).add(
+            edge.get("relationship_class")
+            or relationship_class(edge, str(edge.get("edge_type", "relationship")), packs=ctx.packs)
+        )
         load["source_ids"].update(parse_cell_list(edge.get("source_ids")))
         load["claim_ids"].update(parse_cell_list(edge.get("claim_ids")))

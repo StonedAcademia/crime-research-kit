@@ -9,6 +9,7 @@ from typing import Any
 from core.casefile import slugify
 
 from adapters.ops.evidence.reports.analysis.relationships import relationship_class
+from adapters.ops.evidence.reports.analysis.vocabulary import VocabPacks, load_default_packs, match_pack
 from adapters.ops.evidence.reports.common import entity_display, parse_cell_list, read_csv_dicts
 
 
@@ -20,7 +21,7 @@ def audit_bridge_class(capacity: str) -> str:
         return "category_only_drug_rehab_bridge"
     if "behavior" in lowered or "authority" in lowered or "category" in lowered:
         return "category_bridge"
-    if "software" in lowered or "promis" in lowered or "institutional" in lowered:
+    if "software" in lowered or "institutional" in lowered:
         return "institutional_software_bridge"
     if "direct" in lowered:
         return "direct_org_person_context"
@@ -70,6 +71,7 @@ def analysis_graph(
     event_links: list[dict[str, Any]],
     relationships: list[dict[str, Any]],
     allowed_statuses: set[str] | None = None,
+    packs: VocabPacks | None = None,
 ) -> tuple[dict[str, list[tuple[str, dict[str, Any]]]], dict[str, dict[str, Any]]]:
     allowed = allowed_statuses or {"verified", "corroborated", "single_source"}
     graph: dict[str, list[tuple[str, dict[str, Any]]]] = {}
@@ -83,7 +85,18 @@ def analysis_graph(
         status = str(record.get("status", ""))
         if status not in allowed:
             return
-        edge = {"record_id": record_id, "edge_type": edge_type, "relation_type": record.get("relation_type", edge_type), "relationship_class": relationship_class(record, edge_type), "status": status, "source_ids": parse_cell_list(record.get("source_ids")), "claim_ids": parse_cell_list(record.get("claim_ids")), "confidence": record.get("confidence", ""), "notes": record.get("notes", ""), "public_export": record.get("public_export", True)}
+        edge = {
+            "record_id": record_id,
+            "edge_type": edge_type,
+            "relation_type": record.get("relation_type", edge_type),
+            "relationship_class": relationship_class(record, edge_type, packs=packs),
+            "status": status,
+            "source_ids": parse_cell_list(record.get("source_ids")),
+            "claim_ids": parse_cell_list(record.get("claim_ids")),
+            "confidence": record.get("confidence", ""),
+            "notes": record.get("notes", ""),
+            "public_export": record.get("public_export", True),
+        }
         graph.setdefault(left, []).append((right, edge))
         graph.setdefault(right, []).append((left, edge))
 
@@ -136,10 +149,14 @@ def shortest_analysis_path(
     return None
 
 
-def classify_bridge_path(steps: list[tuple[str, str, dict[str, Any]]], meta: dict[str, dict[str, Any]]) -> str:
+def classify_bridge_path(
+    steps: list[tuple[str, str, dict[str, Any]]],
+    meta: dict[str, dict[str, Any]],
+    packs: VocabPacks | None = None,
+) -> str:
     labels = " ".join(meta.get(node, {}).get("label", node) for step in steps for node in step[:2]).lower()
     notes = " ".join(str(step[2].get("notes", "")) for step in steps).lower()
-    classes = {relationship_class(step[2], str(step[2].get("edge_type", "relationship"))) for step in steps}
+    classes = {relationship_class(step[2], str(step[2].get("edge_type", "relationship")), packs=packs) for step in steps}
     if "hypothesis_requires_more_sources" in classes:
         return "hypothesis_requires_more_sources_bridge"
     if "contested_overlap" in classes:
@@ -150,10 +167,9 @@ def classify_bridge_path(steps: list[tuple[str, str, dict[str, Any]]], meta: dic
         return "method_diffusion_bridge"
     if "documented_successor" in classes:
         return "documented_successor_bridge"
-    if any(term in labels for term in ["drug rehabilitation program context", "behavioral-control and authority context"]):
-        return "category_bridge"
-    if any(term in labels for term in ["promis", "inslaw", "central intelligence agency", "cia"]):
-        return "institutional_software_bridge"
+    label_match = match_pack(labels, (packs or load_default_packs()).bridge_labels)
+    if label_match:
+        return label_match
     if "lead" in notes or "alleged" in notes:
         return "lead_context_bridge"
     if len(steps) <= 2:

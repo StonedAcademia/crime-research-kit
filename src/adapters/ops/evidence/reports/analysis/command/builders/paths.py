@@ -6,7 +6,7 @@ from typing import Any
 
 from core.casefile import slugify
 
-from adapters.ops.evidence.reports.analysis.classifiers import STATUS_SCORE
+from adapters.ops.evidence.reports.analysis.classifiers import status_score
 from adapters.ops.evidence.reports.analysis.command.context import AnalysisContext
 from adapters.ops.evidence.reports.analysis.paths import classify_bridge_path, shortest_analysis_path
 from adapters.ops.evidence.reports.analysis.relationships import relationship_class
@@ -39,10 +39,10 @@ def build_path_atlas(ctx: AnalysisContext) -> dict[str, list[dict[str, Any]]]:
             "hops": len(steps),
             "over_six_hops": len(steps) > 6,
             "path": ctx.path_label(steps),
-            "weakest_status": min(statuses, key=lambda status: STATUS_SCORE.get(status, 0.0)) if statuses else "",
-            "bridge_classes": sorted({classify_bridge_path([step], ctx.graph_meta) for step in steps}),
+            "weakest_status": min(statuses, key=lambda status: status_score(status, packs=ctx.packs)) if statuses else "",
+            "bridge_classes": sorted({classify_bridge_path([step], ctx.graph_meta, packs=ctx.packs) for step in steps}),
             "relationship_classes": sorted({
-                relationship_class(step[2], str(step[2].get("edge_type", "relationship")))
+                relationship_class(step[2], str(step[2].get("edge_type", "relationship")), packs=ctx.packs)
                 for step in steps
             }),
             "source_ids": sorted({sid for step in steps for sid in parse_cell_list(step[2].get("source_ids"))}),
@@ -50,7 +50,7 @@ def build_path_atlas(ctx: AnalysisContext) -> dict[str, list[dict[str, Any]]]:
             "caveat": "Contains category/context bridges; path length is not evidence of influence, guilt, membership, or control.",
         })
         for idx, (src, dst, edge) in enumerate(steps, start=1):
-            step_class = classify_bridge_path([(src, dst, edge)], ctx.graph_meta)
+            step_class = classify_bridge_path([(src, dst, edge)], ctx.graph_meta, packs=ctx.packs)
             path_segments.append({
                 "path_id": path_id,
                 "segment_index": idx,
@@ -63,7 +63,8 @@ def build_path_atlas(ctx: AnalysisContext) -> dict[str, list[dict[str, Any]]]:
                 "record_type": edge.get("edge_type", ""),
                 "record_id": edge.get("record_id", ""),
                 "relation_type": edge.get("relation_type", ""),
-                "relationship_class": edge.get("relationship_class") or relationship_class(edge, str(edge.get("edge_type", "relationship"))),
+                "relationship_class": edge.get("relationship_class")
+                or relationship_class(edge, str(edge.get("edge_type", "relationship")), packs=ctx.packs),
                 "segment_status": edge.get("status", ""),
                 "segment_confidence": edge.get("confidence", ""),
                 "segment_public_export": edge.get("public_export", True),

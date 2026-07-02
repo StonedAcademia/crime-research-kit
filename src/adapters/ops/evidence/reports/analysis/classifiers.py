@@ -4,25 +4,19 @@ from __future__ import annotations
 
 from typing import Any
 
+from adapters.ops.evidence.reports.analysis.vocabulary import VocabPacks, load_default_packs
 from adapters.ops.evidence.reports.common import parse_cell_list
 
-STATUS_SCORE = {
-    "verified": 1.0,
-    "corroborated": 0.9,
-    "single_source": 0.65,
-    "disputed": 0.35,
-    "unverified": 0.2,
-    "excluded_from_public_script": 0.1,
-    "false_or_retracted": 0.05,
-}
 
-GRADE_SCORE = {"A": 1.0, "B": 0.82, "C": 0.55, "D": 0.25, "X": 0.0}
+def status_score(status: str, packs: VocabPacks | None = None) -> float:
+    return (packs or load_default_packs()).status_scores.get(status, 0.0)
 
 
-def source_grade_score(source_rows: list[dict[str, Any]]) -> float:
+def source_grade_score(source_rows: list[dict[str, Any]], packs: VocabPacks | None = None) -> float:
     if not source_rows:
         return 0.0
-    return round(max(GRADE_SCORE.get(str(source.get("reliability_grade", "")), 0.35) for source in source_rows), 3)
+    scores = (packs or load_default_packs()).grade_scores
+    return round(max(scores.get(str(source.get("reliability_grade", "")), 0.35) for source in source_rows), 3)
 
 
 def readiness_label(row: dict[str, Any], source_rows: list[dict[str, Any]] | None = None) -> str:
@@ -59,8 +53,9 @@ def public_ready_record(row: dict[str, Any]) -> bool:
     return row.get("public_export", True) is not False and privacy == "clear"
 
 
-def best_grade(source_rows: list[dict[str, Any]]) -> str:
-    return max((str(source.get("reliability_grade", "")) for source in source_rows), key=lambda grade: GRADE_SCORE.get(grade, 0.0), default="")
+def best_grade(source_rows: list[dict[str, Any]], packs: VocabPacks | None = None) -> str:
+    scores = (packs or load_default_packs()).grade_scores
+    return max((str(source.get("reliability_grade", "")) for source in source_rows), key=lambda grade: scores.get(grade, 0.0), default="")
 
 
 def source_grade_counts(source_rows: list[dict[str, Any]]) -> str:
@@ -71,8 +66,9 @@ def source_grade_counts(source_rows: list[dict[str, Any]]) -> str:
     return ";".join(f"{grade}:{counts[grade]}" for grade in sorted(counts))
 
 
-def weakest_status(statuses: list[str]) -> str:
-    return min(statuses, key=lambda status: STATUS_SCORE.get(status, 0.0), default="")
+def weakest_status(statuses: list[str], packs: VocabPacks | None = None) -> str:
+    scores = (packs or load_default_packs()).status_scores
+    return min(statuses, key=lambda status: scores.get(status, 0.0), default="")
 
 
 def boundary_signal(row: dict[str, Any]) -> bool:

@@ -118,3 +118,32 @@ def test_case_pack_changes_classification(tmp_path):
     }
     assert relationship_class(record) == "unclassified"
     assert relationship_class(record, packs=load_case_packs(tmp_path)) == "contested_overlap"
+
+
+def test_status_and_grade_scores_come_from_packs():
+    from adapters.ops.evidence.reports.analysis.classifiers import source_grade_score, status_score
+
+    assert status_score("verified") == 1.0
+    custom = VocabPacks(status_scores={"verified": 0.5}, grade_scores={"A": 0.1})
+    assert status_score("verified", packs=custom) == 0.5
+    assert source_grade_score([{"reliability_grade": "A"}], packs=custom) == 0.1
+
+
+def test_layer_order_map_reads_packs():
+    from adapters.ops.evidence.reports.analysis.command.builders.layered.vocab import layer_order_map
+
+    assert layer_order_map()["person"] == 1
+    assert layer_order_map(VocabPacks(layer_order={"person": 42}))["person"] == 42
+
+
+def test_classify_bridge_path_label_terms_from_packs():
+    from adapters.ops.evidence.reports.analysis.paths import classify_bridge_path
+
+    steps = [("a", "b", {"relation_type": "x", "status": "corroborated", "edge_type": "relationship"})]
+    meta = {"a": {"label": "zeta widget hub"}, "b": {"label": "other"}}
+    default = classify_bridge_path(steps, meta)
+    assert default in {"direct_or_near_direct", "indirect_context_bridge", "unclassified_bridge"} or default.endswith(
+        "_bridge"
+    )
+    custom = VocabPacks(bridge_labels=[TermPack(key="category_bridge", terms=["zeta widget hub"])])
+    assert classify_bridge_path(steps, meta, packs=custom) == "category_bridge"

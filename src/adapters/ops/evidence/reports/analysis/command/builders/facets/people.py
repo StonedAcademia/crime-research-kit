@@ -6,8 +6,9 @@ from typing import Any
 
 from core.casefile import slugify
 
-from adapters.ops.evidence.reports.analysis.classifiers import STATUS_SCORE
+from adapters.ops.evidence.reports.analysis.classifiers import status_score
 from adapters.ops.evidence.reports.analysis.command.context import AnalysisContext
+from adapters.ops.evidence.reports.analysis.vocabulary import VocabPacks
 from adapters.ops.evidence.reports.common import entity_display, parse_cell_list
 
 
@@ -141,12 +142,12 @@ def _person_source_nodes(ctx: AnalysisContext, person_source: list[dict[str, Any
     return person_source_nodes
 
 
-def build_fragility(edge_load: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
+def build_fragility(edge_load: dict[str, dict[str, Any]], packs: VocabPacks | None = None) -> list[dict[str, Any]]:
     fragility = []
     for row in edge_load.values():
         status = str(row["status"])
         load_score = int(row["load_bearing_score"])
-        support_score = STATUS_SCORE.get(status, 0.25)
+        support_score = status_score(status, packs=packs) or 0.25
         if any(cls in {"category_bridge", "lead_context_bridge", "institutional_software_bridge"} for cls in row["bridge_classes"]):
             support_score *= 0.7
         fragility_score = round(max(0.0, min(1.0, 1.0 - support_score + min(0.25, load_score * 0.025))), 3)

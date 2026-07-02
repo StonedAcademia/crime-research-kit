@@ -4,12 +4,18 @@ from __future__ import annotations
 
 from typing import Any
 
-from adapters.ops.evidence.reports.analysis.command.builders.layered.vocab import LAYER_ORDER_MAP
+from adapters.ops.evidence.reports.analysis.command.builders.layered.vocab import layer_order_map
+from adapters.ops.evidence.reports.analysis.vocabulary import VocabPacks
 from adapters.ops.evidence.reports.weights import parse_float
 
 
-def build_layered_v2_layers(nodes: list[dict[str, Any]], edges: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def build_layered_v2_layers(
+    nodes: list[dict[str, Any]],
+    edges: list[dict[str, Any]],
+    packs: VocabPacks | None = None,
+) -> list[dict[str, Any]]:
     layer_summary_map: dict[str, dict[str, Any]] = {}
+    order_map = layer_order_map(packs)
     for node in nodes:
         layer = str(node.get("layer", "entity"))
         bucket = _layer_bucket(layer_summary_map, layer, node.get("layer_order", 99))
@@ -21,7 +27,7 @@ def build_layered_v2_layers(nodes: list[dict[str, Any]], edges: list[dict[str, A
     for edge in edges:
         for layer_key in ["src_layer", "dst_layer"]:
             layer = str(edge.get(layer_key) or "entity")
-            bucket = _layer_bucket(layer_summary_map, layer, LAYER_ORDER_MAP.get(layer, 99))
+            bucket = _layer_bucket(layer_summary_map, layer, order_map.get(layer, 99))
             bucket["edge_count"] += 1
             bucket["public_edge_count"] += 1 if edge.get("public_export", True) is not False else 0
             bucket["lead_or_disputed_edge_count"] += 1 if str(edge.get("readiness", "")) == "lead_or_disputed" else 0

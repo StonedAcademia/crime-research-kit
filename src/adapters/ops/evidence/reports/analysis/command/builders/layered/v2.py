@@ -5,18 +5,19 @@ from __future__ import annotations
 from typing import Any
 
 from adapters.ops.evidence.reports.analysis.classifiers import (
-    STATUS_SCORE,
     best_grade,
     boundary_signal,
     readiness_label,
     source_grade_counts,
     source_grade_score,
+    status_score,
 )
 from adapters.ops.evidence.reports.analysis.command.context import AnalysisContext
 from adapters.ops.evidence.reports.analysis.command.builders.layered.layers import build_layered_v2_layers
-from adapters.ops.evidence.reports.analysis.command.builders.layered.vocab import LAYER_ORDER_MAP
+from adapters.ops.evidence.reports.analysis.command.builders.layered.vocab import layer_order_map
 from adapters.ops.evidence.reports.analysis.paths import classify_bridge_path
 from adapters.ops.evidence.reports.analysis.relationships import relation_family
+from adapters.ops.evidence.reports.analysis.vocabulary import VocabPacks
 from adapters.ops.evidence.reports.common import parse_cell_list
 
 
@@ -32,7 +33,7 @@ def build_layered_v2(
         degree_by_node[str(edge.get("dst_id", ""))] = degree_by_node.get(str(edge.get("dst_id", "")), 0) + 1
     layered_v2_nodes = _layered_v2_nodes(ctx, layered_nodes, event_record_by_node, degree_by_node)
     layered_v2_edges = _layered_v2_edges(ctx, layered_edges)
-    layered_v2_layers = build_layered_v2_layers(layered_v2_nodes, layered_v2_edges)
+    layered_v2_layers = build_layered_v2_layers(layered_v2_nodes, layered_v2_edges, packs=ctx.packs)
     return {
         "layered_v2_nodes": layered_v2_nodes,
         "layered_v2_edges": layered_v2_edges,
@@ -40,7 +41,11 @@ def build_layered_v2(
     }
 
 
-def _node_evidence_state(record: dict[str, Any], source_rows: list[dict[str, Any]]) -> str:
+def _node_evidence_state(
+    record: dict[str, Any],
+    source_rows: list[dict[str, Any]],
+    packs: VocabPacks,
+) -> str:
     if record.get("public_export", True) is False:
         return "internal_only"
     status = str(record.get("status", ""))
@@ -48,7 +53,7 @@ def _node_evidence_state(record: dict[str, Any], source_rows: list[dict[str, Any
         return "candidate_or_identity_review"
     if not source_rows:
         return "unsourced_context"
-    grade = best_grade(source_rows)
+    grade = best_grade(source_rows, packs=packs)
     if grade in {"A", "B"}:
         return "documented_source"
     return "source_note_required"
@@ -61,6 +66,7 @@ def _layered_v2_nodes(
     degree_by_node: dict[str, int],
 ) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
+    order_map = layer_order_map(ctx.packs)
     for row in layered_nodes:
         node_id = str(row.get("node_id", ""))
         record = ctx.entity_by_id.get(node_id) or event_record_by_node.get(node_id) or {}
@@ -69,19 +75,19 @@ def _layered_v2_nodes(
         node_sources = ctx.source_rows_for_ids(source_ids)
         readiness = readiness_label(record, node_sources) if record else "review_needed"
         layer = str(row.get("layer") or "entity")
-        evidence_state = _node_evidence_state(record, node_sources)
+        evidence_state = _node_evidence_state(record, node_sources, ctx.packs)
         boundary = boundary_signal(record) if record else False
         rows.append({
             "node_id": node_id,
             "label": row.get("label", ""),
             "layer": layer,
-            "layer_order": LAYER_ORDER_MAP.get(layer, 99),
+            "layer_order": order_map.get(layer, 99),
             "cluster_id": row.get("cluster_id", ""),
             "status": record.get("status", row.get("status", "")),
             "degree": degree_by_node.get(node_id, 0),
             "source_count": len(source_ids),
             "independent_source_count": ctx.independent_source_count(node_sources),
-            "best_source_grade": best_grade(node_sources),
+            "best_source_grade": best_grade(node_sources, packs=ctx.packs),
             "source_grade_counts": source_grade_counts(node_sources),
             "claim_count": len(claim_ids),
             "evidence_state": evidence_state,
@@ -137,11 +143,11 @@ def _layered_v2_edges(ctx: AnalysisContext, layered_edges: list[dict[str, Any]])
             "notes": "",
             "public_export": edge.get("public_export", True),
         }
-        bridge_class = classify_bridge_path([(src_id, dst_id, graph_edge)], ctx.graph_meta)
+        bridge_class = classify_bridge_path([(src_id, dst_id, graph_edge)], ctx.graph_meta, packs=ctx.packs)
         readiness = readiness_label(graph_edge, edge_sources)
         evidence_weight = round(
-            STATUS_SCORE.get(str(edge.get("status", "")), 0.35)
-            * max(0.35, source_grade_score(edge_sources))
+            (status_score(str(edge.get("status", "")), packs=ctx.packs) or 0.35)
+            * max(0.35, source_grade_score(edge_sources, packs=ctx.packs))
             * (1.0 + min(4, len(edge_sources)) * 0.12),
             3,
         )
@@ -157,14 +163,18 @@ def _layered_v2_edges(ctx: AnalysisContext, layered_edges: list[dict[str, Any]])
             "edge_type": edge.get("edge_type", ""),
             "relation_type": edge.get("relation_type", ""),
             "relationship_class": edge.get("relationship_class", ""),
-            "relation_family": relation_family(str(edge.get("relation_type", "")), str(edge.get("edge_type", ""))),
+            "relation_family": relation_family(
+                str(edge.get("relation_type", "")),
+                str(edge.get("edge_type", "")),
+                packs=ctx.packs,
+            ),
             "bridge_class": bridge_class,
             "status": edge.get("status", ""),
             "confidence": edge.get("confidence", ""),
             "evidence_weight": evidence_weight,
             "source_count": len(edge_sources),
             "independent_source_count": ctx.independent_source_count(edge_sources),
-            "best_source_grade": best_grade(edge_sources),
+            "best_source_grade": best_grade(edge_sources, packs=ctx.packs),
             "source_grade_counts": source_grade_counts(edge_sources),
             "claim_ids": claim_ids,
             "source_ids": sorted(source_ids),
