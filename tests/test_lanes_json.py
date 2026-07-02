@@ -1,5 +1,7 @@
 import json
 import re
+import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -64,3 +66,47 @@ def test_generic_is_template_not_lane():
 
     assert "generic" in registry["templates"]
     assert "generic" not in registry["lanes"]
+
+
+def test_tcr_draft_extraction_help_includes_registry_templates():
+    registry = load_registry()
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            ".agents/skills/truecrime-cult-research/scripts/tcr.py",
+            "draft-extraction",
+            "--help",
+        ],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    for template_id in registry["templates"]:
+        assert template_id in result.stdout
+
+
+def test_tcr_plan_public_records_help_includes_planning_lanes():
+    registry = load_registry()
+    planning_lanes = {
+        lane_id for lane_id, lane in registry["lanes"].items() if lane["public_record_plan"]
+    }
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            ".agents/skills/truecrime-cult-research/scripts/tcr.py",
+            "plan-public-records",
+            "--help",
+        ],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    for lane_id in planning_lanes:
+        assert lane_id in result.stdout
+    assert "narrative-readiness" not in result.stdout

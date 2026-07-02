@@ -56,3 +56,10 @@ def test_public_record_plan_includes_registry_metadata():
 def test_public_record_plan_rejects_non_planning_lane():
     with pytest.raises(ValueError):
         lanes_registry.public_record_plan("narrative-readiness", "Jane Doe")
+
+
+def test_source_lanes_exports_match_registry():
+    from case_builder.agents import source_lanes
+
+    assert source_lanes.FALLBACK_LANES == lanes_registry.fallback_source_lanes()
+    assert source_lanes.LANE_TRIGGERS == lanes_registry.lane_triggers()
