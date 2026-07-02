@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="data/assets/banner-transparent.png" alt="Crime Research Kit banner" width="100%">
+  <img src="data/assets/man-pc-square.png" alt="Crime Research Kit" width="320">
 </p>
 
 <h1 align="center">Crime Research Kit</h1>
