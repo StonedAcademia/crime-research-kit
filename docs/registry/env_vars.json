@@ -85,6 +85,13 @@
       "prefix_class": "CRK_"
     },
     {
+      "name": "CRK_RELEASE_TAG",
+      "purpose": "Release tag override used by CI release readiness checks.",
+      "scope": "ci",
+      "default": "",
+      "prefix_class": "CRK_"
+    },
+    {
       "name": "CRK_REPO_ROOT",
       "purpose": "Deployment compose root override for mounted repo paths.",
       "scope": "deployment",

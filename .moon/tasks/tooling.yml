@@ -55,3 +55,11 @@ tasks:
     inputs: ["@group(python)", "pyproject.toml", "README.md", "LICENSE", "deployment/scripts/checks/fresh_build.py"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
+
+  release-check:
+    description: "Validate tag, changelog, reproducible build artifacts, and SBOMs."
+    command: "proto"
+    args: ["run", "python", "--", "deployment/scripts/checks/release/release_readiness.py"]
+    inputs: ["@group(python)", "pyproject.toml", "README.md", "LICENSE", "CHANGELOG.md", "deployment/scripts/checks/release/release_readiness.py"]
+    options: { cache: false, outputStyle: stream }
+    toolchains: system
