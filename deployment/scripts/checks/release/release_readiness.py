@@ -20,6 +20,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
 DEFAULT_EPOCH = "1735689600"
+SEMVER_PATTERN = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
+REQUIRED_CHANGELOG_SECTIONS = ("Added", "Changed", "Security", "Fixed")
+MIN_RELEASE_BULLETS = 12
 
 
 class ReleaseError(RuntimeError):
@@ -52,9 +55,17 @@ def current_tag(root: Path) -> str:
 
 
 def check_tag_matches_version(tag: str, version: str) -> None:
+    check_semver_version(version)
+    if not tag.startswith("v") or not SEMVER_PATTERN.fullmatch(tag[1:]):
+        raise ReleaseError("Release tag must look like vMAJOR.MINOR.PATCH.")
     expected = f"v{version}"
     if tag != expected:
         raise ReleaseError(f"Release tag {tag!r} does not match pyproject version {version!r}; expected {expected!r}.")
+
+
+def check_semver_version(version: str) -> None:
+    if not SEMVER_PATTERN.fullmatch(version):
+        raise ReleaseError(f"Project version {version!r} must be a semantic version MAJOR.MINOR.PATCH.")
 
 
 def changelog_sections(text: str) -> dict[str, str | None]:
@@ -65,13 +76,40 @@ def changelog_sections(text: str) -> dict[str, str | None]:
     return sections
 
 
+def changelog_release_body(text: str, version: str) -> str:
+    pattern = re.compile(rf"^## \[{re.escape(version)}\] - \d{{4}}-\d{{2}}-\d{{2}}\s*$", re.MULTILINE)
+    match = pattern.search(text)
+    if match is None:
+        return ""
+    start = match.end()
+    next_section = re.search(r"^## \[", text[start:], re.MULTILINE)
+    end = start + next_section.start() if next_section else len(text)
+    return text[start:end]
+
+
+def check_changelog_coverage(text: str, version: str) -> None:
+    body = changelog_release_body(text, version)
+    if not body.strip():
+        raise ReleaseError(f"CHANGELOG.md release section for {version} must not be empty.")
+    missing = [section for section in REQUIRED_CHANGELOG_SECTIONS if f"### {section}" not in body]
+    if missing:
+        raise ReleaseError(f"CHANGELOG.md release section for {version} is missing sections: {', '.join(missing)}.")
+    bullet_count = sum(1 for line in body.splitlines() if line.startswith("- "))
+    if bullet_count < MIN_RELEASE_BULLETS:
+        raise ReleaseError(
+            f"CHANGELOG.md release section for {version} must contain at least {MIN_RELEASE_BULLETS} bullets; found {bullet_count}."
+        )
+
+
 def check_changelog(text: str, version: str) -> None:
+    check_semver_version(version)
     sections = changelog_sections(text)
     if "Unreleased" not in sections:
         raise ReleaseError("CHANGELOG.md must contain a ## [Unreleased] section.")
     date = sections.get(version)
     if date is None:
         raise ReleaseError(f"CHANGELOG.md must contain a dated ## [{version}] - YYYY-MM-DD section.")
+    check_changelog_coverage(text, version)
 
 
 def archive_checkout(root: Path, dest: Path) -> Path:
