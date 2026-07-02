@@ -87,6 +87,11 @@ namespaces = true
   "registry_data/lanes/*.json",
   "registry_data/templates/*.json",
 ]
+"core.models" = [
+  "schemas_data/case/*.json",
+  "schemas_data/evidence/*.json",
+  "schemas_data/review/*.json",
+]
 
 [tool.pytest.ini_options]
 testpaths = [

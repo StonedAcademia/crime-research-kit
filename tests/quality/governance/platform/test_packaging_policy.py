@@ -56,6 +56,20 @@ REGISTRY_SHARDS = (
     "lanes/support.json",
     "templates/extraction.json",
 )
+SCHEMA_SHARDS = (
+    "case/artifact.schema.json",
+    "case/entity.schema.json",
+    "case/place.schema.json",
+    "case/source.schema.json",
+    "evidence/claim.schema.json",
+    "evidence/event.schema.json",
+    "evidence/event_link.schema.json",
+    "evidence/relationship.schema.json",
+    "review/quote.schema.json",
+    "review/redaction.schema.json",
+    "review/research_action.schema.json",
+    "review/source_span.schema.json",
+)
 
 
 def load_pyproject() -> dict:
@@ -93,6 +107,16 @@ def test_packaged_registry_data_matches_canonical_docs_registry():
     for rel in REGISTRY_SHARDS:
         assert json.loads((package_registry / rel).read_text(encoding="utf-8")) == json.loads(
             (docs_registry / rel).read_text(encoding="utf-8")
+        )
+
+
+def test_packaged_schema_data_matches_canonical_docs_schemas():
+    docs_schemas = KIT_ROOT / "docs" / "schemas"
+    package_schemas = KIT_ROOT / "src" / "core" / "models" / "schemas_data"
+
+    for rel in SCHEMA_SHARDS:
+        assert json.loads((package_schemas / rel).read_text(encoding="utf-8")) == json.loads(
+            (docs_schemas / rel).read_text(encoding="utf-8")
         )
 
 

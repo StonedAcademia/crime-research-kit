@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Quote",
+  "type": "object",
+  "required": [
+    "quote_id",
+    "source_id",
+    "exact_quote"
+  ],
+  "properties": {
+    "quote_id": {
+      "type": "string"
+    },
+    "source_id": {
+      "type": "string"
+    },
+    "speaker": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "exact_quote": {
+      "type": "string"
+    },
+    "page_or_timestamp": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_span_ids": {
+      "type": "array",
+      "description": "Optional precise citation span IDs locating this quote in the source.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "supports_claim_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "account_type": {
+      "type": "string",
+      "enum": [
+        "firsthand",
+        "secondhand",
+        "unclear",
+        "not_applicable"
+      ]
+    },
+    "public_export": {
+      "type": "boolean"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

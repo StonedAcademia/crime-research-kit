@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Source",
+  "type": "object",
+  "required": [
+    "source_id",
+    "title",
+    "source_type",
+    "reliability_grade",
+    "date_accessed"
+  ],
+  "properties": {
+    "source_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "news_article",
+        "eyewitness_account",
+        "court_record",
+        "government_record",
+        "official_report",
+        "interview",
+        "memoir",
+        "book",
+        "documentary",
+        "academic",
+        "archive",
+        "social_media_lead",
+        "other"
+      ]
+    },
+    "author": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "publisher": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "date_published": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "date_accessed": {
+      "type": "string"
+    },
+    "url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "archive_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "raw_path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "text_path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "content_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "capture_method": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "ingest_url",
+        "manual_registration",
+        "archive_lookup",
+        "local_file",
+        "registered_source",
+        null
+      ]
+    },
+    "capture_timestamp": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "preservation_checked_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "raw_sha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "text_sha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "raw_size_bytes": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "text_size_bytes": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "preservation_status": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "captured",
+        "registered_with_archive",
+        "metadata_only",
+        "missing_artifacts",
+        null
+      ]
+    },
+    "preservation_warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "reliability_grade": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "X"
+      ]
+    },
+    "independence_group": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "notes": {
+      "type": "string"
+    },
+    "public_export": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": true
+}

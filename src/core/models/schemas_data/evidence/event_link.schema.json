@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EventLink",
+  "type": "object",
+  "required": [
+    "event_link_id",
+    "entity_id",
+    "event_id",
+    "relation_type",
+    "source_ids"
+  ],
+  "properties": {
+    "event_link_id": {
+      "type": "string"
+    },
+    "entity_id": {
+      "type": "string"
+    },
+    "event_id": {
+      "type": "string"
+    },
+    "relation_type": {
+      "type": "string",
+      "description": "Specific entity-to-event predicate. This remains open because current case records use many source-specific predicates; use relationship_class for the controlled high-level category when available."
+    },
+    "relationship_class": {
+      "type": "string",
+      "description": "Controlled high-level relationship category for graph grouping and compatibility across cases.",
+      "enum": [
+        "documented_successor",
+        "method_diffusion",
+        "personnel_bridge",
+        "narrative_inheritance",
+        "contested_overlap",
+        "hypothesis_requires_more_sources"
+      ]
+    },
+    "basis": {
+      "type": "string"
+    },
+    "claim_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_span_ids": {
+      "type": "array",
+      "description": "Optional precise citation span IDs supporting this event link.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "description": "Numeric confidence from 0 to 1. This is intentionally a score, not a categorical enum.",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "verified",
+        "corroborated",
+        "single_source",
+        "disputed",
+        "unverified",
+        "excluded"
+      ]
+    },
+    "public_export": {
+      "type": "boolean"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}
