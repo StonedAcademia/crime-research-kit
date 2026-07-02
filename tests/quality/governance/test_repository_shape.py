@@ -19,6 +19,7 @@ MAX_DIRS_PER_DIR = 3
 MAX_NON_COMMENT_LOC = 200
 SKIPPED_ROOTS = (Path(".agents"), Path("data"), Path("docs/superpowers"))
 SRC_ROOT = Path("src")
+SRC_FILE_COUNT_EXEMPT_NAMES = {"README.md", "__init__.py"}
 DIR_LIMIT_OVERRIDES = {
     Path("docs/guides"): {"max_dirs": 4},
 }
@@ -41,6 +42,14 @@ def governed_paths() -> list[Path]:
     return [path for path in tracked_paths() if not is_skipped(path)]
 
 
+def is_src_file_count_exempt(path: Path) -> bool:
+    return path.name in SRC_FILE_COUNT_EXEMPT_NAMES and (path.parent == SRC_ROOT or SRC_ROOT in path.parents)
+
+
+def is_src_dir(path: Path) -> bool:
+    return path == SRC_ROOT or SRC_ROOT in path.parents
+
+
 def repo_shape(paths: list[Path]) -> tuple[set[Path], dict[Path, int], dict[Path, set[str]]]:
     dirs: set[Path] = {Path(".")}
     file_counts: dict[Path, int] = defaultdict(int)
@@ -48,7 +57,8 @@ def repo_shape(paths: list[Path]) -> tuple[set[Path], dict[Path, int], dict[Path
     for path in paths:
         parent = path.parent
         dirs.add(parent)
-        file_counts[parent] += 1
+        if not is_src_file_count_exempt(path):
+            file_counts[parent] += 1
         while parent != Path("."):
             dirs.add(parent.parent)
             child_dirs[parent.parent].add(parent.name)
@@ -64,18 +74,33 @@ def test_directories_keep_small_bounded_shape():
             continue
         limits = DIR_LIMIT_OVERRIDES.get(directory, {})
         max_files = limits.get("max_files", MAX_FILES_PER_DIR)
+        min_files = limits.get("min_files", MIN_FILES_PER_DIR)
         max_dirs = limits.get("max_dirs", MAX_DIRS_PER_DIR)
         files = file_counts.get(directory, 0)
         children = len(child_dirs.get(directory, set()))
-        files_ok = MIN_FILES_PER_DIR <= files <= max_files
+        if is_src_dir(directory) and children:
+            min_files = 0
+        files_ok = min_files <= files <= max_files
         dirs_ok = MIN_DIRS_PER_DIR <= children <= max_dirs
         if not files_ok or not dirs_ok:
             offenders.append(
-                f"{directory.as_posix()} files={files} allowed={MIN_FILES_PER_DIR}-{max_files} "
+                f"{directory.as_posix()} files={files} allowed={min_files}-{max_files} "
                 f"dirs={children} allowed={MIN_DIRS_PER_DIR}-{max_dirs}"
             )
 
     assert offenders == []
+
+
+def test_src_readmes_and_init_files_do_not_consume_file_count_budget():
+    _dirs, file_counts, _child_dirs = repo_shape(
+        [
+            Path("src/example/README.md"),
+            Path("src/example/__init__.py"),
+            Path("src/example/module.py"),
+        ]
+    )
+
+    assert file_counts[Path("src/example")] == 1
 
 
 def src_python_dirs() -> list[Path]:
