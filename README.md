@@ -10,6 +10,7 @@
 
 <p align="center">
   <a href="#quick-start">Quick start</a> |
+  <a href="#minimum-requirements">Requirements</a> |
   <a href="#what-you-can-build">What you can build</a> |
   <a href="#example-workflows">Examples</a> |
   <a href="#self-hosted-container-stack">Containers</a> |
@@ -148,6 +149,18 @@ trcr-case-builder query-case data/cases/example_case "Which timeline claims lack
 The local stack can help retrieve context and draft extraction candidates, but
 the canonical ledger remains `records/*.jsonl`.
 
+## Minimum Requirements
+
+- Python 3.10 or newer.
+- `pip` and Python `venv` support.
+- A local checkout of this repository, with commands run from the `tc-c-kit`
+  repository root.
+
+The core CLI mostly uses the Python standard library. Docker, Bun, Ollama,
+SearXNG, Qdrant, Tesseract, Ghostscript, and optional Python extras are only
+needed for the container stack, UFB exports, local retrieval, OCR, memory, or
+development workflows.
+
 ## Recommended install
 
 From this repo root:
@@ -155,7 +168,7 @@ From this repo root:
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -e .[dev]
+pip install -e '.[dev]'
 ```
 
 The core CLI mostly uses the Python standard library. Optional packages improve extraction and validation:
