@@ -23,18 +23,36 @@ That keeps the repo-local skill path at
 
 ## Install the Core Kit
 
-Create a virtual environment inside `tc-c-kit` and install the package in
-editable mode:
+For the minimum local app install, use the Makefile from inside `tc-c-kit`:
+
+```bash
+cd tc-c-kit
+make install
+```
+
+`make install` detects Linux or Windows, verifies Python 3.10 or newer, creates
+`.venv`, upgrades pip, and installs the core package in editable mode.
+
+To run the OS-specific target directly:
+
+```bash
+make install-linux
+make install-windows
+```
+
+To do the same setup manually from the wrapper root, create a virtual
+environment inside `tc-c-kit` and install the package in editable mode:
 
 ```bash
 python3 -m venv tc-c-kit/.venv
 source tc-c-kit/.venv/bin/activate
 python -m pip install --upgrade pip
-python -m pip install -e './tc-c-kit[dev]'
+python -m pip install -e './tc-c-kit'
 ```
 
-The `dev` extra installs the dependencies used by tests, schema validation,
-source extraction helpers, and chart exports.
+The minimum install uses the core package only. The `dev` extra installs the
+dependencies used by tests, schema validation, source extraction helpers, and
+chart exports.
 
 If you are already inside `tc-c-kit`, use `../.agents/...` for the skill script
 and `data/cases/...` for case paths. From the wrapper root, keep the examples in
