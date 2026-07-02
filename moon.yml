@@ -130,6 +130,21 @@ tasks:
       outputStyle: stream
     toolchains: system
 
+  branch-gate:
+    description: "Run branch-specific push gates for dev, canary, and main."
+    command: "proto"
+    args: ["run", "python", "--", "deployment/scripts/branch_gate.py"]
+    inputs:
+      - "@group(python)"
+      - "@group(tests)"
+      - "pyproject.toml"
+      - "deployment/scripts/branch_gate.py"
+    options:
+      cache: false
+      outputStyle: stream
+    preset: utility
+    toolchains: system
+
   docker-config:
     description: "Render the Docker Compose configuration."
     command: "proto"

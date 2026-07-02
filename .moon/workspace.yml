@@ -5,3 +5,12 @@ defaultProject: trcr
 
 pipeline:
   logRunningCommand: true
+
+vcs:
+  defaultBranch: main
+  hooks:
+    pre-push:
+      - "moon run trcr:branch-gate"
+  remoteCandidates:
+    - origin
+  sync: true
