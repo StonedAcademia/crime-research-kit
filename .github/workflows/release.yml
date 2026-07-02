@@ -8,6 +8,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      CRK_RELEASE_TAG: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -18,4 +20,5 @@ jobs:
       - run: make test
       - run: make build-dist
       - run: make sbom
+      - run: make release-check
       - run: make audit-secrets audit-deps

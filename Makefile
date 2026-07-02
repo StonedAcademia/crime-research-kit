@@ -5,7 +5,7 @@ PROJECT ?= crk
 	docker-build docker-up docker-down docker-logs docker-shell docker-pull-model \
 	docker-smoke docker-config check test test-unit test-integration test-e2e \
 	test-governance test-smoke audit-secrets audit-deps audit-licenses audit-links \
-	sbom build-dist init-sample validate-sample export-sample
+	sbom build-dist release-check init-sample validate-sample export-sample
 
 check-os:
 	@echo "moon/proto handle cross-platform task routing for this repository."
@@ -87,6 +87,9 @@ sbom:
 
 build-dist:
 	$(MOON) run $(PROJECT):build-dist
+
+release-check:
+	$(MOON) run $(PROJECT):release-check
 
 init-sample:
 	$(MOON) run $(PROJECT):init-sample
