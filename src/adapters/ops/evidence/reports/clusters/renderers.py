@@ -1,11 +1,13 @@
-"""People cluster HTML renderer."""
+"""People cluster report page and SVG figure builders."""
 
 from __future__ import annotations
 
-import html
 import math
 from typing import Any
 
+from core.models.reports import Circle, Line, ReportPage, SvgDoc, SvgElement, TableBlock, Text
+
+from adapters.ops.evidence.reports.analysis.pages.render import render_page
 from adapters.ops.evidence.reports.common import entity_display, parse_cell_list, truncate_label
 from adapters.ops.evidence.reports.weights import parse_float
 
@@ -18,62 +20,44 @@ def render_people_clusters_html(
     density_by_id: dict[str, float],
     include_private: bool,
 ) -> str:
+    return render_page(build_people_clusters_page(case_title, nodes, edges, cluster_by_id, density_by_id, include_private))
+
+
+def build_people_clusters_page(
+    case_title: str,
+    nodes: list[dict[str, Any]],
+    edges: list[dict[str, Any]],
+    cluster_by_id: dict[str, str],
+    density_by_id: dict[str, float],
+    include_private: bool,
+) -> ReportPage:
+    return ReportPage(
+        slug="people_clusters",
+        title="Leiden people clusters",
+        case_title=case_title,
+        summary=f"Scope: {'public and internal rows' if include_private else 'public-export rows only'}. Edge weights are evidence-weighted; node size is graph-kernel density. Dashed edges include weak co-mentions and should be treated as leads only.",
+        include_private=include_private,
+        back_href="clusters.md",
+        back_label="Back to clusters index",
+        figure=build_people_clusters_figure(nodes, edges, cluster_by_id, density_by_id),
+        tables=[
+            TableBlock(title="Clustered People", columns=["cluster", "person", "kde", "status", "public_export"], rows=_node_rows(nodes, cluster_by_id, density_by_id), limit=max(1, len(nodes))),
+            TableBlock(title="Weighted Edges", columns=["person", "person_2", "weight", "connection", "status"], rows=_edge_rows(edges), limit=max(1, len(edges))),
+        ],
+    )
+
+
+def build_people_clusters_figure(
+    nodes: list[dict[str, Any]],
+    edges: list[dict[str, Any]],
+    cluster_by_id: dict[str, str],
+    density_by_id: dict[str, float],
+) -> SvgDoc:
     width = 1280
     height = 820
     positions = _positions(width, height, nodes, cluster_by_id)
-    edge_lines = _edge_lines(edges, positions)
-    node_shapes = _node_shapes(nodes, positions, cluster_by_id, density_by_id)
-    node_rows = _node_rows(nodes, cluster_by_id, density_by_id)
-    edge_rows = _edge_rows(edges)
-    return f"""<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<title>Leiden people clusters - {html.escape(case_title)}</title>
-<style>
-body {{ margin: 0; font-family: Arial, sans-serif; color: #1f2933; background: #f7f8fa; }}
-main {{ max-width: 1420px; margin: 0 auto; padding: 28px; }}
-h1 {{ font-size: 26px; margin: 0 0 6px; }}
-p {{ max-width: 980px; line-height: 1.45; }}
-.panel {{ background: #fff; border: 1px solid #d8dee6; border-radius: 8px; padding: 18px; margin-top: 18px; }}
-svg {{ width: 100%; height: auto; background: #fbfcfe; border: 1px solid #d8dee6; border-radius: 8px; }}
-.edge {{ stroke: #64748b; opacity: 0.78; }}
-.node {{ fill: #ffffff; stroke-width: 4; }}
-.node-label {{ fill: #111827; font-size: 13px; font-weight: 700; text-anchor: middle; }}
-.node-sub {{ fill: #475569; font-size: 11px; text-anchor: middle; }}
-table {{ border-collapse: collapse; width: 100%; font-size: 13px; }}
-th, td {{ border-bottom: 1px solid #e2e8f0; padding: 8px; text-align: left; vertical-align: top; }}
-th {{ background: #eef2f7; }}
-</style>
-</head>
-<body>
-<main>
-<h1>Leiden people clusters</h1>
-<p>{html.escape(case_title)}. Scope: {"public and internal rows" if include_private else "public-export rows only"}. Edge weights are evidence-weighted; node size is graph-kernel density. Dashed edges include weak co-mentions and should be treated as leads only.</p>
-<section class="panel">
-<svg viewBox="0 0 {width} {height}" role="img" aria-label="Leiden people clusters">
-{''.join(edge_lines)}
-{''.join(node_shapes)}
-</svg>
-</section>
-<section class="panel">
-<h2>Clustered People</h2>
-<table>
-<thead><tr><th>Cluster</th><th>Person</th><th>KDE</th><th>Status</th><th>Public Export</th></tr></thead>
-<tbody>{node_rows}</tbody>
-</table>
-</section>
-<section class="panel">
-<h2>Weighted Edges</h2>
-<table>
-<thead><tr><th>Person</th><th>Person</th><th>Weight</th><th>Connection</th><th>Status</th></tr></thead>
-<tbody>{edge_rows}</tbody>
-</table>
-</section>
-</main>
-</body>
-</html>
-"""
+    elements = [*_edge_lines(edges, positions), *_node_shapes(nodes, positions, cluster_by_id, density_by_id)]
+    return SvgDoc(width=width, height=height, view_box=f"0 0 {width} {height}", role="img", aria_label="Leiden people clusters", elements=elements)
 
 
 def _positions(width: int, height: int, nodes: list[dict[str, Any]], cluster_by_id: dict[str, str]) -> dict[str, tuple[float, float]]:
@@ -90,18 +74,15 @@ def _positions(width: int, height: int, nodes: list[dict[str, Any]], cluster_by_
         members = sorted(clusters[cluster_id], key=entity_display)
         member_radius = 48 if len(members) > 1 else 0
         for member_idx, node in enumerate(members):
-            if len(members) == 1:
-                x, y = cluster_x, cluster_y
-            else:
-                member_angle = (2 * math.pi * member_idx / len(members)) - (math.pi / 2)
-                x = cluster_x + member_radius * math.cos(member_angle)
-                y = cluster_y + member_radius * math.sin(member_angle)
+            member_angle = (2 * math.pi * member_idx / len(members)) - (math.pi / 2) if len(members) > 1 else 0
+            x = cluster_x if len(members) == 1 else cluster_x + member_radius * math.cos(member_angle)
+            y = cluster_y if len(members) == 1 else cluster_y + member_radius * math.sin(member_angle)
             positions[str(node["entity_id"])] = (x, y)
     return positions
 
 
-def _edge_lines(edges: list[dict[str, Any]], positions: dict[str, tuple[float, float]]) -> list[str]:
-    lines = []
+def _edge_lines(edges: list[dict[str, Any]], positions: dict[str, tuple[float, float]]) -> list[SvgElement]:
+    lines: list[SvgElement] = []
     for edge in edges:
         src = str(edge["src_entity_id"])
         dst = str(edge["dst_entity_id"])
@@ -110,14 +91,14 @@ def _edge_lines(edges: list[dict[str, Any]], positions: dict[str, tuple[float, f
         x1, y1 = positions[src]
         x2, y2 = positions[dst]
         weight = parse_float(edge.get("edge_weight"), 0.0)
-        dashed = "stroke-dasharray:6 6;" if "co_mentioned_with" in parse_cell_list(edge.get("connection_types")) else ""
-        lines.append(f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" class="edge" style="stroke-width:{0.75 + (weight * 4):.2f};{dashed}" />')
+        dashed = "6 6" if "co_mentioned_with" in parse_cell_list(edge.get("connection_types")) else ""
+        lines.append(Line(x1=x1, y1=y1, x2=x2, y2=y2, css_class="edge", stroke_width=0.75 + (weight * 4), stroke_dasharray=dashed))
     return lines
 
 
-def _node_shapes(nodes: list[dict[str, Any]], positions: dict[str, tuple[float, float]], cluster_by_id: dict[str, str], density_by_id: dict[str, float]) -> list[str]:
+def _node_shapes(nodes: list[dict[str, Any]], positions: dict[str, tuple[float, float]], cluster_by_id: dict[str, str], density_by_id: dict[str, float]) -> list[SvgElement]:
     colors = ["#2563eb", "#0f766e", "#7c3aed", "#b45309", "#be123c", "#475569", "#15803d", "#0369a1"]
-    shapes = []
+    shapes: list[SvgElement] = []
     for node in nodes:
         entity_id = str(node["entity_id"])
         x, y = positions[entity_id]
@@ -125,14 +106,17 @@ def _node_shapes(nodes: list[dict[str, Any]], positions: dict[str, tuple[float, 
         color = colors[(int(cluster_id[1:]) - 1) % len(colors)] if cluster_id[1:].isdigit() else colors[0]
         density = density_by_id.get(entity_id, 0.0)
         radius = 24 + min(16, density * 18)
-        label = truncate_label(entity_display(node), 24)
-        shapes.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{radius:.1f}" class="node" style="stroke:{color};" />' f'<text x="{x:.1f}" y="{y + radius + 18:.1f}" class="node-label">{html.escape(label)}</text>' f'<text x="{x:.1f}" y="{y + radius + 34:.1f}" class="node-sub">{html.escape(cluster_id)} kde={density:.2f}</text>')
+        shapes.extend([
+            Circle(cx=x, cy=y, r=radius, css_class="node", fill="#ffffff", stroke=color, stroke_width=4),
+            Text(x=x, y=y + radius + 18, content=truncate_label(entity_display(node), 24), css_class="node-label", anchor="middle"),
+            Text(x=x, y=y + radius + 34, content=f"{cluster_id} kde={density:.2f}", css_class="node-sub", anchor="middle"),
+        ])
     return shapes
 
 
-def _node_rows(nodes: list[dict[str, Any]], cluster_by_id: dict[str, str], density_by_id: dict[str, float]) -> str:
-    return "\n".join("<tr>" f"<td>{html.escape(cluster_by_id[str(node['entity_id'])])}</td>" f"<td>{html.escape(entity_display(node))}</td>" f"<td>{density_by_id.get(str(node['entity_id']), 0.0):.6f}</td>" f"<td>{html.escape(str(node.get('status', '')))}</td>" f"<td>{html.escape(str(node.get('public_export', '')))}</td>" "</tr>" for node in sorted(nodes, key=lambda row: (cluster_by_id[str(row["entity_id"])], entity_display(row))))
+def _node_rows(nodes: list[dict[str, Any]], cluster_by_id: dict[str, str], density_by_id: dict[str, float]) -> list[dict[str, str]]:
+    return [{"cluster": cluster_by_id[str(node["entity_id"])], "person": entity_display(node), "kde": f"{density_by_id.get(str(node['entity_id']), 0.0):.6f}", "status": str(node.get("status", "")), "public_export": str(node.get("public_export", ""))} for node in sorted(nodes, key=lambda row: (cluster_by_id[str(row["entity_id"])], entity_display(row)))]
 
 
-def _edge_rows(edges: list[dict[str, Any]]) -> str:
-    return "\n".join("<tr>" f"<td>{html.escape(str(edge.get('src_name', '')))}</td>" f"<td>{html.escape(str(edge.get('dst_name', '')))}</td>" f"<td>{html.escape(str(edge.get('edge_weight', '')))}</td>" f"<td>{html.escape(str(edge.get('connection_types', '')))}</td>" f"<td>{html.escape(str(edge.get('statuses', '')))}</td>" "</tr>" for edge in sorted(edges, key=lambda row: (str(row.get("src_name", "")), str(row.get("dst_name", "")))))
+def _edge_rows(edges: list[dict[str, Any]]) -> list[dict[str, str]]:
+    return [{"person": str(edge.get("src_name", "")), "person_2": str(edge.get("dst_name", "")), "weight": str(edge.get("edge_weight", "")), "connection": str(edge.get("connection_types", "")), "status": str(edge.get("statuses", ""))} for edge in sorted(edges, key=lambda row: (str(row.get("src_name", "")), str(row.get("dst_name", ""))))]

@@ -57,6 +57,7 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 - Status/grade score tables and layer ordering moved from code constants to the `analysis/scoring.json` and `analysis/vocabulary.json` registry shards.
 - Both CLIs (`crk-ledger`, `cr-kit`) migrated from argparse to Typer while preserving command names, positional arguments, flags, defaults, aliases, and choices through `docs/guides/cli-surface.json`.
 - URL ingestion and SearXNG discovery now use httpx with redirect handling and bounded retries on connect errors and 5xx responses.
+- Analysis, case-chart, and cluster reports now render through typed pydantic models and Jinja2 templates with committed Tailwind/TS assets; output is byte-different but content-equivalent (element/label parity gated against the synthetic case) and remains fully offline-viewable.
 
 ### Security
 
@@ -67,6 +68,9 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 - Included `crime_research_kit*` in setuptools package discovery so the public
   SDK namespace is present in built distributions.
+
+### Removed
+- Legacy f-string HTML/SVG renderers (`pages/interactions.py`, string-building `render_*_svg` functions) -- replaced by `core.models.reports` figures and the `templates_data/` template layer.
 
 ## [0.12.0] - 2026-07-02
 

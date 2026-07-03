@@ -1,18 +1,31 @@
-"""Layered network SVG renderers for analysis chart exports."""
+"""Layered network SVG figure builders for analysis chart exports."""
 
 from __future__ import annotations
 
-import html
 import math
 from typing import Any
 
-from adapters.ops.evidence.reports.analysis.svg.base import color_for, html_title, short_label, svg_no_data
+from core.models.reports import Circle, Group, Line, Path, Rect, SvgDoc, SvgElement, Text
+
+from adapters.ops.evidence.ledger.records import flatten
+from adapters.ops.evidence.reports.analysis.svg.base import color_for, short_label
 from adapters.ops.evidence.reports.weights import parse_float
 
 
-def render_layered_graph_svg(nodes: list[dict[str, Any]], edges: list[dict[str, Any]]) -> str:
+def _chart_doc(width: int, height: int, label: str, elements: list[SvgElement], style: str = "") -> SvgDoc:
+    return SvgDoc(
+        width=width, height=height, view_box=f"0 0 {width} {height}", css_class="chart-svg", style=style, role="img", aria_label=label,
+        elements=[Rect(x=0, y=0, width=width, height=height, rx=8, css_class="chart-bg"), *elements],
+    )
+
+
+def _no_data_figure() -> SvgDoc:
+    return _chart_doc(900, 220, "No chart data", [Text(x=450, y=112, content="No chart data", css_class="axis-label", anchor="middle")])
+
+
+def build_layered_graph_figure(nodes: list[dict[str, Any]], edges: list[dict[str, Any]]) -> SvgDoc:
     if not nodes:
-        return svg_no_data()
+        return _no_data_figure()
     degree: dict[str, int] = {}
     for edge in edges:
         degree[str(edge.get("src_id", ""))] = degree.get(str(edge.get("src_id", "")), 0) + 1
@@ -29,7 +42,7 @@ def render_layered_graph_svg(nodes: list[dict[str, Any]], edges: list[dict[str, 
         for idx, row in enumerate(layer_nodes):
             y = 88 + idx * step + step / 2
             positions[str(row.get("node_id"))] = (x, y)
-    edge_lines = []
+    edge_lines: list[SvgElement] = []
     for edge in edges:
         src = str(edge.get("src_id", ""))
         dst = str(edge.get("dst_id", ""))
@@ -38,35 +51,35 @@ def render_layered_graph_svg(nodes: list[dict[str, Any]], edges: list[dict[str, 
         sx, sy = positions[src]
         dx, dy = positions[dst]
         edge_lines.append(
-            f'<line x1="{sx:.1f}" y1="{sy:.1f}" x2="{dx:.1f}" y2="{dy:.1f}" '
-            f'stroke="{color_for(edge.get("status"))}" stroke-width="{max(1.0, parse_float(edge.get("source_count"), 1.0)):.1f}" stroke-opacity="0.22">'
-            f'{html_title(edge.get("relation_type"))}</line>'
+            Line(
+                x1=f"{sx:.1f}", y1=f"{sy:.1f}", x2=f"{dx:.1f}", y2=f"{dy:.1f}",
+                stroke=color_for(edge.get("status")),
+                stroke_width=f"{max(1.0, parse_float(edge.get('source_count'), 1.0)):.1f}",
+                stroke_opacity="0.22",
+                title=flatten(edge.get("relation_type")),
+            )
         )
-    node_marks = []
+    node_marks: list[SvgElement] = []
     for row in selected:
         node_id = str(row.get("node_id"))
         x, y = positions[node_id]
         radius = 5 + min(11, degree.get(node_id, 0))
         node_marks.append(
-            f'<g><circle cx="{x:.1f}" cy="{y:.1f}" r="{radius}" fill="{color_for(row.get("status"), len(node_marks))}" stroke="#fff" stroke-width="1.5"/>'
-            f'<text x="{x + 14:.1f}" y="{y + 4:.1f}" class="mini-label">{html.escape(short_label(row.get("label"), 24))}</text></g>'
+            Group(children=[
+                Circle(cx=f"{x:.1f}", cy=f"{y:.1f}", r=radius, fill=color_for(row.get("status"), len(node_marks)), stroke="#fff", stroke_width=1.5),
+                Text(x=f"{x + 14:.1f}", y=f"{y + 4:.1f}", content=short_label(row.get("label"), 24), css_class="mini-label"),
+            ])
         )
-    layer_labels = "".join(
-        f'<text x="{80 + idx * ((width - 160) / max(1, len(layers) - 1)):.1f}" y="46" class="axis-label" text-anchor="middle">{html.escape(layer)}</text>'
+    layer_labels = [
+        Text(x=f"{80 + idx * ((width - 160) / max(1, len(layers) - 1)):.1f}", y=46, content=layer, css_class="axis-label", anchor="middle")
         for idx, layer in enumerate(layers)
-    )
-    return (
-        '<div class="chart-shell">'
-        f'<svg class="chart-svg" viewBox="0 0 {width} {height}" role="img" aria-label="Layered knowledge graph">'
-        f'<rect x="0" y="0" width="{width}" height="{height}" rx="8" class="chart-bg"/>'
-        f'{layer_labels}{"".join(edge_lines)}{"".join(node_marks)}'
-        "</svg></div>"
-    )
+    ]
+    return _chart_doc(width, height, "Layered knowledge graph", [*layer_labels, *edge_lines, *node_marks])
 
 
-def render_layered_graph_v2_svg(nodes: list[dict[str, Any]], edges: list[dict[str, Any]]) -> str:
+def build_layered_graph_v2_figure(nodes: list[dict[str, Any]], edges: list[dict[str, Any]]) -> SvgDoc:
     if not nodes:
-        return svg_no_data()
+        return _no_data_figure()
     degree = {str(row.get("node_id", "")): int(parse_float(row.get("degree"), 0.0)) for row in nodes}
     selected = sorted(
         nodes,
@@ -94,14 +107,14 @@ def render_layered_graph_v2_svg(nodes: list[dict[str, Any]], edges: list[dict[st
         for idx, row in enumerate(layer_nodes):
             y = top + idx * step + step / 2
             positions[str(row.get("node_id"))] = (x, y)
-    layer_guides = []
+    layer_guides: list[SvgElement] = []
     for idx, layer in enumerate(layers):
         x = left + idx * (lane_width / max(1, len(layers) - 1))
-        layer_guides.append(
-            f'<line x1="{x:.1f}" y1="{top - 26}" x2="{x:.1f}" y2="{height - bottom + 22}" stroke="#e3ebf2" stroke-width="1"/>'
-            f'<text x="{x:.1f}" y="50" class="axis-label" text-anchor="middle">{html.escape(layer)}</text>'
-        )
-    edge_marks = []
+        layer_guides.extend([
+            Line(x1=f"{x:.1f}", y1=top - 26, x2=f"{x:.1f}", y2=height - bottom + 22, stroke="#e3ebf2"),
+            Text(x=f"{x:.1f}", y=50, content=layer, css_class="axis-label", anchor="middle"),
+        ])
+    edge_marks: list[SvgElement] = []
     for edge in sorted(edges, key=lambda row: parse_float(row.get("evidence_weight"), 0.0)):
         src = str(edge.get("src_id", ""))
         dst = str(edge.get("dst_id", ""))
@@ -114,18 +127,23 @@ def render_layered_graph_v2_svg(nodes: list[dict[str, Any]], edges: list[dict[st
         c2 = dx - mid
         weight = max(1.0, min(5.5, 1.0 + parse_float(edge.get("evidence_weight"), 0.0) * 3.4))
         readiness = str(edge.get("readiness", ""))
-        dash = ' stroke-dasharray="7 7"' if str(edge.get("caveat", "")) else ""
         title = (
             f"{edge.get('src_label')} -> {edge.get('dst_label')} | {edge.get('relation_type')} | "
             f"{edge.get('relationship_class')} | {edge.get('status')} | readiness={readiness} | "
             f"sources={edge.get('source_count')} | caveat={edge.get('caveat')}"
         )
         edge_marks.append(
-            f'<path d="M {sx:.1f} {sy:.1f} C {c1:.1f} {sy:.1f}, {c2:.1f} {dy:.1f}, {dx:.1f} {dy:.1f}" '
-            f'fill="none" stroke="{color_for(readiness or edge.get("status"))}" stroke-width="{weight:.2f}" '
-            f'stroke-opacity="0.22"{dash}>{html_title(title)}</path>'
+            Path(
+                d=f"M {sx:.1f} {sy:.1f} C {c1:.1f} {sy:.1f}, {c2:.1f} {dy:.1f}, {dx:.1f} {dy:.1f}",
+                fill="none",
+                stroke=color_for(readiness or edge.get("status")),
+                stroke_width=f"{weight:.2f}",
+                stroke_opacity="0.22",
+                stroke_dasharray="7 7" if str(edge.get("caveat", "")) else "",
+                title=flatten(title),
+            )
         )
-    node_marks = []
+    node_marks: list[SvgElement] = []
     for row in selected:
         node_id = str(row.get("node_id"))
         x, y = positions[node_id]
@@ -136,11 +154,14 @@ def render_layered_graph_v2_svg(nodes: list[dict[str, Any]], edges: list[dict[st
             f"status={row.get('status')} | readiness={row.get('readiness')} | evidence={row.get('evidence_state')} | "
             f"sources={row.get('source_count')} | degree={row.get('degree')} | caveat={row.get('caveat')}"
         )
-        label = html.escape(short_label(row.get("label"), 22))
         node_marks.append(
-            f'<g><circle cx="{x:.1f}" cy="{y:.1f}" r="{radius:.1f}" fill="{color_for(readiness)}" '
-            f'fill-opacity="0.9" stroke="#fff" stroke-width="1.6">{html_title(title)}</circle>'
-            f'<text x="{x + radius + 7:.1f}" y="{y + 4:.1f}" class="mini-label">{label}</text></g>'
+            Group(children=[
+                Circle(
+                    cx=f"{x:.1f}", cy=f"{y:.1f}", r=f"{radius:.1f}", fill=color_for(readiness),
+                    fill_opacity="0.9", stroke="#fff", stroke_width=1.6, title=flatten(title),
+                ),
+                Text(x=f"{x + radius + 7:.1f}", y=f"{y + 4:.1f}", content=short_label(row.get("label"), 22), css_class="mini-label"),
+            ])
         )
     legend = [
         ("public_ready", "public ready"),
@@ -149,19 +170,20 @@ def render_layered_graph_v2_svg(nodes: list[dict[str, Any]], edges: list[dict[st
         ("lead_or_disputed", "lead/disputed"),
         ("internal_only", "internal"),
     ]
-    legend_marks = []
+    legend_marks: list[SvgElement] = []
     for idx, (key, label) in enumerate(legend):
         x = left + idx * 150
         y = height - 34
         legend_marks.append(
-            f'<g><circle cx="{x}" cy="{y}" r="7" fill="{color_for(key)}"/>'
-            f'<text x="{x + 14}" y="{y + 4}" class="mini-label">{html.escape(label)}</text></g>'
+            Group(children=[
+                Circle(cx=x, cy=y, r=7, fill=color_for(key)),
+                Text(x=x + 14, y=y + 4, content=label, css_class="mini-label"),
+            ])
         )
-    return (
-        '<div class="chart-shell scroll-x">'
-        f'<svg class="chart-svg" style="min-width:{width}px" viewBox="0 0 {width} {height}" role="img" aria-label="Layered knowledge graph v2">'
-        f'<rect x="0" y="0" width="{width}" height="{height}" rx="8" class="chart-bg"/>'
-        f'<text x="{left}" y="24" class="axis-label">Layered evidence navigation graph: node color reflects readiness/evidence state; dashed edges require caveats.</text>'
-        f'{"".join(layer_guides)}{"".join(edge_marks)}{"".join(node_marks)}{"".join(legend_marks)}'
-        "</svg></div>"
+    headline = Text(
+        x=left,
+        y=24,
+        content="Layered evidence navigation graph: node color reflects readiness/evidence state; dashed edges require caveats.",
+        css_class="axis-label",
     )
+    return _chart_doc(width, height, "Layered knowledge graph v2", [headline, *layer_guides, *edge_marks, *node_marks, *legend_marks], style=f"min-width:{width}px")

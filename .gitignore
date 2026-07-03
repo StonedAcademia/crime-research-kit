@@ -40,6 +40,9 @@ deployment/tooling/bin/
 # uv is used as an ephemeral command runner here; do not commit per-worktree locks.
 uv.lock
 
+# Frontend dependencies are restored by npm; committed report assets live under src/.
+frontend/node_modules/
+
 # Case workspaces contain local/raw research material and generated ledgers.
 data/cases/**
 !data/cases/
@@ -55,3 +58,4 @@ data/exports/**
 Thumbs.db
 *.swp
 *.swo
+.superpowers/

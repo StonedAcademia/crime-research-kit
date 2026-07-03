@@ -1,0 +1,14 @@
+{
+  "name": "crk-report-frontend",
+  "private": true,
+  "scripts": {
+    "build": "npm run build:css && npm run build:js",
+    "build:css": "tailwindcss -i styles.css -o ../src/adapters/ops/evidence/reports/analysis/pages/templates_data/static/app.css --minify --content '../src/adapters/ops/evidence/reports/analysis/pages/templates_data/**/*.j2'",
+    "build:js": "esbuild app.ts --bundle --minify --outfile=../src/adapters/ops/evidence/reports/analysis/pages/templates_data/static/app.js"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.0",
+    "esbuild": "^0.24.0",
+    "htmx.org": "^2.0.0"
+  }
+}

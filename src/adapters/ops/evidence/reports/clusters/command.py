@@ -10,8 +10,9 @@ from typing import Any
 from core.casefile import case_path, ensure_case
 
 from adapters.ops.evidence.public_gate import enforce_public_output_gate
+from adapters.ops.evidence.reports.analysis.pages.render import render_page, write_html
 from adapters.ops.evidence.reports.case_charts.command import export_case_charts
-from adapters.ops.evidence.reports.clusters.renderers import render_people_clusters_html
+from adapters.ops.evidence.reports.clusters.renderers import build_people_clusters_page
 from adapters.ops.evidence.reports.common import entity_display, read_csv_dicts
 from adapters.ops.evidence.reports.weights import evidence_edge_weight, kernel_affinity_matrix, leiden_partition, parse_float, weighted_distances
 from adapters.ops.evidence.ledger.markdown import md_table
@@ -43,7 +44,7 @@ def export_people_clusters(args: argparse.Namespace) -> None:
     kernel_rows = _kernel_rows(node_ids, node_by_id, kernel)
     edge_rows = _edge_rows(weighted_edges, cluster_by_id)
     _write_outputs(out, cluster_rows, summary_rows, edge_rows, kernel_rows, node_ids)
-    (out / "people_clusters.html").write_text(render_people_clusters_html(case_title, nodes, edge_rows, cluster_by_id, kde_by_id, args.include_private), encoding="utf-8")
+    write_html(out / "people_clusters.html", render_page(build_people_clusters_page(case_title, nodes, edge_rows, cluster_by_id, kde_by_id, args.include_private)))
     _write_report(out, case_title, args, sigma, summary_rows)
     print(f"Exported Leiden people clusters to {out}")
 

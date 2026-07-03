@@ -1,16 +1,29 @@
-"""Bridge-flow SVG renderers for analysis chart exports."""
+"""Bridge-flow SVG figure builders for analysis chart exports."""
 
 from __future__ import annotations
 
-import html
 from typing import Any
 
-from adapters.ops.evidence.reports.analysis.svg.base import color_for, html_title, short_label, svg_no_data
+from core.models.reports import Group, Path, Rect, SvgDoc, SvgElement, Text
+
+from adapters.ops.evidence.ledger.records import flatten
+from adapters.ops.evidence.reports.analysis.svg.base import color_for, short_label
 
 
-def render_sankey_svg(nodes: list[dict[str, Any]], links: list[dict[str, Any]]) -> str:
+def _chart_doc(width: int, height: int, label: str, elements: list[SvgElement]) -> SvgDoc:
+    return SvgDoc(
+        width=width, height=height, view_box=f"0 0 {width} {height}", css_class="chart-svg", role="img", aria_label=label,
+        elements=[Rect(x=0, y=0, width=width, height=height, rx=8, css_class="chart-bg"), *elements],
+    )
+
+
+def _no_data_figure() -> SvgDoc:
+    return _chart_doc(900, 220, "No chart data", [Text(x=450, y=112, content="No chart data", css_class="axis-label", anchor="middle")])
+
+
+def build_sankey_figure(nodes: list[dict[str, Any]], links: list[dict[str, Any]]) -> SvgDoc:
     if not nodes or not links:
-        return svg_no_data()
+        return _no_data_figure()
     node_by_id = {str(row.get("cluster_id")): row for row in nodes}
     stage: dict[str, int] = {cluster_id: 0 for cluster_id in node_by_id}
     for _ in range(max(1, len(links))):
@@ -36,7 +49,7 @@ def render_sankey_svg(nodes: list[dict[str, Any]], links: list[dict[str, Any]]) 
         for pos, cluster_id in enumerate(ordered):
             y = 70 + step * pos + step / 2
             positions[cluster_id] = (x, y)
-    paths = []
+    paths: list[SvgElement] = []
     for link in links:
         src = str(link.get("src_cluster", ""))
         dst = str(link.get("dst_cluster", ""))
@@ -46,26 +59,28 @@ def render_sankey_svg(nodes: list[dict[str, Any]], links: list[dict[str, Any]]) 
         dx, dy = positions[dst]
         color = color_for(link.get("public_readiness") or link.get("bridge_class"))
         stroke_width = 10 if link.get("public_readiness") != "lead_or_disputed" else 6
-        dash = " stroke-dasharray=\"7 5\"" if "category" in str(link.get("bridge_class", "")) or "lead" in str(link.get("bridge_class", "")) else ""
         paths.append(
-            f'<path d="M {sx + 128:.1f} {sy:.1f} C {(sx + dx) / 2:.1f} {sy:.1f}, {(sx + dx) / 2:.1f} {dy:.1f}, {dx:.1f} {dy:.1f}" '
-            f'fill="none" stroke="{color}" stroke-opacity="0.42" stroke-width="{stroke_width}"{dash}>{html_title(link.get("path"))}</path>'
+            Path(
+                d=f"M {sx + 128:.1f} {sy:.1f} C {(sx + dx) / 2:.1f} {sy:.1f}, {(sx + dx) / 2:.1f} {dy:.1f}, {dx:.1f} {dy:.1f}",
+                fill="none",
+                stroke=color,
+                stroke_opacity="0.42",
+                stroke_width=stroke_width,
+                stroke_dasharray="7 5" if "category" in str(link.get("bridge_class", "")) or "lead" in str(link.get("bridge_class", "")) else "",
+                title=flatten(link.get("path")),
+            )
         )
-    rects = []
+    rects: list[SvgElement] = []
     for cluster_id, (x, y) in positions.items():
         node = node_by_id.get(cluster_id, {})
         label = f"{cluster_id}: {short_label(node.get('cluster_label'), 22)}"
         members = short_label(node.get("member_names"), 38)
         rects.append(
-            f'<g><rect x="{x:.1f}" y="{y - 24:.1f}" width="142" height="48" rx="7" class="node-box"/>'
-            f'<text x="{x + 10:.1f}" y="{y - 5:.1f}" class="node-label">{html.escape(label)}</text>'
-            f'<text x="{x + 10:.1f}" y="{y + 13:.1f}" class="mini-label">{html.escape(members)}</text></g>'
+            Group(children=[
+                Rect(x=f"{x:.1f}", y=f"{y - 24:.1f}", width=142, height=48, rx=7, css_class="node-box"),
+                Text(x=f"{x + 10:.1f}", y=f"{y - 5:.1f}", content=label, css_class="node-label"),
+                Text(x=f"{x + 10:.1f}", y=f"{y + 13:.1f}", content=members, css_class="mini-label"),
+            ])
         )
-    return (
-        '<div class="chart-shell">'
-        f'<svg class="chart-svg" viewBox="0 0 {width} {height}" role="img" aria-label="Cluster bridge Sankey">'
-        f'<rect x="0" y="0" width="{width}" height="{height}" rx="8" class="chart-bg"/>'
-        f'{"".join(paths)}{"".join(rects)}'
-        '<text x="20" y="30" class="axis-label">Audited inter-cluster bridge flow; dashed links are category/lead/context bridges.</text>'
-        "</svg></div>"
-    )
+    axis = Text(x=20, y=30, content="Audited inter-cluster bridge flow; dashed links are category/lead/context bridges.", css_class="axis-label")
+    return _chart_doc(width, height, "Cluster bridge Sankey", [*paths, *rects, axis])
