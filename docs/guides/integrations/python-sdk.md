@@ -71,6 +71,35 @@ for operation in client.operations("sources"):
     print(operation.name, operation.safety_tier.value)
 ```
 
+## Importable Recipes
+
+`crime_research_kit.sdk.examples` contains small importable recipes for common
+integration flows. They are examples built on `CrkClient`, `CrkContext`, and
+SDK operation methods, not a new runtime layer or a separate compatibility
+surface.
+
+```python
+from pathlib import Path
+
+from crime_research_kit.sdk.examples import source_ingest_dry_run_example
+
+result = source_ingest_dry_run_example(
+    "https://example.org/source",
+    cases_root=Path("data/cases"),
+    case_slug="example_case",
+)
+```
+
+The examples package covers these recipes:
+
+| Recipe | Use it for |
+| --- | --- |
+| `case_info_example` | Read public-safe case metadata and record counts. |
+| `source_ingest_dry_run_example` | Preview URL source ingestion without committing writes. |
+| `packet_review_example` | Check staged extraction packets before gated import. |
+| `public_safe_export_example` | Run public-safe export checks and export helpers with private records excluded by default. |
+| `workflow_resume_example` | Resume a paused workflow with packet review and export decisions. |
+
 ## Current Boundary
 
 | Surface | Stability | Notes |
