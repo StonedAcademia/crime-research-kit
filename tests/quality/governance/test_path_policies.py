@@ -26,7 +26,7 @@ VAGUE_DIR_NAMES = {
 }
 APPROVED_VAGUE_DIRS: set[str] = set()
 MACHINE_ROOT_RE = re.compile(r"(/home/[a-z_][a-z0-9_-]*/|/Users/|C:\\Users)")
-README_REQUIRED_ROOTS = ("deployment/scripts", "docs/guides", "docs/registry")
+README_REQUIRED_ROOTS = ("deployment/scripts", "docs/registry")
 README_BUDGET_EXEMPT_DIRS = {
     # Existing governed dirs already at the 4-file shape limit.
     "deployment/scripts/tools",

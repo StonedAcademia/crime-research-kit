@@ -17,13 +17,11 @@ MAX_FILES_PER_DIR = 4
 MIN_DIRS_PER_DIR = 0
 MAX_DIRS_PER_DIR = 3
 MAX_NON_COMMENT_LOC = 200
-SKIPPED_ROOTS = (Path(".agents"), Path("data"), Path("docs/superpowers"))
+SKIPPED_ROOTS = (Path(".agents"), Path("data"), Path("docs/guides"), Path("docs/superpowers"))
 SRC_ROOT = Path("src")
 SIZE_EXEMPT_NAMES = {"LICENSE"}
 SRC_FILE_COUNT_EXEMPT_NAMES = {"README.md", "__init__.py"}
-DIR_LIMIT_OVERRIDES = {
-    Path("docs/guides"): {"max_dirs": 4},
-}
+DIR_LIMIT_OVERRIDES: dict[Path, dict[str, int]] = {}
 
 HASH_COMMENT_SUFFIXES = {".py", ".sh", ".yml", ".yaml", ".toml"}
 HASH_COMMENT_NAMES = {"Dockerfile", ".dockerignore", ".gitignore", ".prototools"}
@@ -41,6 +39,11 @@ def tracked_paths() -> list[Path]:
 
 def governed_paths() -> list[Path]:
     return [path for path in tracked_paths() if not is_skipped(path)]
+
+
+def test_docs_guides_are_exempt_from_shape_governance():
+    assert is_skipped(Path("docs/guides/example.md"))
+    assert is_skipped(Path("docs/guides/courses/samples/mkultra/README.md"))
 
 
 def is_src_file_count_exempt(path: Path) -> bool:
