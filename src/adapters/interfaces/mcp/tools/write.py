@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from adapters.interfaces.mcp.context import ServerContext, error_dict, mcp_result, sdk_case
+from adapters.interfaces.mcp.tools.registry import catalog_tool
 
 
 def discover_sources_tool(ctx: ServerContext, case: str, query: str, limit: int = 10) -> dict[str, Any]:
@@ -105,12 +106,12 @@ def plan_public_records_tool(
 
 
 def register(mcp: Any, ctx: ServerContext) -> None:
-    @mcp.tool()
+    @catalog_tool(mcp, "write", "discover_sources")
     def discover_sources(case: str, query: str, limit: int = 10) -> dict:
         """Search local SearXNG for lead-only source candidates."""
         return discover_sources_tool(ctx, case, query, limit)
 
-    @mcp.tool()
+    @catalog_tool(mcp, "write", "ingest_url")
     def ingest_url(
         case: str,
         url: str,
@@ -121,7 +122,7 @@ def register(mcp: Any, ctx: ServerContext) -> None:
         """Fetch a public URL, extract text, and register it as a source."""
         return ingest_url_tool(ctx, case, url, title, source_type, reliability_grade)
 
-    @mcp.tool()
+    @catalog_tool(mcp, "write", "add_source")
     def add_source(
         case: str,
         title: str,
@@ -132,32 +133,32 @@ def register(mcp: Any, ctx: ServerContext) -> None:
         """Register a source manually with publication metadata."""
         return add_source_tool(ctx, case, title, url, source_type, reliability_grade)
 
-    @mcp.tool()
+    @catalog_tool(mcp, "write", "parse_source")
     def parse_source(case: str, source_id: str) -> dict:
         """Parse a registered source's raw file to text with Docling."""
         return parse_source_tool(ctx, case, source_id)
 
-    @mcp.tool()
+    @catalog_tool(mcp, "write", "ocr_source")
     def ocr_source(case: str, source_id: str, language: str = "eng") -> dict:
         """OCR a registered PDF source with OCRmyPDF."""
         return ocr_source_tool(ctx, case, source_id, language)
 
-    @mcp.tool()
+    @catalog_tool(mcp, "write", "draft_extraction")
     def draft_extraction(case: str, source_id: str, template: str = "generic") -> dict:
         """Create a structured extraction packet template for a source in staging/."""
         return draft_extraction_tool(ctx, case, source_id, template)
 
-    @mcp.tool()
+    @catalog_tool(mcp, "write", "save_extraction_packet")
     def save_extraction_packet(case: str, packet_name: str, packet: dict) -> dict:
         """Save a filled extraction packet to staging/; not a canonical import."""
         return save_extraction_packet_tool(ctx, case, packet_name, packet)
 
-    @mcp.tool()
+    @catalog_tool(mcp, "write", "link_names")
     def link_names(case: str, names: list[str]) -> dict:
         """Link names to existing events/co-mentions without guilt inference."""
         return link_names_tool(ctx, case, names)
 
-    @mcp.tool()
+    @catalog_tool(mcp, "write", "plan_public_records")
     def plan_public_records(case: str, subject: str, lanes: list[str] | None = None) -> dict:
         """Write a public-record source-lane plan for a subject into staging/."""
         return plan_public_records_tool(ctx, case, subject, lanes)

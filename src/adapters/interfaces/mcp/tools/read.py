@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from adapters.interfaces.mcp.context import ServerContext, error_dict, mcp_result, resolve_case, sdk_case, sdk_client
+from adapters.interfaces.mcp.tools.registry import catalog_tool, direct_tool
 from adapters.ops import case as case_ops
 
 
@@ -81,37 +82,37 @@ def run_report_tool(ctx: ServerContext, case: str) -> dict[str, Any]:
 
 
 def register(mcp: Any, ctx: ServerContext) -> None:
-    @mcp.tool()
+    @catalog_tool(mcp, "read", "case_info")
     def case_info(case: str) -> dict:
         """Case metadata and per-record-type counts for a CRK case slug."""
         return case_info_tool(ctx, case)
 
-    @mcp.tool()
+    @catalog_tool(mcp, "read", "list_cases")
     def list_cases() -> dict:
         """List available CRK case slugs."""
         return list_cases_tool(ctx)
 
-    @mcp.tool()
+    @catalog_tool(mcp, "read", "get_records")
     def get_records(case: str, record_type: str, include_private: bool = False, limit: int = 200) -> dict:
         """Read ledger records. Private records are excluded unless include_private."""
         return get_records_tool(ctx, case, record_type, include_private, limit)
 
-    @mcp.tool()
+    @catalog_tool(mcp, "read", "get_source_text")
     def get_source_text(case: str, source_id: str, include_private: bool = False, max_chars: int = 20000) -> dict:
         """Read the extracted text of a registered source."""
         return get_source_text_tool(ctx, case, source_id, include_private, max_chars)
 
-    @mcp.tool()
+    @catalog_tool(mcp, "read", "query_case")
     def query_case(case: str, query: str, include_private: bool = False, top_k: int = 8) -> dict:
         """Semantic retrieval over the local case evidence index."""
         return query_case_tool(ctx, case, query, include_private, top_k)
 
-    @mcp.tool()
+    @catalog_tool(mcp, "read", "list_staged_packets")
     def list_staged_packets(case: str) -> dict:
         """List extraction packets staged for human review."""
         return list_staged_packets_tool(ctx, case)
 
-    @mcp.tool()
+    @direct_tool(mcp, "read", "run_report")
     def run_report(case: str) -> dict:
         """Write the case evidence-board Markdown report."""
         return run_report_tool(ctx, case)

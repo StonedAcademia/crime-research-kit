@@ -7,6 +7,7 @@ from typing import Any
 from crime_research_kit.sdk.results import OperationResult
 
 from adapters.interfaces.mcp.context import ServerContext, error_dict, mcp_result, sdk_case
+from adapters.interfaces.mcp.tools.registry import catalog_tool
 
 PUBLIC_NOTE = "public-safe: records with public_export=false were excluded"
 PRIVATE_NOTE = "include_private=true: for internal review only, do not publish"
@@ -54,22 +55,22 @@ def export_analysis_charts_tool(ctx: ServerContext, case: str, include_private: 
 
 
 def register(mcp: Any, ctx: ServerContext) -> None:
-    @mcp.tool()
+    @catalog_tool(mcp, "gated", "import_extraction")
     def import_extraction(case: str, packet: str, confirm: bool = False) -> dict:
         """Import a staged packet into canonical records. GATED: requires confirm=true."""
         return import_extraction_tool(ctx, case, packet, confirm)
 
-    @mcp.tool()
+    @catalog_tool(mcp, "gated", "export_manim")
     def export_manim(case: str, include_private: bool = False) -> dict:
         """Export public-safe Manim CSVs. include_private is internal review only."""
         return export_manim_tool(ctx, case, include_private)
 
-    @mcp.tool()
+    @catalog_tool(mcp, "gated", "export_case_charts")
     def export_case_charts(case: str, include_private: bool = False) -> dict:
         """Export people graph and subcase timeline charts, public-safe by default."""
         return export_case_charts_tool(ctx, case, include_private)
 
-    @mcp.tool()
+    @catalog_tool(mcp, "gated", "export_analysis_charts")
     def export_analysis_charts(case: str, include_private: bool = False) -> dict:
         """Export extended analysis charts, public-safe by default."""
         return export_analysis_charts_tool(ctx, case, include_private)

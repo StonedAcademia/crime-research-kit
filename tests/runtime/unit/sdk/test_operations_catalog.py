@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import ast
 import json
-from pathlib import Path
 
+from adapters.interfaces.mcp.tools.registry import DIRECT_TOOL_NAMES, sdk_tool_registrations, tool_registrations
 from crime_research_kit.sdk.operations import SafetyTier, get_operation, list_operations, operations_by_domain
 from tests.helpers import KIT_ROOT
 
@@ -110,19 +109,39 @@ def test_cli_commands_have_catalog_entries_or_explicit_exemptions():
 
 
 def test_mcp_tools_have_catalog_entries_or_explicit_exemptions():
-    tool_names = set()
-    for rel in (
-        "src/adapters/interfaces/mcp/tools/read.py",
-        "src/adapters/interfaces/mcp/tools/write.py",
-        "src/adapters/interfaces/mcp/tools/gated.py",
-    ):
-        tool_names.update(_mcp_tool_names(KIT_ROOT / rel))
-
+    tool_names = {entry.tool_name for entry in tool_registrations()}
+    sdk_tool_names = {entry.tool_name for entry in sdk_tool_registrations()}
     catalog_tools = {spec.mcp_tool for spec in list_operations() if spec.mcp_tool}
 
+    assert sdk_tool_names == catalog_tools
     assert tool_names - catalog_tools - DIRECT_MCP_TOOL_EXEMPTIONS == set()
-    assert DIRECT_MCP_TOOL_EXEMPTIONS <= tool_names
+    assert DIRECT_TOOL_NAMES == DIRECT_MCP_TOOL_EXEMPTIONS
     assert DIRECT_MCP_TOOL_EXEMPTIONS.isdisjoint(catalog_tools)
+
+
+def test_mcp_registry_carries_catalog_metadata_and_handler_refs():
+    expected = {spec.mcp_tool: spec for spec in list_operations() if spec.mcp_tool}
+    registered = {entry.tool_name: entry for entry in sdk_tool_registrations()}
+
+    assert set(registered) == set(expected)
+    for tool_name, spec in expected.items():
+        entry = registered[tool_name]
+        assert entry.operation_name == spec.name
+        assert entry.operation == spec
+        assert entry.operation.safety_tier is spec.safety_tier
+        assert entry.summary
+        assert callable(entry.handler())
+
+
+def test_mcp_registry_keeps_direct_tools_prompts_and_resources_explicit():
+    registrations = {entry.tool_name: entry for entry in tool_registrations()}
+    direct = {name: entry for name, entry in registrations.items() if not entry.sdk_backed}
+
+    assert set(direct) == DIRECT_MCP_TOOL_EXEMPTIONS
+    assert direct["run_report"].operation is None
+    assert direct["run_report"].direct_reason
+    assert {"start_case", "process_source", "review_packet", "public_readiness"}.isdisjoint(registrations)
+    assert {"case_json", "records", "packet", "reference"}.isdisjoint(registrations)
 
 
 def test_direct_mcp_tool_exemptions_are_documented():
@@ -134,22 +153,3 @@ def test_direct_mcp_tool_exemptions_are_documented():
     assert "`run_report` remains a direct derived-report path" in overview
     assert "`run_report` remains a direct MCP/runtime exception" in mcp_guide
     assert "`crk-ledger report`, `reportCase`, and MCP `run_report`" in flat_operation_docs
-
-
-def _mcp_tool_names(path: Path) -> set[str]:
-    tree = ast.parse(path.read_text(encoding="utf-8"))
-    names = set()
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.FunctionDef):
-            continue
-        if any(_is_mcp_tool_decorator(decorator) for decorator in node.decorator_list):
-            names.add(node.name)
-    return names
-
-
-def _is_mcp_tool_decorator(node: ast.expr) -> bool:
-    return (
-        isinstance(node, ast.Call)
-        and isinstance(node.func, ast.Attribute)
-        and node.func.attr == "tool"
-    )
