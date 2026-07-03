@@ -52,6 +52,6 @@ def write_analysis_index(ctx: AnalysisContext, chart_specs: list[dict[str, Any]]
         "- These charts are evidence-navigation tools, not proof of a unified conspiracy.",
         "- Category bridges remain distinct from direct personal or institutional relationships.",
         "- Relationship classes separate documented succession, method diffusion, personnel bridges, narrative inheritance, contested overlap, and hypotheses requiring more sources.",
-        "- Lead-only and boundary rows must remain visible when interpreting PROMIS/Maxwell, Barr/Epstein, and methodology-influence lanes.",
+        "- Lead-only and boundary rows must remain visible when interpreting software, institutional, and methodology-influence lanes.",
     ]
     (ctx.out / "analysis_charts.md").write_text("\n".join(index) + "\n", encoding="utf-8")

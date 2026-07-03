@@ -37,7 +37,7 @@ def build_swimlanes(ctx: AnalysisContext) -> list[dict[str, Any]]:
             "confidence": event.get("confidence", ""),
             "event_link_id": link.get("event_link_id", ""),
             "relation_type": link.get("relation_type", ""),
-            "relationship_class": relationship_class(link, "event_link"),
+            "relationship_class": relationship_class(link, "event_link", packs=ctx.packs),
             "event_link_status": link.get("status", ""),
             "event_link_confidence": link.get("confidence", ""),
             "source_count": len(set(parse_cell_list(event.get("source_ids"))) | set(parse_cell_list(link.get("source_ids")))),

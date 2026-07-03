@@ -1,3 +1,4 @@
+import json
 import re
 import subprocess
 import sys
@@ -115,3 +116,29 @@ def test_ledger_plan_public_records_help_includes_planning_lanes():
     for lane_id in planning_lanes:
         assert lane_id in result.stdout
     assert "narrative-readiness" not in result.stdout
+
+
+def test_analysis_vocabulary_shard_is_well_formed():
+    payload = json.loads((REGISTRY_ROOT / "analysis" / "vocabulary.json").read_text(encoding="utf-8"))
+    known_classes = {
+        "documented_successor",
+        "method_diffusion",
+        "personnel_bridge",
+        "narrative_inheritance",
+        "contested_overlap",
+        "hypothesis_requires_more_sources",
+    }
+    for section in ("relation_families", "relationship_classes", "bridge_labels"):
+        for pack in payload[section]:
+            assert isinstance(pack["key"], str) and pack["key"]
+            assert pack["terms"] and all(isinstance(term, str) and term for term in pack["terms"])
+    assert {pack["key"] for pack in payload["relationship_classes"]} <= known_classes
+    assert set(payload["layer_order"]) >= {"person", "institution", "event"}
+
+
+def test_analysis_scoring_shard_is_well_formed():
+    payload = json.loads((REGISTRY_ROOT / "analysis" / "scoring.json").read_text(encoding="utf-8"))
+    assert set(payload["status_scores"]) >= {"verified", "corroborated", "disputed", "unverified"}
+    assert set(payload["grade_scores"]) == {"A", "B", "C", "D", "X"}
+    for table in (payload["status_scores"], payload["grade_scores"]):
+        assert all(0.0 <= value <= 1.0 for value in table.values())

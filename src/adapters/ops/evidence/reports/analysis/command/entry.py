@@ -31,5 +31,5 @@ def export_analysis_charts(args: argparse.Namespace) -> None:
     readiness_products = build_readiness_products(ctx)
     products["readiness_rows"] = readiness_products["readiness_rows"]
     products["readiness_counts"] = readiness_products["readiness_counts"]
-    products["fragility"] = build_fragility(products["edge_load"])
+    products["fragility"] = build_fragility(products["edge_load"], packs=ctx.packs)
     write_analysis_outputs(ctx, products)

@@ -37,7 +37,8 @@ def build_layered_base(ctx: AnalysisContext) -> dict[str, list[dict[str, Any]]]:
                 "dst_label": ctx.node_label(dst),
                 "edge_type": edge.get("edge_type", ""),
                 "relation_type": edge.get("relation_type", ""),
-                "relationship_class": edge.get("relationship_class") or relationship_class(edge, str(edge.get("edge_type", "relationship"))),
+                "relationship_class": edge.get("relationship_class")
+                or relationship_class(edge, str(edge.get("edge_type", "relationship")), packs=ctx.packs),
                 "status": edge.get("status", ""),
                 "confidence": edge.get("confidence", ""),
                 "source_count": len(parse_cell_list(edge.get("source_ids"))),

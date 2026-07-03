@@ -5,13 +5,13 @@ from __future__ import annotations
 from typing import Any
 
 from adapters.ops.evidence.reports.analysis.classifiers import (
-    STATUS_SCORE,
     best_grade,
     boundary_signal,
     public_ready_record,
     readiness_label,
     source_grade_counts,
     source_grade_score,
+    status_score,
 )
 from adapters.ops.evidence.reports.analysis.command.context import AnalysisContext
 from adapters.ops.evidence.reports.analysis.command.builders.sources import build_source_dashboard
@@ -49,12 +49,12 @@ def _claim_products(
             "claim_type": claim.get("claim_type", ""),
             "status": claim.get("status", ""),
             "confidence": claim.get("confidence", ""),
-            "status_score": STATUS_SCORE.get(str(claim.get("status", "")), 0.0),
+            "status_score": status_score(str(claim.get("status", "")), packs=ctx.packs),
             "source_count": len(source_rows),
             "independent_source_count": independent_count,
-            "best_source_grade": best_grade(source_rows),
+            "best_source_grade": best_grade(source_rows, packs=ctx.packs),
             "source_grade_counts": source_grade_counts(source_rows),
-            "source_grade_score": source_grade_score(source_rows),
+            "source_grade_score": source_grade_score(source_rows, packs=ctx.packs),
             "privacy_review": claim.get("privacy_review", ""),
             "public_export": claim.get("public_export", True),
             "boundary_flag": boundary_signal(claim),

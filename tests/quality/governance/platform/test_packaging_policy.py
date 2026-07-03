@@ -55,6 +55,8 @@ REGISTRY_SHARDS = (
     "lanes/review.json",
     "lanes/support.json",
     "templates/extraction.json",
+    "analysis/vocabulary.json",
+    "analysis/scoring.json",
 )
 SCHEMA_SHARDS = (
     "case/artifact.schema.json",

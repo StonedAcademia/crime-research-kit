@@ -12,6 +12,7 @@ from core.casefile import case_path, ensure_case, read_jsonl, record_path
 
 from adapters.ops.evidence.public_gate import enforce_public_output_gate
 from adapters.ops.evidence.reports.analysis.paths import analysis_graph, parse_cluster_bridge_audit, read_cluster_metadata
+from adapters.ops.evidence.reports.analysis.vocabulary import VocabPacks, load_case_packs
 from adapters.ops.evidence.reports.common import entity_display, read_csv_dicts
 from adapters.ops.evidence.ledger.records import public_rows, source_independence_key
 
@@ -40,6 +41,7 @@ class AnalysisContext:
     audit_bridges: list[dict[str, Any]]
     graph: dict[str, Any]
     graph_meta: dict[str, dict[str, Any]]
+    packs: VocabPacks
     cluster_members: dict[str, list[str]]
     cluster_ids: list[str]
 
@@ -62,6 +64,7 @@ def load_analysis_context(args: argparse.Namespace) -> AnalysisContext:
     ensure_case(args.case_dir)
     enforce_public_output_gate(args.case_dir, "export-analysis-charts", args.include_private)
     cdir = case_path(args.case_dir)
+    packs = load_case_packs(cdir)
     include_private = args.include_private
     out = Path(args.out_dir).expanduser().resolve() if args.out_dir else cdir / "exports" / "analysis_charts"
     out.mkdir(parents=True, exist_ok=True)
@@ -93,7 +96,7 @@ def load_analysis_context(args: argparse.Namespace) -> AnalysisContext:
     cluster_summary, cluster_labels = read_cluster_metadata(clusters_dir)
     audit_cluster_labels, audit_bridges = parse_cluster_bridge_audit(cdir)
     cluster_labels.update(audit_cluster_labels)
-    graph, graph_meta = analysis_graph(entities, events, event_links, relationships)
+    graph, graph_meta = analysis_graph(entities, events, event_links, relationships, packs=packs)
     for person_id, cluster_id in cluster_by_person.items():
         if person_id in graph_meta:
             graph_meta[person_id]["cluster_id"] = cluster_id
@@ -126,6 +129,7 @@ def load_analysis_context(args: argparse.Namespace) -> AnalysisContext:
         audit_bridges=audit_bridges,
         graph=graph,
         graph_meta=graph_meta,
+        packs=packs,
         cluster_members=cluster_members,
         cluster_ids=sorted(cluster_members),
     )

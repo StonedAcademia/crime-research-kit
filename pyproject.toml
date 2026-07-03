@@ -86,6 +86,7 @@ namespaces = true
   "registry_data/*.json",
   "registry_data/lanes/*.json",
   "registry_data/templates/*.json",
+  "registry_data/analysis/*.json",
 ]
 "core.models" = [
   "schemas_data/case/*.json",

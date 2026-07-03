@@ -6,7 +6,7 @@ import html
 import math
 from typing import Any
 
-from adapters.ops.evidence.reports.analysis.classifiers import STATUS_SCORE
+from adapters.ops.evidence.reports.analysis.classifiers import status_score
 from adapters.ops.evidence.reports.analysis.svg.base import (
     CHART_COLORS,
     color_for,
@@ -22,7 +22,7 @@ def render_heatmap_svg(rows: list[dict[str, Any]]) -> str:
     if not rows:
         return svg_no_data()
     row_keys = sorted({str(row.get("claim_type") or "unknown") for row in rows})
-    col_keys = sorted({str(row.get("status") or "unknown") for row in rows}, key=lambda status: -STATUS_SCORE.get(status, 0))
+    col_keys = sorted({str(row.get("status") or "unknown") for row in rows}, key=lambda status: -status_score(status))
     cell = 48
     left, top = 210, 58
     width = left + cell * len(col_keys) + 40
