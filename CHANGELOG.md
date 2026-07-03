@@ -6,7 +6,34 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-07-03
+
+### Added
+
+- Added the initial public `crime_research_kit.sdk` namespace with a lightweight
+  `CrkContext`, `SafetyTier`, `OperationSpec`, and empty operation catalog.
+- Added public SDK `OperationResult`, `OperationWarning`, `CrkError`, stable
+  error codes, and dependency/safety/privacy/input error subclasses.
+- Added SDK import tests that verify `crime_research_kit.sdk` does not import
+  or export legacy runtime roots as public API.
+- Added package-discovery governance so built wheels include the public
+  `crime_research_kit*` namespace.
+- Added fresh-build import coverage for `crime_research_kit.sdk`.
+- SDK target-shape planning package covering the public `crime_research_kit.sdk`
+  namespace, extraction phases, and first-wave kanban orchestration.
+- Typed pydantic models for all twelve ledger record types
+  (`core.models.records`), drift-tested against the canonical schemas.
+- Record schemas ship as package data, so installed packages validate without a
+  repo checkout.
+- Per-case vocabulary overrides:
+  `data/cases/<slug>/analysis_vocabulary.json` extends or prepends the default
+  packs, with a worked example in `data/examples/synthetic_case/`.
+- Governance tests banning case-specific vocabulary from `src/` and validating
+  the new registry shards.
+- Frozen CLI-surface governance for both console scripts.
+
 ### Changed
+
 - Adopted a pinned required-dependency set (`jsonschema`, `pydantic`, `pydantic-settings`, `httpx`, `typer`, `jinja2`); the core package is no longer stdlib-only.
 - `crk-ledger validate` now enforces the full JSON Schemas (enums, types, nested shapes) with line-addressed errors, replacing required-field-only checks.
 - Environment configuration is resolved once at CLI/MCP startup via `CrkSettings`; all `CRK_*` variable names and defaults are unchanged.
@@ -16,14 +43,15 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 - Both CLIs (`crk-ledger`, `cr-kit`) migrated from argparse to Typer while preserving command names, positional arguments, flags, defaults, aliases, and choices through `docs/guides/cli-surface.json`.
 - URL ingestion and SearXNG discovery now use httpx with redirect handling and bounded retries on connect errors and 5xx responses.
 
-### Added
-- SDK target-shape planning package covering the public `crime_research_kit.sdk`
-  namespace, extraction phases, and first-wave kanban orchestration.
-- Typed pydantic models for all twelve ledger record types (`core.models.records`), drift-tested against the canonical schemas.
-- Record schemas ship as package data, so installed packages validate without a repo checkout.
-- Per-case vocabulary overrides: `data/cases/<slug>/analysis_vocabulary.json` extends or prepends the default packs, with a worked example in `data/examples/synthetic_case/`.
-- Governance tests banning case-specific vocabulary from `src/` and validating the new registry shards.
-- Frozen CLI-surface governance for both console scripts.
+### Security
+
+- Preserved the public SDK import boundary so importing `crime_research_kit.sdk`
+  does not load CLI, MCP, graph, or ledger runtime modules.
+
+### Fixed
+
+- Included `crime_research_kit*` in setuptools package discovery so the public
+  SDK namespace is present in built distributions.
 
 ## [0.12.0] - 2026-07-02
 

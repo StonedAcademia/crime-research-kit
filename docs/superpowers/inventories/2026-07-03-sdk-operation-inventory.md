@@ -18,7 +18,7 @@ guide points at them.
 | Surface | Current state | SDK decision |
 | --- | --- | --- |
 | Distribution name | `crime-research-kit` in `pyproject.toml` | Keep. Import namespace is separate. |
-| Version at inventory time | `0.12.0` | Bump with implementation/release metadata once SDK modules land. |
+| Version at inventory time | `0.12.0` before SDK integration; bumped to `0.13.0` with SDK skeleton landing | Keep semver and changelog aligned as SDK slices land. |
 | Console scripts | `cr-kit`, `crk-ledger`, `crk-mcp` | Keep stable; adapters should consume SDK/catalog behavior over time. |
 | Published packages | `adapters*`, `core*`, `pipeline*` via setuptools discovery | Do not document these as SDK imports. Add `crime_research_kit*` and later decide whether to move or de-publicize internals. |
 | Required dependencies | `jsonschema`, `pydantic`, `pydantic-settings`, `httpx`, `typer`, `jinja2` | SDK skeleton may rely on current required deps but must not add new required deps. |
@@ -145,3 +145,16 @@ The initial `OperationSpec` catalog should prioritize these stable SDK names:
 The catalog should also carry CLI command names, MCP tool names, Skill API
 camelCase names, future HTTP routes where documented, safety tier, side effects,
 and explicit `not_sdk` exemptions for adapter-only or optional service commands.
+
+## Explicit SDK / Non-Core Decisions
+
+| Live surface | Decision | Reason |
+| --- | --- | --- |
+| `crk-ledger ner-suggest` / `nerSuggest` | SDK candidate under `case.extractions.ner_suggest` or `case.review.ner_suggest` | It is lead-only staged output, not canonical evidence, but it belongs in the operation catalog because Skill API docs expose it. |
+| `crk-ledger report` / MCP `run_report` | SDK candidate under a report/export facade | Renderer internals stay private, but adapter parity needs one catalog entry for the evidence-board operation. |
+| `crk-ledger export-people-clusters` | SDK candidate with optional dependency metadata | Public-export semantics are stable, but graph-analysis dependencies must not enter the base SDK import path. |
+| Hidden CLI alias `source-independence` | Catalog alias for `review.audit_source_independence`, not a separate SDK method | Preserve CLI compatibility while avoiding duplicate SDK operations. |
+| `cr-kit index-case` / `query-case` / MCP `query_case` | Optional retrieval capability, not base SDK core | Requires retrieval extras and local Qdrant/LlamaIndex; public-safe read defaults still apply. |
+| `cr-kit remember-research-actions` | Non-core optional memory capability | Memory is workflow/audit support, not evidence; do not include in the first SDK core. |
+| `cr-kit plan` / `resume` | SDK workflow facade candidates | App service remains runtime orchestration and should consume SDK/catalog-backed workflow behavior. |
+| MCP prompts/resources | Adapter-specific, not SDK operations | They remain MCP content even after MCP tools are catalog-backed. |

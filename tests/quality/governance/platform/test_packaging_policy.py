@@ -102,6 +102,12 @@ def test_console_scripts_stay_stable():
     assert load_pyproject()["project"]["scripts"] == EXPECTED_SCRIPTS
 
 
+def test_public_sdk_namespace_is_packaged():
+    package_include = load_pyproject()["tool"]["setuptools"]["packages"]["find"]["include"]
+
+    assert "crime_research_kit*" in package_include
+
+
 def test_packaged_registry_data_matches_canonical_docs_registry():
     docs_registry = KIT_ROOT / "docs" / "registry"
     package_registry = KIT_ROOT / "src" / "core" / "lanes" / "registry_data"
@@ -138,12 +144,13 @@ def test_packaging_smoke_imports_current_package_modules():
 
     assert "case_builder" not in text
     assert "import cli" in fresh_build
+    assert "import crime_research_kit.sdk" in fresh_build
     assert "adapters.interfaces.mcp.server" in text
 
 
 def test_license_policy_allows_agpl_project_and_copyleft_dependencies(tmp_path):
     records = [
-        {"Name": "crime-research-kit", "Version": "0.12.0", "License": "AGPL-3.0-only"},
+        {"Name": "crime-research-kit", "Version": "0.13.0", "License": "AGPL-3.0-only"},
         {"Name": "chardet", "Version": "5.2.0", "License": "GNU Lesser General Public License v2 or later"},
         {"Name": "tld", "Version": "0.13.2", "License": "MPL-1.1 OR GPL-2.0-only OR LGPL-2.1-or-later"},
         {"Name": "setuptools", "Version": "79.0.1", "License": "UNKNOWN"},

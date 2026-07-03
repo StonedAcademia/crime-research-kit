@@ -22,7 +22,9 @@ SRC_ROOT = Path("src")
 SIZE_EXEMPT_NAMES = {"LICENSE"}
 SRC_FILE_COUNT_EXEMPT_NAMES = {"README.md", "__init__.py"}
 DIR_LIMIT_OVERRIDES = {
+    Path("src"): {"max_dirs": 4},
     Path("docs/guides"): {"max_dirs": 4},
+    Path("tests/runtime/unit"): {"max_dirs": 4},
 }
 
 HASH_COMMENT_SUFFIXES = {".py", ".sh", ".yml", ".yaml", ".toml"}

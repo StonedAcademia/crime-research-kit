@@ -82,6 +82,11 @@ src/crime_research_kit/
     operations.py
 ```
 
+Additional integration files:
+- `pyproject.toml`
+- `deployment/scripts/checks/fresh_build.py`
+- SDK import and packaging governance tests
+
 **Interfaces:**
 - `CrkContext`
 - `OperationResult`
@@ -91,20 +96,24 @@ src/crime_research_kit/
 
 **Steps:**
 
-- [ ] Add failing import tests for `crime_research_kit.sdk`.
-- [ ] Create the package skeleton and local READMEs.
-- [ ] Implement `SafetyTier` values: `read`, `staged_write`,
+- [x] Add failing import tests for `crime_research_kit.sdk`.
+- [x] Create the package skeleton and local READMEs.
+- [x] Implement `SafetyTier` values: `read`, `staged_write`,
   `canonical_gated`, `public_export`, `internal_service`.
-- [ ] Implement `OperationResult` with fields aligned to Skill API docs:
+- [x] Implement `OperationResult` with fields aligned to Skill API docs:
   `ok`, `operation`, `case_ref`, `data`, `errors`, `warnings`, `created`,
   `updated`, `outputs`, `counts`, `diagnostics`.
-- [ ] Keep command/stdout/stderr diagnostic fields opt-in and not central to the
+- [x] Keep command/stdout/stderr diagnostic fields opt-in and not central to the
   public result contract.
-- [ ] Add governance tests that the new package has README coverage and remains
+- [x] Add governance tests that the new package has README coverage and remains
   within line-count limits.
+- [x] Add package-discovery and built-wheel import coverage for
+  `crime_research_kit.sdk`.
 
 **Acceptance:**
 - `from crime_research_kit.sdk import CrkContext, OperationResult` works.
+- Built distributions include `crime_research_kit*` and the fresh-build import
+  smoke imports `crime_research_kit.sdk`.
 - No existing CLI/MCP behavior changes.
 - No compatibility aliases are introduced.
 
@@ -142,6 +151,10 @@ src/crime_research_kit/
 **Purpose:** expose useful Python methods over the current ops without leaking
 the current ops module layout.
 
+Dependency gate: do not begin case-scoped wrappers until the SDK operation
+catalog has landed. Wrapper methods should consume catalog names and safety
+metadata instead of copying interface-local metadata.
+
 **Target files:**
 
 ```text
@@ -177,6 +190,10 @@ src/crime_research_kit/sdk/
 
 **Purpose:** expose app-layer workflow without making graph internals public.
 
+Dependency gate: do not begin workflow facade work until the SDK operation
+catalog has landed. The app service should consume a `WorkflowClient` or
+catalog-backed services, with subprocess transport kept private.
+
 **Target files:**
 - `src/crime_research_kit/sdk/workflows.py`
 - `src/pipeline/app/service.py`
@@ -194,14 +211,19 @@ src/crime_research_kit/sdk/
   approvals.
 
 **Acceptance:**
-- SDK workflow methods can dry-run, pause, resume, and report status without
-  importing graph nodes.
+- SDK workflow methods can dry-run, pause, resume, and report status through
+  SDK/catalog-backed services without importing graph nodes.
+- `pipeline/app/service.py` no longer owns duplicated operation metadata or
+  public safety-tier definitions.
 - Existing `cr-kit plan` and `cr-kit resume` tests still pass.
 
 ## Phase 5: Repoint CLI And MCP To SDK/Catalog
 
 **Purpose:** make CLI and MCP true adapters over the SDK instead of parallel
 operation surfaces.
+
+Dependency gate: do not repoint CLI or MCP until the operation catalog and
+catalog parity tests have landed.
 
 **Files:**
 - `src/adapters/interfaces/cli/**`

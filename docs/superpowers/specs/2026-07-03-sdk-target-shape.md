@@ -132,6 +132,19 @@ and never import `adapters`, `core`, `pipeline`, `CrkRunner`, or MCP/CLI modules
 | Workflow | `client.workflows.plan`, `resume` | `pipeline.app.service` | gated by packet/export review |
 | Optional services | `case.discovery`, `case.retrieval`, `case.memory` or explicit capability modules | `adapters.io`, `core.memory` | optional, not evidence |
 
+## Optional Capability Matrix
+
+| Capability | Current sources | Dependency boundary | SDK rule |
+| --- | --- | --- | --- |
+| Discovery / SearXNG | `adapters.io.acquisition`, `cr-kit discover-sources`, MCP `discover_sources` | `web-local` behavior plus configured `CRK_SEARXNG_URL` | Expose as optional source-discovery capability; base SDK import must not require a running service. |
+| Documents / Docling | `adapters.io.parsing.parse_source`, `cr-kit parse-source`, MCP `parse_source` | `documents` extra | Raise an actionable dependency error when unavailable. |
+| OCR | `adapters.io.parsing.ocr_source`, `cr-kit ocr-source`, MCP `ocr_source` | `documents` extra plus OCR binaries | Raise dependency/tooling errors without making OCR part of base install. |
+| Retrieval / Qdrant-LlamaIndex | `adapters.io.retrieval`, `cr-kit index-case`, `cr-kit query-case`, MCP `query_case` | `retrieval` extra plus configured Qdrant | Optional capability; reads must still default to public-safe records. |
+| Memory / Mem0 | `core.memory`, `cr-kit remember-research-actions` | `memory-local` extra and local provider settings | Not part of first public SDK core; if exposed later, it must be explicit and non-evidence. |
+| LLM helpers | `adapters.interfaces.llm`, graph model factory | `llm` extra and local model provider | Opt-in only; local-first and egress-audited. |
+| MCP server | `adapters.interfaces.mcp` | `mcp` extra | Adapter over SDK/catalog, not required for SDK import. |
+| LangGraph workflows | `pipeline.graph`, checkpoint persistence | `agentic` extra | App/runtime implementation detail behind workflow facade. |
+
 ## App Layer Target
 
 The app layer remains a use-case boundary, not a public SDK boundary.

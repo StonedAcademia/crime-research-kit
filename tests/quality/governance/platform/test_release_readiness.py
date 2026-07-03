@@ -25,15 +25,15 @@ def test_changelog_has_unreleased_and_current_version():
 
     sections = rr.changelog_sections(text)
     assert "Unreleased" in sections
-    rr.check_changelog(text, "0.12.0")
+    rr.check_changelog(text, "0.13.0")
 
 
 def test_tag_must_match_pyproject_version():
     rr = load_release_readiness()
 
-    rr.check_tag_matches_version("v0.12.0", "0.12.0")
+    rr.check_tag_matches_version("v0.13.0", "0.13.0")
     with pytest.raises(rr.ReleaseError):
-        rr.check_tag_matches_version("v0.13.0", "0.12.0")
+        rr.check_tag_matches_version("v0.14.0", "0.13.0")
 
 
 def test_version_and_tag_must_be_semver():
