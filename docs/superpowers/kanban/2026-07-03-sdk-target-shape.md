@@ -28,7 +28,7 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-008 Build `CrkClient` and `CaseClient` | done | main | SDK-005, SDK-007 | SDK client modules and tests | Thin client and case handles landed without operation wrappers. |
 | SDK-009 Wrap case and record reads | done | main | SDK-005, SDK-008 | SDK case/record modules and tests | Public-safe case info, case listing, record reads, and source-text reads landed. |
 | SDK-010 Wrap source operations | done | main | SDK-005, SDK-008 | SDK source modules and tests | Source add, ingest, preserve, discover, parse, and OCR wrappers landed with dependency errors. |
-| SDK-011 Wrap extraction operations | ready | unassigned | SDK-005, SDK-008 | SDK extraction modules and tests | Canonical import remains explicitly approved. |
+| SDK-011 Wrap extraction operations | in_progress | main | SDK-005, SDK-008 | SDK extraction modules and tests | Canonical import remains explicitly approved. |
 | SDK-012 Wrap review operations | ready | unassigned | SDK-005, SDK-008 | SDK review modules and tests | Safety audit behavior remains unchanged. |
 | SDK-013 Wrap export operations | ready | unassigned | SDK-005, SDK-008 | SDK export modules and tests | Exports are public-safe by default. |
 | SDK-014 Add workflow facade | ready | unassigned | SDK-005, SDK-008 | `src/crime_research_kit/sdk/workflows.py`, `src/pipeline/app/service.py`, workflow tests | App layer must consume SDK/catalog-backed facade without exposing graph nodes. |
