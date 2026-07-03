@@ -1,0 +1,122 @@
+{
+  "source_id": "S_NSARCHIVE_MKULTRA_CONTEXT_2024",
+  "extraction_notes": "Deterministic reviewed packet for live E2E workflow coverage.",
+  "entities": [
+    {
+      "entity_id": "E_MKULTRA_E2E_NSARCHIVE",
+      "entity_type": "organization",
+      "name": "National Security Archive",
+      "display_name": "National Security Archive",
+      "aliases": [],
+      "status": "confirmed",
+      "role_tags": ["archive", "publisher"],
+      "privacy_level": "not_applicable",
+      "living_status": "not_applicable",
+      "source_ids": ["S_NSARCHIVE_MKULTRA_CONTEXT_2024"],
+      "claim_ids": ["C_MKULTRA_E2E_NSARCHIVE_COLLECTION"],
+      "public_export": true,
+      "notes": "Organization named by the course source manifest and source page."
+    },
+    {
+      "entity_id": "E_MKULTRA_E2E_CIA",
+      "entity_type": "organization",
+      "name": "Central Intelligence Agency",
+      "display_name": "Central Intelligence Agency",
+      "aliases": ["CIA"],
+      "status": "confirmed",
+      "role_tags": ["government_agency"],
+      "privacy_level": "not_applicable",
+      "living_status": "not_applicable",
+      "source_ids": ["S_NSARCHIVE_MKULTRA_CONTEXT_2024"],
+      "claim_ids": ["C_MKULTRA_E2E_NSARCHIVE_COLLECTION"],
+      "public_export": true,
+      "notes": "Institution named in the source title/context."
+    },
+    {
+      "entity_id": "E_MKULTRA_E2E_PROGRAM",
+      "entity_type": "event_series",
+      "name": "MKULTRA",
+      "display_name": "MKULTRA",
+      "aliases": ["Project MKULTRA", "MK-ULTRA"],
+      "status": "confirmed",
+      "role_tags": ["research_program"],
+      "privacy_level": "not_applicable",
+      "living_status": "not_applicable",
+      "source_ids": ["S_NSARCHIVE_MKULTRA_CONTEXT_2024"],
+      "claim_ids": ["C_MKULTRA_E2E_NSARCHIVE_COLLECTION"],
+      "public_export": true,
+      "notes": "Program name used as a research subject, not as an allegation about any person."
+    }
+  ],
+  "places": [],
+  "artifacts": [],
+  "claims": [
+    {
+      "claim_id": "C_MKULTRA_E2E_NSARCHIVE_COLLECTION",
+      "claim": "The National Security Archive page presents CIA behavior-control experiments as the focus of a scholarly document collection.",
+      "claim_type": "background",
+      "assertion_type": "source_stated_fact",
+      "status": "single_source",
+      "confidence": 0.62,
+      "source_ids": ["S_NSARCHIVE_MKULTRA_CONTEXT_2024"],
+      "contradicts": [],
+      "supports": [],
+      "privacy_review": "clear",
+      "public_export": true,
+      "notes": "Reviewed E2E fixture claim; exact public narration still requires source-span review."
+    }
+  ],
+  "events": [
+    {
+      "event_id": "EV_MKULTRA_E2E_NSARCHIVE_2024",
+      "title": "National Security Archive publishes MKULTRA collection notice",
+      "event_type": "archive_publication",
+      "start_date": "2024-12-23",
+      "end_date": null,
+      "date_precision": "day",
+      "place_ids": [],
+      "entity_ids": ["E_MKULTRA_E2E_NSARCHIVE", "E_MKULTRA_E2E_CIA", "E_MKULTRA_E2E_PROGRAM"],
+      "artifact_ids": [],
+      "claim_ids": ["C_MKULTRA_E2E_NSARCHIVE_COLLECTION"],
+      "source_ids": ["S_NSARCHIVE_MKULTRA_CONTEXT_2024"],
+      "confidence": 0.62,
+      "status": "single_source",
+      "public_export": true,
+      "notes": "Publication event used for E2E report/retrieval coverage."
+    }
+  ],
+  "event_links": [
+    {
+      "event_link_id": "EL_MKULTRA_E2E_PROGRAM_NOTICE",
+      "entity_id": "E_MKULTRA_E2E_PROGRAM",
+      "event_id": "EV_MKULTRA_E2E_NSARCHIVE_2024",
+      "relation_type": "subject_of_archive_notice",
+      "basis": "source-stated page topic",
+      "claim_ids": ["C_MKULTRA_E2E_NSARCHIVE_COLLECTION"],
+      "source_ids": ["S_NSARCHIVE_MKULTRA_CONTEXT_2024"],
+      "confidence": 0.62,
+      "status": "single_source",
+      "public_export": true,
+      "notes": "Neutral subject linkage only."
+    }
+  ],
+  "relationships": [
+    {
+      "rel_id": "R_MKULTRA_E2E_NSARCHIVE_PUBLISHES",
+      "src_entity_id": "E_MKULTRA_E2E_NSARCHIVE",
+      "dst_entity_id": "E_MKULTRA_E2E_PROGRAM",
+      "relation_type": "published_archive_context_about",
+      "start_date": "2024-12-23",
+      "end_date": null,
+      "claim_ids": ["C_MKULTRA_E2E_NSARCHIVE_COLLECTION"],
+      "source_ids": ["S_NSARCHIVE_MKULTRA_CONTEXT_2024"],
+      "confidence": 0.62,
+      "status": "single_source",
+      "public_export": true,
+      "notes": "Publication-context relationship, not a misconduct allegation."
+    }
+  ],
+  "source_spans": [],
+  "quotes": [],
+  "redactions": []
+}

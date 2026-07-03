@@ -106,6 +106,7 @@ markers = [
   "unit: pure functions and small helpers",
   "integration: ops, CLI-adjacent, filesystem, and component-boundary tests",
   "e2e: full graph, service, or MCP orchestration tests",
+  "live: opt-in tests that use external network, local services, or authenticated agent hosts",
   "governance: repository policy, schemas, generated docs, and skill drift checks",
   "smoke: fast heartbeat coverage for the main workflow",
 ]

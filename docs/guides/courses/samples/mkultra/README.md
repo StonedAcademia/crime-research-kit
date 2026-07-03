@@ -19,6 +19,7 @@ sources.
 | Greenfield Windows/WSL, Linux, and macOS install | [01-greenfield-install.md](01-greenfield-install.md) |
 | Source capture, preservation, and citation workflow | [02-source-capture.md](02-source-capture.md) |
 | Operate the case as a skill, MCP server, and CLI | [03-agent-workflows.md](03-agent-workflows.md) |
+| Tested full-stack E2E workflow | [04-tested-full-stack-workflow.md](04-tested-full-stack-workflow.md) |
 | Source manifest and citation tables | [sources/](sources/) |
 | Screenshot capture plan | [assets/](assets/) |
 

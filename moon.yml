@@ -71,6 +71,14 @@ tasks:
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
+  test-mkultra-live:
+    description: "Run the opt-in live MKULTRA full-stack E2E workflow."
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".[dev,mcp,llm,documents,retrieval,agentic,memory-local]", "--", "python", "-m", "pytest", "tests/runtime/e2e/mkultra_live", "-q"]
+    inputs: ["@group(python)", "@group(tests)", "pyproject.toml", "docs/guides/courses/samples/mkultra/**/*"]
+    options: { cache: false, outputStyle: stream }
+    toolchains: system
+
   test-governance:
     description: "Run governance tests."
     command: "uv"
