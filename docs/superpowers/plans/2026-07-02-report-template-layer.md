@@ -12,6 +12,8 @@
 
 **Sequencing:** requires stage 1 (merged). Execute AFTER stage 2 (`refactor/vocab-registry-packs`) merges — both touch `reports/analysis/` builders; rebase this branch if stage 2 is in flight. Stage 3 is independent.
 
+**Execution status (2026-07-03):** all sequencing prerequisites are satisfied — stage 2 merged at `0eebbe9`, stage 3 at `0a08867`. Task 1 is COMPLETE (commit `8ed36e9`, merged at `a8760da`): the delivered `core/models/reports/` interfaces match this plan's Interfaces block exactly, so Tasks 2-9 consume them as written. Resume at Task 2. Stage 2's pack threading means `specs.py`/builder line numbers referenced below may have drifted — the read-first instructions in each task govern, not the line numbers.
+
 **Recorded decisions:**
 - **One generic SVG template, not one per figure.** Markup emission concentrates in `svg.j2`; the 13 legacy figure renderers become geometry builders. This is what makes parity provable and keeps directory shape sane.
 - **htmx is vendored, not load-bearing.** Exports are static files opened from disk; filtering/toggle interactions are plain TS (feature parity with the current `interactions.py` script). htmx ships in the bundle for future server-backed surfaces but nothing in a static export depends on it.
@@ -158,7 +160,7 @@ class Dashboard(BaseModel):
     pages: list[ReportPage] = Field(default_factory=list)
 ```
 
-- [ ] **Step 1: Write failing tests** (append to `tests/runtime/unit/test_record_models.py`):
+- [x] **Step 1: Write failing tests** (append to `tests/runtime/unit/test_record_models.py`):
 
 ```python
 def test_svg_doc_round_trips_nested_groups():
@@ -186,11 +188,11 @@ def test_report_page_defaults():
 
 Run: `PYTEST tests/runtime/unit/test_record_models.py -q` — Expected: FAIL (`ModuleNotFoundError: core.models.reports`).
 
-- [ ] **Step 2: Create the modules** (code above; `__init__.py` re-exports `SvgDoc`, all primitives, `ReportPage`, `TableBlock`, `Dashboard`; README describes the three-layer split).
+- [x] **Step 2: Create the modules** (code above; `__init__.py` re-exports `SvgDoc`, all primitives, `ReportPage`, `TableBlock`, `Dashboard`; README describes the three-layer split).
 
-- [ ] **Step 3: Run** `PYTEST tests/runtime/unit/test_record_models.py tests/quality/governance/test_repository_shape.py -q` — PASS.
+- [x] **Step 3: Run** `PYTEST tests/runtime/unit/test_record_models.py tests/quality/governance/test_repository_shape.py -q` — PASS.
 
-- [ ] **Step 4: Commit** — `feat(models): add typed report page and svg figure models`
+- [x] **Step 4: Commit** — `feat(models): add typed report page and svg figure models`
 
 ---
 
