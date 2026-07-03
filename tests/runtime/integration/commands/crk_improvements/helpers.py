@@ -10,12 +10,7 @@ def load_tcr():
 
 
 def subcommand_parsers(tcr):
-    parser = tcr.build_parser()
-    for action in parser._actions:
-        choices = getattr(action, "choices", None)
-        if choices and "init-case" in choices:
-            return choices
-    return {}
+    return tcr.command_tree.commands
 
 
 def require_command(tcr, *names):
@@ -27,19 +22,18 @@ def require_command(tcr, *names):
 
 
 def command_options(tcr, command):
-    parser = subcommand_parsers(tcr)[command]
     return {
         option
-        for action in parser._actions
-        for option in getattr(action, "option_strings", [])
+        for param in subcommand_parsers(tcr)[command].params
+        if getattr(param, "param_type_name", None) == "option"
+        for option in [*param.opts, *param.secondary_opts]
     }
 
 
 def option_choices(tcr, command, option):
-    parser = subcommand_parsers(tcr)[command]
-    for action in parser._actions:
-        if option in getattr(action, "option_strings", []):
-            return set(action.choices or [])
+    for param in subcommand_parsers(tcr)[command].params:
+        if getattr(param, "param_type_name", None) == "option" and option in [*param.opts, *param.secondary_opts]:
+            return set(getattr(param.type, "choices", None) or [])
     return set()
 
 

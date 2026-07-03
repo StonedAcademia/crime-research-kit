@@ -21,8 +21,8 @@ LEDGER_CLI_MODULE = "adapters.interfaces.cli"
 
 
 def load_ledger_cli() -> SimpleNamespace:
+    from adapters.interfaces.cli.app import app, build_click_command
     from adapters.interfaces.cli.entry import main
-    from adapters.interfaces.cli.parser import build_parser
     from adapters.ops.casework.records.names.parsing import parse_name_entries
     from core.casefile import (
         append_jsonl,
@@ -39,7 +39,8 @@ def load_ledger_cli() -> SimpleNamespace:
 
     return SimpleNamespace(
         append_jsonl=append_jsonl,
-        build_parser=build_parser,
+        app=app,
+        command_tree=build_click_command(),
         case_path=case_path,
         main=main,
         parse_name_entries=parse_name_entries,

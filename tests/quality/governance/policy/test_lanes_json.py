@@ -1,8 +1,7 @@
 import json
 import re
-import subprocess
-import sys
 
+from adapters.interfaces.cli.app import build_click_command
 from core.lanes.registry import load_lanes
 from tests.helpers import KIT_ROOT
 
@@ -72,50 +71,31 @@ def test_generic_is_template_not_lane():
     assert "generic" not in registry["lanes"]
 
 
-def test_ledger_draft_extraction_help_includes_registry_templates():
-    registry = load_registry()
+def option_choices(command: str, option: str) -> set[str]:
+    for param in build_click_command().commands[command].params:
+        if getattr(param, "param_type_name", None) == "option" and option in [*param.opts, *param.secondary_opts]:
+            return set(getattr(param.type, "choices", None) or [])
+    return set()
 
-    result = subprocess.run(
-        [
-            sys.executable,
-            "-m",
-            "adapters.interfaces.cli",
-            "draft-extraction",
-            "--help",
-        ],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-        text=True,
-    )
+
+def test_ledger_draft_extraction_choices_include_registry_templates():
+    registry = load_registry()
+    choices = option_choices("draft-extraction", "--template")
 
     for template_id in registry["templates"]:
-        assert template_id in result.stdout
+        assert template_id in choices
 
 
-def test_ledger_plan_public_records_help_includes_planning_lanes():
+def test_ledger_plan_public_records_choices_include_planning_lanes():
     registry = load_registry()
     planning_lanes = {
         lane_id for lane_id, lane in registry["lanes"].items() if lane["public_record_plan"]
     }
-
-    result = subprocess.run(
-        [
-            sys.executable,
-            "-m",
-            "adapters.interfaces.cli",
-            "plan-public-records",
-            "--help",
-        ],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-        text=True,
-    )
+    choices = option_choices("plan-public-records", "--lane")
 
     for lane_id in planning_lanes:
-        assert lane_id in result.stdout
-    assert "narrative-readiness" not in result.stdout
+        assert lane_id in choices
+    assert "narrative-readiness" not in choices
 
 
 def test_analysis_vocabulary_shard_is_well_formed():

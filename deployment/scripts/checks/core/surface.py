@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 from collections.abc import Iterable
+from enum import Enum
 from typing import Any
 
 
@@ -31,16 +32,23 @@ def click_surface(root: Any) -> dict[str, Any]:
     import click
 
     surface: dict[str, Any] = {}
+    seen_commands: dict[int, str] = {}
     for name, command in root.commands.items():
+        command_key = _command_key(command)
+        if command_key in seen_commands:
+            surface[seen_commands[command_key]]["aliases"].append(name)
+            continue
+        seen_commands[command_key] = name
         args: list[str] = []
         options: dict[str, Any] = {}
         for param in command.params:
-            if isinstance(param, click.Argument):
+            if isinstance(param, click.Argument) or getattr(param, "param_type_name", None) == "argument":
                 args.append(param.name)
                 continue
             option_names = sorted([*param.opts, *param.secondary_opts])
             key = _primary_option(option_names)
-            choices = sorted(param.type.choices) if isinstance(param.type, click.Choice) else None
+            raw_choices = getattr(param.type, "choices", None)
+            choices = sorted(raw_choices) if raw_choices else None
             options[key] = {
                 "aliases": option_names,
                 "default": _comparable_default(param.default),
@@ -79,11 +87,21 @@ def _primary_option(option_names: Iterable[str]) -> str:
 
 
 def _comparable_default(value: Any) -> Any:
+    if isinstance(value, Enum):
+        return value.value
     if isinstance(value, tuple):
-        return list(value)
+        return [_comparable_default(item) for item in value]
+    if isinstance(value, list):
+        return [_comparable_default(item) for item in value]
     if isinstance(value, set):
-        return sorted(value)
+        return sorted(_comparable_default(item) for item in value)
     return value
+
+
+def _command_key(command: Any) -> int:
+    callback = getattr(command, "callback", None)
+    wrapped = getattr(callback, "__wrapped__", callback)
+    return id(wrapped) if wrapped is not None else id(command)
 
 
 def _sorted_surface(surface: dict[str, Any]) -> dict[str, Any]:

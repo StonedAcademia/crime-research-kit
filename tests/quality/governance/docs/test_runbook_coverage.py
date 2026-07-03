@@ -7,6 +7,7 @@ import re
 import subprocess
 import sys
 
+from adapters.interfaces.cli.app import build_click_command
 from tests.helpers import KIT_ROOT, moon_task_names
 
 
@@ -35,8 +36,7 @@ def cr_kit_commands() -> set[str]:
 
 
 def ledger_commands() -> set[str]:
-    output = run_help([sys.executable, "-m", "adapters.interfaces.cli", "--help"])
-    return {f"crk-ledger {name}" for name in subcommands_from_help(output)}
+    return {f"crk-ledger {name}" for name in build_click_command().commands}
 
 
 def docker_moon_targets() -> set[str]:
