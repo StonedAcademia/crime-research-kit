@@ -41,12 +41,13 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-021 Future HTTP route binding | backlog | unassigned | SDK-005 | catalog metadata only | Backlog; no HTTP server in this series. |
 | SDK-022 Move internals under `_runtime` | backlog | unassigned | SDK-018 | `_runtime` migration if chosen | Backlog; runtime modules are documented private for now. |
 | SDK-023 SDK examples package | done | main | SDK-014 | SDK examples/docs | Packaged SDK examples and docs landed. |
-| SDK-024 Catalog-driven MCP registration | backlog | unassigned | SDK-006, SDK-016 | MCP registration code/tests | Dependency-unblocked backlog refinement; prompts/resources remain explicit. |
+| SDK-024 Catalog-driven MCP registration | in_progress | main | SDK-006, SDK-016 | MCP registration code/tests | Catalog-driven MCP registration slice claimed; prompts/resources remain explicit. |
 | SDK-025 Strict request models | backlog | unassigned | SDK-005 | request models/tests | Backlog. |
 
 Dependency note: SDK-015, SDK-016, SDK-018, SDK-019, and SDK-020 are done.
 SDK-015, SDK-016, SDK-018, SDK-019, SDK-020, and SDK-023 are done.
-SDK-021, SDK-022, SDK-024, and SDK-025 remain backlog follow-up slices.
+SDK-024 is in progress. SDK-021, SDK-022, and SDK-025 remain backlog follow-up
+slices.
 
 ## Done
 
@@ -79,7 +80,7 @@ SDK-021, SDK-022, SDK-024, and SDK-025 remain backlog follow-up slices.
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| None | - | No cards currently in progress. |
+| SDK-024 Catalog-driven MCP registration | main | Generate SDK-backed MCP tool registration where safe; keep prompts/resources explicit. |
 
 ## Review
 
@@ -111,7 +112,6 @@ SDK-021, SDK-022, SDK-024, and SDK-025 remain backlog follow-up slices.
 | --- | --- | --- | --- |
 | SDK-021 Future HTTP route binding | P3 | SDK-005 | HTTP mapping uses the catalog but no server is added in the SDK extraction series. |
 | SDK-022 Move internals under `_runtime` | P3 | SDK-018 | Top-level implementation packages stop being packaged after console scripts and imports migrate. |
-| SDK-024 Catalog-driven MCP registration | P3 | SDK-016 | Tool registration is generated where safe; prompts/resources remain explicit. |
 | SDK-025 Strict request models | P3 | SDK-005 | Operation request models replace loose dict payloads for stable operations. |
 
 ## Blocked / Watch
