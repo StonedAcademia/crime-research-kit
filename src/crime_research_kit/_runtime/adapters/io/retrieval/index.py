@@ -87,7 +87,10 @@ def _build_index(
         raise RuntimeError("Install the local retrieval extra before indexing cases.") from exc
 
     if embed is None:
-        from llama_index.embeddings.huggingface import HuggingFaceEmbedding  # type: ignore
+        try:
+            from llama_index.embeddings.huggingface import HuggingFaceEmbedding  # type: ignore
+        except ImportError as exc:
+            raise RuntimeError("Install the local retrieval extra before indexing cases.") from exc
 
         embed = HuggingFaceEmbedding(model_name=embed_model)
     Settings.embed_model = embed
