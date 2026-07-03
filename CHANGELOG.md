@@ -17,6 +17,8 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 - URL ingestion and SearXNG discovery now use httpx with redirect handling and bounded retries on connect errors and 5xx responses.
 
 ### Added
+- SDK target-shape planning package covering the public `crime_research_kit.sdk`
+  namespace, extraction phases, and first-wave kanban orchestration.
 - Typed pydantic models for all twelve ledger record types (`core.models.records`), drift-tested against the canonical schemas.
 - Record schemas ship as package data, so installed packages validate without a repo checkout.
 - Per-case vocabulary overrides: `data/cases/<slug>/analysis_vocabulary.json` extends or prepends the default packs, with a worked example in `data/examples/synthetic_case/`.
