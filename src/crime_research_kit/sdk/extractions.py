@@ -6,10 +6,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from .cases import _from_op_result
+from ._internal import from_op_result as _from_op_result
+from ._internal import invalid_result as _invalid_result
+from ._internal import operation_name as _op
+from ._internal import runner as _runner
 from .context import CrkContext
-from .errors import INVALID_INPUT
-from .operations import get_operation
 from .results import OperationResult
 
 
@@ -68,11 +69,7 @@ class CaseExtractionsClient:
         name = _bare_packet_name(packet_name)
         operation = _op("extractions.import_reviewed")
         if name is None:
-            return OperationResult.failure(
-                operation,
-                {"code": INVALID_INPUT, "message": f"Packet must be a bare filename: {packet_name!r}"},
-                case_ref=str(self.case_dir),
-            )
+            return _invalid_result(operation, f"Packet must be a bare filename: {packet_name!r}", str(self.case_dir))
         packet_path = self.case_dir / "staging" / "extractions" / name
         raw = extraction_ops.import_extraction(
             _runner(self.context),
@@ -86,26 +83,12 @@ class CaseExtractionsClient:
         """Plan or run lead-only named-entity/date suggestions from source text."""
         operation = _op("extractions.ner_suggest")
         if limit < 1:
-            return OperationResult.failure(
-                operation,
-                {"code": INVALID_INPUT, "message": "limit must be greater than zero"},
-                case_ref=str(self.case_dir),
-            )
+            return _invalid_result(operation, "limit must be greater than zero", str(self.case_dir))
         args = ["ner-suggest", str(self.case_dir), "--limit", str(limit)]
         if source_id:
             args.extend(["--source-id", source_id])
         raw = _runner(self.context).run("ner_suggest", args)
         return _result(operation, raw, case_ref=str(self.case_dir))
-
-
-def _op(name: str) -> str:
-    return get_operation(name).name
-
-
-def _runner(context: CrkContext):
-    from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
-
-    return CrkRunner(repo_root=context.repo_root, dry_run=context.dry_run)
 
 
 def _bare_packet_name(packet_name: str) -> str | None:

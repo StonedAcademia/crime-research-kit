@@ -5,10 +5,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from os import PathLike
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Sequence
 
+from ._internal import from_op_result as _from_op_result
+from ._internal import runner as _runner
 from .context import CrkContext
-from .errors import CASE_NOT_FOUND, INVALID_INPUT, OPERATION_FAILED, PRIVACY_BLOCKED, SAFETY_BLOCKED, SOURCE_NOT_FOUND
 from .results import OperationResult
 
 CaseRef = str | PathLike[str] | Path
@@ -118,77 +119,6 @@ def case_info(
         raw.data["record_counts"] = counts
         raw.data["include_private"] = is_internal
     return _from_op_result("case.info", raw, case_ref=str(path))
-
-
-def _from_op_result(operation: str, raw: Any, *, case_ref: str | None = None) -> OperationResult:
-    data = dict(getattr(raw, "data", {}) or {})
-    return OperationResult(
-        ok=bool(getattr(raw, "ok", False)),
-        operation=operation,
-        case_ref=case_ref,
-        data=data,
-        errors=[
-            {
-                "code": _error_code(message),
-                "message": message,
-                "operation": operation,
-                "case_ref": case_ref,
-            }
-            for message in getattr(raw, "errors", []) or []
-        ],
-        warnings=[
-            {"message": message, "operation": operation, "case_ref": case_ref}
-            for message in getattr(raw, "warnings", []) or []
-        ],
-        counts=_counts_for(operation, data),
-        diagnostics=_diagnostics(raw),
-    )
-
-
-def _counts_for(operation: str, data: dict[str, Any]) -> dict[str, int]:
-    if operation == "case.info":
-        return {key: int(value) for key, value in data.get("record_counts", {}).items()}
-    return {key: int(data[key]) for key in ("count", "filtered") if isinstance(data.get(key), int)}
-
-
-def _diagnostics(raw: Any) -> dict[str, Any]:
-    diagnostics: dict[str, Any] = {}
-    for name in ("command", "stdout", "stderr"):
-        value = getattr(raw, name, None)
-        if value:
-            diagnostics[name] = value
-    for name in ("dry_run", "skipped"):
-        value = getattr(raw, name, False)
-        if value:
-            diagnostics[name] = value
-    returncode = getattr(raw, "returncode", 0)
-    if returncode:
-        diagnostics["returncode"] = returncode
-    return diagnostics
-
-
-def _runner(context: CrkContext):
-    from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
-
-    return CrkRunner(repo_root=context.repo_root, dry_run=context.dry_run)
-
-
-def _error_code(message: str) -> str:
-    if "Not a CRK case workspace" in message:
-        return CASE_NOT_FOUND
-    if message.startswith("Source not found"):
-        return SOURCE_NOT_FOUND
-    if message.startswith(("Extraction packet must", "Packet not found")):
-        return INVALID_INPUT
-    if "public_export=false" in message:
-        return PRIVACY_BLOCKED
-    if "confirm=True" in message or "guilt-implying label" in message:
-        return SAFETY_BLOCKED
-    if "Automated writes must stay under" in message or "outside the case workspace" in message:
-        return SAFETY_BLOCKED
-    if message.startswith("Unknown record type"):
-        return INVALID_INPUT
-    return OPERATION_FAILED
 
 
 __all__ = ["CaseRecordsClient", "CasesClient", "case_info"]

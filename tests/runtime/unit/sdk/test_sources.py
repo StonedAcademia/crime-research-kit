@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 from crime_research_kit.sdk import CrkClient, CrkContext
-from crime_research_kit.sdk.errors import DEPENDENCY_MISSING, NETWORK_FAILED
+from crime_research_kit.sdk.errors import DEPENDENCY_MISSING, INVALID_INPUT, NETWORK_FAILED
 from tests.helpers import KIT_ROOT, ledger_command_args
 
 
@@ -47,6 +47,31 @@ def test_sources_add_plans_manual_registration(synthetic_case_copy: Path):
     assert result.diagnostics["dry_run"] is True
 
 
+def test_sources_add_accepts_request_metadata_dict(synthetic_case_copy: Path):
+    result = dry_client_for(synthetic_case_copy).case("synthetic_case").sources.add(
+        title="A Story",
+        metadata={"author": "Alex Smith", "publisher": "Example Daily", "reliability_grade": "B"},
+    )
+
+    args = ledger_command_args(result.diagnostics["command"])
+    assert result.ok is True
+    assert args[args.index("--author") + 1] == "Alex Smith"
+    assert args[args.index("--publisher") + 1] == "Example Daily"
+    assert args[args.index("--reliability-grade") + 1] == "B"
+
+
+def test_sources_add_rejects_unsupported_metadata_without_type_error(synthetic_case_copy: Path):
+    result = dry_client_for(synthetic_case_copy).case("synthetic_case").sources.add(
+        title="A Story",
+        metadata={"collection": "unsupported"},
+    )
+
+    assert result.ok is False
+    assert result.operation == "sources.add"
+    assert result.errors[0].code == INVALID_INPUT
+    assert "collection" in result.errors[0].message
+
+
 def test_sources_ingest_url_plans_positionally_with_public_default(synthetic_case_copy: Path):
     public = dry_client_for(synthetic_case_copy).case("synthetic_case").sources.ingest_url(
         "https://example.com/story",
@@ -67,6 +92,30 @@ def test_sources_ingest_url_plans_positionally_with_public_default(synthetic_cas
     assert args[args.index("--timeout") + 1] == "15"
     assert "--no-public-export" not in args
     assert "--no-public-export" in private_args
+
+
+def test_sources_ingest_url_accepts_request_metadata_dict(synthetic_case_copy: Path):
+    result = dry_client_for(synthetic_case_copy).case("synthetic_case").sources.ingest_url(
+        "https://example.com/story",
+        metadata={"reliability_grade": "B", "timeout": 15},
+    )
+
+    args = ledger_command_args(result.diagnostics["command"])
+    assert result.ok is True
+    assert args[args.index("--reliability-grade") + 1] == "B"
+    assert args[args.index("--timeout") + 1] == "15"
+
+
+def test_sources_ingest_url_rejects_unsupported_metadata_without_type_error(synthetic_case_copy: Path):
+    result = dry_client_for(synthetic_case_copy).case("synthetic_case").sources.ingest_url(
+        "https://example.com/story",
+        metadata={"author": "Alex Smith"},
+    )
+
+    assert result.ok is False
+    assert result.operation == "sources.ingest_url"
+    assert result.errors[0].code == INVALID_INPUT
+    assert "author" in result.errors[0].message
 
 
 def test_sources_preserve_plans_command(synthetic_case_copy: Path):

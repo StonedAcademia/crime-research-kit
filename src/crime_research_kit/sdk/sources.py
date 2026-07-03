@@ -2,15 +2,22 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from .cases import _from_op_result
+from ._internal import exception_result as _exception_result
+from ._internal import from_op_result as _from_op_result
+from ._internal import invalid_result as _invalid_result
+from ._internal import operation_name as _op
+from ._internal import runner as _runner
+from ._internal import setting as _setting
 from .context import CrkContext
-from .errors import DEPENDENCY_MISSING, INVALID_INPUT, NETWORK_FAILED, OPERATION_FAILED, SOURCE_NOT_FOUND
-from .operations import get_operation
 from .results import OperationResult
+
+_ADD_METADATA_KEYS = {"reliability_grade", "author", "publisher", "date_published", "archive_url", "notes"}
+_INGEST_METADATA_KEYS = {"reliability_grade", "timeout"}
 
 
 @dataclass(frozen=True, slots=True)
@@ -34,21 +41,48 @@ class CaseSourcesClient:
         url: str | None = None,
         source_type: str | None = None,
         public_export: bool = True,
-        **metadata: Any,
+        metadata: Mapping[str, Any] | None = None,
+        reliability_grade: str | None = None,
+        author: str | None = None,
+        publisher: str | None = None,
+        date_published: str | None = None,
+        archive_url: str | None = None,
+        notes: str | None = None,
+        **extra_metadata: Any,
     ) -> OperationResult:
         """Plan or run manual source registration."""
         from crime_research_kit._runtime.adapters.ops import sources as source_ops
 
-        raw = source_ops.add_source(
-            _runner(self.context),
-            str(self.case_dir),
-            title=title,
-            url=url,
-            source_type=source_type,
-            public_export=public_export,
-            **metadata,
+        operation = _op("sources.add")
+        case_ref = str(self.case_dir)
+        values, error = _source_metadata(
+            operation,
+            metadata,
+            extra_metadata,
+            _ADD_METADATA_KEYS,
+            case_ref=case_ref,
+            reliability_grade=reliability_grade,
+            author=author,
+            publisher=publisher,
+            date_published=date_published,
+            archive_url=archive_url,
+            notes=notes,
         )
-        return _from_op_result(_op("sources.add"), raw, case_ref=str(self.case_dir))
+        if error:
+            return error
+        try:
+            raw = source_ops.add_source(
+                _runner(self.context),
+                case_ref,
+                title=title,
+                url=url,
+                source_type=source_type,
+                public_export=public_export,
+                **values,
+            )
+        except Exception as exc:
+            return _exception_result(operation, exc, case_ref=case_ref)
+        return _from_op_result(operation, raw, case_ref=case_ref)
 
     def ingest_url(
         self,
@@ -57,21 +91,40 @@ class CaseSourcesClient:
         title: str | None = None,
         source_type: str | None = None,
         public_export: bool = True,
-        **metadata: Any,
+        metadata: Mapping[str, Any] | None = None,
+        reliability_grade: str | None = None,
+        timeout: int | None = None,
+        **extra_metadata: Any,
     ) -> OperationResult:
         """Plan or run URL ingestion for a source."""
         from crime_research_kit._runtime.adapters.ops import sources as source_ops
 
-        raw = source_ops.ingest_url(
-            _runner(self.context),
-            str(self.case_dir),
-            url,
-            title=title,
-            source_type=source_type,
-            public_export=public_export,
-            **metadata,
+        operation = _op("sources.ingest_url")
+        case_ref = str(self.case_dir)
+        values, error = _source_metadata(
+            operation,
+            metadata,
+            extra_metadata,
+            _INGEST_METADATA_KEYS,
+            case_ref=case_ref,
+            reliability_grade=reliability_grade,
+            timeout=timeout,
         )
-        return _from_op_result(_op("sources.ingest_url"), raw, case_ref=str(self.case_dir))
+        if error:
+            return error
+        try:
+            raw = source_ops.ingest_url(
+                _runner(self.context),
+                case_ref,
+                url,
+                title=title,
+                source_type=source_type,
+                public_export=public_export,
+                **values,
+            )
+        except Exception as exc:
+            return _exception_result(operation, exc, case_ref=case_ref)
+        return _from_op_result(operation, raw, case_ref=case_ref)
 
     def preserve(
         self,
@@ -131,48 +184,36 @@ class CaseSourcesClient:
         return _from_op_result(_op("sources.ocr"), raw, case_ref=str(self.case_dir))
 
 
-def _op(name: str) -> str:
-    return get_operation(name).name
+def _source_metadata(
+    operation: str,
+    metadata: Mapping[str, Any] | None,
+    extra_metadata: Mapping[str, Any],
+    supported: set[str],
+    *,
+    case_ref: str,
+    **explicit: Any,
+) -> tuple[dict[str, Any], OperationResult | None]:
+    if metadata is not None and not isinstance(metadata, Mapping):
+        return {}, _invalid_result(operation, "metadata must be a mapping", case_ref)
+    values = dict(metadata or {})
+    values.update(extra_metadata)
+    values.update({key: value for key, value in explicit.items() if value is not None})
+    values = {key: value for key, value in values.items() if value is not None}
+    unsupported = sorted(set(values) - supported)
+    if unsupported:
+        return {}, _invalid_result(operation, f"Unsupported source metadata keys: {', '.join(unsupported)}", case_ref)
+    error = _validate_metadata_values(operation, values, case_ref)
+    return ({}, error) if error else (values, None)
 
 
-def _runner(context: CrkContext):
-    from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
-
-    return CrkRunner(repo_root=context.repo_root, dry_run=context.dry_run)
-
-
-def _setting(context: CrkContext, key: str) -> str | None:
-    value = context.settings.get(key)
-    return str(value) if value else None
-
-
-def _exception_result(operation: str, exc: Exception, *, case_ref: str) -> OperationResult:
-    return OperationResult.failure(
-        operation,
-        {
-            "code": _exception_code(exc),
-            "message": str(exc),
-            "operation": operation,
-            "case_ref": case_ref,
-        },
-        case_ref=case_ref,
-    )
-
-
-def _exception_code(exc: Exception) -> str:
-    message = str(exc)
-    lowered = message.lower()
-    if isinstance(exc, (ImportError, ModuleNotFoundError, FileNotFoundError)):
-        return DEPENDENCY_MISSING
-    if "not installed" in lowered or "ocrmypdf" in lowered:
-        return DEPENDENCY_MISSING
-    if exc.__class__.__module__.startswith("httpx") or "connection" in lowered:
-        return NETWORK_FAILED
-    if message.startswith("Source not found"):
-        return SOURCE_NOT_FOUND
-    if "raw_path" in lowered:
-        return INVALID_INPUT
-    return OPERATION_FAILED
+def _validate_metadata_values(operation: str, values: Mapping[str, Any], case_ref: str) -> OperationResult | None:
+    for key, value in values.items():
+        if key == "timeout":
+            if isinstance(value, bool) or not isinstance(value, int):
+                return _invalid_result(operation, "metadata.timeout must be an integer", case_ref)
+        elif not isinstance(value, str):
+            return _invalid_result(operation, f"metadata.{key} must be a string", case_ref)
+    return None
 
 
 __all__ = ["CaseSourcesClient"]

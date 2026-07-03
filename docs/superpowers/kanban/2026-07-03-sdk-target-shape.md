@@ -43,6 +43,8 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-023 SDK examples package | done | main | SDK-014 | SDK examples/docs | Packaged SDK examples and docs landed. |
 | SDK-024 Catalog-driven MCP registration | done | main + workers | SDK-006, SDK-016 | MCP registration code/tests/docs | Catalog-backed MCP registration metadata landed; prompts/resources remain explicit. |
 | SDK-025 Strict request models | done | main + workers | SDK-005 | request models/tests/docs | Strict request models landed for catalog `request_model` names. |
+| SDK-026 Normalize source metadata request handling | done | main | SDK-010, SDK-025 | `src/crime_research_kit/sdk/sources.py`, SDK source tests | `metadata` dicts now map supported add/ingest keys; unsupported keys return `INVALID_INPUT`. |
+| SDK-027 Consolidate SDK wrapper helpers | done | main | SDK-010 to SDK-014 | `src/crime_research_kit/sdk/_internal.py`, SDK wrapper modules | Shared `_runner`, operation-name, settings, result, and exception helpers now live in `sdk/_internal.py`. |
 
 Dependency note: SDK-015, SDK-016, SDK-018, SDK-019, and SDK-020 are done.
 SDK-015, SDK-016, SDK-018, SDK-019, SDK-020, SDK-023, and SDK-024 are done.
@@ -78,6 +80,8 @@ SDK-021, SDK-022, and SDK-025 are done.
 | SDK-023 SDK examples package | Packaged SDK example recipes now cover case info, source ingest dry-run, packet review, public-safe export planning, and workflow resume decisions. |
 | SDK-024 Catalog-driven MCP registration | SDK-backed MCP tool registration metadata is catalog-derived where safe; `run_report`, prompts, and resources remain explicit MCP content. |
 | SDK-025 Strict request models | Catalog `request_model` names now resolve to strict pydantic request models under `crime_research_kit.sdk.requests`. |
+| SDK-026 Normalize source metadata request handling | Source add/ingest now accept request-model-style `metadata` dicts for supported runtime keys and return SDK `INVALID_INPUT` results for unsupported or mistyped metadata. |
+| SDK-027 Consolidate SDK wrapper helpers | SDK wrapper modules now share private helper code through `sdk/_internal.py`; focused SDK, MCP write-gated, shape-governance, and quick checks passed. |
 
 ## In Progress
 

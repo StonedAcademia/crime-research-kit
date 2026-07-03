@@ -7,9 +7,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from ._internal import exception_result as _exception_result
+from ._internal import invalid_result as _invalid_result
+from ._internal import operation_name as _op
+from ._internal import setting as _setting
 from .context import CrkContext
-from .errors import DEPENDENCY_MISSING, INVALID_INPUT, OPERATION_FAILED
-from .operations import get_operation
+from .errors import OPERATION_FAILED
 from .requests import PathValue, RunnerName, WorkflowPlanRequest, WorkflowResumeRequest
 from .results import OperationResult
 
@@ -90,21 +93,12 @@ class WorkflowClient:
         return _result(operation, raw, case_ref=str(resolved))
 
 
-def _op(name: str) -> str:
-    return get_operation(name).name
-
-
 def _case_dir(context: CrkContext, case_dir: PathValue | None) -> Path | None:
     return context.resolve_case_ref(case_dir)
 
 
 def _execute(context: CrkContext, requested: bool) -> bool:
     return requested and not context.dry_run
-
-
-def _setting(context: CrkContext, key: str) -> str | None:
-    value = context.settings.get(key)
-    return str(value) if value else None
 
 
 def _result(operation: str, raw: Mapping[str, Any], *, case_ref: str) -> OperationResult:
@@ -125,24 +119,7 @@ def _result(operation: str, raw: Mapping[str, Any], *, case_ref: str) -> Operati
 
 
 def _invalid(operation: str, message: str, case_ref: str | None = None) -> OperationResult:
-    return OperationResult.failure(operation, {"code": INVALID_INPUT, "message": message}, case_ref=case_ref)
-
-
-def _exception_result(operation: str, exc: Exception, *, case_ref: str) -> OperationResult:
-    return OperationResult.failure(
-        operation,
-        {"code": _exception_code(exc), "message": str(exc), "operation": operation, "case_ref": case_ref},
-        case_ref=case_ref,
-    )
-
-
-def _exception_code(exc: Exception) -> str:
-    message = str(exc)
-    if isinstance(exc, (ImportError, ModuleNotFoundError)) or "LangGraph is not installed" in message:
-        return DEPENDENCY_MISSING
-    if "Checkpointing requires" in message:
-        return INVALID_INPUT
-    return OPERATION_FAILED
+    return _invalid_result(operation, message, case_ref)
 
 
 def _counts(data: Mapping[str, Any]) -> dict[str, int]:

@@ -6,10 +6,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from .cases import _from_op_result
+from ._internal import from_op_result as _from_op_result
+from ._internal import invalid_result as _invalid_result
+from ._internal import operation_name as _op
+from ._internal import runner as _runner
 from .context import CrkContext
-from .errors import INVALID_INPUT
-from .operations import get_operation
 from .results import OperationResult
 
 _DEDUPE_RECORD_TYPES = {"all", "entities", "sources", "claims"}
@@ -173,22 +174,12 @@ class CaseReviewClient:
         return self.context.include_private if explicit is None else explicit
 
 
-def _op(name: str) -> str:
-    return get_operation(name).name
-
-
-def _runner(context: CrkContext):
-    from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
-
-    return CrkRunner(repo_root=context.repo_root, dry_run=context.dry_run)
-
-
 def _result(operation: str, raw: Any, *, case_ref: str) -> OperationResult:
     return _from_op_result(operation, raw, case_ref=case_ref)
 
 
 def _invalid(operation: str, message: str, case_ref: str) -> OperationResult:
-    return OperationResult.failure(operation, {"code": INVALID_INPUT, "message": message}, case_ref=case_ref)
+    return _invalid_result(operation, message, case_ref)
 
 
 __all__ = ["CaseReviewClient"]

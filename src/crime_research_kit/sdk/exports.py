@@ -6,9 +6,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from .cases import _from_op_result
+from ._internal import from_op_result as _from_op_result
+from ._internal import operation_name as _op
+from ._internal import runner as _runner
 from .context import CrkContext
-from .operations import get_operation
 from .results import OperationResult
 
 PUBLIC_NOTE = "public-safe: records with public_export=false were excluded"
@@ -149,17 +150,6 @@ class ExportsClient:
             include_private=is_internal,
             outputs=[out_dir or str(_default_timeline_dir(Path(root)))],
         )
-
-
-def _op(name: str) -> str:
-    return get_operation(name).name
-
-
-def _runner(context: CrkContext):
-    from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
-
-    return CrkRunner(repo_root=context.repo_root, dry_run=context.dry_run)
-
 
 def _result(
     operation: str,
