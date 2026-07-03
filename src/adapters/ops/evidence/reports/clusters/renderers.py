@@ -107,7 +107,7 @@ def _node_shapes(nodes: list[dict[str, Any]], positions: dict[str, tuple[float, 
         density = density_by_id.get(entity_id, 0.0)
         radius = 24 + min(16, density * 18)
         shapes.extend([
-            Circle(cx=x, cy=y, r=radius, css_class="node", stroke=color, stroke_width=4),
+            Circle(cx=x, cy=y, r=radius, css_class="node", fill="#ffffff", stroke=color, stroke_width=4),
             Text(x=x, y=y + radius + 18, content=truncate_label(entity_display(node), 24), css_class="node-label", anchor="middle"),
             Text(x=x, y=y + radius + 34, content=f"{cluster_id} kde={density:.2f}", css_class="node-sub", anchor="middle"),
         ])

@@ -58,3 +58,4 @@ data/exports/**
 Thumbs.db
 *.swp
 *.swo
+.superpowers/

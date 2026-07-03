@@ -1,8 +1,8 @@
 @import "tailwindcss";
-@source inline("crk-muted crk-table-wrap crk-filter-btn crk-metrics crk-metric crk-report-section");
+@source inline("crk-muted crk-table-wrap crk-filter-btn crk-metrics crk-metric crk-report-section node-box metric mini-label heat-label warn-label treemap-label");
 
 @layer components {
-  .crk-report { margin: 0; font-family: Arial, sans-serif; color: #1f2933; background: #f7f8fa; }
+  .crk-report { --bad: #a63a3a; margin: 0; font-family: Arial, sans-serif; color: #1f2933; background: #f7f8fa; }
   .crk-muted { @apply text-sm text-slate-500; }
   .crk-table-wrap { @apply overflow-x-auto rounded border border-slate-200; }
   .crk-table-wrap table { border-collapse: collapse; width: 100%; font-size: 13px; }
@@ -30,8 +30,13 @@
   .lane { stroke: #cbd5e1; stroke-width: 1.5; }
   .lane-label, .node-label { fill: #111827; font-size: 13px; font-weight: 700; }
   .axis-label, .node-sub { fill: #475569; font-size: 12px; }
-  .node-label, .node-sub { text-anchor: middle; }
-  .node { fill: #ffffff; stroke-width: 4; }
+  .node { stroke-width: 4; }
+  .mini-label { fill: #53616f; font-size: 10.5px; }
+  .heat-label { fill: #111827; font-size: 11px; font-weight: 700; }
+  .warn-label { fill: var(--bad); font-size: 11px; font-weight: 800; }
+  .metric { fill: #16202a; font-size: 27px; font-weight: 800; }
+  .node-box { fill: #fff; stroke: #bac8d6; stroke-width: 1.2; }
+  .treemap-label { fill: #111827; font-size: 10px; font-weight: 700; pointer-events: none; }
   .edge { stroke: #64748b; opacity: .78; }
   .point { stroke: #ffffff; stroke-width: 2; }
   .verified { fill: #2563eb; }

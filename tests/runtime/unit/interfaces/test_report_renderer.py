@@ -2,10 +2,20 @@
 
 from __future__ import annotations
 
+import ast
+import re
+from pathlib import Path
+
+from adapters.ops.evidence.reports.analysis.pages.render import _static_assets, render_dashboard, render_page, render_svg_doc, write_html
+from adapters.ops.evidence.reports.analysis.svg.network.bridges import build_sankey_figure
 from core.models.reports import Dashboard, Rect, ReportPage, SvgDoc, TableBlock, Text
-from adapters.ops.evidence.reports.analysis.pages.render import render_dashboard, render_page, write_html
 
 SVG_XMLNS = 'xmlns="http://www.w3.org/2000/svg"'
+ROOT = Path(__file__).resolve().parents[4]
+REPORT_BUILDERS = ROOT / "src" / "adapters" / "ops" / "evidence" / "reports"
+FRONTEND_CSS = ROOT / "frontend" / "styles.css"
+CSS_CLASS_ALLOWLIST: dict[str, str] = {}
+CSS_TOKEN = re.compile(r"[A-Za-z_][A-Za-z0-9_-]*")
 
 
 def _page() -> ReportPage:
@@ -62,3 +72,59 @@ def test_write_html_replaces_target_atomically(tmp_path):
     write_html(target, "<!doctype html>second")
     assert target.read_text(encoding="utf-8") == "<!doctype html>second"
     assert not list(target.parent.glob("*.tmp"))
+
+
+def test_sankey_node_boxes_are_styled_in_static_assets():
+    figure = build_sankey_figure(
+        nodes=[
+            {"cluster_id": "C1", "cluster_label": "Origin cluster", "member_names": "Alice"},
+            {"cluster_id": "C2", "cluster_label": "Target cluster", "member_names": "Bob"},
+        ],
+        links=[
+            {
+                "src_cluster": "C1",
+                "dst_cluster": "C2",
+                "public_readiness": "public_ready",
+                "bridge_class": "personnel_bridge",
+                "path": "C1 -> C2",
+            }
+        ],
+    )
+    svg_text = render_svg_doc(figure)
+    css, _ = _static_assets()
+    assert svg_text.count('class="node-box"') == 2
+    assert re.search(r"\.node-box\{[^}]*\bfill:", css)
+
+
+def test_report_builder_css_classes_are_styled():
+    styles = FRONTEND_CSS.read_text(encoding="utf-8")
+    emitted = _report_builder_css_classes()
+    missing = sorted(
+        token
+        for token in emitted
+        if token not in CSS_CLASS_ALLOWLIST and not re.search(rf"(?<![\w-])\.{re.escape(token)}(?![\w-])", styles)
+    )
+    assert not missing, "Unstyled report CSS classes: " + ", ".join(missing)
+
+
+def _report_builder_css_classes() -> dict[str, Path]:
+    classes: dict[str, Path] = {}
+    for path in sorted(REPORT_BUILDERS.rglob("*.py")):
+        for literal in _css_class_literals(path):
+            for token in literal.split():
+                if CSS_TOKEN.fullmatch(token):
+                    classes.setdefault(token, path.relative_to(ROOT))
+    return classes
+
+
+def _css_class_literals(path: Path) -> list[str]:
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    literals: list[str] = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.keyword) or node.arg != "css_class":
+            continue
+        if isinstance(node.value, ast.Constant) and isinstance(node.value.value, str):
+            literals.append(node.value.value)
+        elif isinstance(node.value, ast.JoinedStr):
+            literals.extend(part.value for part in node.value.values if isinstance(part, ast.Constant) and isinstance(part.value, str))
+    return literals
