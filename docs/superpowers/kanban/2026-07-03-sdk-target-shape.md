@@ -36,7 +36,7 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-016 Repoint MCP tools | done | main | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/mcp/**`, MCP tests | SDK-backed MCP tools now route through SDK facades while preserving MCP payload compatibility; `run_report` remains direct pending evidence-board privacy semantics. |
 | SDK-017 Generate or drift-check Skill API docs | done | worker-sdk-docs-drift + main integration | SDK-005 | docs drift tests, Skill API docs | Skill API operation docs now drift-check against the SDK catalog. |
 | SDK-018 Define private runtime policy | done | main | SDK-006, SDK-015, SDK-016 | packaging docs/tests | Public docs declare only `crime_research_kit.sdk`; top-level runtime packages are private pre-1.0 internals. |
-| SDK-019 Update architecture docs | ready | unassigned | SDK-018 | architecture docs | System overview shows SDK as Python public layer and CLI/MCP as adapters. |
+| SDK-019 Update architecture docs | in_progress | main | SDK-018 | architecture docs | System overview shows SDK as Python public layer and CLI/MCP as adapters. |
 | SDK-020 Release-note and gate pass | blocked | unassigned | SDK-019 | `CHANGELOG.md`, release/gate checks | Final full-series gate. |
 | SDK-021 Future HTTP route binding | backlog | unassigned | SDK-005 | catalog metadata only | Backlog; no HTTP server in this series. |
 | SDK-022 Move internals under `_runtime` | backlog | unassigned | SDK-018 | `_runtime` migration if chosen | Backlog; runtime modules are documented private for now. |
@@ -75,7 +75,7 @@ SDK-019 is now the next ready architecture-doc slice.
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| None | - | No cards currently in progress. |
+| SDK-019 Update architecture docs | main | Update architecture docs and governance so SDK is the public Python layer and CLI/MCP are adapters. |
 
 ## Review
 
@@ -93,7 +93,7 @@ SDK-019 is now the next ready architecture-doc slice.
 
 | Card | Priority | Depends on | Acceptance |
 | --- | --- | --- | --- |
-| SDK-019 Update architecture docs | P2 | SDK-018 | System overview shows SDK as Python public layer and CLI/MCP as adapters. |
+| None | - | No cards currently ready. |
 
 ## Blocked / Dependency-Gated
 
