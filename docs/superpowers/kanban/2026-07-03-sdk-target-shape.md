@@ -38,7 +38,7 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-018 Define private runtime policy | done | main | SDK-006, SDK-015, SDK-016 | packaging docs/tests | Public docs declare only `crime_research_kit.sdk`; top-level runtime packages are private pre-1.0 internals. |
 | SDK-019 Update architecture docs | done | main | SDK-018 | architecture docs | System overview and workflow docs now show SDK as the public Python layer and CLI/MCP as adapters. |
 | SDK-020 Release-note and gate pass | done | main | SDK-019 | `CHANGELOG.md`, release/gate checks | Final full-series gate passed with `moon run crk:test`. |
-| SDK-021 Future HTTP route binding | claimed | main | SDK-005 | catalog metadata only | Claimed for catalog-driven HTTP route metadata; no HTTP server in this slice. |
+| SDK-021 Future HTTP route binding | in_progress | main | SDK-005 | catalog metadata only | Catalog-driven HTTP route metadata in progress; no HTTP server in this slice. |
 | SDK-022 Move internals under `_runtime` | backlog | unassigned | SDK-018 | `_runtime` migration if chosen | Backlog; runtime modules are documented private for now. |
 | SDK-023 SDK examples package | done | main | SDK-014 | SDK examples/docs | Packaged SDK examples and docs landed. |
 | SDK-024 Catalog-driven MCP registration | done | main + workers | SDK-006, SDK-016 | MCP registration code/tests/docs | Catalog-backed MCP registration metadata landed; prompts/resources remain explicit. |
@@ -81,7 +81,7 @@ SDK-025 is done. SDK-021 and SDK-022 remain backlog follow-up slices.
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| None | - | No cards currently in progress. |
+| SDK-021 | main | Catalog-driven HTTP route metadata only; workers own docs/test sidecars. |
 
 ## Review
 
@@ -93,7 +93,7 @@ SDK-025 is done. SDK-021 and SDK-022 remain backlog follow-up slices.
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| SDK-021 | main | Catalog-driven HTTP route metadata only; no HTTP server. |
+| None | - | No unstarted cards are claimed. |
 
 ## Ready
 

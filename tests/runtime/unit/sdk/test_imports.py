@@ -39,6 +39,8 @@ def test_sdk_imports_without_legacy_runtime_packages():
     assert sdk.OperationSpec.from_tags("example").tags == ()
     assert sdk.SafetyTier.READ.value == "read"
     assert sdk.get_operation("case.info").mcp_tool == "case_info"
+    assert sdk.get_operation_for_http_route("post", "/v1/cases").name == "cases.create"
+    assert sdk.http_route_bindings()[0].route.startswith("POST /v1/")
     assert sdk.list_operations()
     assert not (LEGACY_ROOTS & set(sys.modules))
 

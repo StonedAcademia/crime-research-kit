@@ -28,7 +28,20 @@ from .errors import (
     CrkValidationError,
 )
 from .names import CaseNamesClient
-from .operations import OPERATION_BY_NAME, OPERATION_SPECS, OperationSpec, SafetyTier, get_operation, list_operations, operations_by_domain
+from .operations import (
+    HTTP_ROUTE_BINDINGS,
+    OPERATION_BY_HTTP_ROUTE,
+    OPERATION_BY_NAME,
+    OPERATION_SPECS,
+    HttpRouteBinding,
+    OperationSpec,
+    SafetyTier,
+    get_operation,
+    get_operation_for_http_route,
+    http_route_bindings,
+    list_operations,
+    operations_by_domain,
+)
 from .requests import OperationRequest, REQUEST_MODELS, get_request_model, validate_request
 from .retrieval import CaseRetrievalClient
 from .review import CaseReviewClient
@@ -61,9 +74,12 @@ __all__ = [
     "DEPENDENCY_MISSING",
     "INVALID_INPUT",
     "NETWORK_FAILED",
+    "HTTP_ROUTE_BINDINGS",
     "OPERATION_BY_NAME",
+    "OPERATION_BY_HTTP_ROUTE",
     "OPERATION_SPECS",
     "OPERATION_FAILED",
+    "HttpRouteBinding",
     "OperationRequest",
     "OperationResult",
     "OperationSpec",
@@ -80,7 +96,9 @@ __all__ = [
     "WorkflowPlanRequest",
     "WorkflowResumeRequest",
     "get_operation",
+    "get_operation_for_http_route",
     "get_request_model",
+    "http_route_bindings",
     "list_operations",
     "operations_by_domain",
     "validate_request",

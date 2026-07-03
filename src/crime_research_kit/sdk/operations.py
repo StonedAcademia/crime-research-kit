@@ -17,6 +17,11 @@ class SafetyTier(str, Enum):
     INTERNAL_SERVICE = "internal_service"
 
 
+def _parse_http_route(route: str) -> tuple[str, str]:
+    method, path = route.split(maxsplit=1)
+    return method.upper(), path
+
+
 @dataclass(frozen=True, slots=True)
 class OperationSpec:
     """Public metadata for an SDK operation."""
@@ -42,6 +47,32 @@ class OperationSpec:
         object.__setattr__(self, "side_effects", tuple(self.side_effects))
         object.__setattr__(self, "tags", tuple(self.tags))
         object.__setattr__(self, "cli_aliases", tuple(self.cli_aliases))
+        if self.http_route:
+            method, path = _parse_http_route(self.http_route)
+            object.__setattr__(self, "http_route", f"{method} {path}")
+
+    @property
+    def http_method(self) -> str | None:
+        """Return the future HTTP method for this operation, if mapped."""
+        return _parse_http_route(self.http_route)[0] if self.http_route else None
+
+    @property
+    def http_path(self) -> str | None:
+        """Return the future HTTP path for this operation, if mapped."""
+        return _parse_http_route(self.http_route)[1] if self.http_route else None
+
+    def http_binding(self) -> "HttpRouteBinding | None":
+        """Return structured HTTP route metadata without adding a server."""
+        if not self.http_route:
+            return None
+        return HttpRouteBinding(
+            method=self.http_method or "",
+            path=self.http_path or "",
+            operation_name=self.name,
+            skill_api_name=self.skill_api_name,
+            request_model=self.request_model,
+            safety_tier=self.safety_tier,
+        )
 
     @classmethod
     def from_tags(
@@ -65,6 +96,23 @@ class OperationSpec:
             requires_case=requires_case,
             tags=tuple(tags),
         )
+
+
+@dataclass(frozen=True, slots=True)
+class HttpRouteBinding:
+    """Future HTTP adapter metadata derived from an operation spec."""
+
+    method: str
+    path: str
+    operation_name: str
+    skill_api_name: str | None
+    request_model: str
+    safety_tier: SafetyTier
+
+    @property
+    def route(self) -> str:
+        """Return the compact method/path route key."""
+        return f"{self.method} {self.path}"
 
 
 _T = SafetyTier
@@ -137,6 +185,12 @@ def _spec(row: tuple) -> OperationSpec:
 
 OPERATION_SPECS: tuple[OperationSpec, ...] = tuple(sorted((_spec(row) for row in _ROWS), key=lambda spec: spec.name))
 OPERATION_BY_NAME: dict[str, OperationSpec] = {spec.name: spec for spec in OPERATION_SPECS}
+HTTP_ROUTE_BINDINGS: tuple[HttpRouteBinding, ...] = tuple(
+    binding for spec in OPERATION_SPECS if (binding := spec.http_binding()) is not None
+)
+OPERATION_BY_HTTP_ROUTE: dict[str, OperationSpec] = {
+    binding.route: OPERATION_BY_NAME[binding.operation_name] for binding in HTTP_ROUTE_BINDINGS
+}
 
 
 def list_operations() -> tuple[OperationSpec, ...]:
@@ -149,17 +203,32 @@ def get_operation(name: str) -> OperationSpec:
     return OPERATION_BY_NAME[name]
 
 
+def http_route_bindings() -> tuple[HttpRouteBinding, ...]:
+    """Return future HTTP route metadata derived from the operation catalog."""
+    return HTTP_ROUTE_BINDINGS
+
+
+def get_operation_for_http_route(method: str, path: str) -> OperationSpec:
+    """Return the catalog operation for a future HTTP route."""
+    return OPERATION_BY_HTTP_ROUTE[f"{method.upper()} {path}"]
+
+
 def operations_by_domain(domain: str) -> tuple[OperationSpec, ...]:
     """Return catalog entries for one operation domain."""
     return tuple(spec for spec in OPERATION_SPECS if spec.domain == domain)
 
 
 __all__ = [
+    "HTTP_ROUTE_BINDINGS",
     "OPERATION_BY_NAME",
+    "OPERATION_BY_HTTP_ROUTE",
     "OPERATION_SPECS",
+    "HttpRouteBinding",
     "OperationSpec",
     "SafetyTier",
     "get_operation",
+    "get_operation_for_http_route",
+    "http_route_bindings",
     "list_operations",
     "operations_by_domain",
 ]
