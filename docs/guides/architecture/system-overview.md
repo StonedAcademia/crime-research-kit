@@ -1,9 +1,25 @@
 # System Overview
 
 This is the full architecture write-up that the README summarizes. It covers
-the two implementation layers, the canonical case ledger they share, the
-optional subsystems, and the review gates between raw sources and public
-output.
+the public SDK and adapter surfaces, the private runtime layers, the canonical
+case ledger they share, the optional subsystems, and the review gates between
+raw sources and public output.
+
+## Public Python Boundary
+
+The public Python API is `crime_research_kit.sdk`. Python integrations should
+use `CrkClient`, `CrkContext`, case-scoped clients, `OperationResult`, and the
+operation catalog from that namespace.
+
+The packaged top-level modules `adapters`, `core`, and `pipeline` remain
+private runtime packages. They are still installed because the current console
+scripts and app runtime use them, but they are not SDK imports and may move
+before 1.0. See [Python SDK Boundary](../integrations/python-sdk.md).
+
+`cr-kit` and `crk-mcp` are adapter surfaces over SDK/catalog-backed operations.
+`crk-ledger` remains the ledger CLI contract. MCP resources and prompts stay
+MCP-specific; `run_report` remains a direct derived-report path until the
+evidence-board report has explicit public/private filtering semantics.
 
 ## The two-layer model
 
@@ -17,11 +33,12 @@ ledger, and neither is allowed to bypass its contract:
    `.agents/skills/` (legal-court-records, missing-persons-case,
    privacy-redaction-audit, …) extend the same case ledger with
    domain-specific packets. See [Agent Skills](../integrations/agent-skills.md).
-2. **`src/`** — the agent app. Its frontends (CLI, LangGraph
-   workflow, MCP server) never touch `crk-ledger` or the ledger directly; they go
-   through the typed ops core in `ops/` (`OpResult`, `CrkRunner`, and the
-   safety `policy`). The graph runner stops at a human review gate. See
-   [Case Builder & LangGraph](case-builder-langgraph.md).
+2. **Private runtime packages** — the agent app under `src/`. CLI/MCP adapters
+   call SDK facades where operations have been promoted; the SDK delegates into
+   the app service and typed ops core (`OpResult`, `CrkRunner`, and the safety
+   `policy`). Runtime modules may use the ledger CLI, but public Python callers
+   do not import those modules directly. The graph runner stops at a human
+   review gate. See [Case Builder & LangGraph](case-builder-langgraph.md).
 
 ## Architecture diagram
 
@@ -34,14 +51,24 @@ flowchart TB
     ADJ["16 adjacent skills<br/>legal · missing-persons · FOIA · privacy · ..."]
   end
 
-  subgraph APP["Layer 2 · case-builder agent app"]
-    CLI2["CLI"]
+  subgraph PUB["Public API and adapters"]
+    PY["Python callers"]
+    SDK["crime_research_kit.sdk<br/>CrkClient · OperationResult · catalog"]
+    CLI2["cr-kit CLI adapter"]
+    MCP["crk-mcp adapter"]
+    PY --> SDK
+    CLI2 --> SDK
+    MCP --> SDK
+  end
+
+  subgraph APP["Private runtime"]
+    SVC["workflow app service"]
     GRAPH["LangGraph graph<br/>+ sequential fallback"]
-    MCP["MCP server"]
     OPS["Typed ops core<br/>OpResult · CrkRunner · safety policy"]
-    CLI2 --> OPS
+    SDK --> SVC
+    SDK --> OPS
+    SVC --> GRAPH
     GRAPH --> OPS
-    MCP --> OPS
   end
 
   subgraph OPT["Optional subsystems (degrade gracefully when absent)"]
@@ -108,7 +135,12 @@ The full loop is the [Case Workflow runbook](../runbooks/cases/case-workflow.md)
 ## Design invariants
 
 - The JSONL ledger is canonical; everything else is rebuildable from it.
-- Frontends never bypass the ops core; the ops core never bypasses `crk-ledger`.
+- Public Python callers use `crime_research_kit.sdk`; runtime packages are not
+  public SDK imports.
+- CLI/MCP adapters use SDK/catalog-backed operations where promoted, and do not
+  treat runtime modules as public API.
+- Runtime operations never bypass the ledger contract; canonical writes flow
+  through `crk-ledger` or the same ledger-safe command path.
 - AI-generated summaries are never evidence; extraction packets are staged
   for review before import.
 - Optional dependencies degrade gracefully — no required third-party packages
@@ -123,6 +155,7 @@ The full loop is the [Case Workflow runbook](../runbooks/cases/case-workflow.md)
 | Topic | Reference |
 | --- | --- |
 | Ledger records and conventions | [Case Ledger](case-ledger.md) |
+| Public Python import boundary | [Python SDK Boundary](../integrations/python-sdk.md) |
 | Skill invocation and lane routing | [Agent Skills](../integrations/agent-skills.md) |
 | Machine-facing CLI/JSONL contract | [Skill API Spec](../skill-api-spec.md) |
 | LangGraph workflow boundary | [Case Builder & LangGraph](case-builder-langgraph.md) |

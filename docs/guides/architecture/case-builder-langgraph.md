@@ -5,11 +5,18 @@ LangGraph only as an orchestration runtime. Agents and graph nodes may draft
 plans, extraction packets, and audits, but canonical records are written only by
 the existing CRK import and validation commands.
 
+The public workflow API is `crime_research_kit.sdk.WorkflowClient` through
+`CrkClient().workflows`. CLI users reach the same boundary through `cr-kit plan`
+and `cr-kit resume`. The `pipeline.*` modules, graph nodes, and app service are
+private runtime internals, not Python SDK imports.
+
 ## Ownership
 
 | Layer | Owner | Notes |
 | --- | --- | --- |
 | Case ledger | `data/cases/<case>/records/*.jsonl` | Canonical source, entity, event, claim, relationship, quote, redaction, and action records. |
+| Public workflow SDK | `crime_research_kit.sdk.WorkflowClient` | Public Python facade for plan/resume requests and `OperationResult` responses. |
+| CLI adapter | `cr-kit plan` / `cr-kit resume` | Command surface over the SDK workflow facade. |
 | Workflow state | `core.models.state.CaseBuilderState` | Serializable run state for planning, command outputs, errors, and review gates. |
 | Orchestration | LangGraph | Optional runtime for resumable step graphs. The sequential runner remains available for tests and local dry runs. |
 | Observability | Local logs and `research_actions.jsonl` | No managed tracing service is configured for the self-hosted stack. |
@@ -20,10 +27,11 @@ the existing CRK import and validation commands.
 | Directory | Responsibility |
 | --- | --- |
 | `src/core/` | Case ledger helpers, configuration, lane registry, state models, and workflow memory. |
+| `src/crime_research_kit/sdk/` | Public SDK facade, result envelope, context, and workflow request/response boundary. |
 | `src/pipeline/` | Deterministic agents, service boundary, and LangGraph/sequential workflow execution. |
 | `src/adapters/io/` | Local source discovery, parsing/OCR, and rebuildable evidence retrieval indexes. |
 | `src/adapters/ops/` | Typed operations, runner/result contracts, and safety policy shared by frontends. |
-| `src/adapters/interfaces/` | LLM and MCP interface adapters that call ops instead of touching ledger internals. |
+| `src/adapters/interfaces/` | CLI, LLM, and MCP interface adapters. CLI/MCP call SDK facades where operations are promoted. |
 
 Each package directory has a local `README.md`. Python modules are kept under
 200 non-comment LOC by `tests/quality/governance/test_repository_shape.py`.
@@ -48,6 +56,23 @@ non-checkpointed graphs) an unapproved gate ends the run with
 `import_extraction(confirm=True)` downstream of the packet gate.
 
 Checkpointed run and resume:
+
+Python callers use the SDK facade:
+
+```python
+from crime_research_kit.sdk import CrkClient, CrkContext
+
+client = CrkClient(CrkContext(repo_root=".", cases_root="data/cases"))
+plan = client.workflows.plan(
+    "example_case",
+    title="Example Case",
+    subject="Jane Doe missing person",
+    runner="langgraph",
+    checkpoint=True,
+)
+```
+
+CLI callers use the adapter surface:
 
 ```bash
 cr-kit plan data/cases/example_case \
