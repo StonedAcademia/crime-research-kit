@@ -1,7 +1,7 @@
 import pytest
 
-from core.casefile import CasefileError
-from adapters.ops.result import OpResult, local_op
+from crime_research_kit._runtime.core.casefile import CasefileError
+from crime_research_kit._runtime.adapters.ops.result import OpResult, local_op
 
 
 def test_op_result_defaults_and_dict_roundtrip():

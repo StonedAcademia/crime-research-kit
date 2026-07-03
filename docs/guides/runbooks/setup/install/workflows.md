@@ -11,7 +11,7 @@ moon run crk:check
 Check that the case-builder app can plan a dry run:
 
 ```bash
-uv run --cache-dir .uv-cache --no-project --with-editable . -- python -m cli plan data/cases/install_smoke \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- python -m crime_research_kit._runtime.cli plan data/cases/install_smoke \
   --title "Install Smoke Test" \
   --subject "Synthetic public-source smoke test for setup verification"
 ```

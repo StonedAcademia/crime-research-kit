@@ -1,4 +1,4 @@
-from pipeline.graph.review.gates import export_review_gate_node, packet_review_gate_node
+from crime_research_kit._runtime.pipeline.graph.review.gates import export_review_gate_node, packet_review_gate_node
 
 
 def test_packet_gate_waits_without_approvals():

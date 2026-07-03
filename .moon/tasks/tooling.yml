@@ -70,8 +70,8 @@ tasks:
     args: ["--prefix", "frontend", "run", "build"]
     inputs: ["frontend/package.json", "frontend/app.ts", "frontend/styles.css"]
     outputs:
-      - "src/adapters/ops/evidence/reports/analysis/pages/templates_data/static/app.css"
-      - "src/adapters/ops/evidence/reports/analysis/pages/templates_data/static/app.js"
+      - "src/crime_research_kit/_runtime/adapters/ops/evidence/reports/analysis/pages/templates_data/static/app.css"
+      - "src/crime_research_kit/_runtime/adapters/ops/evidence/reports/analysis/pages/templates_data/static/app.js"
     options:
       cache: false
       outputStyle: stream

@@ -6,10 +6,10 @@ import pytest
 
 pytest.importorskip("mcp")
 
-from adapters.interfaces.mcp.context import ServerContext
-from adapters.interfaces.mcp.server import create_server
-from adapters.ops.runner import CrkRunner
-from core.config import CrkSettings
+from crime_research_kit._runtime.adapters.interfaces.mcp.context import ServerContext
+from crime_research_kit._runtime.adapters.interfaces.mcp.server import create_server
+from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
+from crime_research_kit._runtime.core.config import CrkSettings
 from tests.helpers import KIT_ROOT
 
 

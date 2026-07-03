@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from adapters.interfaces.llm.packet_agent import PacketAgentError, bounded_context, fill_packet
+from crime_research_kit._runtime.adapters.interfaces.llm.packet_agent import PacketAgentError, bounded_context, fill_packet
 
 
 class FakeModel:

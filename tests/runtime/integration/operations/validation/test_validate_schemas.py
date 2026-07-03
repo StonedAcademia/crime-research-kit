@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from adapters.ops.casework.records.validation import validate_case
+from crime_research_kit._runtime.adapters.ops.casework.records.validation import validate_case
 
 SYNTHETIC_CASE = Path(__file__).resolve().parents[5] / "data" / "examples" / "synthetic_case"
 

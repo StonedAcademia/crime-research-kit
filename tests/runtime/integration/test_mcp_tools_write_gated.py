@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from adapters.interfaces.mcp import tools_gated, tools_write
-from adapters.interfaces.mcp.context import ServerContext
-from adapters.ops.runner import CrkRunner
-from core.config import CrkSettings
+from crime_research_kit._runtime.adapters.interfaces.mcp import tools_gated, tools_write
+from crime_research_kit._runtime.adapters.interfaces.mcp.context import ServerContext
+from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
+from crime_research_kit._runtime.core.config import CrkSettings
 from crime_research_kit.sdk.results import OperationResult
 from tests.helpers import KIT_ROOT, ledger_command_args, ledger_subcommand
 

@@ -3,7 +3,7 @@ import re
 from collections import defaultdict
 from pathlib import Path
 
-from core.lanes.registry import load_lanes
+from crime_research_kit._runtime.core.lanes.registry import load_lanes
 from tests.helpers import KIT_ROOT as ROOT
 
 SKILLS_ROOT = ROOT / ".agents" / "skills"

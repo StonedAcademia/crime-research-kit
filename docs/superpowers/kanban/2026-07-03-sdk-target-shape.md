@@ -31,22 +31,22 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-011 Wrap extraction operations | done | main | SDK-005, SDK-008 | SDK extraction modules and tests | Draft/list/read/save/import_reviewed/ner_suggest wrappers landed with explicit import approval. |
 | SDK-012 Wrap review operations | done | main | SDK-005, SDK-008 | SDK review modules and tests | Validation, dedupe, identity, contradiction, readiness, privacy, public-export, and source-independence wrappers landed. |
 | SDK-013 Wrap export operations | done | main | SDK-005, SDK-008 | SDK export modules and tests | Public-safe export wrappers landed. |
-| SDK-014 Add workflow facade | done | main | SDK-005, SDK-008 | `src/crime_research_kit/sdk/workflows.py`, `src/pipeline/app/service.py`, workflow tests | Workflow facade landed without public graph-node imports. |
-| SDK-015 Repoint CLI handlers | done | main | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/cli/**`, CLI tests | `cr-kit` handlers now route through SDK facades without command surface changes. |
-| SDK-016 Repoint MCP tools | done | main | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/mcp/**`, MCP tests | SDK-backed MCP tools now route through SDK facades while preserving MCP payload compatibility; `run_report` remains direct pending evidence-board privacy semantics. |
+| SDK-014 Add workflow facade | done | main | SDK-005, SDK-008 | `src/crime_research_kit/sdk/workflows.py`, `src/crime_research_kit/_runtime/pipeline/app/service.py`, workflow tests | Workflow facade landed without public graph-node imports. |
+| SDK-015 Repoint CLI handlers | done | main | SDK-006, SDK-009 to SDK-014 | `src/crime_research_kit/_runtime/adapters/interfaces/cli/**`, CLI tests | `cr-kit` handlers now route through SDK facades without command surface changes. |
+| SDK-016 Repoint MCP tools | done | main | SDK-006, SDK-009 to SDK-014 | `src/crime_research_kit/_runtime/adapters/interfaces/mcp/**`, MCP tests | SDK-backed MCP tools now route through SDK facades while preserving MCP payload compatibility; `run_report` remains direct pending evidence-board privacy semantics. |
 | SDK-017 Generate or drift-check Skill API docs | done | worker-sdk-docs-drift + main integration | SDK-005 | docs drift tests, Skill API docs | Skill API operation docs now drift-check against the SDK catalog. |
 | SDK-018 Define private runtime policy | done | main | SDK-006, SDK-015, SDK-016 | packaging docs/tests | Public docs declare only `crime_research_kit.sdk`; top-level runtime packages are private pre-1.0 internals. |
 | SDK-019 Update architecture docs | done | main | SDK-018 | architecture docs | System overview and workflow docs now show SDK as the public Python layer and CLI/MCP as adapters. |
 | SDK-020 Release-note and gate pass | done | main | SDK-019 | `CHANGELOG.md`, release/gate checks | Final full-series gate passed with `moon run crk:test`. |
 | SDK-021 Future HTTP route binding | done | main + workers | SDK-005 | catalog metadata only | Catalog-driven HTTP route metadata landed with duplicate-route guards and docs drift coverage; no HTTP server added. |
-| SDK-022 Move internals under `_runtime` | backlog | unassigned | SDK-018 | `_runtime` migration if chosen | Backlog; runtime modules are documented private for now. |
+| SDK-022 Move internals under `_runtime` | done | main + workers | SDK-018 | `src/crime_research_kit/_runtime/**`, `pyproject.toml`, import-boundary tests, runtime inventory | Private runtime move landed under `crime_research_kit._runtime`; full gate and fresh build passed. |
 | SDK-023 SDK examples package | done | main | SDK-014 | SDK examples/docs | Packaged SDK examples and docs landed. |
 | SDK-024 Catalog-driven MCP registration | done | main + workers | SDK-006, SDK-016 | MCP registration code/tests/docs | Catalog-backed MCP registration metadata landed; prompts/resources remain explicit. |
 | SDK-025 Strict request models | done | main + workers | SDK-005 | request models/tests/docs | Strict request models landed for catalog `request_model` names. |
 
 Dependency note: SDK-015, SDK-016, SDK-018, SDK-019, and SDK-020 are done.
 SDK-015, SDK-016, SDK-018, SDK-019, SDK-020, SDK-023, and SDK-024 are done.
-SDK-021 and SDK-025 are done. SDK-022 remains a backlog follow-up slice.
+SDK-021, SDK-022, and SDK-025 are done.
 
 ## Done
 
@@ -74,6 +74,7 @@ SDK-021 and SDK-025 are done. SDK-022 remains a backlog follow-up slice.
 | SDK-019 Update architecture docs | Architecture docs now describe `crime_research_kit.sdk` as the public Python layer, CLI/MCP as adapters, and top-level runtime packages as private implementation. |
 | SDK-020 Release-note and gate pass | Developer SDK quick start, catalog reference drift-gate docs, release metadata, shape-governance budgets, `moon run crk:check`, and final `moon run crk:test` gate completed. |
 | SDK-021 Future HTTP route binding | Future HTTP route metadata now comes from the SDK operation catalog, with structured route bindings, duplicate-route guards, and docs drift coverage. |
+| SDK-022 Move internals under `_runtime` | Private runtime packages now live under `crime_research_kit._runtime`; console script names, SDK imports, package data, MCP wiring, workflow imports, and source-checkout registry/schema resolution remain covered by tests. |
 | SDK-023 SDK examples package | Packaged SDK example recipes now cover case info, source ingest dry-run, packet review, public-safe export planning, and workflow resume decisions. |
 | SDK-024 Catalog-driven MCP registration | SDK-backed MCP tool registration metadata is catalog-derived where safe; `run_report`, prompts, and resources remain explicit MCP content. |
 | SDK-025 Strict request models | Catalog `request_model` names now resolve to strict pydantic request models under `crime_research_kit.sdk.requests`. |
@@ -82,7 +83,7 @@ SDK-021 and SDK-025 are done. SDK-022 remains a backlog follow-up slice.
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| None | - | No cards currently in progress. |
+| None | - | No cards currently in implementation. |
 
 ## Review
 
@@ -112,7 +113,7 @@ SDK-021 and SDK-025 are done. SDK-022 remains a backlog follow-up slice.
 
 | Card | Priority | Depends on | Acceptance |
 | --- | --- | --- | --- |
-| SDK-022 Move internals under `_runtime` | P3 | SDK-018 | Top-level implementation packages stop being packaged after console scripts and imports migrate. |
+| None | - | No backlog cards currently unclaimed. |
 
 ## Blocked / Watch
 

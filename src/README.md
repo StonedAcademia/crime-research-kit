@@ -1,5 +1,5 @@
 # Source Tree
 
-This directory contains the CRK case-building app modules. The CLI entrypoint
-is `cli.py`; runtime code is grouped under `core/`, `pipeline/`, and
-`adapters/`.
+This directory contains the packaged CRK Python modules. The public SDK is
+`crime_research_kit.sdk`; private app and adapter internals live under
+`crime_research_kit._runtime`.

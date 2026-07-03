@@ -37,7 +37,7 @@ class CaseRetrievalClient:
         top_k: int = 8,
     ) -> OperationResult:
         """Query the local retrieval index for a case."""
-        from adapters.ops import query as query_ops
+        from crime_research_kit._runtime.adapters.ops import query as query_ops
 
         operation = _op("retrieval.query")
         try:

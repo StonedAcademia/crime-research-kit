@@ -24,29 +24,29 @@ Decision: the public Python SDK namespace is `crime_research_kit.sdk`.
 The distribution name remains `crime-research-kit`, and the existing console
 scripts remain `cr-kit`, `crk-ledger`, and `crk-mcp`. Do not add
 `case_builder.*` aliases, and do not document top-level `adapters`, `core`, or
-`pipeline` as public SDK imports. Those packages may remain implementation
-layout during the migration, but they are not compatibility promises for SDK
-consumers.
+`pipeline` as public SDK imports. Private implementation now lives under
+`crime_research_kit._runtime`, and that namespace remains internal rather than a
+public SDK promise.
 
 ## Current Inventory
 
 | Surface | Current files | What exists now | Target disposition |
 | --- | --- | --- | --- |
-| Distribution | `pyproject.toml` | Distribution name is `crime-research-kit`; console scripts are `cr-kit`, `crk-ledger`, and `crk-mcp`; packages exported today are top-level `adapters*`, `core*`, and `pipeline*`. | Keep console scripts. Add a real public import namespace, preferably `crime_research_kit`. Stop treating top-level implementation packages as public SDK surface. |
+| Distribution | `pyproject.toml` | Distribution name is `crime-research-kit`; console scripts are `cr-kit`, `crk-ledger`, and `crk-mcp`; packaged implementation modules are under `crime_research_kit._runtime`. | Keep console scripts and the public `crime_research_kit.sdk` namespace. Do not treat runtime implementation packages as public SDK surface. |
 | Ledger contract | `docs/guides/skill-api-spec.md`, `docs/guides/integrations/skill-api/*` | Machine-facing operation docs exist, but the documented envelope does not exactly match `OpResult`. | Make the SDK operation catalog the source for operation names, safety tiers, error codes, and generated reference docs. |
-| Canonical data | `data/cases/<slug>/records/*.jsonl`, `docs/schemas/*`, `src/core/models/*` | JSONL ledger and schemas are canonical; pydantic record models mirror schemas. | SDK reads and writes through typed operation methods only. JSONL helpers stay internal. |
-| Core helpers | `src/core/casefile.py`, `src/core/config.py`, `src/core/lanes/*`, `src/core/memory/*` | Case path resolution, record IO, settings, lane registry, and memory are mixed under a top-level package. | Split into public model/config types and private runtime helpers under the new namespace. Do not expose raw file-mutating helpers as SDK primitives. |
-| Result envelope | `src/adapters/ops/result.py` | `OpResult` is a pydantic model with `ok`, `data`, `errors`, `warnings`, `command`, `dry_run`, `stdout`, and `stderr`. | Promote to `OperationResult` with stable fields aligned to Skill API docs; keep command/debug fields internal or explicitly marked diagnostic. |
-| Runner/transport | `src/adapters/ops/runner.py` | `CrkRunner` shells through `python -m adapters.interfaces.cli` and returns `OpResult`; dry run is command planning. | Replace as the default SDK abstraction with a transport interface. Keep subprocess execution as an internal transport only where direct Python operation code is not yet clean. |
-| Safety policy | `src/adapters/ops/safety/policy.py` | Staged-write enforcement, public filtering, automation defaults, LLM egress logging, and guilt-label lint exist. | Keep as a first-class SDK safety layer. Safety tier belongs in the operation catalog, not scattered across wrappers. |
-| Case/source ops | `src/adapters/ops/casework/*` | Lifecycle, source intake, extraction packets, name linking, validation, and planning exist. Some operations wrap CLI, others call Python directly. | Organize behind `client.cases`, `case.sources`, `case.extractions`, and `case.records`; make transport choice invisible to callers. |
-| Evidence ops | `src/adapters/ops/evidence/*` | Query, review audits, exports, report/chart builders, safety audits, and ledger report helpers exist. | Expose stable methods for records, review, and exports. Keep report renderer internals private. |
-| Optional IO | `src/adapters/io/*` | SearXNG acquisition, Docling/OCR parsing, and Qdrant retrieval are optional and lazily imported. | Expose as optional SDK capabilities with clear dependency errors; do not make optional services part of the base client contract. |
-| CLI interfaces | `src/adapters/interfaces/cli/*`, `src/cli.py` | Typer apps define the researcher CLI and case-builder CLI. Handlers call ops and app service. | CLI becomes an adapter over SDK clients and operation catalog. It should not own operation behavior or payload shapes. |
-| MCP interface | `src/adapters/interfaces/mcp/*` | FastMCP server, context, tools, resources, and prompts call ops directly. Tool tiers are manually defined. | MCP tool registration should be generated or driven from operation catalog metadata plus explicit prompt/resource definitions. |
-| LLM helpers | `src/adapters/interfaces/llm/*` | Local Ollama provider and bounded packet/readiness helpers exist. | Keep optional and local-first. SDK exposes LLM-assisted workflow options only as explicit opt-in fields. |
-| App service | `src/pipeline/app/service.py` | `run_case_builder` and `resume_case_builder` choose runner, checkpoint mode, model factory, and return serializable state. | Keep app service as workflow orchestration. It consumes `WorkflowClient`; it is not the SDK. |
-| Graph runtime | `src/pipeline/graph/*` | Sequential and LangGraph paths share nodes, review gates, and checkpointing. | Keep private runtime. SDK exposes workflow methods and resumable run state, not graph nodes. |
+| Canonical data | `data/cases/<slug>/records/*.jsonl`, `docs/schemas/*`, `src/crime_research_kit/_runtime/core/models/*` | JSONL ledger and schemas are canonical; pydantic record models mirror schemas. | SDK reads and writes through typed operation methods only. JSONL helpers stay internal. |
+| Core helpers | `src/crime_research_kit/_runtime/core/casefile.py`, `src/crime_research_kit/_runtime/core/config.py`, `src/crime_research_kit/_runtime/core/lanes/*`, `src/crime_research_kit/_runtime/core/memory/*` | Case path resolution, record IO, settings, lane registry, and memory are private runtime helpers. | Keep public model/config behavior behind SDK types. Do not expose raw file-mutating helpers as SDK primitives. |
+| Result envelope | `src/crime_research_kit/_runtime/adapters/ops/result.py` | `OpResult` is a pydantic model with `ok`, `data`, `errors`, `warnings`, `command`, `dry_run`, `stdout`, and `stderr`. | Promote to `OperationResult` with stable fields aligned to Skill API docs; keep command/debug fields internal or explicitly marked diagnostic. |
+| Runner/transport | `src/crime_research_kit/_runtime/adapters/ops/runner.py` | `CrkRunner` shells through `python -m crime_research_kit._runtime.adapters.interfaces.cli` and returns `OpResult`; dry run is command planning. | Replace as the default SDK abstraction with a transport interface. Keep subprocess execution as an internal transport only where direct Python operation code is not yet clean. |
+| Safety policy | `src/crime_research_kit/_runtime/adapters/ops/safety/policy.py` | Staged-write enforcement, public filtering, automation defaults, LLM egress logging, and guilt-label lint exist. | Keep as a first-class SDK safety layer. Safety tier belongs in the operation catalog, not scattered across wrappers. |
+| Case/source ops | `src/crime_research_kit/_runtime/adapters/ops/casework/*` | Lifecycle, source intake, extraction packets, name linking, validation, and planning exist. Some operations wrap CLI, others call Python directly. | Organize behind `client.cases`, `case.sources`, `case.extractions`, and `case.records`; make transport choice invisible to callers. |
+| Evidence ops | `src/crime_research_kit/_runtime/adapters/ops/evidence/*` | Query, review audits, exports, report/chart builders, safety audits, and ledger report helpers exist. | Expose stable methods for records, review, and exports. Keep report renderer internals private. |
+| Optional IO | `src/crime_research_kit/_runtime/adapters/io/*` | SearXNG acquisition, Docling/OCR parsing, and Qdrant retrieval are optional and lazily imported. | Expose as optional SDK capabilities with clear dependency errors; do not make optional services part of the base client contract. |
+| CLI interfaces | `src/crime_research_kit/_runtime/adapters/interfaces/cli/*`, `src/crime_research_kit/_runtime/cli.py` | Typer apps define the researcher CLI and case-builder CLI. Handlers call ops and app service. | CLI becomes an adapter over SDK clients and operation catalog. It should not own operation behavior or payload shapes. |
+| MCP interface | `src/crime_research_kit/_runtime/adapters/interfaces/mcp/*` | FastMCP server, context, tools, resources, and prompts call ops directly. Tool tiers are manually defined. | MCP tool registration should be generated or driven from operation catalog metadata plus explicit prompt/resource definitions. |
+| LLM helpers | `src/crime_research_kit/_runtime/adapters/interfaces/llm/*` | Local Ollama provider and bounded packet/readiness helpers exist. | Keep optional and local-first. SDK exposes LLM-assisted workflow options only as explicit opt-in fields. |
+| App service | `src/crime_research_kit/_runtime/pipeline/app/service.py` | `run_case_builder` and `resume_case_builder` choose runner, checkpoint mode, model factory, and return serializable state. | Keep app service as workflow orchestration. It consumes `WorkflowClient`; it is not the SDK. |
+| Graph runtime | `src/crime_research_kit/_runtime/pipeline/graph/*` | Sequential and LangGraph paths share nodes, review gates, and checkpointing. | Keep private runtime. SDK exposes workflow methods and resumable run state, not graph nodes. |
 | Tests | `tests/runtime/*`, `tests/quality/governance/*` | Good coverage exists for result, policy, records, MCP tools, graph gates, resume, schemas, packaging, and docs drift. | Add SDK contract tests and generated-operation parity tests so CLI/MCP/docs cannot drift from SDK metadata. |
 | Historical plans | `docs/superpowers/*` | Several older plans still mention `src/case_builder`, `tcr.py`, and older zero-dependency assumptions. | Treat as archives. New work must target the live top-level `src/` layout and current dependency policy. |
 
@@ -88,9 +88,8 @@ src/crime_research_kit/
     records/           # public record models already mirrored from schemas
     workflow.py        # public workflow request/result models
   _runtime/
-    ledger/            # private JSONL helpers and legacy command adapters
-    ops/               # private operation implementations while migrating
-    interfaces/        # CLI/MCP adapters after they move under namespace
+    adapters/          # CLI/MCP/LLM adapters, optional IO, and ops
+    core/              # private ledger/config/models/lanes helpers
     pipeline/          # private graph runtime
 ```
 
@@ -133,28 +132,29 @@ and never import `adapters`, `core`, `pipeline`, `CrkRunner`, or MCP/CLI modules
 | Names/planning | `case.names.link`, `case.records.plan_public_records`, `plan_open_records`, `index_transcript` | `casework.records.*` | staged/private leads |
 | Validation/review | `case.review.validate`, `dedupe`, `resolve_identities`, `audit_*`, `readiness` | `records.validation`, `evidence.quality`, `evidence.review` | read plus generated reports |
 | Exports | `case.exports.manim`, `case.exports.charts`, `client.exports.timeline` | `evidence.exports`, reports | public-safe default, private opt-in |
-| Workflow | `client.workflows.plan`, `resume` | `pipeline.app.service` | gated by packet/export review |
-| Optional services | `case.discovery`, `case.retrieval`, `case.memory` or explicit capability modules | `adapters.io`, `core.memory` | optional, not evidence |
+| Workflow | `client.workflows.plan`, `resume` | `crime_research_kit._runtime.pipeline.app.service` | gated by packet/export review |
+| Optional services | `case.discovery`, `case.retrieval`, `case.memory` or explicit capability modules | `crime_research_kit._runtime.adapters.io`, `crime_research_kit._runtime.core.memory` | optional, not evidence |
 
 ## Optional Capability Matrix
 
 | Capability | Current sources | Dependency boundary | SDK rule |
 | --- | --- | --- | --- |
-| Discovery / SearXNG | `adapters.io.acquisition`, `cr-kit discover-sources`, MCP `discover_sources` | `web-local` behavior plus configured `CRK_SEARXNG_URL` | Expose as optional source-discovery capability; base SDK import must not require a running service. |
-| Documents / Docling | `adapters.io.parsing.parse_source`, `cr-kit parse-source`, MCP `parse_source` | `documents` extra | Raise an actionable dependency error when unavailable. |
-| OCR | `adapters.io.parsing.ocr_source`, `cr-kit ocr-source`, MCP `ocr_source` | `documents` extra plus OCR binaries | Raise dependency/tooling errors without making OCR part of base install. |
-| Retrieval / Qdrant-LlamaIndex | `adapters.io.retrieval`, `cr-kit index-case`, `cr-kit query-case`, MCP `query_case` | `retrieval` extra plus configured Qdrant | Optional capability; reads must still default to public-safe records. |
-| Memory / Mem0 | `core.memory`, `cr-kit remember-research-actions` | `memory-local` extra and local provider settings | Not part of first public SDK core; if exposed later, it must be explicit and non-evidence. |
-| LLM helpers | `adapters.interfaces.llm`, graph model factory | `llm` extra and local model provider | Opt-in only; local-first and egress-audited. |
-| MCP server | `adapters.interfaces.mcp` | `mcp` extra | Adapter over SDK/catalog, not required for SDK import. |
-| LangGraph workflows | `pipeline.graph`, checkpoint persistence | `agentic` extra | App/runtime implementation detail behind workflow facade. |
+| Discovery / SearXNG | `crime_research_kit._runtime.adapters.io.acquisition`, `cr-kit discover-sources`, MCP `discover_sources` | `web-local` behavior plus configured `CRK_SEARXNG_URL` | Expose as optional source-discovery capability; base SDK import must not require a running service. |
+| Documents / Docling | `crime_research_kit._runtime.adapters.io.parsing.parse_source`, `cr-kit parse-source`, MCP `parse_source` | `documents` extra | Raise an actionable dependency error when unavailable. |
+| OCR | `crime_research_kit._runtime.adapters.io.parsing.ocr_source`, `cr-kit ocr-source`, MCP `ocr_source` | `documents` extra plus OCR binaries | Raise dependency/tooling errors without making OCR part of base install. |
+| Retrieval / Qdrant-LlamaIndex | `crime_research_kit._runtime.adapters.io.retrieval`, `cr-kit index-case`, `cr-kit query-case`, MCP `query_case` | `retrieval` extra plus configured Qdrant | Optional capability; reads must still default to public-safe records. |
+| Memory / Mem0 | `crime_research_kit._runtime.core.memory`, `cr-kit remember-research-actions` | `memory-local` extra and local provider settings | Not part of first public SDK core; if exposed later, it must be explicit and non-evidence. |
+| LLM helpers | `crime_research_kit._runtime.adapters.interfaces.llm`, graph model factory | `llm` extra and local model provider | Opt-in only; local-first and egress-audited. |
+| MCP server | `crime_research_kit._runtime.adapters.interfaces.mcp` | `mcp` extra | Adapter over SDK/catalog, not required for SDK import. |
+| LangGraph workflows | `crime_research_kit._runtime.pipeline.graph`, checkpoint persistence | `agentic` extra | App/runtime implementation detail behind workflow facade. |
 
 ## App Layer Target
 
 The app layer remains a use-case boundary, not a public SDK boundary.
 
-- `pipeline/app/service.py` should keep only workflow concerns: runner choice,
-  checkpointing, model factory wiring, and serializable run state.
+- `crime_research_kit._runtime.pipeline.app.service` should keep only workflow
+  concerns: runner choice, checkpointing, model factory wiring, and
+  serializable run state.
 - It should consume `WorkflowClient` or the same operation catalog-backed
   services the SDK exposes.
 - It should not instantiate deep settings except at the explicit process
@@ -173,9 +173,9 @@ contract must be new and narrow:
 2. Add `crime_research_kit.sdk` as the Python API.
 3. Move operation declarations into `OperationSpec`.
 4. Repoint CLI, MCP, and app workflow to SDK/catalog behavior.
-5. Once tests prove parity, move private implementation under
-   `crime_research_kit._runtime` or otherwise mark top-level packages as
-   non-public until they can be removed from package discovery.
+5. Keep private implementation under `crime_research_kit._runtime` while tests
+   prove console scripts, package data, SDK lazy imports, MCP wiring, and
+   workflow imports no longer depend on top-level runtime packages.
 
 ## Acceptance Criteria
 

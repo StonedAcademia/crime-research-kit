@@ -42,10 +42,13 @@ EXPECTED_EXTRAS = {
     "governance": {"pip-audit", "pip-licenses", "cyclonedx-bom", "build", "tomli"},
 }
 EXPECTED_SCRIPTS = {
-    "cr-kit": "cli:main",
-    "crk-ledger": "adapters.interfaces.cli.entry:main",
-    "crk-mcp": "adapters.interfaces.mcp.server:main",
+    "cr-kit": "crime_research_kit._runtime.cli:main",
+    "crk-ledger": "crime_research_kit._runtime.adapters.interfaces.cli.entry:main",
+    "crk-mcp": "crime_research_kit._runtime.adapters.interfaces.mcp.server:main",
 }
+TEMPORARY_RUNTIME_PACKAGE_INCLUDES = {"adapters*", "core*", "pipeline*"}
+RUNTIME_NAMESPACE = "crime_research_kit._runtime."
+TOP_LEVEL_RUNTIME_PREFIXES = ("adapters.", "core.", "pipeline.")
 REGISTRY_SHARDS = (
     "index.json",
     "env_vars.json",
@@ -105,12 +108,35 @@ def test_console_scripts_stay_stable():
 def test_public_sdk_namespace_is_packaged():
     package_include = load_pyproject()["tool"]["setuptools"]["packages"]["find"]["include"]
 
-    assert "crime_research_kit*" in package_include
+    assert package_include == ["crime_research_kit*"]
+
+
+def test_runtime_package_discovery_waits_for_runtime_metadata_move():
+    pyproject = load_pyproject()
+    package_include = set(pyproject["tool"]["setuptools"]["packages"]["find"]["include"])
+    missing_includes = sorted(TEMPORARY_RUNTIME_PACKAGE_INCLUDES - package_include)
+    if not missing_includes:
+        return
+
+    scripts = pyproject["project"]["scripts"]
+    package_data = pyproject["tool"]["setuptools"].get("package-data", {})
+    unmigrated_scripts = {name: target for name, target in scripts.items() if not target.startswith(RUNTIME_NAMESPACE)}
+    unmigrated_data = sorted(key for key in package_data if key.startswith(TOP_LEVEL_RUNTIME_PREFIXES))
+    runtime_data = sorted(key for key in package_data if key.startswith(RUNTIME_NAMESPACE))
+
+    assert not unmigrated_scripts and runtime_data and not unmigrated_data, (
+        "Do not remove top-level runtime packages from package discovery before "
+        "console scripts and package-data keys move under crime_research_kit._runtime. "
+        f"missing includes={missing_includes}; "
+        f"unmigrated scripts={unmigrated_scripts}; "
+        f"unmigrated package-data keys={unmigrated_data}; "
+        f"runtime package-data keys={runtime_data}"
+    )
 
 
 def test_packaged_registry_data_matches_canonical_docs_registry():
     docs_registry = KIT_ROOT / "docs" / "registry"
-    package_registry = KIT_ROOT / "src" / "core" / "lanes" / "registry_data"
+    package_registry = KIT_ROOT / "src" / "crime_research_kit" / "_runtime" / "core" / "lanes" / "registry_data"
 
     for rel in REGISTRY_SHARDS:
         assert json.loads((package_registry / rel).read_text(encoding="utf-8")) == json.loads(
@@ -120,7 +146,7 @@ def test_packaged_registry_data_matches_canonical_docs_registry():
 
 def test_packaged_schema_data_matches_canonical_docs_schemas():
     docs_schemas = KIT_ROOT / "docs" / "schemas"
-    package_schemas = KIT_ROOT / "src" / "core" / "models" / "schemas_data"
+    package_schemas = KIT_ROOT / "src" / "crime_research_kit" / "_runtime" / "core" / "models" / "schemas_data"
 
     for rel in SCHEMA_SHARDS:
         assert json.loads((package_schemas / rel).read_text(encoding="utf-8")) == json.loads(
@@ -143,14 +169,14 @@ def test_packaging_smoke_imports_current_package_modules():
     text = f"{fresh_build}\n{smoke}"
 
     assert "case_builder" not in text
-    assert "import cli" in fresh_build
+    assert "import crime_research_kit._runtime.cli" in fresh_build
     assert "import crime_research_kit.sdk" in fresh_build
     assert "import crime_research_kit.sdk.examples" in fresh_build
-    assert "adapters.interfaces.mcp.server" in text
+    assert "crime_research_kit._runtime.adapters.interfaces.mcp.server" in text
 
 
 def test_report_frontend_assets_are_committed_and_selfcontained():
-    static = KIT_ROOT / "src/adapters/ops/evidence/reports/analysis/pages/templates_data/static"
+    static = KIT_ROOT / "src/crime_research_kit/_runtime/adapters/ops/evidence/reports/analysis/pages/templates_data/static"
     css_path, js_path = static / "app.css", static / "app.js"
 
     assert css_path.exists() and js_path.exists()

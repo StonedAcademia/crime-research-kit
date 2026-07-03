@@ -1,6 +1,6 @@
 import pytest
 
-from adapters.ops.safety.policy import (
+from crime_research_kit._runtime.adapters.ops.safety.policy import (
     PolicyError,
     apply_automation_defaults,
     ensure_staged_write,

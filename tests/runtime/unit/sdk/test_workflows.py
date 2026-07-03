@@ -68,7 +68,7 @@ def test_workflows_resume_requires_thread_id(tmp_path: Path):
 
 
 def test_workflows_resume_maps_missing_agentic_extra(tmp_path: Path, monkeypatch):
-    from pipeline.app import service
+    from crime_research_kit._runtime.pipeline.app import service
 
     def missing_langgraph(*_args, **_kwargs):
         raise RuntimeError("LangGraph is not installed. Install with `pip install -e '.[agentic]'`.")
@@ -82,7 +82,7 @@ def test_workflows_resume_maps_missing_agentic_extra(tmp_path: Path, monkeypatch
 
 
 def test_workflows_resume_shapes_rejected_packets(tmp_path: Path, monkeypatch):
-    from pipeline.app import service
+    from crime_research_kit._runtime.pipeline.app import service
 
     captured: dict[str, object] = {}
 

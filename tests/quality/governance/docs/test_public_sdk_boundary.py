@@ -43,6 +43,8 @@ def test_python_sdk_boundary_policy_is_documented():
     assert "core.*" in text
     assert "pipeline.*" in text
     assert "private runtime" in text
+    assert "crime_research_kit._runtime" in text
+    assert "Not packaged as public SDK imports." in text
 
 
 def test_readme_sdk_summary_does_not_reintroduce_legacy_dependency_claims():

@@ -1,7 +1,7 @@
 import json
 
-from adapters.interfaces.llm.briefs.audit_brief import write_readiness_brief
-from adapters.interfaces.llm.briefs.lane_suggest import suggest_lanes
+from crime_research_kit._runtime.adapters.interfaces.llm.briefs.audit_brief import write_readiness_brief
+from crime_research_kit._runtime.adapters.interfaces.llm.briefs.lane_suggest import suggest_lanes
 
 
 class FakeModel:

@@ -69,7 +69,7 @@ If Moon is not available yet, use `uv` directly:
 
 ```bash
 uv run --cache-dir .uv-cache --no-project --with-editable '.[dev,mcp,documents,retrieval]' \
-  -- python -c "import cli"
+  -- python -c "import crime_research_kit._runtime.cli"
 ```
 
 ## Done When

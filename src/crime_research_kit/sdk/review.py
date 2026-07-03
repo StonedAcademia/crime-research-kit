@@ -31,14 +31,14 @@ class CaseReviewClient:
 
     def validate(self) -> OperationResult:
         """Plan or run case validation."""
-        from adapters.ops import case as case_ops
+        from crime_research_kit._runtime.adapters.ops import case as case_ops
 
         raw = case_ops.validate(_runner(self.context), str(self.case_dir))
         return _result(_op("review.validate"), raw, case_ref=str(self.case_dir))
 
     def dedupe(self, *, record_type: str = "all", min_key_chars: int = 12, out: str | None = None) -> OperationResult:
         """Report duplicate candidates without merging or deleting rows."""
-        from adapters.ops.evidence import review as review_ops
+        from crime_research_kit._runtime.adapters.ops.evidence import review as review_ops
 
         operation = _op("review.dedupe")
         if record_type not in _DEDUPE_RECORD_TYPES:
@@ -56,7 +56,7 @@ class CaseReviewClient:
 
     def resolve_identities(self, *, min_key_chars: int = 8, include_merged: bool = False, out: str | None = None) -> OperationResult:
         """Report candidate duplicate or ambiguous identities without merging."""
-        from adapters.ops.evidence import review as review_ops
+        from crime_research_kit._runtime.adapters.ops.evidence import review as review_ops
 
         operation = _op("review.resolve_identities")
         if min_key_chars < 1:
@@ -79,7 +79,7 @@ class CaseReviewClient:
         out: str | None = None,
     ) -> OperationResult:
         """Report explicit and likely claim contradictions."""
-        from adapters.ops.evidence import review as review_ops
+        from crime_research_kit._runtime.adapters.ops.evidence import review as review_ops
 
         raw = review_ops.audit_contradictions(
             _runner(self.context),
@@ -101,7 +101,7 @@ class CaseReviewClient:
         out: str | None = None,
     ) -> OperationResult:
         """Report public narrative readiness gaps."""
-        from adapters.ops.evidence import review as review_ops
+        from crime_research_kit._runtime.adapters.ops.evidence import review as review_ops
 
         operation = _op("review.narrative_readiness")
         if min_independent_sources < 1:
@@ -126,7 +126,7 @@ class CaseReviewClient:
         out: str | None = None,
     ) -> OperationResult:
         """Report privacy and redaction issues before public output."""
-        from adapters.ops.evidence import review as review_ops
+        from crime_research_kit._runtime.adapters.ops.evidence import review as review_ops
 
         raw = review_ops.audit_privacy_redactions(
             _runner(self.context),
@@ -140,7 +140,7 @@ class CaseReviewClient:
 
     def audit_public_export(self, *, warn_only: bool = False, out: str | None = None) -> OperationResult:
         """Report public export safety issues."""
-        from adapters.ops.evidence import review as review_ops
+        from crime_research_kit._runtime.adapters.ops.evidence import review as review_ops
 
         raw = review_ops.audit_public_export(_runner(self.context), str(self.case_dir), warn_only=warn_only, out=out)
         return _result(_op("review.audit_public_export"), raw, case_ref=str(self.case_dir))
@@ -154,7 +154,7 @@ class CaseReviewClient:
         out: str | None = None,
     ) -> OperationResult:
         """Report source-chain, wire-copy, and press-release risks."""
-        from adapters.ops.evidence import review as review_ops
+        from crime_research_kit._runtime.adapters.ops.evidence import review as review_ops
 
         operation = _op("review.audit_source_independence")
         if min_title_chars < 1:
@@ -178,7 +178,7 @@ def _op(name: str) -> str:
 
 
 def _runner(context: CrkContext):
-    from adapters.ops.runner import CrkRunner
+    from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
 
     return CrkRunner(repo_root=context.repo_root, dry_run=context.dry_run)
 

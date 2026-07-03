@@ -83,7 +83,7 @@ def test_sources_preserve_plans_command(synthetic_case_copy: Path):
 
 
 def test_sources_discover_maps_network_errors(synthetic_case_copy: Path, monkeypatch):
-    from adapters.ops import sources as source_ops
+    from crime_research_kit._runtime.adapters.ops import sources as source_ops
 
     def fail_discover(*_args, **_kwargs):
         raise RuntimeError("connection refused by local SearXNG")
@@ -98,7 +98,7 @@ def test_sources_discover_maps_network_errors(synthetic_case_copy: Path, monkeyp
 
 
 def test_sources_parse_maps_missing_document_extra(synthetic_case_copy: Path, monkeypatch):
-    from adapters.ops import sources as source_ops
+    from crime_research_kit._runtime.adapters.ops import sources as source_ops
 
     add_raw_source(synthetic_case_copy, "SRAW001")
 
@@ -115,7 +115,7 @@ def test_sources_parse_maps_missing_document_extra(synthetic_case_copy: Path, mo
 
 
 def test_sources_ocr_maps_missing_tooling(synthetic_case_copy: Path, monkeypatch):
-    from adapters.ops import sources as source_ops
+    from crime_research_kit._runtime.adapters.ops import sources as source_ops
 
     add_raw_source(synthetic_case_copy, "SOCR001")
 

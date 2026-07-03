@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from adapters.ops import case as case_ops
-from adapters.ops import sources as source_ops
-from adapters.ops.runner import CrkRunner
+from crime_research_kit._runtime.adapters.ops import case as case_ops
+from crime_research_kit._runtime.adapters.ops import sources as source_ops
+from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT, ledger_command_args, ledger_subcommand
 
 REPO_ROOT = KIT_ROOT

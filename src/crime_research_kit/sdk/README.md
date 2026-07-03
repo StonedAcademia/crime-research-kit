@@ -47,5 +47,6 @@ through `crime_research_kit.sdk.requests` when validating catalog-driven
 payloads or generating adapter schemas.
 
 Only this `crime_research_kit.sdk` package is the public Python SDK surface.
-Top-level implementation packages such as `adapters`, `core`, and `pipeline`
-remain private runtime modules even while they are packaged for console scripts.
+Private implementation modules live under `crime_research_kit._runtime` for
+console scripts and app internals. Top-level `adapters`, `core`, and `pipeline`
+imports are not packaged SDK surfaces.

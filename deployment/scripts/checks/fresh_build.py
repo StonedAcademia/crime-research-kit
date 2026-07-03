@@ -47,8 +47,8 @@ def build_from_archive(source: Path, python: Path, dist_dir: Path) -> None:
 def import_check_wheel(python: Path, wheel: Path) -> None:
     run([str(python), "-m", "pip", "install", "--disable-pip-version-check", str(wheel)], cwd=ROOT)
     code = (
-        "import cli; import core.lanes.registry; import pipeline.app.service; "
-        "import adapters.interfaces.mcp.server; import crime_research_kit.sdk; "
+        "import crime_research_kit._runtime.cli; import crime_research_kit._runtime.core.lanes.registry; import crime_research_kit._runtime.pipeline.app.service; "
+        "import crime_research_kit._runtime.adapters.interfaces.mcp.server; import crime_research_kit.sdk; "
         "import crime_research_kit.sdk.examples"
     )
     run([str(python), "-c", code], cwd=ROOT)

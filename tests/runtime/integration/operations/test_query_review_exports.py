@@ -1,10 +1,10 @@
 import json
 from pathlib import Path
 
-from adapters.ops import exports as export_ops
-from adapters.ops import query as query_ops
-from adapters.ops import review as review_ops
-from adapters.ops.runner import CrkRunner
+from crime_research_kit._runtime.adapters.ops import exports as export_ops
+from crime_research_kit._runtime.adapters.ops import query as query_ops
+from crime_research_kit._runtime.adapters.ops import review as review_ops
+from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT, ledger_subcommand
 
 REPO_ROOT = KIT_ROOT

@@ -28,7 +28,7 @@ class CaseNamesClient:
 
     def link(self, *, names: Sequence[str] = (), names_file: str | None = None) -> OperationResult:
         """Plan or run lead-only name linking without guilt inference."""
-        from adapters.ops import query as query_ops
+        from crime_research_kit._runtime.adapters.ops import query as query_ops
 
         raw = query_ops.link_names(_runner(self.context), str(self.case_dir), names=list(names), names_file=names_file)
         return _from_op_result(_op("names.link"), raw, case_ref=str(self.case_dir))
@@ -39,7 +39,7 @@ def _op(name: str) -> str:
 
 
 def _runner(context: CrkContext):
-    from adapters.ops.runner import CrkRunner
+    from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
 
     return CrkRunner(repo_root=context.repo_root, dry_run=context.dry_run)
 

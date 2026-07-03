@@ -50,7 +50,7 @@ bootstrap, use the direct `uv` fallback:
 
 ```bash
 uv run --cache-dir .uv-cache --no-project --with-editable '.[dev,mcp,documents,retrieval]' \
-  -- python -c "import cli"
+  -- python -c "import crime_research_kit._runtime.cli"
 ```
 
 ## Verify The Workstation

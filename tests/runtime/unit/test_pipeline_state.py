@@ -1,4 +1,4 @@
-from core.models.state import CaseBuilderState
+from crime_research_kit._runtime.core.models.state import CaseBuilderState
 
 
 def test_state_defaults_new_pipeline_fields():

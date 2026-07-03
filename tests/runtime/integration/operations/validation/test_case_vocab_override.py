@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from adapters.ops.evidence.reports.analysis.relationships import relationship_class
-from adapters.ops.evidence.reports.analysis.vocabulary import load_case_packs, load_default_packs
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.relationships import relationship_class
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.vocabulary import load_case_packs, load_default_packs
 
 SYNTHETIC_CASE = Path(__file__).resolve().parents[5] / "data" / "examples" / "synthetic_case"
 

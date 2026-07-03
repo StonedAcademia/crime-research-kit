@@ -6,7 +6,7 @@ import json
 
 import pytest
 
-from adapters.ops.evidence.reports.analysis.vocabulary import (
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.vocabulary import (
     CASE_PACK_FILENAME,
     TermPack,
     VocabPacks,
@@ -14,8 +14,8 @@ from adapters.ops.evidence.reports.analysis.vocabulary import (
     load_default_packs,
     match_pack,
 )
-from adapters.ops.evidence.reports.analysis.relationships import relation_family, relationship_class
-from core.casefile import CasefileError
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.relationships import relation_family, relationship_class
+from crime_research_kit._runtime.core.casefile import CasefileError
 
 
 def test_default_packs_load_from_registry():
@@ -121,7 +121,7 @@ def test_case_pack_changes_classification(tmp_path):
 
 
 def test_status_and_grade_scores_come_from_packs():
-    from adapters.ops.evidence.reports.analysis.classifiers import source_grade_score, status_score
+    from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.classifiers import source_grade_score, status_score
 
     assert status_score("verified") == 1.0
     custom = VocabPacks(status_scores={"verified": 0.5}, grade_scores={"A": 0.1})
@@ -130,14 +130,14 @@ def test_status_and_grade_scores_come_from_packs():
 
 
 def test_layer_order_map_reads_packs():
-    from adapters.ops.evidence.reports.analysis.command.builders.layered.vocab import layer_order_map
+    from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.command.builders.layered.vocab import layer_order_map
 
     assert layer_order_map()["person"] == 1
     assert layer_order_map(VocabPacks(layer_order={"person": 42}))["person"] == 42
 
 
 def test_classify_bridge_path_label_terms_from_packs():
-    from adapters.ops.evidence.reports.analysis.paths import classify_bridge_path
+    from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.paths import classify_bridge_path
 
     steps = [("a", "b", {"relation_type": "x", "status": "corroborated", "edge_type": "relationship"})]
     meta = {"a": {"label": "zeta widget hub"}, "b": {"label": "other"}}

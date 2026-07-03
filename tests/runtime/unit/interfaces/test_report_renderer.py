@@ -6,9 +6,9 @@ import ast
 import re
 from pathlib import Path
 
-from adapters.ops.evidence.reports.analysis.pages.render import _static_assets, render_dashboard, render_page, render_svg_doc, write_html
-from adapters.ops.evidence.reports.analysis.svg.network.bridges import build_sankey_figure
-from core.models.reports import Dashboard, Rect, ReportPage, SvgDoc, TableBlock, Text
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.render import _static_assets, render_dashboard, render_page, render_svg_doc, write_html
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.svg.network.bridges import build_sankey_figure
+from crime_research_kit._runtime.core.models.reports import Dashboard, Rect, ReportPage, SvgDoc, TableBlock, Text
 
 SVG_XMLNS = 'xmlns="http://www.w3.org/2000/svg"'
 ROOT = Path(__file__).resolve().parents[4]

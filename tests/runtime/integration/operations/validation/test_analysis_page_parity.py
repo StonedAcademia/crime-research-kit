@@ -12,28 +12,28 @@ from typing import Any
 
 import pytest
 
-from adapters.ops.evidence.reports.analysis.command.builders.bridges import build_cluster_bridges
-from adapters.ops.evidence.reports.analysis.command.builders.evidence import build_evidence_products
-from adapters.ops.evidence.reports.analysis.command.builders.facets.boundary import (
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.command.builders.bridges import build_cluster_bridges
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.command.builders.evidence import build_evidence_products
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.command.builders.facets.boundary import (
     build_boundary_rows,
     build_readiness_products,
 )
-from adapters.ops.evidence.reports.analysis.command.builders.facets.people import (
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.command.builders.facets.people import (
     build_fragility,
     build_person_source_products,
 )
-from adapters.ops.evidence.reports.analysis.command.builders.facets.relationships import (
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.command.builders.facets.relationships import (
     build_relation_type_counts,
 )
-from adapters.ops.evidence.reports.analysis.command.builders.facets.timelines import build_swimlanes
-from adapters.ops.evidence.reports.analysis.command.builders.layered import build_layered_graphs
-from adapters.ops.evidence.reports.analysis.command.builders.paths import build_path_atlas
-from adapters.ops.evidence.reports.analysis.command.context import load_analysis_context
-from adapters.ops.evidence.reports.analysis.command.output import _chart_data
-from adapters.ops.evidence.reports.analysis.pages.render import render_page, render_svg_doc
-from adapters.ops.evidence.reports.analysis.pages.specs import build_analysis_chart_specs
-from adapters.ops.evidence.reports.case_charts.command import export_case_charts
-from adapters.ops.evidence.reports.clusters.command import export_people_clusters
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.command.builders.facets.timelines import build_swimlanes
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.command.builders.layered import build_layered_graphs
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.command.builders.paths import build_path_atlas
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.command.context import load_analysis_context
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.command.output import _chart_data
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.render import render_page, render_svg_doc
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.specs import build_analysis_chart_specs
+from crime_research_kit._runtime.adapters.ops.evidence.reports.case_charts.command import export_case_charts
+from crime_research_kit._runtime.adapters.ops.evidence.reports.clusters.command import export_people_clusters
 
 
 ROOT = Path(__file__).resolve().parents[5]

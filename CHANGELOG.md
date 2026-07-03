@@ -6,6 +6,12 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+## [0.13.15] - 2026-07-03
+
+### Changed
+
+- Moved private runtime internals under `crime_research_kit._runtime` while preserving public SDK imports and console script names.
+
 ## [0.13.14] - 2026-07-03
 
 ### Added
@@ -22,8 +28,7 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ### Changed
 
-- Added catalog-backed MCP tool registration metadata, registry parity coverage,
-  and docs while keeping `run_report`, prompts, and resources explicit.
+- Added catalog-backed MCP tool registration metadata, registry parity coverage, and docs while keeping `run_report`, prompts, and resources explicit.
 
 ## [0.13.11] - 2026-07-03
 
@@ -51,9 +56,7 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ### Changed
 
-- Updated architecture docs to show `crime_research_kit.sdk` as the public
-  Python layer, `cr-kit` and `crk-mcp` as adapters, and top-level runtime
-  packages as private implementation.
+- Updated architecture docs to show `crime_research_kit.sdk` as the public Python layer, `cr-kit` and `crk-mcp` as adapters, and top-level runtime packages as private implementation.
 
 ## [0.13.8] - 2026-07-03
 

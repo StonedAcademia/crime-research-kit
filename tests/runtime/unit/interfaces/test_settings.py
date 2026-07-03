@@ -5,8 +5,8 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
-from adapters.interfaces.cli.case_builder.handlers import _env_override
-from core.config import (
+from crime_research_kit._runtime.adapters.interfaces.cli.case_builder.handlers import _env_override
+from crime_research_kit._runtime.core.config import (
     DEFAULT_MODEL_SPEC,
     DEFAULT_QDRANT_PORT,
     DEFAULT_SEARXNG_URL,

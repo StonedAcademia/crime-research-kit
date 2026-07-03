@@ -1,10 +1,10 @@
 import json
 from pathlib import Path
 
-from adapters.interfaces.mcp import tools_read
-from adapters.interfaces.mcp.context import ServerContext
-from adapters.ops.runner import CrkRunner
-from core.config import CrkSettings
+from crime_research_kit._runtime.adapters.interfaces.mcp import tools_read
+from crime_research_kit._runtime.adapters.interfaces.mcp.context import ServerContext
+from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
+from crime_research_kit._runtime.core.config import CrkSettings
 from crime_research_kit.sdk.results import OperationResult
 from tests.helpers import KIT_ROOT, ledger_subcommand
 
@@ -143,7 +143,7 @@ def test_query_case_tool_routes_through_sdk(monkeypatch, synthetic_case_copy):
 def test_records_resource_is_public_safe_jsonl(synthetic_case_copy):
     import json as json_module
 
-    from adapters.interfaces.mcp import resources
+    from crime_research_kit._runtime.adapters.interfaces.mcp import resources
 
     claims = synthetic_case_copy / "records" / "claims.jsonl"
     private_row = {
@@ -167,7 +167,7 @@ def test_records_resource_is_public_safe_jsonl(synthetic_case_copy):
 def test_reference_resource_allow_list(synthetic_case_copy):
     import pytest
 
-    from adapters.interfaces.mcp import resources
+    from crime_research_kit._runtime.adapters.interfaces.mcp import resources
 
     ctx = make_ctx(synthetic_case_copy.parent)
 
@@ -179,7 +179,7 @@ def test_reference_resource_allow_list(synthetic_case_copy):
 
 
 def test_prompts_cover_safety_workflow():
-    from adapters.interfaces.mcp import prompts
+    from crime_research_kit._runtime.adapters.interfaces.mcp import prompts
 
     assert "review" in prompts.REVIEW_PACKET.lower()
     assert "confirm" in prompts.REVIEW_PACKET.lower()

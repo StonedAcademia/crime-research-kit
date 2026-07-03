@@ -2,10 +2,10 @@ import json
 import shutil
 from pathlib import Path
 
-from cli import build_click_command
-from core.config import CrkSettings
-from core.memory import remember_research_actions
-from adapters.io.retrieval import build_evidence_documents
+from crime_research_kit._runtime.cli import build_click_command
+from crime_research_kit._runtime.core.config import CrkSettings
+from crime_research_kit._runtime.core.memory import remember_research_actions
+from crime_research_kit._runtime.adapters.io.retrieval import build_evidence_documents
 from tests.helpers import KIT_ROOT
 
 
@@ -114,7 +114,7 @@ def test_self_hosted_service_defaults_read_env(monkeypatch):
 def test_cli_parse_source_reports_clean_error_for_non_case(tmp_path, capsys):
     import pytest
 
-    from cli import main
+    from crime_research_kit._runtime.cli import main
 
     with pytest.raises(SystemExit) as excinfo:
         main(["parse-source", str(tmp_path / "not_a_case"), "S1"])

@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from pipeline.graph.runner import run_sequential
-from core.models.state import CaseBuilderState
-from adapters.ops.runner import CrkRunner
+from crime_research_kit._runtime.pipeline.graph.runner import run_sequential
+from crime_research_kit._runtime.core.models.state import CaseBuilderState
+from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT, ledger_subcommand
 
 REPO_ROOT = KIT_ROOT
@@ -63,7 +63,7 @@ def test_checkpointer_creates_runs_db(tmp_path):
     import pytest
 
     pytest.importorskip("langgraph")
-    from pipeline.graph.persistence.checkpoint import case_checkpointer
+    from crime_research_kit._runtime.pipeline.graph.persistence.checkpoint import case_checkpointer
 
     saver = case_checkpointer(str(tmp_path / "some_case"))
 
