@@ -1,3 +1,4 @@
 # Core Checks
 
-Lightweight compile and fixture validation entrypoints for local and CI checks.
+Lightweight compile, fixture validation, and shared introspection helpers for
+local and CI checks.

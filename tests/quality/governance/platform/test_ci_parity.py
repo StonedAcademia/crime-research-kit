@@ -89,3 +89,21 @@ def test_branch_gate_dry_run_prints_resolved_targets():
     )
 
     assert "crk:test-integration" in proc.stdout
+
+
+def test_cli_surface_matches_snapshot():
+    import json
+
+    from adapters.interfaces.cli.app import build_click_command
+    from cli import build_click_command as build_crkit_command
+    from deployment.scripts.checks.core.surface import click_surface
+
+    snapshot = json.loads((KIT_ROOT / "docs" / "guides" / "cli-surface.json").read_text(encoding="utf-8"))
+    assert _jsonable(click_surface(build_click_command())) == snapshot["crk-ledger"]
+    assert _jsonable(click_surface(build_crkit_command())) == snapshot["cr-kit"]
+
+
+def _jsonable(surface: dict[str, object]) -> dict[str, object]:
+    import json
+
+    return json.loads(json.dumps(surface, default=str))

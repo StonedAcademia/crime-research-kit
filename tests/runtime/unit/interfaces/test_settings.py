@@ -5,7 +5,7 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
-from cli import _env_override
+from adapters.interfaces.cli.case_builder.handlers import _env_override
 from core.config import (
     DEFAULT_MODEL_SPEC,
     DEFAULT_QDRANT_PORT,
