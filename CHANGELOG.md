@@ -6,6 +6,18 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+## [0.13.10] - 2026-07-03
+
+### Added
+
+- Added a developer-integrator quick start for the public
+  `crime_research_kit.sdk` surface.
+
+### Changed
+
+- Updated README and Skill API operation reference docs to describe the SDK,
+  adapter, and catalog drift-check boundaries for the final SDK extraction gate.
+
 ## [0.13.9] - 2026-07-03
 
 ### Changed

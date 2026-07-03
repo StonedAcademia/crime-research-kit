@@ -304,14 +304,14 @@ catalog parity tests have landed.
 
 **Steps:**
 
-- [ ] Add a developer-integrator SDK quick start after the SDK works.
-- [ ] Generate or update operation reference docs from the catalog.
+- [x] Add a developer-integrator SDK quick start after the SDK works.
+- [x] Generate or update operation reference docs from the catalog.
 - [x] Update architecture docs to show SDK as the public Python layer and
   CLI/MCP as adapters.
 - [x] Add dated changelog entry and bump version.
 - [x] Run `moon run crk:check`.
 - [x] Run targeted SDK, MCP, CLI, workflow, and governance tests.
-- [ ] Run `moon run crk:test` before merging the full series.
+- [x] Run `moon run crk:test` before merging the full series.
 
 **Acceptance:**
 - Docs describe the new public SDK shape without preserving historical imports.
