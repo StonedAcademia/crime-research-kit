@@ -1,4 +1,11 @@
+from __future__ import annotations
+
+import ast
+import json
+from pathlib import Path
+
 from crime_research_kit.sdk.operations import SafetyTier, get_operation, list_operations, operations_by_domain
+from tests.helpers import KIT_ROOT
 
 
 def test_operation_catalog_has_unique_names_and_required_metadata():
@@ -74,3 +81,54 @@ def test_catalog_can_be_grouped_by_domain():
         "exports.people_clusters",
         "exports.timeline",
     }
+
+
+def test_cli_commands_have_catalog_entries_or_explicit_exemptions():
+    surface = json.loads((KIT_ROOT / "docs/guides/cli-surface.json").read_text(encoding="utf-8"))
+    specs_by_cli = {spec.cli_command: spec for spec in list_operations() if spec.cli_command}
+    command_names = {
+        f"{script} {command}"
+        for script, commands in surface.items()
+        for command in commands
+    }
+
+    assert command_names - set(specs_by_cli) == set()
+    for script, commands in surface.items():
+        for command, metadata in commands.items():
+            aliases = set(metadata.get("aliases") or [])
+            if aliases:
+                spec = specs_by_cli[f"{script} {command}"]
+                assert aliases <= set(spec.cli_aliases)
+
+
+def test_mcp_tools_have_catalog_entries_or_explicit_exemptions():
+    tool_names = set()
+    for rel in (
+        "src/adapters/interfaces/mcp/tools/read.py",
+        "src/adapters/interfaces/mcp/tools/write.py",
+        "src/adapters/interfaces/mcp/tools/gated.py",
+    ):
+        tool_names.update(_mcp_tool_names(KIT_ROOT / rel))
+
+    catalog_tools = {spec.mcp_tool for spec in list_operations() if spec.mcp_tool}
+
+    assert tool_names - catalog_tools == set()
+
+
+def _mcp_tool_names(path: Path) -> set[str]:
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    names = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.FunctionDef):
+            continue
+        if any(_is_mcp_tool_decorator(decorator) for decorator in node.decorator_list):
+            names.add(node.name)
+    return names
+
+
+def _is_mcp_tool_decorator(node: ast.expr) -> bool:
+    return (
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and node.func.attr == "tool"
+    )

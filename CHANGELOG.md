@@ -17,6 +17,8 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 - Added a metadata-only `OperationSpec` catalog with safety tiers,
   side-effect descriptions, request/result model names, and CLI/MCP/Skill API
   mappings for the initial SDK operation set.
+- Added SDK catalog parity tests that ensure current CLI commands and MCP tools
+  are represented by catalog entries.
 - Added SDK import tests that verify `crime_research_kit.sdk` does not import
   or export legacy runtime roots as public API.
 - Added package-discovery governance so built wheels include the public

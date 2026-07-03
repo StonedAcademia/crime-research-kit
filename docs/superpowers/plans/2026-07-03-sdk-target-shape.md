@@ -135,7 +135,7 @@ Additional integration files:
   source text, add/ingest/preserve/discover/parse/ocr, draft/list/read/save
   extraction, import reviewed extraction, link names, public-record planning,
   validation, review audits, public-safe exports, workflow plan/resume.
-- [ ] Add parity tests proving every current MCP tool and relevant CLI command
+- [x] Add parity tests proving every current MCP tool and relevant CLI command
   has a catalog entry or an explicit "not SDK" exemption.
 - [ ] Add docs generation or a drift check that compares Skill API operation
   docs to the catalog.
