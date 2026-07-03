@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "crime-research-kit"
-version = "0.13.5"
+version = "0.13.6"
 description = "Agentic skill, MCP, SDK, and CLI scaffolding for data-first crime research."
 requires-python = ">=3.10"
 license = {text = "AGPL-3.0-only"}

@@ -6,6 +6,14 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+## [0.13.6] - 2026-07-03
+
+### Changed
+
+- Repointed bounded MCP read, staged-write, gated import, and public export
+  tools through the public SDK facade while preserving MCP tool names, command
+  diagnostics, string errors, and privacy note payloads.
+
 ## [0.13.5] - 2026-07-03
 
 ### Changed
