@@ -1,0 +1,4 @@
+interface:
+  display_name: "Spec Kanban Agent Orchestration"
+  short_description: "Coordinate spec-led reviewer and worker agents."
+  default_prompt: "Use $spec-kanban-agent-orchestration to coordinate worker and reviewer agents from the current spec, plan, and kanban."

@@ -16,6 +16,11 @@
       "skills": ["truecrime-cult-research"]
     },
     {
+      "id": "workflow",
+      "title": "Workflow orchestration",
+      "skills": ["spec-kanban-agent-orchestration"]
+    },
+    {
       "id": "public-record",
       "title": "Public-record lanes",
       "skills": [
@@ -153,6 +158,12 @@
       "registry_lanes": ["source-independence"],
       "templates": ["source-independence"],
       "references": ["case_mapping.md", "independence_rules.md"]
+    },
+    "spec-kanban-agent-orchestration": {
+      "group": "workflow",
+      "registry_lanes": [],
+      "templates": [],
+      "references": ["kanban-contract.md", "prompt-templates.md"]
     },
     "truecrime-cult-research": {
       "group": "core",
