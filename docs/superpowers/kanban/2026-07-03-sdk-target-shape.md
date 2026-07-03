@@ -42,11 +42,11 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-022 Move internals under `_runtime` | backlog | unassigned | SDK-018 | `_runtime` migration if chosen | Backlog; runtime modules are documented private for now. |
 | SDK-023 SDK examples package | done | main | SDK-014 | SDK examples/docs | Packaged SDK examples and docs landed. |
 | SDK-024 Catalog-driven MCP registration | done | main + workers | SDK-006, SDK-016 | MCP registration code/tests/docs | Catalog-backed MCP registration metadata landed; prompts/resources remain explicit. |
-| SDK-025 Strict request models | backlog | unassigned | SDK-005 | request models/tests | Backlog. |
+| SDK-025 Strict request models | in_progress | main | SDK-005 | request models/tests | Strict request model slice claimed for stable SDK operations. |
 
 Dependency note: SDK-015, SDK-016, SDK-018, SDK-019, and SDK-020 are done.
 SDK-015, SDK-016, SDK-018, SDK-019, SDK-020, SDK-023, and SDK-024 are done.
-SDK-021, SDK-022, and SDK-025 remain backlog follow-up slices.
+SDK-025 is in progress. SDK-021 and SDK-022 remain backlog follow-up slices.
 
 ## Done
 
@@ -80,7 +80,7 @@ SDK-021, SDK-022, and SDK-025 remain backlog follow-up slices.
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| None | - | No cards currently in progress. |
+| SDK-025 Strict request models | main | Add strict SDK request model definitions and catalog parity checks. |
 
 ## Review
 
@@ -112,7 +112,6 @@ SDK-021, SDK-022, and SDK-025 remain backlog follow-up slices.
 | --- | --- | --- | --- |
 | SDK-021 Future HTTP route binding | P3 | SDK-005 | HTTP mapping uses the catalog but no server is added in the SDK extraction series. |
 | SDK-022 Move internals under `_runtime` | P3 | SDK-018 | Top-level implementation packages stop being packaged after console scripts and imports migrate. |
-| SDK-025 Strict request models | P3 | SDK-005 | Operation request models replace loose dict payloads for stable operations. |
 
 ## Blocked / Watch
 
