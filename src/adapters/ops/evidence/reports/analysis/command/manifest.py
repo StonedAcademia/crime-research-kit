@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from typing import Any
+from core.models.reports import ReportPage
 
 from adapters.ops.evidence.reports.analysis.command.context import AnalysisContext
 
 
-def write_analysis_index(ctx: AnalysisContext, chart_specs: list[dict[str, Any]]) -> None:
-    chart_page_lines = [f"- `{spec['filename']}` - {spec['title']}" for spec in chart_specs]
+def write_analysis_index(ctx: AnalysisContext, chart_specs: list[ReportPage]) -> None:
+    chart_page_lines = [f"- `{page.slug}.html` - {page.title}" for page in chart_specs]
     index = [
         f"# Analysis charts: {ctx.case_title}",
         "",
