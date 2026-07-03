@@ -42,6 +42,7 @@ class Line(_El):
     y2: float
     stroke: str = ""
     stroke_width: float = 1.0
+    stroke_opacity: float | str | None = None
 
 
 class Path(_El):
@@ -51,6 +52,7 @@ class Path(_El):
     fill_opacity: float | str | None = None
     stroke: str = ""
     stroke_width: float = 1.0
+    stroke_opacity: float | str | None = None
 
 
 class Text(_El):

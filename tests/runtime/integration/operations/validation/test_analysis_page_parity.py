@@ -52,6 +52,11 @@ def _signature(html_text: str) -> dict[str, Any]:
 def svg_signature(svg_text: str) -> dict:
     root = ET.fromstring(svg_text)
     ns = "{http://www.w3.org/2000/svg}"
+    if root.tag.replace(ns, "") != "svg":
+        for el in root.iter():
+            if el.tag.replace(ns, "") == "svg":
+                root = el
+                break
     counts: dict[str, int] = {}
     labels: list[str] = []
     for el in root.iter():
@@ -100,11 +105,16 @@ def test_new_pipeline_preserves_page_content(tmp_path: Path):
     assert signatures == {key: value for key, value in expected.items() if key != "figures"}
 
     figure_keys = {
+        "bipartite": "11_person_source_bipartite",
+        "boundary_overlay": "08_contradiction_boundary_overlay",
         "claim_matrix": "05_claim_corroboration_matrix",
         "fragility": "04_bridge_fragility",
         "heatmap": "03_evidence_confidence_heatmap",
+        "path_atlas": "07_sixdof_path_atlas",
         "readiness": "12_public_narrative_readiness",
         "source_quality": "06_source_quality_dashboard",
+        "swimlanes": "09_temporal_cluster_swimlanes",
+        "treemap": "10_relationship_type_treemap",
     }
     by_slug = {page.slug: page for page in pages}
     figure_signatures = {}
