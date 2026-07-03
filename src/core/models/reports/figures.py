@@ -32,6 +32,8 @@ class Circle(_El):
     r: float
     fill: str = ""
     fill_opacity: float | str | None = None
+    stroke: str = ""
+    stroke_width: float = 1.0
 
 
 class Line(_El):
@@ -53,6 +55,7 @@ class Path(_El):
     stroke: str = ""
     stroke_width: float = 1.0
     stroke_opacity: float | str | None = None
+    stroke_dasharray: str = ""
 
 
 class Text(_El):

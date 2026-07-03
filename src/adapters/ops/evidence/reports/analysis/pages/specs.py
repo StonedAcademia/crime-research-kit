@@ -21,10 +21,10 @@ from adapters.ops.evidence.reports.analysis.svg.matrix import (
     build_readiness_figure,
     build_source_quality_figure,
 )
-from adapters.ops.evidence.reports.analysis.svg.network.bridges import render_sankey_svg
+from adapters.ops.evidence.reports.analysis.svg.network.bridges import build_sankey_figure
 from adapters.ops.evidence.reports.analysis.svg.network.layers import (
-    render_layered_graph_svg,
-    render_layered_graph_v2_svg,
+    build_layered_graph_figure,
+    build_layered_graph_v2_figure,
 )
 from adapters.ops.evidence.ledger.records import flatten
 
@@ -71,7 +71,7 @@ def build_analysis_chart_specs(chart_data: dict[str, Any]) -> list[ReportPage]:
             "cluster_bridge_sankey",
             "Cluster Bridge Sankey",
             "Audited inter-cluster bridge flow with category and lead-context links visually separated.",
-            render_sankey_svg(chart_data["sankey_nodes"], chart_data["cluster_bridge_links"]),
+            build_sankey_figure(chart_data["sankey_nodes"], chart_data["cluster_bridge_links"]),
             chart_data["cluster_bridges"],
             ["src_cluster", "dst_cluster", "bridge_class", "hops", "path", "statuses"],
             12,
@@ -82,7 +82,7 @@ def build_analysis_chart_specs(chart_data: dict[str, Any]) -> list[ReportPage]:
             "layered_knowledge_graph",
             "Layered Knowledge Graph",
             "Layered graph separating people, events, organizations, institutions, and context nodes.",
-            render_layered_graph_svg(chart_data["layered_nodes"], chart_data["layered_edges"]),
+            build_layered_graph_figure(chart_data["layered_nodes"], chart_data["layered_edges"]),
             chart_data["layered_edges"],
             ["src_label", "dst_label", "edge_type", "relation_type", "relationship_class", "status", "source_count"],
             18,
@@ -93,7 +93,7 @@ def build_analysis_chart_specs(chart_data: dict[str, Any]) -> list[ReportPage]:
             "layered_knowledge_graph_v2",
             "Layered Knowledge Graph v2",
             "Evidence-navigation graph with explicit layers, source grades, public-readiness state, caveats, and cluster context.",
-            render_layered_graph_v2_svg(chart_data["layered_v2_nodes"], chart_data["layered_v2_edges"]),
+            build_layered_graph_v2_figure(chart_data["layered_v2_nodes"], chart_data["layered_v2_edges"]),
             chart_data["layered_v2_edges"],
             ["src_label", "dst_label", "relationship_class", "bridge_class", "readiness", "source_count", "caveat"],
             18,

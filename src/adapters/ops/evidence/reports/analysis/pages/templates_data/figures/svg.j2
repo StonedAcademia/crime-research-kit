@@ -7,11 +7,11 @@
 {%- if el.kind == "rect" -%}
 <rect x="{{ el.x }}" y="{{ el.y }}" width="{{ el.width }}" height="{{ el.height }}"{% if el.rx %} rx="{{ el.rx }}"{% endif %}{% if el.fill %} fill="{{ el.fill }}"{% endif %}{% if el.fill_opacity is not none %} fill-opacity="{{ el.fill_opacity }}"{% endif %}{% if el.stroke %} stroke="{{ el.stroke }}"{% endif %}{{ attrs(el) }}>{% if el.title %}<title>{{ el.title }}</title>{% endif %}</rect>
 {%- elif el.kind == "circle" -%}
-<circle cx="{{ el.cx }}" cy="{{ el.cy }}" r="{{ el.r }}"{% if el.fill %} fill="{{ el.fill }}"{% endif %}{% if el.fill_opacity is not none %} fill-opacity="{{ el.fill_opacity }}"{% endif %}{{ attrs(el) }}>{% if el.title %}<title>{{ el.title }}</title>{% endif %}</circle>
+<circle cx="{{ el.cx }}" cy="{{ el.cy }}" r="{{ el.r }}"{% if el.fill %} fill="{{ el.fill }}"{% endif %}{% if el.fill_opacity is not none %} fill-opacity="{{ el.fill_opacity }}"{% endif %}{% if el.stroke %} stroke="{{ el.stroke }}" stroke-width="{{ el.stroke_width }}"{% endif %}{{ attrs(el) }}>{% if el.title %}<title>{{ el.title }}</title>{% endif %}</circle>
 {%- elif el.kind == "line" -%}
 <line x1="{{ el.x1 }}" y1="{{ el.y1 }}" x2="{{ el.x2 }}" y2="{{ el.y2 }}"{% if el.stroke %} stroke="{{ el.stroke }}"{% endif %} stroke-width="{{ el.stroke_width }}"{% if el.stroke_opacity is not none %} stroke-opacity="{{ el.stroke_opacity }}"{% endif %}{{ attrs(el) }}>{% if el.title %}<title>{{ el.title }}</title>{% endif %}</line>
 {%- elif el.kind == "path" -%}
-<path d="{{ el.d }}"{% if el.fill %} fill="{{ el.fill }}"{% endif %}{% if el.fill_opacity is not none %} fill-opacity="{{ el.fill_opacity }}"{% endif %}{% if el.stroke %} stroke="{{ el.stroke }}"{% endif %} stroke-width="{{ el.stroke_width }}"{% if el.stroke_opacity is not none %} stroke-opacity="{{ el.stroke_opacity }}"{% endif %}{{ attrs(el) }}>{% if el.title %}<title>{{ el.title }}</title>{% endif %}</path>
+<path d="{{ el.d }}"{% if el.fill %} fill="{{ el.fill }}"{% endif %}{% if el.fill_opacity is not none %} fill-opacity="{{ el.fill_opacity }}"{% endif %}{% if el.stroke %} stroke="{{ el.stroke }}"{% endif %} stroke-width="{{ el.stroke_width }}"{% if el.stroke_opacity is not none %} stroke-opacity="{{ el.stroke_opacity }}"{% endif %}{% if el.stroke_dasharray %} stroke-dasharray="{{ el.stroke_dasharray }}"{% endif %}{{ attrs(el) }}>{% if el.title %}<title>{{ el.title }}</title>{% endif %}</path>
 {%- elif el.kind == "text" -%}
 <text x="{{ el.x }}" y="{{ el.y }}" text-anchor="{{ el.anchor }}" font-size="{{ el.font_size }}"{% if el.transform %} transform="{{ el.transform }}"{% endif %}{{ attrs(el) }}>{{ el.content }}</text>
 {%- elif el.kind == "group" -%}
