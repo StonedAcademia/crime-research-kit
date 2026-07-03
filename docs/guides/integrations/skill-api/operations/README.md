@@ -10,6 +10,10 @@ this reference.
 table and the operation detail headings against
 `crime_research_kit.sdk.operations.list_operations()`.
 
+Direct runtime exceptions are not SDK catalog entries. `crk-ledger report`,
+`reportCase`, and MCP `run_report` remain direct until the evidence-board
+report has explicit public/private filtering semantics.
+
 ## SDK Catalog Reference
 
 | Skill API operation | SDK operation | Safety tier | Result envelope |
@@ -35,7 +39,6 @@ table and the operation detail headings against
 | `planOpenRecords` | `records.plan_open_records` | `staged_write` | `OperationResult` |
 | `planPublicRecords` | `records.plan_public_records` | `staged_write` | `OperationResult` |
 | `preserveSource` | `sources.preserve` | `staged_write` | `OperationResult` |
-| `reportCase` | `reports.evidence_board` | `public_export` | `OperationResult` |
 | `resolveIdentities` | `review.resolve_identities` | `staged_write` | `OperationResult` |
 | `reviewNarrativeReadiness` | `review.narrative_readiness` | `staged_write` | `OperationResult` |
 | `validateCase` | `review.validate` | `read` | `OperationResult` |

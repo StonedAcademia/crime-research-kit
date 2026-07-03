@@ -154,7 +154,11 @@ crk-ledger validate data/cases/<case_slug>
 
 Returns a success message or validation errors by record type and row index.
 
-## `reportCase`
+## Direct Runtime Operations
+
+### Direct runtime: `reportCase`
 
 Writes `exports/evidence_board.md` with source ledger, entities, events, event
 links, relationships, claims by status, and redactions/public-output exclusions.
+This operation remains outside the SDK catalog until the evidence-board report
+has explicit public/private filtering semantics.

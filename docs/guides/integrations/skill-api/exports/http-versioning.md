@@ -14,7 +14,6 @@ If this CLI is wrapped by an HTTP API, use these stable operation routes:
 | `POST` | `/v1/cases/{case_slug}/candidates:ner-suggest` | `nerSuggest` |
 | `POST` | `/v1/cases/{case_slug}/links:names` | `linkNames` |
 | `POST` | `/v1/cases/{case_slug}:validate` | `validateCase` |
-| `POST` | `/v1/cases/{case_slug}:report` | `reportCase` |
 | `POST` | `/v1/cases/{case_slug}/exports:manim` | `exportManim` |
 | `POST` | `/v1/cases/{case_slug}:dedupe` | `dedupeRecords` |
 | `POST` | `/v1/cases/{case_slug}:audit-public-export` | `auditPublicExport` |
@@ -26,6 +25,9 @@ If this CLI is wrapped by an HTTP API, use these stable operation routes:
 
 The HTTP wrapper must preserve local safety defaults, especially explicit
 opt-in for private records.
+
+The evidence-board `reportCase` route is deferred until that report has
+explicit public/private filtering semantics and a public SDK operation.
 
 ## Versioning
 

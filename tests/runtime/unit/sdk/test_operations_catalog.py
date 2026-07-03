@@ -8,11 +8,15 @@ from crime_research_kit.sdk.operations import SafetyTier, get_operation, list_op
 from tests.helpers import KIT_ROOT
 
 
+DIRECT_MCP_TOOL_EXEMPTIONS = {"run_report"}
+DIRECT_CLI_COMMAND_EXEMPTIONS = {"crk-ledger report"}
+
+
 def test_operation_catalog_has_unique_names_and_required_metadata():
     specs = list_operations()
     names = [spec.name for spec in specs]
 
-    assert len(specs) >= 40
+    assert len(specs) >= 39
     assert len(names) == len(set(names))
     assert names == sorted(names)
     assert all(spec.domain for spec in specs)
@@ -92,9 +96,13 @@ def test_cli_commands_have_catalog_entries_or_explicit_exemptions():
         for command in commands
     }
 
-    assert command_names - set(specs_by_cli) == set()
+    assert command_names - set(specs_by_cli) - DIRECT_CLI_COMMAND_EXEMPTIONS == set()
+    assert DIRECT_CLI_COMMAND_EXEMPTIONS <= command_names
+    assert DIRECT_CLI_COMMAND_EXEMPTIONS.isdisjoint(specs_by_cli)
     for script, commands in surface.items():
         for command, metadata in commands.items():
+            if f"{script} {command}" in DIRECT_CLI_COMMAND_EXEMPTIONS:
+                continue
             aliases = set(metadata.get("aliases") or [])
             if aliases:
                 spec = specs_by_cli[f"{script} {command}"]
@@ -112,7 +120,20 @@ def test_mcp_tools_have_catalog_entries_or_explicit_exemptions():
 
     catalog_tools = {spec.mcp_tool for spec in list_operations() if spec.mcp_tool}
 
-    assert tool_names - catalog_tools == set()
+    assert tool_names - catalog_tools - DIRECT_MCP_TOOL_EXEMPTIONS == set()
+    assert DIRECT_MCP_TOOL_EXEMPTIONS <= tool_names
+    assert DIRECT_MCP_TOOL_EXEMPTIONS.isdisjoint(catalog_tools)
+
+
+def test_direct_mcp_tool_exemptions_are_documented():
+    overview = (KIT_ROOT / "docs/guides/architecture/system-overview.md").read_text(encoding="utf-8")
+    mcp_guide = (KIT_ROOT / "docs/guides/integrations/mcp-server.md").read_text(encoding="utf-8")
+    operation_docs = (KIT_ROOT / "docs/guides/integrations/skill-api/operations/README.md").read_text(encoding="utf-8")
+    flat_operation_docs = " ".join(operation_docs.split())
+
+    assert "`run_report` remains a direct derived-report path" in overview
+    assert "`run_report` remains a direct MCP/runtime exception" in mcp_guide
+    assert "`crk-ledger report`, `reportCase`, and MCP `run_report`" in flat_operation_docs
 
 
 def _mcp_tool_names(path: Path) -> set[str]:

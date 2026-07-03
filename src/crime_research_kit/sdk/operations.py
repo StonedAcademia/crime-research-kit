@@ -74,7 +74,6 @@ _ROWS = (
     ("case.info", "cases", _T.READ, "CaseInfoRequest", "", "", "case_info", "", "", "", ""),
     ("records.list", "records", _T.READ, "ListRecordsRequest", "", "", "get_records", "", "", "", ""),
     ("records.source_text", "records", _T.READ, "SourceTextRequest", "", "", "get_source_text", "", "", "", ""),
-    ("reports.evidence_board", "reports", _T.PUBLIC_EXPORT, "EvidenceBoardRequest", "exports/evidence_board.md", "crk-ledger report", "run_report", "reportCase", "POST /v1/cases/{case_slug}:report", "", ""),
     ("sources.add", "sources", _T.STAGED_WRITE, "AddSourceRequest", "records/sources.jsonl", "crk-ledger add-source", "add_source", "addSource", "POST /v1/cases/{case_slug}/sources", "", ""),
     ("sources.ingest_url", "sources", _T.STAGED_WRITE, "IngestUrlRequest", "raw source text|records/sources.jsonl", "crk-ledger ingest-url", "ingest_url", "ingestUrl", "POST /v1/cases/{case_slug}/sources:ingest-url", "", ""),
     ("sources.discover", "sources", _T.STAGED_WRITE, "DiscoverSourcesRequest", "staging/candidates/source_leads.json", "cr-kit discover-sources", "discover_sources", "", "", "web-local", "optional"),

@@ -17,6 +17,9 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 - Updated README and Skill API operation reference docs to describe the SDK,
   adapter, and catalog drift-check boundaries for the final SDK extraction gate.
+- Kept the evidence-board report out of the SDK catalog until public/private
+  filtering semantics are explicit, with documented CLI/MCP direct-runtime
+  exemptions.
 
 ## [0.13.9] - 2026-07-03
 
