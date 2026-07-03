@@ -141,6 +141,21 @@ def test_packaging_smoke_imports_current_package_modules():
     assert "adapters.interfaces.mcp.server" in text
 
 
+def test_report_frontend_assets_are_committed_and_selfcontained():
+    static = KIT_ROOT / "src/adapters/ops/evidence/reports/analysis/pages/templates_data/static"
+    css_path, js_path = static / "app.css", static / "app.js"
+
+    assert css_path.exists() and js_path.exists()
+    css, js = css_path.read_text(encoding="utf-8"), js_path.read_text(encoding="utf-8")
+    assert len(css) > 500 and len(js) > 500
+    assert "https://tailwindcss.com" in css
+    for text in (css.replace("https://tailwindcss.com", ""), js):
+        assert "http://" not in text
+        assert "https://" not in text
+        assert "fetch(" not in text
+        assert re.search(r"""(?:src|href)=["']https?://""", text) is None
+
+
 def test_license_policy_allows_agpl_project_and_copyleft_dependencies(tmp_path):
     records = [
         {"Name": "crime-research-kit", "Version": "0.12.0", "License": "AGPL-3.0-only"},

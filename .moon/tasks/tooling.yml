@@ -63,3 +63,17 @@ tasks:
     inputs: ["@group(python)", "pyproject.toml", "README.md", "LICENSE", "CHANGELOG.md", "deployment/scripts/checks/release/release_readiness.py"]
     options: { cache: false, outputStyle: stream }
     toolchains: system
+
+  frontend-build:
+    description: "Build committed report frontend assets."
+    command: "npm"
+    args: ["--prefix", "frontend", "run", "build"]
+    inputs: ["frontend/package.json", "frontend/app.ts", "frontend/styles.css"]
+    outputs:
+      - "src/adapters/ops/evidence/reports/analysis/pages/templates_data/static/app.css"
+      - "src/adapters/ops/evidence/reports/analysis/pages/templates_data/static/app.js"
+    options:
+      cache: false
+      outputStyle: stream
+    deps: []
+    toolchains: system
