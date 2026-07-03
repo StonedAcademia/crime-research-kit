@@ -10,6 +10,8 @@ Current surface:
 - `CaseClient` is a case-scoped handle that stores the resolved case context.
 - `CasesClient` and `CaseRecordsClient` expose case listing, case info, public
   record reads, and source-text reads.
+- `CaseSourcesClient` exposes source registration, URL ingestion,
+  preservation, discovery, parsing, and OCR wrappers.
 - `TransportMode` records whether clients should use automatic, direct, or
   subprocess-backed runtime access.
 - `OperationResult` and `OperationWarning` define the stable SDK result

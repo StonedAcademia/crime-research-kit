@@ -10,6 +10,7 @@ from .cases import CaseRecordsClient, CasesClient, case_info
 from .context import CrkContext
 from .operations import OperationSpec, get_operation, operations_by_domain
 from .results import OperationResult
+from .sources import CaseSourcesClient
 
 CaseRef = str | PathLike[str] | Path
 
@@ -41,6 +42,11 @@ class CaseClient:
     def records(self) -> CaseRecordsClient:
         """Record read operations for this case."""
         return CaseRecordsClient(context=self.context, case_ref=self.case_ref)
+
+    @property
+    def sources(self) -> CaseSourcesClient:
+        """Source intake operations for this case."""
+        return CaseSourcesClient(context=self.context, case_ref=self.case_ref)
 
     def info(self, *, include_private: bool | None = None) -> OperationResult:
         """Return case metadata and public-safe record counts by default."""

@@ -176,6 +176,9 @@ src/crime_research_kit/sdk/
   `case_dir` repeatedly after obtaining a case handle.
 - [x] Wrap case info, case listing, record listing, and source-text reads behind
   SDK methods, converting `OpResult` into `OperationResult`.
+- [x] Wrap source add, ingest, preserve, discover, parse, and OCR operations
+  behind SDK methods, converting `OpResult` or raised optional failures into
+  `OperationResult`.
 - [ ] Wrap remaining existing ops behind SDK methods, converting `OpResult` into
   `OperationResult`.
 - [x] Make `include_private` explicit on case and record reads, defaulting to
@@ -184,8 +187,10 @@ src/crime_research_kit/sdk/
   false.
 - [ ] Make canonical import method name explicit, for example
   `case.extractions.import_reviewed(packet, approved=True)`.
-- [ ] Add dependency-error tests for optional retrieval/OCR/discovery methods
-  when extras are absent.
+- [x] Add dependency-error tests for optional source discovery, OCR, and parsing
+  methods when services or extras are absent.
+- [ ] Add dependency-error tests for remaining optional retrieval methods when
+  extras are absent.
 
 **Acceptance:**
 - A Python user can create a client, inspect a case, read public records, stage

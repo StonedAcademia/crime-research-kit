@@ -20,6 +20,8 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
   callers.
 - Added SDK case and record read wrappers for case listing, public-safe case
   info, record listing, and source-text reads.
+- Added SDK source wrappers for source registration, URL ingestion,
+  preservation, discovery, parsing, and OCR with actionable optional failures.
 - Added a metadata-only `OperationSpec` catalog with safety tiers,
   side-effect descriptions, request/result model names, and CLI/MCP/Skill API
   mappings for the initial SDK operation set.
