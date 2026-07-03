@@ -6,6 +6,14 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+## [0.13.5] - 2026-07-03
+
+### Changed
+
+- Repointed `cr-kit` workflow, discovery, parse, and OCR handlers through the
+  public SDK facade while preserving command names, flags, and JSON payload
+  shape.
+
 ## [0.13.4] - 2026-07-03
 
 ### Added

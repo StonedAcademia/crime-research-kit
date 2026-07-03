@@ -32,7 +32,7 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-012 Wrap review operations | done | main | SDK-005, SDK-008 | SDK review modules and tests | Validation, dedupe, identity, contradiction, readiness, privacy, public-export, and source-independence wrappers landed. |
 | SDK-013 Wrap export operations | done | main | SDK-005, SDK-008 | SDK export modules and tests | Public-safe export wrappers landed. |
 | SDK-014 Add workflow facade | done | main | SDK-005, SDK-008 | `src/crime_research_kit/sdk/workflows.py`, `src/pipeline/app/service.py`, workflow tests | Workflow facade landed without public graph-node imports. |
-| SDK-015 Repoint CLI handlers | in_progress | main | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/cli/**`, CLI tests | Do not change command names or flags. |
+| SDK-015 Repoint CLI handlers | done | main | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/cli/**`, CLI tests | `cr-kit` handlers now route through SDK facades without command surface changes. |
 | SDK-016 Repoint MCP tools | ready | unassigned | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/mcp/**`, MCP tests | Tool safety tiers should come from catalog where possible. |
 | SDK-017 Generate or drift-check Skill API docs | done | worker-sdk-docs-drift + main integration | SDK-005 | docs drift tests, Skill API docs | Skill API operation docs now drift-check against the SDK catalog. |
 | SDK-018 Define private runtime policy | blocked | unassigned | SDK-006, SDK-015, SDK-016 | packaging docs/tests | Public docs declare only `crime_research_kit.sdk`. |
@@ -66,13 +66,14 @@ SDK-018 stays blocked until both adapter slices land.
 | SDK-012 Wrap review operations | Validation, duplicate review, identity review, contradiction audits, narrative readiness, privacy redaction audits, public export audits, and source-independence audits now return SDK results. |
 | SDK-013 Wrap export operations | Manim, case-chart, analysis-chart, people-cluster, and cross-case timeline exports now return SDK results with public-safe defaults. |
 | SDK-014 Add workflow facade | Case-builder plan and resume workflows now return SDK results through `client.workflows` without public graph-node imports. |
+| SDK-015 Repoint CLI handlers | `cr-kit` workflow, discovery, parse, and OCR handlers now call SDK facades while preserving command names, flags, and JSON payload shape. |
 | SDK-017 Generate or drift-check Skill API docs | Skill API operation docs now drift-check names, safety tiers, and result envelope against the SDK catalog. |
 
 ## In Progress
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| SDK-015 Repoint CLI handlers | main | Repoint bounded CLI handlers through SDK while preserving command names and flags. |
+| None | - | No cards currently in progress. |
 
 ## Review
 
@@ -120,3 +121,4 @@ SDK-018 stays blocked until both adapter slices land.
 | Subprocess runner leaks into SDK | Public API becomes a CLI wrapper instead of an SDK. | Transport stays private; SDK methods expose operations, not commands. |
 | Optional extras become required by accident | Base install gets heavier and less local-friendly. | Packaging policy tests remain in the gate; optional methods raise dependency errors. |
 | Evidence-board report lacks public/private switch | Wrapping `reports.evidence_board` as-is could violate public-safe SDK defaults. | Do not expose through SDK until the app-layer report has explicit filtering semantics. |
+| `crk-ledger` recursion risk | Current SDK ledger wrappers shell through `crk-ledger`, so repointing `crk-ledger` commands through them would recurse in real execution. | Keep ledger commands direct until a direct SDK transport lands; `cr-kit` handlers are SDK-backed first. |
