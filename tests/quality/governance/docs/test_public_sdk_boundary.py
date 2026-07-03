@@ -33,10 +33,27 @@ def test_python_sdk_boundary_policy_is_documented():
     text = policy.read_text(encoding="utf-8")
 
     assert "The public Python SDK import root is `crime_research_kit.sdk`." in text
+    assert "## Quick Start" in text
+    assert "from crime_research_kit.sdk import CrkClient, CrkContext" in text
+    assert 'CrkContext(cases_root=Path("data/examples"))' in text
+    assert "`include_private` defaults to `False`" in text
+    assert "OperationResult" in text
+    assert "approved=True" in text
     assert "adapters.*" in text
     assert "core.*" in text
     assert "pipeline.*" in text
     assert "private runtime" in text
+
+
+def test_readme_sdk_summary_does_not_reintroduce_legacy_dependency_claims():
+    text = (KIT_ROOT / "README.md").read_text(encoding="utf-8")
+    flat = " ".join(text.split())
+
+    assert "Python SDK Boundary and Quick Start" in text
+    assert "Python callers use `crime_research_kit.sdk`" in flat
+    assert "top-level runtime packages stay private" in flat
+    assert "standard-library-only" not in text
+    assert "standard library alone" not in text.lower()
 
 
 def test_public_docs_do_not_advertise_runtime_imports():

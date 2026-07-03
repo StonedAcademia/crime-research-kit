@@ -6,6 +6,10 @@ The operation names and safety tiers below are governed by
 `crime_research_kit.sdk.operations`. Update the SDK catalog first, then refresh
 this reference.
 
+`tests/quality/governance/docs/test_sdk_operation_docs.py` drift-checks this
+table and the operation detail headings against
+`crime_research_kit.sdk.operations.list_operations()`.
+
 ## SDK Catalog Reference
 
 | Skill API operation | SDK operation | Safety tier | Result envelope |

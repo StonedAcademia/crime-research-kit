@@ -25,6 +25,13 @@ def test_skill_api_operation_reference_matches_sdk_catalog():
     assert documented == expected
 
 
+def test_skill_api_operation_reference_declares_catalog_drift_gate():
+    text = OPERATIONS_INDEX.read_text(encoding="utf-8")
+
+    assert "crime_research_kit.sdk.operations.list_operations()" in text
+    assert "test_sdk_operation_docs.py" in text
+
+
 def test_skill_api_operation_detail_headings_match_sdk_catalog():
     documented = _operation_headings()
     expected = {spec.skill_api_name for spec in _skill_api_specs()}

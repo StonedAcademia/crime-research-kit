@@ -1,4 +1,4 @@
-# Python SDK Boundary
+# Python SDK Boundary And Quick Start
 
 Status: pre-1.0 public API policy.
 
@@ -18,6 +18,59 @@ historical `case_builder.*` paths. If an operation is missing from the SDK,
 promote it under `crime_research_kit.sdk` with tests and catalog metadata
 instead of documenting a runtime module as public API.
 
+## Quick Start
+
+Read operations use public-safe defaults. `include_private` defaults to `False`
+unless a caller opts in through `CrkContext` or an explicit method argument.
+
+```python
+from pathlib import Path
+
+from crime_research_kit.sdk import CrkClient, CrkContext
+
+client = CrkClient(CrkContext(cases_root=Path("data/examples")))
+case = client.case("synthetic_case")
+
+info = case.info()
+sources = case.records.list("sources", limit=10)
+
+assert info.ok
+assert sources.ok
+```
+
+SDK methods return `OperationResult` objects. Use `result.ok`, `result.data`,
+`result.errors`, `result.warnings`, `result.outputs`, and `result.diagnostics`
+instead of parsing CLI stdout.
+
+Staged writes and optional services stay explicit:
+
+```python
+client = CrkClient(CrkContext(cases_root=Path("data/cases"), dry_run=True))
+case = client.case("example_case")
+
+result = case.sources.add(
+    title="Archive index lead",
+    url="https://example.org/archive",
+    source_type="archive",
+    public_export=False,
+)
+```
+
+Canonical imports stay gated. A reviewed packet import requires an explicit
+approval flag at the SDK boundary:
+
+```python
+result = case.extractions.import_reviewed("SDEMO0001_extraction.json", approved=True)
+```
+
+For operation names, safety tiers, CLI/MCP mappings, and future HTTP metadata,
+use the SDK catalog:
+
+```python
+for operation in client.operations("sources"):
+    print(operation.name, operation.safety_tier.value)
+```
+
 ## Current Boundary
 
 | Surface | Stability | Notes |
@@ -32,3 +85,11 @@ instead of documenting a runtime module as public API.
 New Python integration points start as runtime implementation and become public
 only when they are exposed from `crime_research_kit.sdk`, covered by tests, and
 represented in the SDK operation catalog where they are operations.
+
+## Reference Docs
+
+The Skill API operation reference is checked against
+`crime_research_kit.sdk.operations.list_operations()` by
+`tests/quality/governance/docs/test_sdk_operation_docs.py`. Update the catalog
+first, then refresh `docs/guides/integrations/skill-api/operations/README.md`
+and the operation detail pages.

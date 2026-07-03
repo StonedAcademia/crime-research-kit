@@ -70,7 +70,7 @@ The record-level contract behind this chain is documented in
 | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Researcher**                   | A local case workspace, the `crk-ledger` ledger CLI, repo-local skills, staged extraction packets, audits, and public-safe exports.  | [Case Workflow](docs/guides/runbooks/cases/case-workflow.md) · [Agent Skills](docs/guides/integrations/agent-skills.md) · [Export Artifacts](docs/guides/runbooks/outputs/export-artifacts.md) · [Public Output Readiness](docs/guides/runbooks/cases/public-output-readiness.md) |
 | **Operator**                     | A self-hosted local stack: SearXNG discovery, Qdrant retrieval, Ollama runtime, OCR, MCP, and the case-builder app.              | [Requirements](docs/guides/runbooks/setup/requirements.md) · [Initial App Install](docs/guides/runbooks/setup/install.md) · [Self-Hosted Deployment](docs/guides/runbooks/setup/self-hosted-deployment.md)                                                                                                                                     |
-| **Developer / agent integrator** | The public Python SDK, MCP server, app boundary, skill API contract, and skill invocation model. | [Python SDK Boundary](docs/guides/integrations/python-sdk.md) · [System Overview](docs/guides/architecture/system-overview.md) · [Case Builder & LangGraph](docs/guides/architecture/case-builder-langgraph.md) · [MCP Server](docs/guides/integrations/mcp-server.md) · [Skill API Spec](docs/guides/skill-api-spec.md)                                      |
+| **Developer / agent integrator** | The public Python SDK, MCP server, app boundary, skill API contract, and skill invocation model. | [Python SDK Boundary and Quick Start](docs/guides/integrations/python-sdk.md) · [System Overview](docs/guides/architecture/system-overview.md) · [Case Builder & LangGraph](docs/guides/architecture/case-builder-langgraph.md) · [MCP Server](docs/guides/integrations/mcp-server.md) · [Skill API Spec](docs/guides/skill-api-spec.md)                                      |
 
 New to the kit? Read [the evidence chain](#the-evidence-chain) and
 [public-interest boundaries](#public-interest-boundaries) first as they define
@@ -124,16 +124,18 @@ install, optional extras, retrieval, OCR, and memory setup are in
 
 ## Architecture at a glance
 
-Two implementation layers share one canonical JSONL ledger: the
-standard-library-only ledger CLI (`crk-ledger` plus sixteen adjacent domain
-skills), and the `src/` agent app whose frontends (CLI,
-LangGraph, MCP) go through a typed ops core. Retrieval indexes, workflow
-memory, and parse artifacts are optional, rebuildable, and never evidence.
+The public Python SDK, CLI/MCP adapters, and private runtime share one
+canonical JSONL ledger. `crk-ledger` remains the ledger CLI contract, while
+Python callers use `crime_research_kit.sdk`; top-level runtime packages stay
+private. Retrieval indexes, workflow memory, and parse artifacts are optional,
+rebuildable, and never evidence.
 
 ```mermaid
 flowchart LR
   SRC["Public sources<br/>URLs · PDFs · transcripts · records"] --> TCR["Skill layer<br/>crk-ledger CLI + 16 adjacent skills"]
-  SRC --> APP["case-builder app<br/>CLI · LangGraph · MCP → typed ops core"]
+  SRC --> SDK["Public Python SDK<br/>crime_research_kit.sdk"]
+  CLI["CLI/MCP adapters"] --> SDK
+  SDK --> APP["Private runtime<br/>workflow service · typed ops core"]
   APP -.-> OPT["Optional subsystems<br/>parsing · retrieval · memory · acquisition"]
   APP --> TCR
   TCR --> LED[("Canonical JSONL case ledger<br/>data/cases/{slug}/records/*.jsonl")]
