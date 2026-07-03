@@ -95,12 +95,12 @@ def test_cli_surface_matches_snapshot():
     import json
 
     from adapters.interfaces.cli.app import build_click_command
-    from cli import build_parser as build_crkit_parser
-    from deployment.scripts.checks.core.surface import argparse_surface, click_surface
+    from cli import build_click_command as build_crkit_command
+    from deployment.scripts.checks.core.surface import click_surface
 
     snapshot = json.loads((KIT_ROOT / "docs" / "guides" / "cli-surface.json").read_text(encoding="utf-8"))
     assert _jsonable(click_surface(build_click_command())) == snapshot["crk-ledger"]
-    assert _jsonable(argparse_surface(build_crkit_parser())) == snapshot["cr-kit"]
+    assert _jsonable(click_surface(build_crkit_command())) == snapshot["cr-kit"]
 
 
 def _jsonable(surface: dict[str, object]) -> dict[str, object]:

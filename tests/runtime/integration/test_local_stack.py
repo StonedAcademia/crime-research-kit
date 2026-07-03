@@ -2,7 +2,7 @@ import json
 import shutil
 from pathlib import Path
 
-from cli import build_parser
+from cli import build_click_command
 from core.config import CrkSettings
 from core.memory import remember_research_actions
 from adapters.io.retrieval import build_evidence_documents
@@ -81,14 +81,18 @@ def test_remember_research_actions_local_provider(tmp_path):
 
 
 def test_local_stack_cli_commands_parse():
-    parser = build_parser()
-
-    assert parser.parse_args(["discover-sources", "data/cases/x", "--query", "test"]).command == "discover-sources"
-    assert parser.parse_args(["parse-source", "data/cases/x", "S1"]).command == "parse-source"
-    assert parser.parse_args(["ocr-source", "data/cases/x", "S1"]).command == "ocr-source"
-    assert parser.parse_args(["index-case", "data/cases/x"]).command == "index-case"
-    assert parser.parse_args(["query-case", "data/cases/x", "question"]).command == "query-case"
-    assert parser.parse_args(["remember-research-actions", "data/cases/x"]).command == "remember-research-actions"
+    commands = build_click_command().commands
+    samples = {
+        "discover-sources": ["data/cases/x", "--query", "test"],
+        "parse-source": ["data/cases/x", "S1"],
+        "ocr-source": ["data/cases/x", "S1"],
+        "index-case": ["data/cases/x"],
+        "query-case": ["data/cases/x", "question"],
+        "remember-research-actions": ["data/cases/x"],
+    }
+    for command, args in samples.items():
+        with commands[command].make_context(command, args) as ctx:
+            assert ctx.info_name == command
 
 
 def test_self_hosted_service_defaults_read_env(monkeypatch):

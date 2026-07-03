@@ -2,12 +2,8 @@
 
 from __future__ import annotations
 
-import os
-import re
-import subprocess
-import sys
-
 from adapters.interfaces.cli.app import build_click_command
+from cli import build_click_command as build_crkit_command
 from tests.helpers import KIT_ROOT, moon_task_names
 
 
@@ -19,20 +15,8 @@ RUNBOOK_EXEMPT = {
 }
 
 
-def run_help(args: list[str]) -> str:
-    env = {**os.environ, "PYTHONPATH": str(KIT_ROOT / "src")}
-    return subprocess.run(args, cwd=KIT_ROOT, check=True, capture_output=True, text=True, env=env).stdout
-
-
-def subcommands_from_help(output: str) -> list[str]:
-    match = re.search(r"\{([^}]+)\}", output)
-    assert match, output
-    return [item.strip() for item in match.group(1).split(",") if item.strip()]
-
-
 def cr_kit_commands() -> set[str]:
-    output = run_help([sys.executable, "-m", "cli", "--help"])
-    return {f"cr-kit {name}" for name in subcommands_from_help(output)}
+    return {f"cr-kit {name}" for name in build_crkit_command().commands}
 
 
 def ledger_commands() -> set[str]:

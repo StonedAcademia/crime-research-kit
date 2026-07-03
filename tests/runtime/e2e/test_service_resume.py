@@ -1,27 +1,30 @@
 import pytest
 
-from cli import build_parser
+from types import SimpleNamespace
+
+from cli import build_click_command
+
+
+def parse_command(command: str, args: list[str]) -> SimpleNamespace:
+    with build_click_command().commands[command].make_context(command, args) as ctx:
+        params = {key: list(value) if isinstance(value, tuple) else value for key, value in ctx.params.items()}
+        return SimpleNamespace(command=command, **params)
 
 
 def test_plan_parser_accepts_pipeline_flags():
-    parser = build_parser()
-
-    args = parser.parse_args(
-        [
-            "plan",
-            "data/cases/x",
-            "--subject",
-            "test",
-            "--source-url",
-            "https://a.example",
-            "--source-id",
-            "S0001",
-            "--index",
-            "--checkpoint",
-            "--thread",
-            "t1",
-        ]
-    )
+    args = parse_command("plan", [
+        "data/cases/x",
+        "--subject",
+        "test",
+        "--source-url",
+        "https://a.example",
+        "--source-id",
+        "S0001",
+        "--index",
+        "--checkpoint",
+        "--thread",
+        "t1",
+    ])
 
     assert args.source_url == ["https://a.example"]
     assert args.source_id == ["S0001"]
@@ -31,23 +34,18 @@ def test_plan_parser_accepts_pipeline_flags():
 
 
 def test_resume_parser_accepts_review_decisions():
-    parser = build_parser()
-
-    args = parser.parse_args(
-        [
-            "resume",
-            "data/cases/x",
-            "--thread",
-            "t1",
-            "--approve-packet",
-            "S1_extraction.json",
-            "--reject-packet",
-            "S2_extraction.json",
-            "--reason",
-            "insufficient sourcing",
-            "--approve-export",
-        ]
-    )
+    args = parse_command("resume", [
+        "data/cases/x",
+        "--thread",
+        "t1",
+        "--approve-packet",
+        "S1_extraction.json",
+        "--reject-packet",
+        "S2_extraction.json",
+        "--reason",
+        "insufficient sourcing",
+        "--approve-export",
+    ])
 
     assert args.command == "resume"
     assert args.approve_packet == ["S1_extraction.json"]
@@ -56,9 +54,7 @@ def test_resume_parser_accepts_review_decisions():
 
 
 def test_plan_parser_accepts_llm_flag():
-    parser = build_parser()
-
-    args = parser.parse_args(["plan", "data/cases/x", "--llm"])
+    args = parse_command("plan", ["data/cases/x", "--llm"])
 
     assert args.llm is True
 
