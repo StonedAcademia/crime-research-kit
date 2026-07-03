@@ -37,7 +37,7 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-017 Generate or drift-check Skill API docs | done | worker-sdk-docs-drift + main integration | SDK-005 | docs drift tests, Skill API docs | Skill API operation docs now drift-check against the SDK catalog. |
 | SDK-018 Define private runtime policy | done | main | SDK-006, SDK-015, SDK-016 | packaging docs/tests | Public docs declare only `crime_research_kit.sdk`; top-level runtime packages are private pre-1.0 internals. |
 | SDK-019 Update architecture docs | done | main | SDK-018 | architecture docs | System overview and workflow docs now show SDK as the public Python layer and CLI/MCP as adapters. |
-| SDK-020 Release-note and gate pass | ready | unassigned | SDK-019 | `CHANGELOG.md`, release/gate checks | Final full-series gate. |
+| SDK-020 Release-note and gate pass | in_progress | main | SDK-019 | `CHANGELOG.md`, release/gate checks | Final full-series gate in progress. |
 | SDK-021 Future HTTP route binding | backlog | unassigned | SDK-005 | catalog metadata only | Backlog; no HTTP server in this series. |
 | SDK-022 Move internals under `_runtime` | backlog | unassigned | SDK-018 | `_runtime` migration if chosen | Backlog; runtime modules are documented private for now. |
 | SDK-023 SDK examples package | backlog | unassigned | SDK-014 | SDK examples/docs | Backlog. |
@@ -45,7 +45,7 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-025 Strict request models | backlog | unassigned | SDK-005 | request models/tests | Backlog. |
 
 Dependency note: SDK-015, SDK-016, SDK-018, and SDK-019 are done.
-SDK-020 is now the next ready release/gate slice.
+SDK-020 is in progress as the final release/gate slice.
 
 ## Done
 
@@ -76,7 +76,7 @@ SDK-020 is now the next ready release/gate slice.
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| None | - | No cards currently in progress. |
+| SDK-020 Release-note and gate pass | main | Run final SDK docs/release gates and close Phase 7. |
 
 ## Review
 
@@ -94,7 +94,7 @@ SDK-020 is now the next ready release/gate slice.
 
 | Card | Priority | Depends on | Acceptance |
 | --- | --- | --- | --- |
-| SDK-020 Release-note and gate pass | P2 | SDK-019 | Changelog updated; targeted tests, `moon run crk:check`, and final `moon run crk:test` pass. |
+| None | - | No cards currently ready. |
 
 ## Blocked / Dependency-Gated
 
