@@ -109,6 +109,17 @@ The examples package covers these recipes:
 | `adapters.*`, `core.*`, `pipeline.*` | private runtime | Packaged for current implementation and scripts only. |
 | `case_builder.*` | Historical | No compatibility aliases will be added. |
 
+## Runtime Migration Rule
+
+The target private runtime namespace is `crime_research_kit._runtime`.
+Top-level `adapters.*`, `core.*`, and `pipeline.*` can be removed from package
+discovery only after console scripts, package-data resources, SDK lazy imports,
+MCP wiring, and workflow imports have moved to that private namespace.
+
+Do not add compatibility aliases for the historical top-level modules. During
+the migration, fix callers to use `crime_research_kit.sdk` for public
+operations or `crime_research_kit._runtime` for internal implementation code.
+
 ## Promotion Rule
 
 New Python integration points start as runtime implementation and become public

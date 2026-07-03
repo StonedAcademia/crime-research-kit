@@ -14,7 +14,10 @@ operation catalog from that namespace.
 The packaged top-level modules `adapters`, `core`, and `pipeline` remain
 private runtime packages. They are still installed because the current console
 scripts and app runtime use them, but they are not SDK imports and may move
-before 1.0. See [Python SDK Boundary](../integrations/python-sdk.md).
+before 1.0. Their target namespace is `crime_research_kit._runtime`, and that
+move must update console scripts, package-data resources, SDK lazy imports,
+MCP wiring, and workflow imports before top-level runtime packages leave
+package discovery. See [Python SDK Boundary](../integrations/python-sdk.md).
 
 `cr-kit` and `crk-mcp` are adapter surfaces over SDK/catalog-backed operations.
 `crk-ledger` remains the ledger CLI contract. MCP resources and prompts stay

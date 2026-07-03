@@ -39,7 +39,7 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-019 Update architecture docs | done | main | SDK-018 | architecture docs | System overview and workflow docs now show SDK as the public Python layer and CLI/MCP as adapters. |
 | SDK-020 Release-note and gate pass | done | main | SDK-019 | `CHANGELOG.md`, release/gate checks | Final full-series gate passed with `moon run crk:test`. |
 | SDK-021 Future HTTP route binding | done | main + workers | SDK-005 | catalog metadata only | Catalog-driven HTTP route metadata landed with duplicate-route guards and docs drift coverage; no HTTP server added. |
-| SDK-022 Move internals under `_runtime` | claimed | main | SDK-018 | runtime migration map, import-boundary tests | Claimed for migration-prep guardrails before any broad package move. |
+| SDK-022 Move internals under `_runtime` | in_progress | main + workers | SDK-018 | runtime migration map, import-boundary tests | Migration-prep guardrails in progress before any broad package move. |
 | SDK-023 SDK examples package | done | main | SDK-014 | SDK examples/docs | Packaged SDK examples and docs landed. |
 | SDK-024 Catalog-driven MCP registration | done | main + workers | SDK-006, SDK-016 | MCP registration code/tests/docs | Catalog-backed MCP registration metadata landed; prompts/resources remain explicit. |
 | SDK-025 Strict request models | done | main + workers | SDK-005 | request models/tests/docs | Strict request models landed for catalog `request_model` names. |
@@ -82,7 +82,7 @@ SDK-021 and SDK-025 are done. SDK-022 remains a backlog follow-up slice.
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| None | - | No cards currently in progress. |
+| SDK-022 | main + workers | Runtime migration map and guardrails; full move remains pending. |
 
 ## Review
 
@@ -94,7 +94,7 @@ SDK-021 and SDK-025 are done. SDK-022 remains a backlog follow-up slice.
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| SDK-022 | main | First slice maps imports/package boundary and adds guardrails; no runtime move yet. |
+| None | - | No unstarted cards are claimed. |
 
 ## Ready
 
