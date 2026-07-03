@@ -39,14 +39,14 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-019 Update architecture docs | done | main | SDK-018 | architecture docs | System overview and workflow docs now show SDK as the public Python layer and CLI/MCP as adapters. |
 | SDK-020 Release-note and gate pass | done | main | SDK-019 | `CHANGELOG.md`, release/gate checks | Final full-series gate passed with `moon run crk:test`. |
 | SDK-021 Future HTTP route binding | done | main + workers | SDK-005 | catalog metadata only | Catalog-driven HTTP route metadata landed with duplicate-route guards and docs drift coverage; no HTTP server added. |
-| SDK-022 Move internals under `_runtime` | review | main + workers | SDK-018 | `src/crime_research_kit/_runtime/**`, `pyproject.toml`, import-boundary tests, runtime inventory | Runtime move implemented; awaiting final reviewer readout and full gate. |
+| SDK-022 Move internals under `_runtime` | done | main + workers | SDK-018 | `src/crime_research_kit/_runtime/**`, `pyproject.toml`, import-boundary tests, runtime inventory | Private runtime move landed under `crime_research_kit._runtime`; full gate and fresh build passed. |
 | SDK-023 SDK examples package | done | main | SDK-014 | SDK examples/docs | Packaged SDK examples and docs landed. |
 | SDK-024 Catalog-driven MCP registration | done | main + workers | SDK-006, SDK-016 | MCP registration code/tests/docs | Catalog-backed MCP registration metadata landed; prompts/resources remain explicit. |
 | SDK-025 Strict request models | done | main + workers | SDK-005 | request models/tests/docs | Strict request models landed for catalog `request_model` names. |
 
 Dependency note: SDK-015, SDK-016, SDK-018, SDK-019, and SDK-020 are done.
 SDK-015, SDK-016, SDK-018, SDK-019, SDK-020, SDK-023, and SDK-024 are done.
-SDK-021 and SDK-025 are done. SDK-022 is in final review.
+SDK-021, SDK-022, and SDK-025 are done.
 
 ## Done
 
@@ -74,6 +74,7 @@ SDK-021 and SDK-025 are done. SDK-022 is in final review.
 | SDK-019 Update architecture docs | Architecture docs now describe `crime_research_kit.sdk` as the public Python layer, CLI/MCP as adapters, and top-level runtime packages as private implementation. |
 | SDK-020 Release-note and gate pass | Developer SDK quick start, catalog reference drift-gate docs, release metadata, shape-governance budgets, `moon run crk:check`, and final `moon run crk:test` gate completed. |
 | SDK-021 Future HTTP route binding | Future HTTP route metadata now comes from the SDK operation catalog, with structured route bindings, duplicate-route guards, and docs drift coverage. |
+| SDK-022 Move internals under `_runtime` | Private runtime packages now live under `crime_research_kit._runtime`; console script names, SDK imports, package data, MCP wiring, workflow imports, and source-checkout registry/schema resolution remain covered by tests. |
 | SDK-023 SDK examples package | Packaged SDK example recipes now cover case info, source ingest dry-run, packet review, public-safe export planning, and workflow resume decisions. |
 | SDK-024 Catalog-driven MCP registration | SDK-backed MCP tool registration metadata is catalog-derived where safe; `run_report`, prompts, and resources remain explicit MCP content. |
 | SDK-025 Strict request models | Catalog `request_model` names now resolve to strict pydantic request models under `crime_research_kit.sdk.requests`. |
@@ -88,7 +89,7 @@ SDK-021 and SDK-025 are done. SDK-022 is in final review.
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| SDK-022 | main + workers | Runtime move implemented; focused checks passed, full gate pending. |
+| None | - | No cards currently awaiting review. |
 
 ## Claimed
 
