@@ -70,7 +70,7 @@ The record-level contract behind this chain is documented in
 | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Researcher**                   | A local case workspace, the `crk-ledger` ledger CLI, repo-local skills, staged extraction packets, audits, and public-safe exports.  | [Case Workflow](docs/guides/runbooks/cases/case-workflow.md) · [Agent Skills](docs/guides/integrations/agent-skills.md) · [Export Artifacts](docs/guides/runbooks/outputs/export-artifacts.md) · [Public Output Readiness](docs/guides/runbooks/cases/public-output-readiness.md) |
 | **Operator**                     | A self-hosted local stack: SearXNG discovery, Qdrant retrieval, Ollama runtime, OCR, MCP, and the case-builder app.              | [Requirements](docs/guides/runbooks/setup/requirements.md) · [Initial App Install](docs/guides/runbooks/setup/install.md) · [Self-Hosted Deployment](docs/guides/runbooks/setup/self-hosted-deployment.md)                                                                                                                                     |
-| **Developer / agent integrator** | The MCP server, the `src/` app boundary and typed ops core, the skill API contract, and the skill invocation model. | [System Overview](docs/guides/architecture/system-overview.md) · [Case Builder & LangGraph](docs/guides/architecture/case-builder-langgraph.md) · [MCP Server](docs/guides/integrations/mcp-server.md) · [Skill API Spec](docs/guides/skill-api-spec.md)                                      |
+| **Developer / agent integrator** | The public Python SDK, MCP server, app boundary, skill API contract, and skill invocation model. | [Python SDK Boundary](docs/guides/integrations/python-sdk.md) · [System Overview](docs/guides/architecture/system-overview.md) · [Case Builder & LangGraph](docs/guides/architecture/case-builder-langgraph.md) · [MCP Server](docs/guides/integrations/mcp-server.md) · [Skill API Spec](docs/guides/skill-api-spec.md)                                      |
 
 New to the kit? Read [the evidence chain](#the-evidence-chain) and
 [public-interest boundaries](#public-interest-boundaries) first as they define
@@ -184,6 +184,11 @@ notes and the [ledger contract](docs/guides/architecture/case-ledger.md) under
 `docs/guides/runbooks/`, JSON Schemas under `docs/schemas/`, and the canonical
 lane/template registry under `docs/registry/`. Persistent agent rules live in
 `AGENTS.md`.
+
+Python callers should import only `crime_research_kit.sdk`; top-level runtime
+packages such as `adapters`, `core`, and `pipeline` are packaged internals, not
+public SDK modules. See the
+[Python SDK Boundary](docs/guides/integrations/python-sdk.md).
 
 Validate changes with `moon run crk:check` (compile + ledger validation) and
 `moon run crk:test` (unit, integration, e2e, governance, smoke). For ad hoc

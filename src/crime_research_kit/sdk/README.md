@@ -9,11 +9,13 @@ Current surface:
 - `CrkClient` is the top-level SDK entrypoint.
 - `CaseClient` is a case-scoped handle that stores the resolved case context.
 - `CasesClient` and `CaseRecordsClient` expose case listing, case info, public
-  record reads, and source-text reads.
+  record reads, source-text reads, and public-record planning.
+- `CaseRetrievalClient` exposes local retrieval query wrappers.
 - `CaseSourcesClient` exposes source registration, URL ingestion,
   preservation, discovery, parsing, and OCR wrappers.
 - `CaseExtractionsClient` exposes staged extraction draft, list, read, save,
   reviewed import, and lead-only NER suggestion wrappers.
+- `CaseNamesClient` exposes lead-only name-linking wrappers.
 - `CaseReviewClient` exposes validation, duplicate/identity review, and safety
   audit wrappers.
 - `CaseExportsClient` exposes Manim, case-chart, analysis-chart, and
@@ -35,3 +37,7 @@ Current surface:
 
 The operation catalog remains the source of operation metadata as wrappers are
 promoted into the SDK.
+
+Only this `crime_research_kit.sdk` package is the public Python SDK surface.
+Top-level implementation packages such as `adapters`, `core`, and `pipeline`
+remain private runtime modules even while they are packaged for console scripts.
