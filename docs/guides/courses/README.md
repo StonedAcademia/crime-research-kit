@@ -4,9 +4,19 @@ Courses are project-based guides that teach CRK by building a real local case
 workspace. They are documentation only: raw source downloads and generated case
 records stay under ignored `data/cases/` paths.
 
+## Core Guides
+
+| Guide | Use It For |
+| --- | --- |
+| [Setup](setup/) | Installing CRK and preparing the local case environment. |
+| [Usage Progression](usage/) | Initial, intermediate, and advanced workflows. |
+| [Architecture And Usage Types](architecture/) | How CRK fits together across CLI, MCP, skills, local services, ledgers, and exports. |
+
+## Sample Courses
+
 | Course | Status | Focus |
 | --- | --- | --- |
-| [MKUltra source-traceable course](mkultra/) | Draft, source pack captured | Greenfield install, source preservation, skill/MCP/CLI workflows, controversy boundaries. |
+| [MKUltra source-traceable course](samples/mkultra/) | Draft, source pack captured | Greenfield install, source preservation, skill/MCP/CLI workflows, controversy boundaries. |
 
 ## Course Rules
 

@@ -19,6 +19,7 @@ that makes discovery less predictable for skill-aware agents.
 | Group | Skills | Use |
 | --- | --- | --- |
 | Core | `truecrime-cult-research` | Case ledger, safety baseline, CLI script, templates, and export workflow. |
+| Workflow orchestration | `spec-kanban-agent-orchestration` | Spec/plan/kanban-driven reviewer and worker subagent coordination. |
 | Public record lanes | `corporate-financial-records`, `educational-path-records`, `geographical-location-intelligence`, `legal-court-records`, `licensing-professional-records`, `media-transcript-intelligence`, `missing-persons-case`, `property-location-records` | Domain-specific public-record collection and extraction. |
 | Support lanes | `criminal-research`, `identity-resolution`, `public-records-router`, `source-capture-preservation` | Routing, preservation, identity review, and analytical support. |
 | Review lanes | `claim-contradiction-audit`, `foia-open-records-planning`, `narrative-readiness-review`, `privacy-redaction-audit`, `source-independence-audit` | Contradiction, records-request, public-output, privacy, and corroboration review. |
