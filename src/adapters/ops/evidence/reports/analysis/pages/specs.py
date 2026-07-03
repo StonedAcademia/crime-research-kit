@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from core.models.reports import ReportPage, TableBlock
+from core.models.reports import ReportPage, SvgDoc, TableBlock
 
 from adapters.ops.evidence.reports.analysis.pages.render import filter_terms
 from adapters.ops.evidence.reports.analysis.svg.facets import (
@@ -15,11 +15,11 @@ from adapters.ops.evidence.reports.analysis.svg.facets import (
     render_treemap_svg,
 )
 from adapters.ops.evidence.reports.analysis.svg.matrix import (
-    render_claim_matrix_svg,
-    render_fragility_svg,
-    render_heatmap_svg,
-    render_readiness_svg,
-    render_source_quality_svg,
+    build_claim_matrix_figure,
+    build_fragility_figure,
+    build_heatmap_figure,
+    build_readiness_figure,
+    build_source_quality_figure,
 )
 from adapters.ops.evidence.reports.analysis.svg.network.bridges import render_sankey_svg
 from adapters.ops.evidence.reports.analysis.svg.network.layers import (
@@ -42,7 +42,7 @@ def _page(
     slug: str,
     title: str,
     summary: str,
-    legacy_figure_svg: str,
+    figure: SvgDoc | str,
     rows: list[dict[str, Any]],
     columns: list[str],
     limit: int,
@@ -54,7 +54,8 @@ def _page(
         case_title="",
         summary=summary,
         filters=filters,
-        legacy_figure_svg=legacy_figure_svg,
+        figure=figure if isinstance(figure, SvgDoc) else None,
+        legacy_figure_svg=figure if isinstance(figure, str) else "",
         table=_table_block(rows, columns, limit),
     )
 
@@ -103,7 +104,7 @@ def build_analysis_chart_specs(chart_data: dict[str, Any]) -> list[ReportPage]:
             "evidence_confidence_heatmap",
             "Evidence Confidence Heatmap",
             "Claim-type by status heatmap, with cell intensity tied to average confidence.",
-            render_heatmap_svg(chart_data["heatmap_aggregate"]),
+            build_heatmap_figure(chart_data["heatmap_aggregate"]),
             chart_data["claim_heatmap"],
             ["claim_id", "status", "confidence", "source_count", "best_source_grade", "readiness"],
             18,
@@ -114,7 +115,7 @@ def build_analysis_chart_specs(chart_data: dict[str, Any]) -> list[ReportPage]:
             "bridge_fragility",
             "Bridge Fragility Chart",
             "Load-bearing bridge records plotted against fragility score.",
-            render_fragility_svg(chart_data["fragility"]),
+            build_fragility_figure(chart_data["fragility"]),
             chart_data["fragility"],
             ["record_id", "relationship_class", "load_bearing_score", "fragility_score", "fragility_tier", "bridge_class"],
             18,
@@ -125,7 +126,7 @@ def build_analysis_chart_specs(chart_data: dict[str, Any]) -> list[ReportPage]:
             "claim_corroboration_matrix",
             "Claim Corroboration Matrix",
             "Claim-source matrix colored by source grade and preserving boundary/contradiction markers.",
-            render_claim_matrix_svg(chart_data["claim_matrix"]),
+            build_claim_matrix_figure(chart_data["claim_matrix"]),
             chart_data["claim_matrix"],
             ["claim_id", "source_id", "source_grade", "source_type", "claim_status"],
             20,
@@ -136,7 +137,7 @@ def build_analysis_chart_specs(chart_data: dict[str, Any]) -> list[ReportPage]:
             "source_quality_dashboard",
             "Source Quality Dashboard",
             "Source-grade distribution with coverage footprint across claims, events, relationships, and people.",
-            render_source_quality_svg(chart_data["source_grade_counts"], chart_data["source_dashboard"]),
+            build_source_quality_figure(chart_data["source_grade_counts"], chart_data["source_dashboard"]),
             chart_data["source_dashboard"],
             ["source_id", "reliability_grade", "claim_count", "event_count", "relationship_count", "nonpublic_record_count"],
             18,
@@ -202,7 +203,7 @@ def build_analysis_chart_specs(chart_data: dict[str, Any]) -> list[ReportPage]:
             "public_narrative_readiness",
             "Public Narrative Readiness",
             "Readiness tiers for public narration, with privacy and boundary gates preserved.",
-            render_readiness_svg(chart_data["readiness_counts"]),
+            build_readiness_figure(chart_data["readiness_counts"]),
             chart_data["readiness_counts"],
             ["readiness", "count"],
             12,

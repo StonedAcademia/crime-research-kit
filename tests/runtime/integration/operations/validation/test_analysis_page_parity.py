@@ -6,6 +6,7 @@ import argparse
 import json
 import re
 import shutil
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any
 
@@ -27,7 +28,7 @@ from adapters.ops.evidence.reports.analysis.command.builders.layered import buil
 from adapters.ops.evidence.reports.analysis.command.builders.paths import build_path_atlas
 from adapters.ops.evidence.reports.analysis.command.context import load_analysis_context
 from adapters.ops.evidence.reports.analysis.command.output import _chart_data
-from adapters.ops.evidence.reports.analysis.pages.render import render_page
+from adapters.ops.evidence.reports.analysis.pages.render import render_page, render_svg_doc
 from adapters.ops.evidence.reports.analysis.pages.specs import build_analysis_chart_specs
 
 
@@ -46,6 +47,20 @@ def _signature(html_text: str) -> dict[str, Any]:
         "filter_terms": sorted(set(re.findall(r'data-query="([^"]+)"', html_text))),
         "svg_count": html_text.count("<svg"),
     }
+
+
+def svg_signature(svg_text: str) -> dict:
+    root = ET.fromstring(svg_text)
+    ns = "{http://www.w3.org/2000/svg}"
+    counts: dict[str, int] = {}
+    labels: list[str] = []
+    for el in root.iter():
+        tag = el.tag.replace(ns, "")
+        key = f"{tag}.{el.get('class') or ''}"
+        counts[key] = counts.get(key, 0) + 1
+        if tag == "text" and (el.text or "").strip():
+            labels.append(el.text.strip())
+    return {"counts": dict(sorted(counts.items())), "labels": sorted(labels)}
 
 
 def _build_products(ctx: Any) -> dict[str, Any]:
@@ -82,4 +97,19 @@ def test_new_pipeline_preserves_page_content(tmp_path: Path):
         signatures[contextual_page.slug] = _signature(render_page(contextual_page))
 
     expected = json.loads(FIXTURE.read_text(encoding="utf-8"))
-    assert signatures == expected
+    assert signatures == {key: value for key, value in expected.items() if key != "figures"}
+
+    figure_keys = {
+        "claim_matrix": "05_claim_corroboration_matrix",
+        "fragility": "04_bridge_fragility",
+        "heatmap": "03_evidence_confidence_heatmap",
+        "readiness": "12_public_narrative_readiness",
+        "source_quality": "06_source_quality_dashboard",
+    }
+    by_slug = {page.slug: page for page in pages}
+    figure_signatures = {}
+    for key, slug in figure_keys.items():
+        figure = by_slug[slug].figure
+        assert figure is not None
+        figure_signatures[key] = svg_signature(render_svg_doc(figure))
+    assert figure_signatures == expected["figures"]

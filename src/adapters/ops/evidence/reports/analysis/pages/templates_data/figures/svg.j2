@@ -5,22 +5,22 @@
 
 {% macro element(el) -%}
 {%- if el.kind == "rect" -%}
-<rect x="{{ el.x }}" y="{{ el.y }}" width="{{ el.width }}" height="{{ el.height }}"{% if el.rx %} rx="{{ el.rx }}"{% endif %}{% if el.fill %} fill="{{ el.fill }}"{% endif %}{{ attrs(el) }}>{% if el.title %}<title>{{ el.title }}</title>{% endif %}</rect>
+<rect x="{{ el.x }}" y="{{ el.y }}" width="{{ el.width }}" height="{{ el.height }}"{% if el.rx %} rx="{{ el.rx }}"{% endif %}{% if el.fill %} fill="{{ el.fill }}"{% endif %}{% if el.fill_opacity is not none %} fill-opacity="{{ el.fill_opacity }}"{% endif %}{% if el.stroke %} stroke="{{ el.stroke }}"{% endif %}{{ attrs(el) }}>{% if el.title %}<title>{{ el.title }}</title>{% endif %}</rect>
 {%- elif el.kind == "circle" -%}
-<circle cx="{{ el.cx }}" cy="{{ el.cy }}" r="{{ el.r }}"{% if el.fill %} fill="{{ el.fill }}"{% endif %}{{ attrs(el) }}>{% if el.title %}<title>{{ el.title }}</title>{% endif %}</circle>
+<circle cx="{{ el.cx }}" cy="{{ el.cy }}" r="{{ el.r }}"{% if el.fill %} fill="{{ el.fill }}"{% endif %}{% if el.fill_opacity is not none %} fill-opacity="{{ el.fill_opacity }}"{% endif %}{{ attrs(el) }}>{% if el.title %}<title>{{ el.title }}</title>{% endif %}</circle>
 {%- elif el.kind == "line" -%}
 <line x1="{{ el.x1 }}" y1="{{ el.y1 }}" x2="{{ el.x2 }}" y2="{{ el.y2 }}"{% if el.stroke %} stroke="{{ el.stroke }}"{% endif %} stroke-width="{{ el.stroke_width }}"{{ attrs(el) }}/>
 {%- elif el.kind == "path" -%}
-<path d="{{ el.d }}"{% if el.fill %} fill="{{ el.fill }}"{% endif %}{% if el.stroke %} stroke="{{ el.stroke }}"{% endif %} stroke-width="{{ el.stroke_width }}"{{ attrs(el) }}/>
+<path d="{{ el.d }}"{% if el.fill %} fill="{{ el.fill }}"{% endif %}{% if el.fill_opacity is not none %} fill-opacity="{{ el.fill_opacity }}"{% endif %}{% if el.stroke %} stroke="{{ el.stroke }}"{% endif %} stroke-width="{{ el.stroke_width }}"{{ attrs(el) }}>{% if el.title %}<title>{{ el.title }}</title>{% endif %}</path>
 {%- elif el.kind == "text" -%}
-<text x="{{ el.x }}" y="{{ el.y }}" text-anchor="{{ el.anchor }}" font-size="{{ el.font_size }}"{{ attrs(el) }}>{{ el.content }}</text>
+<text x="{{ el.x }}" y="{{ el.y }}" text-anchor="{{ el.anchor }}" font-size="{{ el.font_size }}"{% if el.transform %} transform="{{ el.transform }}"{% endif %}{{ attrs(el) }}>{{ el.content }}</text>
 {%- elif el.kind == "group" -%}
 <g{% if el.transform %} transform="{{ el.transform }}"{% endif %}{{ attrs(el) }}>{% for child in el.children %}{{ element(child) }}{% endfor %}</g>
 {%- endif -%}
 {%- endmacro %}
 
 {% macro svg(doc) -%}
-<svg xmlns="http://www.w3.org/2000/svg" width="{{ doc.width }}" height="{{ doc.height }}" viewBox="{{ doc.view_box or ('0 0 ' ~ doc.width ~ ' ' ~ doc.height) }}"{% if doc.css_class %} class="{{ doc.css_class }}"{% endif %}>
+<svg xmlns="http://www.w3.org/2000/svg" width="{{ doc.width }}" height="{{ doc.height }}" viewBox="{{ doc.view_box or ('0 0 ' ~ doc.width ~ ' ' ~ doc.height) }}"{% if doc.css_class %} class="{{ doc.css_class }}"{% endif %}{% if doc.style %} style="{{ doc.style }}"{% endif %}{% if doc.role %} role="{{ doc.role }}"{% endif %}{% if doc.aria_label %} aria-label="{{ doc.aria_label }}"{% endif %}>
 {%- for el in doc.elements %}{{ element(el) }}{% endfor -%}
 </svg>
 {%- endmacro %}

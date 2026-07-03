@@ -17,7 +17,7 @@ from adapters.ops.evidence.reports.analysis.pages.interactions import analysis_c
 from adapters.ops.evidence.reports.analysis.svg.base import short_label
 from adapters.ops.evidence.reports.common import parse_cell_list
 from adapters.ops.evidence.ledger.records import flatten
-from core.models.reports import Dashboard, ReportPage
+from core.models.reports import Dashboard, ReportPage, SvgDoc
 
 
 @lru_cache(maxsize=1)
@@ -48,6 +48,10 @@ def render_page(page: ReportPage) -> str:
 def render_dashboard(dash: Dashboard) -> str:
     css, js = _static_assets()
     return _environment().get_template("layouts/dashboard.html.j2").render(dash=dash, app_css=css, app_js=js)
+
+
+def render_svg_doc(doc: SvgDoc) -> str:
+    return str(_environment().get_template("figures/svg.j2").module.svg(doc))
 
 
 def write_html(path: Path, html_text: str) -> None:
