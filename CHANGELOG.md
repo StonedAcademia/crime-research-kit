@@ -6,6 +6,19 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+## [0.13.11] - 2026-07-03
+
+### Added
+
+- Added packaged SDK example recipes for case info, source ingest dry-runs,
+  packet review, public-safe export planning, and workflow resume decisions.
+- Added docs for importing `crime_research_kit.sdk.examples` recipes.
+
+### Changed
+
+- Extended the fresh-build import smoke to include the packaged SDK examples
+  namespace.
+
 ## [0.13.10] - 2026-07-03
 
 ### Added

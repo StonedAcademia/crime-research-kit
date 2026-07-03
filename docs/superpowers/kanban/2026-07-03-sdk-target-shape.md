@@ -40,13 +40,13 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-020 Release-note and gate pass | done | main | SDK-019 | `CHANGELOG.md`, release/gate checks | Final full-series gate passed with `moon run crk:test`. |
 | SDK-021 Future HTTP route binding | backlog | unassigned | SDK-005 | catalog metadata only | Backlog; no HTTP server in this series. |
 | SDK-022 Move internals under `_runtime` | backlog | unassigned | SDK-018 | `_runtime` migration if chosen | Backlog; runtime modules are documented private for now. |
-| SDK-023 SDK examples package | in_progress | main | SDK-014 | SDK examples/docs | Minimal packaged SDK examples in progress. |
+| SDK-023 SDK examples package | done | main | SDK-014 | SDK examples/docs | Packaged SDK examples and docs landed. |
 | SDK-024 Catalog-driven MCP registration | backlog | unassigned | SDK-006, SDK-016 | MCP registration code/tests | Dependency-unblocked backlog refinement; prompts/resources remain explicit. |
 | SDK-025 Strict request models | backlog | unassigned | SDK-005 | request models/tests | Backlog. |
 
 Dependency note: SDK-015, SDK-016, SDK-018, SDK-019, and SDK-020 are done.
-SDK-023 is in progress as the next SDK examples slice. SDK-021, SDK-022,
-SDK-024, and SDK-025 remain backlog follow-up slices.
+SDK-015, SDK-016, SDK-018, SDK-019, SDK-020, and SDK-023 are done.
+SDK-021, SDK-022, SDK-024, and SDK-025 remain backlog follow-up slices.
 
 ## Done
 
@@ -73,12 +73,13 @@ SDK-024, and SDK-025 remain backlog follow-up slices.
 | SDK-018 Define private runtime policy | Public docs now declare `crime_research_kit.sdk` as the only public Python SDK import surface, top-level runtime packages are documented private, and governance tests prevent public docs from advertising runtime imports. |
 | SDK-019 Update architecture docs | Architecture docs now describe `crime_research_kit.sdk` as the public Python layer, CLI/MCP as adapters, and top-level runtime packages as private implementation. |
 | SDK-020 Release-note and gate pass | Developer SDK quick start, catalog reference drift-gate docs, release metadata, shape-governance budgets, `moon run crk:check`, and final `moon run crk:test` gate completed. |
+| SDK-023 SDK examples package | Packaged SDK example recipes now cover case info, source ingest dry-run, packet review, public-safe export planning, and workflow resume decisions. |
 
 ## In Progress
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| SDK-023 SDK examples package | main | Add packaged SDK examples covering case info, source ingest dry-run, packet review, public-safe export, and workflow resume. |
+| None | - | No cards currently in progress. |
 
 ## Review
 

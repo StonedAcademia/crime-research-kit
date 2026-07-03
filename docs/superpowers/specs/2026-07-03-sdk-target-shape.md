@@ -82,6 +82,7 @@ src/crime_research_kit/
     review.py          # validation and deterministic audits
     exports.py         # public-safe exports
     workflows.py       # plan/resume workflow facade
+    examples/          # importable example recipes, not a runtime layer
   models/
     records/           # public record models already mirrored from schemas
     workflow.py        # public workflow request/result models
@@ -117,6 +118,7 @@ and never import `adapters`, `core`, `pipeline`, `CrkRunner`, or MCP/CLI modules
 | `OperationResult` | Stable result envelope with `ok`, `operation`, `case_ref`, `data`, `warnings`, `errors`, `created`, `updated`, `outputs`, `counts`. | Diagnostics such as commands/stdout are present only when requested. |
 | `CrkError` | Typed exception carrying error code and operation context. | SDK methods may return results or raise based on client mode; default should be result-returning for parity with current ops. |
 | `WorkflowClient` | `plan`, `resume`, `status`, and run-state helpers. | Owns app-layer orchestration facade, not graph internals. |
+| `crime_research_kit.sdk.examples` | Importable examples for common SDK calls. | Documentation and smoke-test recipes only; not a runtime layer. |
 
 ## Operation Taxonomy
 

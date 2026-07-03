@@ -145,6 +145,7 @@ def test_packaging_smoke_imports_current_package_modules():
     assert "case_builder" not in text
     assert "import cli" in fresh_build
     assert "import crime_research_kit.sdk" in fresh_build
+    assert "import crime_research_kit.sdk.examples" in fresh_build
     assert "adapters.interfaces.mcp.server" in text
 
 

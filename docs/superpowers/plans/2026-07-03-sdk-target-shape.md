@@ -331,3 +331,11 @@ Keep these as separate reviewable commits or branches:
 
 Do not mix report-renderer refactors, vocabulary-pack work, course-doc moves,
 or unrelated governance cleanup into this SDK series.
+
+## Backlog Follow-Ups
+
+- [ ] SDK-021 Future HTTP route binding.
+- [ ] SDK-022 Move internals under `_runtime`.
+- [x] SDK-023 SDK examples package.
+- [ ] SDK-024 Catalog-driven MCP registration.
+- [ ] SDK-025 Strict request models.
