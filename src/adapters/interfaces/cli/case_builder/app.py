@@ -7,8 +7,8 @@ import json
 from collections.abc import Callable
 from typing import Any
 
-import click
 import typer
+import typer._click as click
 import typer.main
 
 from adapters.interfaces.cli.commands import choice_enum, enum_value

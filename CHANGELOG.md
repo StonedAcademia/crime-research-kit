@@ -13,12 +13,15 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 - Setting an env var to an empty string is now a validation error for integer settings (e.g. `CRK_QDRANT_PORT=""` fails at startup) instead of silently falling back to the default.
 - Analysis relationship/family/bridge classification is now driven by vocabulary packs from `docs/registry/analysis/`; records matching no pack or structural rule surface as `unclassified` instead of silently defaulting to `personnel_bridge`.
 - Status/grade score tables and layer ordering moved from code constants to the `analysis/scoring.json` and `analysis/vocabulary.json` registry shards.
+- Both CLIs (`crk-ledger`, `cr-kit`) migrated from argparse to Typer while preserving command names, positional arguments, flags, defaults, aliases, and choices through `docs/guides/cli-surface.json`.
+- URL ingestion and SearXNG discovery now use httpx with redirect handling and bounded retries on connect errors and 5xx responses.
 
 ### Added
 - Typed pydantic models for all twelve ledger record types (`core.models.records`), drift-tested against the canonical schemas.
 - Record schemas ship as package data, so installed packages validate without a repo checkout.
 - Per-case vocabulary overrides: `data/cases/<slug>/analysis_vocabulary.json` extends or prepends the default packs, with a worked example in `data/examples/synthetic_case/`.
 - Governance tests banning case-specific vocabulary from `src/` and validating the new registry shards.
+- Frozen CLI-surface governance for both console scripts.
 
 ## [0.12.0] - 2026-07-02
 

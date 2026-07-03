@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import click
 import typer
+import typer._click as click
 import typer.main
 
 from adapters.interfaces.cli.commands import casework, planning, quality, reports
