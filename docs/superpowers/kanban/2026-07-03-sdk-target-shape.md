@@ -35,17 +35,17 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-015 Repoint CLI handlers | done | main | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/cli/**`, CLI tests | `cr-kit` handlers now route through SDK facades without command surface changes. |
 | SDK-016 Repoint MCP tools | done | main | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/mcp/**`, MCP tests | SDK-backed MCP tools now route through SDK facades while preserving MCP payload compatibility; `run_report` remains direct pending evidence-board privacy semantics. |
 | SDK-017 Generate or drift-check Skill API docs | done | worker-sdk-docs-drift + main integration | SDK-005 | docs drift tests, Skill API docs | Skill API operation docs now drift-check against the SDK catalog. |
-| SDK-018 Define private runtime policy | in_progress | main | SDK-006, SDK-015, SDK-016 | packaging docs/tests | Public docs declare only `crime_research_kit.sdk`. |
-| SDK-019 Update architecture docs | blocked | unassigned | SDK-018 | architecture docs | System overview shows SDK as Python public layer and CLI/MCP as adapters. |
+| SDK-018 Define private runtime policy | done | main | SDK-006, SDK-015, SDK-016 | packaging docs/tests | Public docs declare only `crime_research_kit.sdk`; top-level runtime packages are private pre-1.0 internals. |
+| SDK-019 Update architecture docs | ready | unassigned | SDK-018 | architecture docs | System overview shows SDK as Python public layer and CLI/MCP as adapters. |
 | SDK-020 Release-note and gate pass | blocked | unassigned | SDK-019 | `CHANGELOG.md`, release/gate checks | Final full-series gate. |
 | SDK-021 Future HTTP route binding | backlog | unassigned | SDK-005 | catalog metadata only | Backlog; no HTTP server in this series. |
-| SDK-022 Move internals under `_runtime` | blocked | unassigned | SDK-018 | `_runtime` migration if chosen | Backlog; only after CLI/MCP import migration. |
+| SDK-022 Move internals under `_runtime` | backlog | unassigned | SDK-018 | `_runtime` migration if chosen | Backlog; runtime modules are documented private for now. |
 | SDK-023 SDK examples package | backlog | unassigned | SDK-014 | SDK examples/docs | Backlog. |
 | SDK-024 Catalog-driven MCP registration | backlog | unassigned | SDK-006, SDK-016 | MCP registration code/tests | Dependency-unblocked backlog refinement; prompts/resources remain explicit. |
 | SDK-025 Strict request models | backlog | unassigned | SDK-005 | request models/tests | Backlog. |
 
-Dependency note: SDK-015 and SDK-016 adapter-repointing slices are done.
-SDK-018 is now the next ready packaging-boundary slice.
+Dependency note: SDK-015, SDK-016, and SDK-018 are done.
+SDK-019 is now the next ready architecture-doc slice.
 
 ## Done
 
@@ -69,12 +69,13 @@ SDK-018 is now the next ready packaging-boundary slice.
 | SDK-015 Repoint CLI handlers | `cr-kit` workflow, discovery, parse, and OCR handlers now call SDK facades while preserving command names, flags, and JSON payload shape. |
 | SDK-016 Repoint MCP tools | SDK-backed MCP read, retrieval, staged-write, gated import, and public export tools now call SDK facades while preserving MCP command diagnostics, string errors, legacy result names, and privacy-note payloads. `run_report` remains direct pending evidence-board privacy semantics. |
 | SDK-017 Generate or drift-check Skill API docs | Skill API operation docs now drift-check names, safety tiers, and result envelope against the SDK catalog. |
+| SDK-018 Define private runtime policy | Public docs now declare `crime_research_kit.sdk` as the only public Python SDK import surface, top-level runtime packages are documented private, and governance tests prevent public docs from advertising runtime imports. |
 
 ## In Progress
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| SDK-018 Define private runtime policy | main | Document the pre-1.0 public namespace and add import-boundary governance without moving runtime modules. |
+| None | - | No cards currently in progress. |
 
 ## Review
 
@@ -92,13 +93,12 @@ SDK-018 is now the next ready packaging-boundary slice.
 
 | Card | Priority | Depends on | Acceptance |
 | --- | --- | --- | --- |
-| None | - | No cards currently ready. |
+| SDK-019 Update architecture docs | P2 | SDK-018 | System overview shows SDK as Python public layer and CLI/MCP as adapters. |
 
 ## Blocked / Dependency-Gated
 
 | Card | Priority | Depends on | Acceptance |
 | --- | --- | --- | --- |
-| SDK-019 Update architecture docs | P2 | SDK-018 | System overview shows SDK as Python public layer and CLI/MCP as adapters. |
 | SDK-020 Release-note and gate pass | P2 | SDK-019 | Changelog updated; targeted tests, `moon run crk:check`, and final `moon run crk:test` pass. |
 
 ## Backlog

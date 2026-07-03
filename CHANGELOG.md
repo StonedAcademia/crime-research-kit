@@ -6,6 +6,17 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+## [0.13.8] - 2026-07-03
+
+### Added
+
+- Documented the pre-1.0 Python SDK boundary, declaring
+  `crime_research_kit.sdk` as the only public Python import surface while
+  keeping packaged top-level runtime modules private.
+- Added governance coverage that prevents public docs from advertising
+  top-level `adapters`, `core`, `pipeline`, or historical `case_builder`
+  imports as SDK usage.
+
 ## [0.13.7] - 2026-07-03
 
 ### Added

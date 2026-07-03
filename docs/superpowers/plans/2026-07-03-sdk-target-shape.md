@@ -274,15 +274,18 @@ catalog parity tests have landed.
 
 **Steps:**
 
-- [ ] Decide whether to move implementation modules under
+- [x] Decide whether to move implementation modules under
   `crime_research_kit._runtime` now or mark top-level packages as temporary
-  internal implementation in packaging docs.
-- [ ] If moving, move in small domain slices with import-boundary tests.
-- [ ] If not moving yet, add explicit docs saying only `crime_research_kit.sdk`
+  internal implementation in packaging docs. Decision: do not move modules in
+  this slice; document them as private runtime.
+- [x] If moving, move in small domain slices with import-boundary tests. Not
+  moving now; deferred to SDK-022 if the runtime migration is chosen later.
+- [x] If not moving yet, add explicit docs saying only `crime_research_kit.sdk`
   is public pre-1.0 Python API.
-- [ ] Update package discovery only when console scripts and internal imports
-  have been migrated.
-- [ ] Add a governance test that public docs do not advertise top-level
+- [x] Update package discovery only when console scripts and internal imports
+  have been migrated. No package discovery change is needed for this policy
+  slice.
+- [x] Add a governance test that public docs do not advertise top-level
   implementation imports.
 
 **Acceptance:**
