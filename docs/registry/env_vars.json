@@ -99,6 +99,13 @@
       "prefix_class": "CRK_"
     },
     {
+      "name": "CRK_SEARXNG_HOST_PORT",
+      "purpose": "Host port used by Docker Compose for the localhost-bound SearXNG service.",
+      "scope": "deployment",
+      "default": "18080 in deployment/.env.example; 8080 if unset",
+      "prefix_class": "CRK_"
+    },
+    {
       "name": "OLLAMA_HOST",
       "purpose": "Local Ollama endpoint for deployment smoke checks and containers.",
       "scope": "deployment",
@@ -109,7 +116,7 @@
       "name": "SEARXNG_BASE_URL",
       "purpose": "SearXNG service base URL used by the local compose stack.",
       "scope": "deployment",
-      "default": "http://127.0.0.1:8080/",
+      "default": "http://127.0.0.1:18080/ in deployment/.env.example",
       "prefix_class": "SEARXNG_"
     },
     {

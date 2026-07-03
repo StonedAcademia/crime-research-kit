@@ -118,7 +118,7 @@ The self-hosted Docker image installs those packages in
 
 | Service | Default binding | Required for |
 | --- | --- | --- |
-| SearXNG | `127.0.0.1:8080` | Lead-only public-source discovery. |
+| SearXNG | `127.0.0.1:${CRK_SEARXNG_HOST_PORT:-8080}` | Lead-only public-source discovery. |
 | Valkey | Internal Docker network only. | SearXNG limiter/cache backing service. |
 | Qdrant | `127.0.0.1:6333`, `127.0.0.1:6334` | Evidence retrieval and Mem0 vector storage. |
 | Ollama | `127.0.0.1:11434` | Self-hosted LLM runtime for optional LLM workflows. |

@@ -20,7 +20,7 @@ self-hosted Ollama.
 | Service | Purpose | Host binding |
 | --- | --- | --- |
 | `crk` | CLI, LangGraph, MCP, OCR, retrieval, memory, and case-builder toolbox. | No public port. |
-| `searxng` | Lead-only public-source discovery. | `127.0.0.1:8080` |
+| `searxng` | Lead-only public-source discovery. | `127.0.0.1:${CRK_SEARXNG_HOST_PORT:-8080}` |
 | `searxng-valkey` | SearXNG limiter/cache backing service. | Internal only. |
 | `qdrant` | Evidence and Mem0 vector storage. | `127.0.0.1:6333`, `127.0.0.1:6334` |
 | `ollama` | Self-hosted LLM runtime. | `127.0.0.1:11434` |
@@ -103,6 +103,8 @@ Important default values from `deployment/.env.example`:
 CRK_MODEL=ollama:llama3.1
 CRK_CASES_ROOT=/app/data/cases
 CRK_SEARXNG_URL=http://searxng:8080
+CRK_SEARXNG_HOST_PORT=18080
+SEARXNG_BASE_URL=http://127.0.0.1:18080/
 CRK_QDRANT_URL=http://qdrant:6333
 CRK_QDRANT_HOST=qdrant
 CRK_QDRANT_PORT=6333
@@ -136,5 +138,8 @@ moon run crk:docker-up
 moon run crk:docker-smoke
 ```
 
-If SearXNG is exposed beyond localhost, change `server.secret_key` in
+`deployment/.env.example` uses SearXNG host port `18080` to avoid common local
+dev collisions. Override `CRK_SEARXNG_HOST_PORT` and `SEARXNG_BASE_URL`
+together when another port is preferred. If SearXNG is exposed beyond
+localhost, change `server.secret_key` and revisit the local limiter setting in
 `deployment/searxng/settings.yml` before exposure.
