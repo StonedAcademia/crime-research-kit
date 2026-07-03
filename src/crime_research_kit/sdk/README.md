@@ -4,7 +4,10 @@
 
 Current surface:
 
-- `CrkContext` carries caller-provided paths and execution metadata.
+- `CrkContext` carries caller-provided roots, privacy defaults, resolved
+  settings, metadata, and transport mode.
+- `TransportMode` records whether clients should use automatic, direct, or
+  subprocess-backed runtime access.
 - `OperationResult` and `OperationWarning` define the stable SDK result
   envelope.
 - `CrkError` and related subclasses define stable SDK error codes.

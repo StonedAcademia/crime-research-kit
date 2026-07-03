@@ -25,6 +25,7 @@ DIR_LIMIT_OVERRIDES = {
     Path("src"): {"max_dirs": 4},
     Path("docs/guides"): {"max_dirs": 4},
     Path("tests/runtime/unit"): {"max_dirs": 4},
+    Path("tests/runtime/unit/sdk"): {"max_files": 5},
 }
 
 HASH_COMMENT_SUFFIXES = {".py", ".sh", ".yml", ".yaml", ".toml"}

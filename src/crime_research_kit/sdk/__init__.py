@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from .context import CrkContext
+from .context import CrkContext, TransportMode
 from .errors import (
     CASE_NOT_FOUND,
     DEPENDENCY_MISSING,
@@ -51,6 +51,7 @@ __all__ = [
     "SCHEMA_NOT_FOUND",
     "SOURCE_NOT_FOUND",
     "SafetyTier",
+    "TransportMode",
     "VALIDATION_FAILED",
     "get_operation",
     "list_operations",

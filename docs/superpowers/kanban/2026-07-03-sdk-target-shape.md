@@ -24,8 +24,8 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-004 Define public result/error types | done | worker-sdk-results + main integration | SDK-003 | `src/crime_research_kit/sdk/results.py`, `src/crime_research_kit/sdk/errors.py`, result/error tests | Public result/error types landed and are exported from `crime_research_kit.sdk`. |
 | SDK-005 Define `OperationSpec` catalog | done | main | SDK-004 | `src/crime_research_kit/sdk/operations.py`, operation catalog tests | Metadata-only catalog landed from the operation inventory. |
 | SDK-006 Add catalog parity tests | done | main | SDK-005 | catalog parity tests | CLI commands and MCP tools are checked against catalog mappings. |
-| SDK-007 Build `CrkContext` | ready | unassigned | SDK-005 | `src/crime_research_kit/sdk/context.py`, context tests | Next client-path task. |
-| SDK-008 Build `CrkClient` and `CaseClient` | blocked | unassigned | SDK-005, SDK-007 | SDK client modules and tests | Blocks case/source/extraction/review/export/workflow wrappers. |
+| SDK-007 Build `CrkContext` | done | main | SDK-005 | `src/crime_research_kit/sdk/context.py`, context tests | Context now owns roots, settings, privacy defaults, and transport selection. |
+| SDK-008 Build `CrkClient` and `CaseClient` | ready | unassigned | SDK-005, SDK-007 | SDK client modules and tests | Next client-path task. |
 | SDK-009 Wrap case and record reads | blocked | unassigned | SDK-005, SDK-008 | SDK case/record modules and tests | Must preserve public-safe defaults. |
 | SDK-010 Wrap source operations | blocked | unassigned | SDK-005, SDK-008 | SDK source modules and tests | Optional dependency errors must remain actionable. |
 | SDK-011 Wrap extraction operations | blocked | unassigned | SDK-005, SDK-008 | SDK extraction modules and tests | Canonical import remains explicitly approved. |
@@ -44,8 +44,8 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-024 Catalog-driven MCP registration | blocked | unassigned | SDK-006, SDK-016 | MCP registration code/tests | Backlog. |
 | SDK-025 Strict request models | backlog | unassigned | SDK-005 | request models/tests | Backlog. |
 
-Dependency note: SDK-007 and SDK-017 are unblocked. SDK-007 is the client-path
-critical next step; SDK-017 is a docs/catalog drift-check side path.
+Dependency note: SDK-008 and SDK-017 are unblocked. SDK-008 is the next
+client-path task; SDK-017 is a docs/catalog drift-check side path.
 
 ## Done
 
@@ -58,6 +58,7 @@ critical next step; SDK-017 is a docs/catalog drift-check side path.
 | SDK-004 Define public result/error types | `OperationResult`, warnings, error details, error codes, and SDK exceptions landed. |
 | SDK-005 Define `OperationSpec` catalog | Metadata-only operation catalog landed with safety tiers and adapter mappings. |
 | SDK-006 Add catalog parity tests | CLI command and MCP tool surfaces are checked against catalog entries. |
+| SDK-007 Build `CrkContext` | Context owns roots, settings, privacy defaults, and transport mode without runtime imports. |
 
 ## In Progress
 
@@ -81,14 +82,13 @@ critical next step; SDK-017 is a docs/catalog drift-check side path.
 
 | Card | Priority | Depends on | Acceptance |
 | --- | --- | --- | --- |
-| SDK-007 Build `CrkContext` | P1 | SDK-005 | Context owns roots, settings, privacy defaults, and transport selection without deep modules calling settings directly. |
+| SDK-008 Build `CrkClient` and `CaseClient` | P1 | SDK-005, SDK-007 | Case-scoped handle removes repeated `case_dir` passing for public SDK users. |
 | SDK-017 Generate or drift-check Skill API docs | P2 | SDK-005 | Operation docs cannot drift from catalog names, safety tiers, and envelope. |
 
 ## Blocked / Dependency-Gated
 
 | Card | Priority | Depends on | Acceptance |
 | --- | --- | --- | --- |
-| SDK-008 Build `CrkClient` and `CaseClient` | P1 | SDK-005, SDK-007 | Case-scoped handle removes repeated `case_dir` passing for public SDK users. |
 | SDK-009 Wrap case and record reads | P1 | SDK-005, SDK-008 | Public record reads exclude private rows by default and return `OperationResult`. |
 | SDK-010 Wrap source operations | P1 | SDK-005, SDK-008 | Add, ingest, preserve, discover, parse, and OCR are exposed with optional dependency failures kept actionable. |
 | SDK-011 Wrap extraction operations | P1 | SDK-005, SDK-008 | Draft/list/read/save/import operations preserve staged-write policy and explicit import approval. |
