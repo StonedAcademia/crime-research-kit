@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import json
 
+import pytest
+from pydantic import BaseModel, ValidationError
+
 from adapters.interfaces.mcp.tools.registry import DIRECT_TOOL_NAMES, sdk_tool_registrations, tool_registrations
 from crime_research_kit.sdk.operations import SafetyTier, get_operation, list_operations, operations_by_domain
 from tests.helpers import KIT_ROOT
@@ -22,6 +25,97 @@ def test_operation_catalog_has_unique_names_and_required_metadata():
     assert all(spec.request_model.endswith("Request") for spec in specs)
     assert {spec.result_model for spec in specs} == {"OperationResult"}
     assert all(isinstance(spec.safety_tier, SafetyTier) for spec in specs)
+
+
+def test_catalog_request_models_are_registered_strict_pydantic_models():
+    from crime_research_kit.sdk.requests import REQUEST_MODELS, get_request_model
+
+    catalog_model_names = {spec.request_model for spec in list_operations()}
+
+    assert catalog_model_names <= set(REQUEST_MODELS)
+    for model_name in sorted(catalog_model_names):
+        model = get_request_model(model_name)
+        assert issubclass(model, BaseModel)
+        assert model.model_config.get("extra") == "forbid"
+
+
+def test_catalog_request_models_reject_unknown_fields():
+    from crime_research_kit.sdk.requests import get_request_model
+
+    for spec in list_operations():
+        model = get_request_model(spec.request_model)
+        with pytest.raises(ValidationError) as exc_info:
+            model.model_validate({"unexpected_sdk_field": True})
+        assert any(error["type"] == "extra_forbidden" for error in exc_info.value.errors()), spec.request_model
+
+
+@pytest.mark.parametrize(
+    ("operation", "model_name", "payload", "expected"),
+    [
+        (
+            "sources.ingest_url",
+            "IngestUrlRequest",
+            {
+                "case_dir": "demo_case",
+                "url": "https://example.test/source",
+                "title": "Demo source",
+                "public_export": False,
+            },
+            {
+                "case_dir": "demo_case",
+                "public_export": False,
+                "title": "Demo source",
+                "url": "https://example.test/source",
+            },
+        ),
+        (
+            "extractions.draft",
+            "DraftExtractionRequest",
+            {"case_dir": "demo_case", "source_id": "SDEMO0001", "template": "interview", "excerpt_chars": 1200},
+            {"case_dir": "demo_case", "excerpt_chars": 1200, "source_id": "SDEMO0001", "template": "interview"},
+        ),
+        (
+            "workflows.plan",
+            "WorkflowPlanRequest",
+            {
+                "case_dir": "demo_case",
+                "subject": "public court filing search",
+                "lanes": ["legal-court"],
+                "source_urls": ["https://example.test/source"],
+                "runner": "sequential",
+                "thread_id": "sdk-t1",
+            },
+            {
+                "case_dir": "demo_case",
+                "checkpoint": False,
+                "execute": False,
+                "index": False,
+                "lanes": ["legal-court"],
+                "llm": False,
+                "runner": "sequential",
+                "source_ids": [],
+                "source_urls": ["https://example.test/source"],
+                "subject": "public court filing search",
+                "thread_id": "sdk-t1",
+            },
+        ),
+    ],
+)
+def test_validate_request_returns_typed_source_extraction_and_workflow_models(operation, model_name, payload, expected):
+    from crime_research_kit.sdk.requests import REQUEST_MODELS, validate_request
+
+    request = validate_request(operation, payload)
+
+    assert isinstance(request, REQUEST_MODELS[model_name])
+    assert request.model_dump(mode="json", exclude_none=True) == expected
+
+
+def test_workflow_request_models_stay_exported_through_sdk_surface():
+    import crime_research_kit.sdk as sdk
+    from crime_research_kit.sdk.requests import WorkflowPlanRequest, WorkflowResumeRequest
+
+    assert sdk.WorkflowPlanRequest is WorkflowPlanRequest
+    assert sdk.WorkflowResumeRequest is WorkflowResumeRequest
 
 
 def test_catalog_covers_initial_seed_operations():

@@ -23,8 +23,11 @@ Current surface:
 - `ExportsClient` exposes top-level export wrappers such as the cross-case
   timeline export.
 - `WorkflowClient` exposes case-builder plan and resume workflow wrappers.
-- `WorkflowPlanRequest` and `WorkflowResumeRequest` define workflow request
-  fields without exposing graph nodes.
+- `crime_research_kit.sdk.requests` exposes strict request models,
+  `get_request_model()`, and `validate_request()` for catalog
+  `request_model` names.
+- `WorkflowPlanRequest` and `WorkflowResumeRequest` remain public workflow
+  request models without exposing graph nodes.
 - `crime_research_kit.sdk.examples` provides importable recipes for common
   integrator flows.
 - `TransportMode` records whether clients should use automatic, direct, or
@@ -39,6 +42,9 @@ Current surface:
 
 The operation catalog remains the source of operation metadata as wrappers are
 promoted into the SDK.
+Catalog `request_model` values are model names, not import paths; resolve them
+through `crime_research_kit.sdk.requests` when validating catalog-driven
+payloads or generating adapter schemas.
 
 Only this `crime_research_kit.sdk` package is the public Python SDK surface.
 Top-level implementation packages such as `adapters`, `core`, and `pipeline`

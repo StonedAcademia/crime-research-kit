@@ -29,6 +29,7 @@ from .errors import (
 )
 from .names import CaseNamesClient
 from .operations import OPERATION_BY_NAME, OPERATION_SPECS, OperationSpec, SafetyTier, get_operation, list_operations, operations_by_domain
+from .requests import OperationRequest, REQUEST_MODELS, get_request_model, validate_request
 from .retrieval import CaseRetrievalClient
 from .review import CaseReviewClient
 from .results import OperationResult, OperationWarning
@@ -63,6 +64,7 @@ __all__ = [
     "OPERATION_BY_NAME",
     "OPERATION_SPECS",
     "OPERATION_FAILED",
+    "OperationRequest",
     "OperationResult",
     "OperationSpec",
     "OperationWarning",
@@ -70,6 +72,7 @@ __all__ = [
     "SAFETY_BLOCKED",
     "SCHEMA_NOT_FOUND",
     "SOURCE_NOT_FOUND",
+    "REQUEST_MODELS",
     "SafetyTier",
     "TransportMode",
     "VALIDATION_FAILED",
@@ -77,6 +80,8 @@ __all__ = [
     "WorkflowPlanRequest",
     "WorkflowResumeRequest",
     "get_operation",
+    "get_request_model",
     "list_operations",
     "operations_by_domain",
+    "validate_request",
 ]

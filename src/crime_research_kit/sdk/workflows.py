@@ -3,57 +3,17 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, field
-from os import PathLike
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any
 
 from .context import CrkContext
 from .errors import DEPENDENCY_MISSING, INVALID_INPUT, OPERATION_FAILED
 from .operations import get_operation
+from .requests import PathValue, RunnerName, WorkflowPlanRequest, WorkflowResumeRequest
 from .results import OperationResult
 
-PathValue = str | PathLike[str] | Path
-RunnerName = Literal["auto", "langgraph", "sequential"]
 _RUNNERS = {"auto", "langgraph", "sequential"}
-
-
-@dataclass(frozen=True, slots=True)
-class WorkflowPlanRequest:
-    """Request fields for planning a case-builder workflow."""
-
-    case_dir: PathValue | None = None
-    title: str | None = None
-    subject: str | None = None
-    lanes: Sequence[str] = field(default_factory=tuple)
-    source_urls: Sequence[str] = field(default_factory=tuple)
-    source_ids: Sequence[str] = field(default_factory=tuple)
-    index: bool = False
-    thread_id: str | None = None
-    execute: bool = False
-    runner: RunnerName = "auto"
-    checkpoint: bool = False
-    llm: bool = False
-    model_spec: str | None = None
-    qdrant_url: str | None = None
-    embed_model: str | None = None
-
-
-@dataclass(frozen=True, slots=True)
-class WorkflowResumeRequest:
-    """Request fields for resuming a checkpointed workflow."""
-
-    case_dir: PathValue | None = None
-    thread_id: str = ""
-    approved_packets: Sequence[str] = field(default_factory=tuple)
-    rejected_packets: Sequence[str | Mapping[str, Any]] = field(default_factory=tuple)
-    reject_reason: str | None = None
-    export_approved: bool = False
-    execute: bool = False
-    llm: bool = False
-    model_spec: str | None = None
-    qdrant_url: str | None = None
-    embed_model: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
