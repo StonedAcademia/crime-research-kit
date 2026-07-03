@@ -6,6 +6,14 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+## [0.13.9] - 2026-07-03
+
+### Changed
+
+- Updated architecture docs to show `crime_research_kit.sdk` as the public
+  Python layer, `cr-kit` and `crk-mcp` as adapters, and top-level runtime
+  packages as private implementation.
+
 ## [0.13.8] - 2026-07-03
 
 ### Added
