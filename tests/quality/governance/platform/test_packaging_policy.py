@@ -46,6 +46,9 @@ EXPECTED_SCRIPTS = {
     "crk-ledger": "adapters.interfaces.cli.entry:main",
     "crk-mcp": "adapters.interfaces.mcp.server:main",
 }
+TEMPORARY_RUNTIME_PACKAGE_INCLUDES = {"adapters*", "core*", "pipeline*"}
+RUNTIME_NAMESPACE = "crime_research_kit._runtime."
+TOP_LEVEL_RUNTIME_PREFIXES = ("adapters.", "core.", "pipeline.")
 REGISTRY_SHARDS = (
     "index.json",
     "env_vars.json",
@@ -106,6 +109,29 @@ def test_public_sdk_namespace_is_packaged():
     package_include = load_pyproject()["tool"]["setuptools"]["packages"]["find"]["include"]
 
     assert "crime_research_kit*" in package_include
+
+
+def test_runtime_package_discovery_waits_for_runtime_metadata_move():
+    pyproject = load_pyproject()
+    package_include = set(pyproject["tool"]["setuptools"]["packages"]["find"]["include"])
+    missing_includes = sorted(TEMPORARY_RUNTIME_PACKAGE_INCLUDES - package_include)
+    if not missing_includes:
+        return
+
+    scripts = pyproject["project"]["scripts"]
+    package_data = pyproject["tool"]["setuptools"].get("package-data", {})
+    unmigrated_scripts = {name: target for name, target in scripts.items() if not target.startswith(RUNTIME_NAMESPACE)}
+    unmigrated_data = sorted(key for key in package_data if key.startswith(TOP_LEVEL_RUNTIME_PREFIXES))
+    runtime_data = sorted(key for key in package_data if key.startswith(RUNTIME_NAMESPACE))
+
+    assert not unmigrated_scripts and runtime_data and not unmigrated_data, (
+        "Do not remove top-level runtime packages from package discovery before "
+        "console scripts and package-data keys move under crime_research_kit._runtime. "
+        f"missing includes={missing_includes}; "
+        f"unmigrated scripts={unmigrated_scripts}; "
+        f"unmigrated package-data keys={unmigrated_data}; "
+        f"runtime package-data keys={runtime_data}"
+    )
 
 
 def test_packaged_registry_data_matches_canonical_docs_registry():
