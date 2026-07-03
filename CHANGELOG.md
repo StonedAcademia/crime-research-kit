@@ -6,12 +6,17 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+## [0.13.14] - 2026-07-03
+
+### Added
+
+- Added catalog-driven future HTTP route bindings and docs drift coverage without adding an HTTP server.
+
 ## [0.13.13] - 2026-07-03
 
 ### Added
 
-- Added strict SDK request models and catalog parity checks for operation
-  `request_model` names.
+- Added strict SDK request models and catalog parity checks for operation `request_model` names.
 
 ## [0.13.12] - 2026-07-03
 
