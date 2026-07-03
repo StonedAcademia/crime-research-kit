@@ -5,6 +5,7 @@ from __future__ import annotations
 from .cases import CaseRecordsClient, CasesClient
 from .client import CaseClient, CrkClient
 from .context import CrkContext, TransportMode
+from .extractions import CaseExtractionsClient
 from .errors import (
     CASE_NOT_FOUND,
     DEPENDENCY_MISSING,
@@ -32,6 +33,7 @@ from .sources import CaseSourcesClient
 __all__ = [
     "CASE_NOT_FOUND",
     "CaseClient",
+    "CaseExtractionsClient",
     "CaseRecordsClient",
     "CaseSourcesClient",
     "CasesClient",

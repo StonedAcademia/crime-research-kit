@@ -12,6 +12,8 @@ Current surface:
   record reads, and source-text reads.
 - `CaseSourcesClient` exposes source registration, URL ingestion,
   preservation, discovery, parsing, and OCR wrappers.
+- `CaseExtractionsClient` exposes staged extraction draft, list, read, save,
+  reviewed import, and lead-only NER suggestion wrappers.
 - `TransportMode` records whether clients should use automatic, direct, or
   subprocess-backed runtime access.
 - `OperationResult` and `OperationWarning` define the stable SDK result

@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from .context import CrkContext
-from .errors import CASE_NOT_FOUND, INVALID_INPUT, OPERATION_FAILED, PRIVACY_BLOCKED, SOURCE_NOT_FOUND
+from .errors import CASE_NOT_FOUND, INVALID_INPUT, OPERATION_FAILED, PRIVACY_BLOCKED, SAFETY_BLOCKED, SOURCE_NOT_FOUND
 from .results import OperationResult
 
 CaseRef = str | PathLike[str] | Path
@@ -165,8 +165,14 @@ def _error_code(message: str) -> str:
         return CASE_NOT_FOUND
     if message.startswith("Source not found"):
         return SOURCE_NOT_FOUND
+    if message.startswith(("Extraction packet must", "Packet not found")):
+        return INVALID_INPUT
     if "public_export=false" in message:
         return PRIVACY_BLOCKED
+    if "confirm=True" in message or "guilt-implying label" in message:
+        return SAFETY_BLOCKED
+    if "Automated writes must stay under" in message or "outside the case workspace" in message:
+        return SAFETY_BLOCKED
     if message.startswith("Unknown record type"):
         return INVALID_INPUT
     return OPERATION_FAILED

@@ -6,6 +6,13 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+## [0.13.1] - 2026-07-03
+
+### Added
+
+- Added SDK extraction wrappers for staged packet draft, list, read, save,
+  reviewed import approval, and lead-only NER suggestions.
+
 ## [0.13.0] - 2026-07-03
 
 ### Added

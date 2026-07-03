@@ -28,7 +28,7 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-008 Build `CrkClient` and `CaseClient` | done | main | SDK-005, SDK-007 | SDK client modules and tests | Thin client and case handles landed without operation wrappers. |
 | SDK-009 Wrap case and record reads | done | main | SDK-005, SDK-008 | SDK case/record modules and tests | Public-safe case info, case listing, record reads, and source-text reads landed. |
 | SDK-010 Wrap source operations | done | main | SDK-005, SDK-008 | SDK source modules and tests | Source add, ingest, preserve, discover, parse, and OCR wrappers landed with dependency errors. |
-| SDK-011 Wrap extraction operations | in_progress | main | SDK-005, SDK-008 | SDK extraction modules and tests | Canonical import remains explicitly approved. |
+| SDK-011 Wrap extraction operations | done | main | SDK-005, SDK-008 | SDK extraction modules and tests | Draft/list/read/save/import_reviewed/ner_suggest wrappers landed with explicit import approval. |
 | SDK-012 Wrap review operations | ready | unassigned | SDK-005, SDK-008 | SDK review modules and tests | Safety audit behavior remains unchanged. |
 | SDK-013 Wrap export operations | ready | unassigned | SDK-005, SDK-008 | SDK export modules and tests | Exports are public-safe by default. |
 | SDK-014 Add workflow facade | ready | unassigned | SDK-005, SDK-008 | `src/crime_research_kit/sdk/workflows.py`, `src/pipeline/app/service.py`, workflow tests | App layer must consume SDK/catalog-backed facade without exposing graph nodes. |
@@ -44,8 +44,8 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-024 Catalog-driven MCP registration | blocked | unassigned | SDK-006, SDK-016 | MCP registration code/tests | Backlog. |
 | SDK-025 Strict request models | backlog | unassigned | SDK-005 | request models/tests | Backlog. |
 
-Dependency note: SDK-011 through SDK-014 remain ready wrapper slices. SDK-015
-and SDK-016 stay blocked until SDK-011 through SDK-014 land.
+Dependency note: SDK-012 through SDK-014 remain ready wrapper slices. SDK-015
+and SDK-016 stay blocked until SDK-012 through SDK-014 land.
 
 ## Done
 
@@ -62,6 +62,7 @@ and SDK-016 stay blocked until SDK-011 through SDK-014 land.
 | SDK-008 Build `CrkClient` and `CaseClient` | Thin SDK entrypoint and case-scoped handle landed; operation wrappers remain separate cards. |
 | SDK-009 Wrap case and record reads | Public-safe case info, case listing, record reads, and source-text reads now return `OperationResult`. |
 | SDK-010 Wrap source operations | Source add, ingest, preserve, discover, parse, and OCR wrappers now return SDK results with actionable optional failures. |
+| SDK-011 Wrap extraction operations | Extraction draft, list, read, save, reviewed import, and NER suggestion wrappers now return SDK results with explicit import approval. |
 | SDK-017 Generate or drift-check Skill API docs | Skill API operation docs now drift-check names, safety tiers, and result envelope against the SDK catalog. |
 
 ## In Progress
@@ -86,7 +87,6 @@ and SDK-016 stay blocked until SDK-011 through SDK-014 land.
 
 | Card | Priority | Depends on | Acceptance |
 | --- | --- | --- | --- |
-| SDK-011 Wrap extraction operations | P1 | SDK-005, SDK-008 | Draft/list/read/save/import operations preserve staged-write policy and explicit import approval. |
 | SDK-012 Wrap review operations | P1 | SDK-005, SDK-008 | Validate, dedupe, identity, contradiction, privacy, public export, independence, and readiness calls return stable SDK results. |
 | SDK-013 Wrap export operations | P1 | SDK-005, SDK-008 | Exports are public-safe by default and echo internal/private mode when requested. |
 | SDK-014 Add workflow facade | P1 | SDK-005, SDK-008 | `client.workflows.plan/resume` expose app workflow through SDK/catalog-backed services without graph-node imports. |

@@ -17,8 +17,26 @@ IMPORT_REFUSAL = (
 )
 
 
-def draft_extraction(runner: CrkRunner, case_dir: str, source_id: str, *, template: str = "generic") -> OpResult:
-    return runner.run("draft_extraction", ["draft-extraction", case_dir, source_id, "--template", template])
+def draft_extraction(
+    runner: CrkRunner,
+    case_dir: str,
+    source_id: str,
+    *,
+    template: str = "generic",
+    excerpt_chars: int = 6000,
+) -> OpResult:
+    return runner.run(
+        "draft_extraction",
+        [
+            "draft-extraction",
+            case_dir,
+            source_id,
+            "--template",
+            template,
+            "--excerpt-chars",
+            str(excerpt_chars),
+        ],
+    )
 
 
 def import_extraction(runner: CrkRunner, case_dir: str, packet_path: str, *, confirm: bool = False) -> OpResult:

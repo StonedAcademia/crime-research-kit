@@ -8,6 +8,7 @@ from pathlib import Path
 
 from .cases import CaseRecordsClient, CasesClient, case_info
 from .context import CrkContext
+from .extractions import CaseExtractionsClient
 from .operations import OperationSpec, get_operation, operations_by_domain
 from .results import OperationResult
 from .sources import CaseSourcesClient
@@ -47,6 +48,11 @@ class CaseClient:
     def sources(self) -> CaseSourcesClient:
         """Source intake operations for this case."""
         return CaseSourcesClient(context=self.context, case_ref=self.case_ref)
+
+    @property
+    def extractions(self) -> CaseExtractionsClient:
+        """Extraction packet operations for this case."""
+        return CaseExtractionsClient(context=self.context, case_ref=self.case_ref)
 
     def info(self, *, include_private: bool | None = None) -> OperationResult:
         """Return case metadata and public-safe record counts by default."""
