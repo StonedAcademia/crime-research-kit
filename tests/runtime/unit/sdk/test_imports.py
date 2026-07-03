@@ -20,9 +20,10 @@ def test_sdk_imports_without_legacy_runtime_packages():
 
     assert sdk.CrkContext().case_dir is None
     assert sdk.OperationResult(operation="case.info").ok is True
-    assert sdk.OperationSpec("example").tags == ()
+    assert sdk.OperationSpec.from_tags("example").tags == ()
     assert sdk.SafetyTier.READ.value == "read"
-    assert sdk.list_operations() == ()
+    assert sdk.get_operation("case.info").mcp_tool == "case_info"
+    assert sdk.list_operations()
     assert not (LEGACY_ROOTS & set(sys.modules))
 
 

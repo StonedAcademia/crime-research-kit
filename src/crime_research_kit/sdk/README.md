@@ -10,8 +10,8 @@ Current surface:
 - `CrkError` and related subclasses define stable SDK error codes.
 - `SafetyTier` and `OperationSpec` describe public operation wrappers before
   they are wired.
-- `list_operations()` returns the current public operation specification
-  catalog.
+- `list_operations()`, `get_operation()`, and `operations_by_domain()` expose
+  the current public operation specification catalog.
 
-The operation catalog is intentionally empty until operation wrappers are
-promoted into the SDK.
+The operation catalog is metadata-only until operation wrappers are promoted
+into the SDK.

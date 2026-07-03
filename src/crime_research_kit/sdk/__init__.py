@@ -23,7 +23,7 @@ from .errors import (
     CrkSafetyError,
     CrkValidationError,
 )
-from .operations import OPERATION_SPECS, OperationSpec, SafetyTier, list_operations
+from .operations import OPERATION_BY_NAME, OPERATION_SPECS, OperationSpec, SafetyTier, get_operation, list_operations, operations_by_domain
 from .results import OperationResult, OperationWarning
 
 __all__ = [
@@ -40,6 +40,7 @@ __all__ = [
     "DEPENDENCY_MISSING",
     "INVALID_INPUT",
     "NETWORK_FAILED",
+    "OPERATION_BY_NAME",
     "OPERATION_SPECS",
     "OPERATION_FAILED",
     "OperationResult",
@@ -51,5 +52,7 @@ __all__ = [
     "SOURCE_NOT_FOUND",
     "SafetyTier",
     "VALIDATION_FAILED",
+    "get_operation",
     "list_operations",
+    "operations_by_domain",
 ]

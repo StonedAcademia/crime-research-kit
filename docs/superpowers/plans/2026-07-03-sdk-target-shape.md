@@ -128,10 +128,10 @@ Additional integration files:
 
 **Steps:**
 
-- [ ] Define `OperationSpec` with name, domain, safety tier, request model name,
+- [x] Define `OperationSpec` with name, domain, safety tier, request model name,
   result model name, side effects, CLI mapping, MCP mapping, and future HTTP
   mapping.
-- [ ] Add specs for the initial stable set: case info/create, records list,
+- [x] Add specs for the initial stable set: case info/create, records list,
   source text, add/ingest/preserve/discover/parse/ocr, draft/list/read/save
   extraction, import reviewed extraction, link names, public-record planning,
   validation, review audits, public-safe exports, workflow plan/resume.
@@ -139,7 +139,7 @@ Additional integration files:
   has a catalog entry or an explicit "not SDK" exemption.
 - [ ] Add docs generation or a drift check that compares Skill API operation
   docs to the catalog.
-- [ ] Keep operation names snake_case internally and define camelCase/docs names
+- [x] Keep operation names snake_case internally and define camelCase/docs names
   as metadata, not separate behavior.
 
 **Acceptance:**

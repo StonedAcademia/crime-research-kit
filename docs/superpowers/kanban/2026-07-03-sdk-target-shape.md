@@ -22,8 +22,8 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-002 Decide public namespace | done | main | SDK-001 | SDK spec/plan/kanban | `crime_research_kit.sdk` recorded as the public import surface; no legacy aliases. |
 | SDK-003 Add SDK package skeleton | done | worker-sdk-skeleton + main integration | SDK-002 | `src/crime_research_kit/**`, SDK import tests, `pyproject.toml` package discovery, built-package import smoke | SDK skeleton, package discovery, semver, changelog, and import checks landed. |
 | SDK-004 Define public result/error types | done | worker-sdk-results + main integration | SDK-003 | `src/crime_research_kit/sdk/results.py`, `src/crime_research_kit/sdk/errors.py`, result/error tests | Public result/error types landed and are exported from `crime_research_kit.sdk`. |
-| SDK-005 Define `OperationSpec` catalog | ready | unassigned | SDK-004 | `src/crime_research_kit/sdk/operations.py`, operation catalog tests | Next Ready task. |
-| SDK-006 Add catalog parity tests | blocked | unassigned | SDK-005 | catalog parity tests, docs drift tests | Blocks adapter repointing. |
+| SDK-005 Define `OperationSpec` catalog | done | main | SDK-004 | `src/crime_research_kit/sdk/operations.py`, operation catalog tests | Metadata-only catalog landed from the operation inventory. |
+| SDK-006 Add catalog parity tests | ready | unassigned | SDK-005 | catalog parity tests, docs drift tests | Next Ready task; blocks adapter repointing. |
 | SDK-007 Build `CrkContext` | blocked | unassigned | SDK-005 | `src/crime_research_kit/sdk/context.py`, context tests | Full context work waits for catalog shape; skeleton may exist under SDK-003. |
 | SDK-008 Build `CrkClient` and `CaseClient` | blocked | unassigned | SDK-005, SDK-007 | SDK client modules and tests | Blocks case/source/extraction/review/export/workflow wrappers. |
 | SDK-009 Wrap case and record reads | blocked | unassigned | SDK-005, SDK-008 | SDK case/record modules and tests | Must preserve public-safe defaults. |
@@ -44,9 +44,9 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-024 Catalog-driven MCP registration | blocked | unassigned | SDK-006, SDK-016 | MCP registration code/tests | Backlog. |
 | SDK-025 Strict request models | blocked | unassigned | SDK-005 | request models/tests | Backlog. |
 
-Dependency note: SDK-005 is the next unblocked task. Client and adapter work
-must wait for the catalog and parity gates so wrapper metadata does not drift
-before it is centralized.
+Dependency note: SDK-006 is the next unblocked task. Client and adapter work
+must wait for the catalog parity gates so wrapper metadata does not drift before
+it is centralized.
 
 ## Done
 
@@ -57,6 +57,7 @@ before it is centralized.
 | SDK-002 Decide public namespace | Public namespace recorded as `crime_research_kit.sdk`; no legacy aliases. |
 | SDK-003 Add SDK package skeleton | Public package skeleton, README coverage, package discovery, and import tests landed. |
 | SDK-004 Define public result/error types | `OperationResult`, warnings, error details, error codes, and SDK exceptions landed. |
+| SDK-005 Define `OperationSpec` catalog | Metadata-only operation catalog landed with safety tiers and adapter mappings. |
 
 ## In Progress
 
@@ -80,13 +81,12 @@ before it is centralized.
 
 | Card | Priority | Depends on | Acceptance |
 | --- | --- | --- | --- |
-| SDK-005 Define `OperationSpec` catalog | P0 | SDK-004 | Operation specs include domain, safety tier, side effects, CLI/MCP/HTTP mappings, and request/result model names. |
+| SDK-006 Add catalog parity tests | P0 | SDK-005 | Current CLI commands and MCP tools have catalog entries or explicit non-SDK exemptions. |
 
 ## Blocked / Dependency-Gated
 
 | Card | Priority | Depends on | Acceptance |
 | --- | --- | --- | --- |
-| SDK-006 Add catalog parity tests | P0 | SDK-005 | Current CLI commands and MCP tools have catalog entries or explicit non-SDK exemptions. |
 | SDK-007 Build `CrkContext` | P1 | SDK-005 | Context owns roots, settings, privacy defaults, and transport selection without deep modules calling settings directly. |
 | SDK-008 Build `CrkClient` and `CaseClient` | P1 | SDK-005, SDK-007 | Case-scoped handle removes repeated `case_dir` passing for public SDK users. |
 | SDK-009 Wrap case and record reads | P1 | SDK-005, SDK-008 | Public record reads exclude private rows by default and return `OperationResult`. |
