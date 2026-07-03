@@ -14,6 +14,27 @@ from crime_research_kit.sdk import CrkClient, CrkContext
 from crime_research_kit.sdk.results import OperationResult
 
 CASE_SLUG_RE = re.compile(r"[a-zA-Z0-9][a-zA-Z0-9_-]{0,80}")
+LEGACY_RESULT_NAMES = {
+    "case.info": "case_info",
+    "cases.list": "list_cases",
+    "records.list": "get_records",
+    "records.source_text": "get_source_text",
+    "retrieval.query": "query_case",
+    "sources.discover": "discover_sources",
+    "sources.ingest_url": "ingest_url",
+    "sources.add": "add_source",
+    "sources.parse": "parse_source",
+    "sources.ocr": "ocr_source",
+    "extractions.draft": "draft_extraction",
+    "extractions.list": "list_packets",
+    "extractions.save": "save_packet",
+    "extractions.import_reviewed": "import_extraction",
+    "names.link": "link_names",
+    "records.plan_public_records": "plan_public_records",
+    "exports.manim": "export_manim",
+    "exports.case_charts": "export_case_charts",
+    "exports.analysis_charts": "export_analysis_charts",
+}
 
 
 @dataclass
@@ -96,6 +117,7 @@ def sdk_case(ctx: ServerContext, case: str):
 
 def mcp_result(result: OperationResult) -> dict[str, Any]:
     payload = result.to_dict()
+    payload.setdefault("name", LEGACY_RESULT_NAMES.get(result.operation, result.operation))
     diagnostics = payload.get("diagnostics") or {}
     for key in ("command", "dry_run", "skipped", "returncode", "stdout", "stderr"):
         if key in diagnostics:

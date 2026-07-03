@@ -33,7 +33,7 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-013 Wrap export operations | done | main | SDK-005, SDK-008 | SDK export modules and tests | Public-safe export wrappers landed. |
 | SDK-014 Add workflow facade | done | main | SDK-005, SDK-008 | `src/crime_research_kit/sdk/workflows.py`, `src/pipeline/app/service.py`, workflow tests | Workflow facade landed without public graph-node imports. |
 | SDK-015 Repoint CLI handlers | done | main | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/cli/**`, CLI tests | `cr-kit` handlers now route through SDK facades without command surface changes. |
-| SDK-016 Repoint MCP tools | done | main | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/mcp/**`, MCP tests | Bounded MCP tools now route through SDK facades while preserving MCP payload compatibility. |
+| SDK-016 Repoint MCP tools | done | main | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/mcp/**`, MCP tests | SDK-backed MCP tools now route through SDK facades while preserving MCP payload compatibility; `run_report` remains direct pending evidence-board privacy semantics. |
 | SDK-017 Generate or drift-check Skill API docs | done | worker-sdk-docs-drift + main integration | SDK-005 | docs drift tests, Skill API docs | Skill API operation docs now drift-check against the SDK catalog. |
 | SDK-018 Define private runtime policy | ready | unassigned | SDK-006, SDK-015, SDK-016 | packaging docs/tests | Public docs declare only `crime_research_kit.sdk`. |
 | SDK-019 Update architecture docs | blocked | unassigned | SDK-018 | architecture docs | System overview shows SDK as Python public layer and CLI/MCP as adapters. |
@@ -67,7 +67,7 @@ SDK-018 is now the next ready packaging-boundary slice.
 | SDK-013 Wrap export operations | Manim, case-chart, analysis-chart, people-cluster, and cross-case timeline exports now return SDK results with public-safe defaults. |
 | SDK-014 Add workflow facade | Case-builder plan and resume workflows now return SDK results through `client.workflows` without public graph-node imports. |
 | SDK-015 Repoint CLI handlers | `cr-kit` workflow, discovery, parse, and OCR handlers now call SDK facades while preserving command names, flags, and JSON payload shape. |
-| SDK-016 Repoint MCP tools | Bounded MCP read, staged-write, gated import, and public export tools now call SDK facades while preserving MCP command diagnostics, string errors, and privacy-note payloads. |
+| SDK-016 Repoint MCP tools | SDK-backed MCP read, retrieval, staged-write, gated import, and public export tools now call SDK facades while preserving MCP command diagnostics, string errors, legacy result names, and privacy-note payloads. `run_report` remains direct pending evidence-board privacy semantics. |
 | SDK-017 Generate or drift-check Skill API docs | Skill API operation docs now drift-check names, safety tiers, and result envelope against the SDK catalog. |
 
 ## In Progress

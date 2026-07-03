@@ -115,6 +115,31 @@ def test_query_case_tool_degrades_to_error_dict(synthetic_case_copy):
     assert "ok" in result
 
 
+def test_query_case_tool_routes_through_sdk(monkeypatch, synthetic_case_copy):
+    ctx = make_ctx(synthetic_case_copy.parent)
+    calls = {}
+
+    class Retrieval:
+        def query(self, *, query_text: str, include_private: bool, top_k: int) -> OperationResult:
+            calls["args"] = (query_text, include_private, top_k)
+            return OperationResult.success("retrieval.query", data={"matches": []})
+
+    class Case:
+        retrieval = Retrieval()
+
+    def fake_sdk_case(_ctx: ServerContext, case: str) -> Case:
+        calls["case"] = case
+        return Case()
+
+    monkeypatch.setattr(tools_read, "sdk_case", fake_sdk_case)
+
+    result = tools_read.query_case_tool(ctx, "synthetic_case", "needle", include_private=True, top_k=5)
+
+    assert calls == {"case": "synthetic_case", "args": ("needle", True, 5)}
+    assert result["name"] == "query_case"
+    assert result["operation"] == "retrieval.query"
+
+
 def test_records_resource_is_public_safe_jsonl(synthetic_case_copy):
     import json as json_module
 

@@ -174,3 +174,56 @@ def test_export_manim_tool_routes_through_sdk_and_keeps_privacy_note(monkeypatch
     assert result["operation"] == "exports.manim"
     assert result["command"] == ["crk-ledger", "export-manim", "--include-private"]
     assert "internal review" in result["data"]["privacy"]
+
+
+def test_link_names_tool_routes_through_sdk(monkeypatch, synthetic_case_copy):
+    ctx = make_ctx(synthetic_case_copy.parent)
+    calls = {}
+
+    class Names:
+        def link(self, *, names: list[str]) -> OperationResult:
+            calls["names"] = names
+            return OperationResult.success("names.link", diagnostics={"command": ["crk-ledger", "link-names"]})
+
+    class Case:
+        names = Names()
+
+    def fake_sdk_case(_ctx: ServerContext, case: str) -> Case:
+        calls["case"] = case
+        return Case()
+
+    monkeypatch.setattr(tools_write, "sdk_case", fake_sdk_case)
+
+    result = tools_write.link_names_tool(ctx, "synthetic_case", ["Jane Doe"])
+
+    assert calls == {"case": "synthetic_case", "names": ["Jane Doe"]}
+    assert result["name"] == "link_names"
+    assert result["operation"] == "names.link"
+
+
+def test_plan_public_records_tool_routes_through_sdk(monkeypatch, synthetic_case_copy):
+    ctx = make_ctx(synthetic_case_copy.parent)
+    calls = {}
+
+    class Records:
+        def plan_public_records(self, subject: str, *, lanes: list[str]) -> OperationResult:
+            calls["args"] = (subject, lanes)
+            return OperationResult.success(
+                "records.plan_public_records",
+                diagnostics={"command": ["crk-ledger", "plan-public-records"]},
+            )
+
+    class Case:
+        records = Records()
+
+    def fake_sdk_case(_ctx: ServerContext, case: str) -> Case:
+        calls["case"] = case
+        return Case()
+
+    monkeypatch.setattr(tools_write, "sdk_case", fake_sdk_case)
+
+    result = tools_write.plan_public_records_tool(ctx, "synthetic_case", "Jane Doe", ["courts"])
+
+    assert calls == {"case": "synthetic_case", "args": ("Jane Doe", ["courts"])}
+    assert result["name"] == "plan_public_records"
+    assert result["operation"] == "records.plan_public_records"

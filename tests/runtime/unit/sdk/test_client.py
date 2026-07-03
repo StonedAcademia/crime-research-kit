@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from crime_research_kit.sdk import CaseClient, CrkClient
+from crime_research_kit.sdk import CaseClient, CaseNamesClient, CaseRetrievalClient, CrkClient
 from crime_research_kit.sdk.context import CrkContext
 from crime_research_kit.sdk.operations import SafetyTier
 
@@ -26,6 +26,13 @@ def test_case_client_preserves_explicit_case_path():
     case = client.case("tmp/case")
 
     assert case.case_dir == Path("tmp/case")
+
+
+def test_case_client_exposes_retrieval_and_name_clients():
+    case = CrkClient(CrkContext(cases_root="data/cases")).case("demo_case")
+
+    assert isinstance(case.retrieval, CaseRetrievalClient)
+    assert isinstance(case.names, CaseNamesClient)
 
 
 def test_clients_expose_catalog_metadata_without_runtime_imports():

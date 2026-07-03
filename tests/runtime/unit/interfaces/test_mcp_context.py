@@ -78,6 +78,7 @@ def test_mcp_result_preserves_legacy_command_and_string_errors():
 
     payload = mcp_result(result)
 
+    assert payload["name"] == "import_extraction"
     assert payload["errors"] == ["confirm=True required"]
     assert payload["command"] == ["crk-ledger", "import-extraction"]
     assert payload["dry_run"] is True

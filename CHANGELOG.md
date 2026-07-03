@@ -6,6 +6,19 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+## [0.13.7] - 2026-07-03
+
+### Added
+
+- Added SDK facades for retrieval queries, lead-only name linking, and
+  public-record planning so the remaining safe MCP tools can route through the
+  public SDK.
+
+### Changed
+
+- Preserved legacy MCP `name` fields when SDK `OperationResult` payloads are
+  adapted for MCP callers.
+
 ## [0.13.6] - 2026-07-03
 
 ### Changed

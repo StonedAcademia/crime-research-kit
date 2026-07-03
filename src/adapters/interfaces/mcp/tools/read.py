@@ -6,7 +6,6 @@ from typing import Any
 
 from adapters.interfaces.mcp.context import ServerContext, error_dict, mcp_result, resolve_case, sdk_case, sdk_client
 from adapters.ops import case as case_ops
-from adapters.ops import query as query_ops
 
 
 def case_info_tool(ctx: ServerContext, case: str) -> dict[str, Any]:
@@ -57,18 +56,14 @@ def query_case_tool(
     top_k: int = 8,
 ) -> dict[str, Any]:
     try:
-        return query_ops.query_case(
-            resolve_case(ctx, case),
-            query,
+        result = sdk_case(ctx, case).retrieval.query(
             include_private=include_private,
-            qdrant_url=ctx.settings.qdrant_url,
-            embed_model=ctx.settings.embed_model,
+            query_text=query,
             top_k=top_k,
-        ).to_dict()
+        )
+        return mcp_result(result)
     except ValueError as exc:
         return error_dict(str(exc))
-    except Exception as exc:
-        return error_dict(f"query_case failed: {exc}")
 
 
 def list_staged_packets_tool(ctx: ServerContext, case: str) -> dict[str, Any]:

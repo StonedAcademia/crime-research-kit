@@ -27,7 +27,9 @@ from .errors import (
     CrkSafetyError,
     CrkValidationError,
 )
+from .names import CaseNamesClient
 from .operations import OPERATION_BY_NAME, OPERATION_SPECS, OperationSpec, SafetyTier, get_operation, list_operations, operations_by_domain
+from .retrieval import CaseRetrievalClient
 from .review import CaseReviewClient
 from .results import OperationResult, OperationWarning
 from .sources import CaseSourcesClient
@@ -38,7 +40,9 @@ __all__ = [
     "CaseClient",
     "CaseExtractionsClient",
     "CaseExportsClient",
+    "CaseNamesClient",
     "CaseRecordsClient",
+    "CaseRetrievalClient",
     "CaseReviewClient",
     "CaseSourcesClient",
     "CasesClient",

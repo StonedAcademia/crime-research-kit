@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from os import PathLike
 from pathlib import Path
-from typing import Any
+from typing import Any, Sequence
 
 from .context import CrkContext
 from .errors import CASE_NOT_FOUND, INVALID_INPUT, OPERATION_FAILED, PRIVACY_BLOCKED, SAFETY_BLOCKED, SOURCE_NOT_FOUND
@@ -83,6 +83,13 @@ class CaseRecordsClient:
         )
         return _from_op_result("records.source_text", raw, case_ref=str(self.case_dir))
 
+    def plan_public_records(self, subject: str, *, lanes: Sequence[str] = ()) -> OperationResult:
+        """Plan public-record source lanes for a subject."""
+        from adapters.ops import sources as source_ops
+
+        raw = source_ops.plan_public_records(_runner(self.context), str(self.case_dir), subject, list(lanes))
+        return _from_op_result("records.plan_public_records", raw, case_ref=str(self.case_dir))
+
     def _include_private(self, explicit: bool | None) -> bool:
         return self.context.include_private if explicit is None else explicit
 
@@ -158,6 +165,12 @@ def _diagnostics(raw: Any) -> dict[str, Any]:
     if returncode:
         diagnostics["returncode"] = returncode
     return diagnostics
+
+
+def _runner(context: CrkContext):
+    from adapters.ops.runner import CrkRunner
+
+    return CrkRunner(repo_root=context.repo_root, dry_run=context.dry_run)
 
 
 def _error_code(message: str) -> str:

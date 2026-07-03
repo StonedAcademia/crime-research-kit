@@ -4,9 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from adapters.interfaces.mcp.context import ServerContext, error_dict, mcp_result, resolve_case, sdk_case
-from adapters.ops import query as query_ops
-from adapters.ops import sources as source_ops
+from adapters.interfaces.mcp.context import ServerContext, error_dict, mcp_result, sdk_case
 
 
 def discover_sources_tool(ctx: ServerContext, case: str, query: str, limit: int = 10) -> dict[str, Any]:
@@ -87,10 +85,10 @@ def save_extraction_packet_tool(ctx: ServerContext, case: str, packet_name: str,
 
 def link_names_tool(ctx: ServerContext, case: str, names: list[str]) -> dict[str, Any]:
     try:
-        case_dir = resolve_case(ctx, case)
+        result = sdk_case(ctx, case).names.link(names=names)
     except ValueError as exc:
         return error_dict(str(exc))
-    return query_ops.link_names(ctx.runner, case_dir, names=names).to_dict()
+    return mcp_result(result)
 
 
 def plan_public_records_tool(
@@ -100,10 +98,10 @@ def plan_public_records_tool(
     lanes: list[str] | None = None,
 ) -> dict[str, Any]:
     try:
-        case_dir = resolve_case(ctx, case)
+        result = sdk_case(ctx, case).records.plan_public_records(subject, lanes=lanes or [])
     except ValueError as exc:
         return error_dict(str(exc))
-    return source_ops.plan_public_records(ctx.runner, case_dir, subject, lanes or []).to_dict()
+    return mcp_result(result)
 
 
 def register(mcp: Any, ctx: ServerContext) -> None:

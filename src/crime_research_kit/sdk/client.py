@@ -10,7 +10,9 @@ from .cases import CaseRecordsClient, CasesClient, case_info
 from .context import CrkContext
 from .exports import CaseExportsClient, ExportsClient
 from .extractions import CaseExtractionsClient
+from .names import CaseNamesClient
 from .operations import OperationSpec, get_operation, operations_by_domain
+from .retrieval import CaseRetrievalClient
 from .review import CaseReviewClient
 from .results import OperationResult
 from .sources import CaseSourcesClient
@@ -48,9 +50,19 @@ class CaseClient:
         return CaseRecordsClient(context=self.context, case_ref=self.case_ref)
 
     @property
+    def retrieval(self) -> CaseRetrievalClient:
+        """Local retrieval operations for this case."""
+        return CaseRetrievalClient(context=self.context, case_ref=self.case_ref)
+
+    @property
     def sources(self) -> CaseSourcesClient:
         """Source intake operations for this case."""
         return CaseSourcesClient(context=self.context, case_ref=self.case_ref)
+
+    @property
+    def names(self) -> CaseNamesClient:
+        """Lead-only name linking operations for this case."""
+        return CaseNamesClient(context=self.context, case_ref=self.case_ref)
 
     @property
     def extractions(self) -> CaseExtractionsClient:

@@ -5,6 +5,7 @@ from pathlib import Path
 
 from crime_research_kit.sdk import CrkClient, CrkContext
 from crime_research_kit.sdk.errors import INVALID_INPUT, PRIVACY_BLOCKED
+from tests.helpers import KIT_ROOT, ledger_subcommand
 
 
 def add_private_claim(case_dir: Path) -> None:
@@ -62,6 +63,10 @@ def sdk_client_for(case_dir: Path) -> CrkClient:
     return CrkClient(CrkContext(cases_root=case_dir.parent))
 
 
+def dry_run_sdk_client_for(case_dir: Path) -> CrkClient:
+    return CrkClient(CrkContext(cases_root=case_dir.parent, repo_root=KIT_ROOT, dry_run=True))
+
+
 def test_client_lists_case_slugs(synthetic_case_copy: Path):
     result = sdk_client_for(synthetic_case_copy).cases.list()
 
@@ -115,6 +120,17 @@ def test_records_list_unknown_type_returns_sdk_error(synthetic_case_copy: Path):
     assert result.ok is False
     assert result.operation == "records.list"
     assert result.errors[0].code == INVALID_INPUT
+
+
+def test_records_plan_public_records_uses_runner(synthetic_case_copy: Path):
+    case = dry_run_sdk_client_for(synthetic_case_copy).case("synthetic_case")
+
+    result = case.records.plan_public_records("Jane Doe", lanes=["courts", "property"])
+
+    assert result.ok is True
+    assert result.operation == "records.plan_public_records"
+    assert ledger_subcommand(result.diagnostics["command"]) == "plan-public-records"
+    assert "--lane" in result.diagnostics["command"]
 
 
 def test_source_text_respects_privacy_default(synthetic_case_copy: Path):

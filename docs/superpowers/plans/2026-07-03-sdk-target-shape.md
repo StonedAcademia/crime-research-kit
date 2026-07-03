@@ -245,20 +245,23 @@ catalog parity tests have landed.
 
 **Steps:**
 
-- [ ] Repoint CLI handlers to SDK clients while preserving command names and
+- [x] Repoint CLI handlers to SDK clients while preserving command names and
   flags.
-- [ ] Repoint MCP tool functions to SDK clients or catalog-dispatched
-  operations.
-- [ ] Keep MCP resources/prompts as MCP-specific content, but remove duplicated
-  operation tier metadata where catalog can drive it.
-- [ ] Update tests to assert SDK/catalog parity rather than hand-maintained
+- [x] Repoint SDK-backed MCP tool functions to SDK clients or
+  catalog-dispatched operations. `run_report` stays direct until the
+  evidence-board report has explicit public/private filtering semantics.
+- [x] Keep MCP resources/prompts as MCP-specific content, but remove duplicated
+  operation tier metadata where catalog can drive it; generated MCP
+  registration remains SDK-024.
+- [x] Update tests to assert SDK/catalog parity rather than hand-maintained
   duplicate lists.
-- [ ] Preserve current error text where runbooks rely on it, but ensure the
+- [x] Preserve current error text where runbooks rely on it, but ensure the
   underlying error code comes from SDK errors/results.
 
 **Acceptance:**
 - Existing CLI and MCP tests pass.
-- Operation safety tiers are defined once.
+- Operation safety tiers are defined once in the SDK catalog for the current
+  SDK-backed MCP surface.
 
 ## Phase 6: Packaging Boundary And Private Runtime
 
