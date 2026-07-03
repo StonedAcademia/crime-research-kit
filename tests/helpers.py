@@ -3,8 +3,12 @@
 from __future__ import annotations
 
 import re
+import shutil
 from pathlib import Path
 from types import SimpleNamespace
+
+import httpx
+import pytest
 
 
 def find_repo_root(start: Path | None = None) -> Path:
@@ -81,3 +85,53 @@ def moon_task_names() -> set[str]:
             if in_tasks and match:
                 names.add(match.group(1))
     return names
+
+
+DOCS_FIXTURE = KIT_ROOT / "tests" / "fixtures" / "docs" / "sample_report.pdf"
+
+
+def requires_extra(module_name: str):
+    return pytest.importorskip(module_name)
+
+
+def requires_binary(name: str) -> None:
+    if shutil.which(name) is None:
+        pytest.skip(f"required binary not on PATH: {name}")
+
+
+def live_service(url: str | None, health_path: str) -> str:
+    if not url:
+        pytest.skip("live service URL not configured")
+    base = url.rstrip("/")
+    try:
+        response = httpx.get(base + health_path, timeout=2.0)
+        response.raise_for_status()
+    except Exception as exc:  # connection refused, timeout, non-2xx
+        pytest.skip(f"live service not reachable at {base}{health_path}: {exc}")
+    return base
+
+
+def register_pdf_source(case_dir, source_id: str, pdf_path):
+    from pathlib import Path as _Path
+    import shutil as _shutil
+
+    from crime_research_kit._runtime.core.casefile import append_jsonl, record_path
+
+    case_dir = _Path(case_dir)
+    rel = f"raw/sources/{source_id}.pdf"
+    dest = case_dir / rel
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    _shutil.copyfile(_Path(pdf_path), dest)
+    append_jsonl(
+        record_path(case_dir, "sources"),
+        {
+            "source_id": source_id,
+            "title": f"Fixture source {source_id}",
+            "source_type": "document",
+            "raw_path": rel,
+            "public_export": True,
+            "reliability_grade": "C",
+            "notes": "Synthetic fixture source; not real evidence.",
+        },
+    )
+    return rel
