@@ -6,6 +6,13 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+## [0.13.12] - 2026-07-03
+
+### Changed
+
+- Added catalog-backed MCP tool registration metadata, registry parity coverage,
+  and docs while keeping `run_report`, prompts, and resources explicit.
+
 ## [0.13.11] - 2026-07-03
 
 ### Added
