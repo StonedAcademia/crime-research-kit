@@ -31,7 +31,7 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-011 Wrap extraction operations | done | main | SDK-005, SDK-008 | SDK extraction modules and tests | Draft/list/read/save/import_reviewed/ner_suggest wrappers landed with explicit import approval. |
 | SDK-012 Wrap review operations | done | main | SDK-005, SDK-008 | SDK review modules and tests | Validation, dedupe, identity, contradiction, readiness, privacy, public-export, and source-independence wrappers landed. |
 | SDK-013 Wrap export operations | done | main | SDK-005, SDK-008 | SDK export modules and tests | Public-safe export wrappers landed. |
-| SDK-014 Add workflow facade | ready | unassigned | SDK-005, SDK-008 | `src/crime_research_kit/sdk/workflows.py`, `src/pipeline/app/service.py`, workflow tests | App layer must consume SDK/catalog-backed facade without exposing graph nodes. |
+| SDK-014 Add workflow facade | in_progress | main | SDK-005, SDK-008 | `src/crime_research_kit/sdk/workflows.py`, `src/pipeline/app/service.py`, workflow tests | App layer must consume SDK/catalog-backed facade without exposing graph nodes. |
 | SDK-015 Repoint CLI handlers | blocked | unassigned | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/cli/**`, CLI tests | Do not change command names or flags. |
 | SDK-016 Repoint MCP tools | blocked | unassigned | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/mcp/**`, MCP tests | Tool safety tiers should come from catalog where possible. |
 | SDK-017 Generate or drift-check Skill API docs | done | worker-sdk-docs-drift + main integration | SDK-005 | docs drift tests, Skill API docs | Skill API operation docs now drift-check against the SDK catalog. |
@@ -44,8 +44,7 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-024 Catalog-driven MCP registration | blocked | unassigned | SDK-006, SDK-016 | MCP registration code/tests | Backlog. |
 | SDK-025 Strict request models | backlog | unassigned | SDK-005 | request models/tests | Backlog. |
 
-Dependency note: SDK-014 remains the next ready wrapper slice. SDK-015 and
-SDK-016 stay blocked until SDK-014 lands.
+Dependency note: SDK-015 and SDK-016 stay blocked until SDK-014 lands.
 
 ## Done
 
@@ -71,7 +70,7 @@ SDK-016 stay blocked until SDK-014 lands.
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| None | - | No cards currently in progress. |
+| SDK-014 Add workflow facade | main | Implement `client.workflows.plan/resume` without exposing graph nodes. |
 
 ## Review
 
@@ -89,7 +88,7 @@ SDK-016 stay blocked until SDK-014 lands.
 
 | Card | Priority | Depends on | Acceptance |
 | --- | --- | --- | --- |
-| SDK-014 Add workflow facade | P1 | SDK-005, SDK-008 | `client.workflows.plan/resume` expose app workflow through SDK/catalog-backed services without graph-node imports. |
+| None | - | No cards currently ready. |
 
 ## Blocked / Dependency-Gated
 
