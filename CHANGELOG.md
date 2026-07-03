@@ -6,6 +6,14 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+## [0.13.3] - 2026-07-03
+
+### Added
+
+- Added SDK export wrappers for Manim, case-chart, analysis-chart,
+  people-cluster, and cross-case timeline exports with public-safe privacy
+  defaults.
+
 ## [0.13.2] - 2026-07-03
 
 ### Added

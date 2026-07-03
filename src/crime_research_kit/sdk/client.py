@@ -8,6 +8,7 @@ from pathlib import Path
 
 from .cases import CaseRecordsClient, CasesClient, case_info
 from .context import CrkContext
+from .exports import CaseExportsClient, ExportsClient
 from .extractions import CaseExtractionsClient
 from .operations import OperationSpec, get_operation, operations_by_domain
 from .review import CaseReviewClient
@@ -60,6 +61,11 @@ class CaseClient:
         """Review and audit operations for this case."""
         return CaseReviewClient(context=self.context, case_ref=self.case_ref)
 
+    @property
+    def exports(self) -> CaseExportsClient:
+        """Public export operations for this case."""
+        return CaseExportsClient(context=self.context, case_ref=self.case_ref)
+
     def info(self, *, include_private: bool | None = None) -> OperationResult:
         """Return case metadata and public-safe record counts by default."""
         return case_info(self.context, self.case_ref, include_private=include_private)
@@ -79,6 +85,11 @@ class CrkClient:
     def cases(self) -> CasesClient:
         """Case workspace read operations."""
         return CasesClient(context=self.context)
+
+    @property
+    def exports(self) -> ExportsClient:
+        """Top-level export operations."""
+        return ExportsClient(context=self.context)
 
     def case(self, case_ref: CaseRef) -> CaseClient:
         """Return a case-scoped client so callers stop passing case_dir."""

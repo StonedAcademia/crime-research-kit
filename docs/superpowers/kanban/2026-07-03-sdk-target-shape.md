@@ -30,7 +30,7 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-010 Wrap source operations | done | main | SDK-005, SDK-008 | SDK source modules and tests | Source add, ingest, preserve, discover, parse, and OCR wrappers landed with dependency errors. |
 | SDK-011 Wrap extraction operations | done | main | SDK-005, SDK-008 | SDK extraction modules and tests | Draft/list/read/save/import_reviewed/ner_suggest wrappers landed with explicit import approval. |
 | SDK-012 Wrap review operations | done | main | SDK-005, SDK-008 | SDK review modules and tests | Validation, dedupe, identity, contradiction, readiness, privacy, public-export, and source-independence wrappers landed. |
-| SDK-013 Wrap export operations | in_progress | main | SDK-005, SDK-008 | SDK export modules and tests | Exports are public-safe by default. |
+| SDK-013 Wrap export operations | done | main | SDK-005, SDK-008 | SDK export modules and tests | Public-safe export wrappers landed. |
 | SDK-014 Add workflow facade | ready | unassigned | SDK-005, SDK-008 | `src/crime_research_kit/sdk/workflows.py`, `src/pipeline/app/service.py`, workflow tests | App layer must consume SDK/catalog-backed facade without exposing graph nodes. |
 | SDK-015 Repoint CLI handlers | blocked | unassigned | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/cli/**`, CLI tests | Do not change command names or flags. |
 | SDK-016 Repoint MCP tools | blocked | unassigned | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/mcp/**`, MCP tests | Tool safety tiers should come from catalog where possible. |
@@ -44,8 +44,8 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-024 Catalog-driven MCP registration | blocked | unassigned | SDK-006, SDK-016 | MCP registration code/tests | Backlog. |
 | SDK-025 Strict request models | backlog | unassigned | SDK-005 | request models/tests | Backlog. |
 
-Dependency note: SDK-013 and SDK-014 remain ready wrapper slices. SDK-015
-and SDK-016 stay blocked until SDK-013 and SDK-014 land.
+Dependency note: SDK-014 remains the next ready wrapper slice. SDK-015 and
+SDK-016 stay blocked until SDK-014 lands.
 
 ## Done
 
@@ -64,13 +64,14 @@ and SDK-016 stay blocked until SDK-013 and SDK-014 land.
 | SDK-010 Wrap source operations | Source add, ingest, preserve, discover, parse, and OCR wrappers now return SDK results with actionable optional failures. |
 | SDK-011 Wrap extraction operations | Extraction draft, list, read, save, reviewed import, and NER suggestion wrappers now return SDK results with explicit import approval. |
 | SDK-012 Wrap review operations | Validation, duplicate review, identity review, contradiction audits, narrative readiness, privacy redaction audits, public export audits, and source-independence audits now return SDK results. |
+| SDK-013 Wrap export operations | Manim, case-chart, analysis-chart, people-cluster, and cross-case timeline exports now return SDK results with public-safe defaults. |
 | SDK-017 Generate or drift-check Skill API docs | Skill API operation docs now drift-check names, safety tiers, and result envelope against the SDK catalog. |
 
 ## In Progress
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| SDK-013 Wrap export operations | main | Implement case and top-level export wrappers with public-safe defaults. |
+| None | - | No cards currently in progress. |
 
 ## Review
 
@@ -119,3 +120,4 @@ and SDK-016 stay blocked until SDK-013 and SDK-014 land.
 | `OpResult` differs from Skill API docs | SDK could stabilize the wrong envelope. | SDK-004 and SDK-017 must align result/docs before adapters are repointed. |
 | Subprocess runner leaks into SDK | Public API becomes a CLI wrapper instead of an SDK. | Transport stays private; SDK methods expose operations, not commands. |
 | Optional extras become required by accident | Base install gets heavier and less local-friendly. | Packaging policy tests remain in the gate; optional methods raise dependency errors. |
+| Evidence-board report lacks public/private switch | Wrapping `reports.evidence_board` as-is could violate public-safe SDK defaults. | Do not expose through SDK until the app-layer report has explicit filtering semantics. |

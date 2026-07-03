@@ -22,7 +22,11 @@ def test_sdk_imports_without_legacy_runtime_packages():
     assert sdk.CrkClient().case("demo").case_dir.as_posix() == "data/cases/demo"
     assert sdk.CrkClient().case("demo").extractions.case_dir.as_posix() == "data/cases/demo"
     assert sdk.CrkClient().case("demo").review.case_dir.as_posix() == "data/cases/demo"
+    assert sdk.CrkClient().case("demo").exports.case_dir.as_posix() == "data/cases/demo"
+    assert sdk.CrkClient().exports.context.dry_run is False
     assert sdk.CaseExtractionsClient
+    assert sdk.CaseExportsClient
+    assert sdk.ExportsClient
     assert sdk.CaseReviewClient
     assert sdk.OperationResult(operation="case.info").ok is True
     assert sdk.OperationSpec.from_tags("example").tags == ()

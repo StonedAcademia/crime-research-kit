@@ -16,6 +16,10 @@ Current surface:
   reviewed import, and lead-only NER suggestion wrappers.
 - `CaseReviewClient` exposes validation, duplicate/identity review, and safety
   audit wrappers.
+- `CaseExportsClient` exposes Manim, case-chart, analysis-chart, and
+  people-cluster export wrappers.
+- `ExportsClient` exposes top-level export wrappers such as the cross-case
+  timeline export.
 - `TransportMode` records whether clients should use automatic, direct, or
   subprocess-backed runtime access.
 - `OperationResult` and `OperationWarning` define the stable SDK result

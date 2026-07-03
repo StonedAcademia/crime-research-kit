@@ -5,6 +5,7 @@ from __future__ import annotations
 from .cases import CaseRecordsClient, CasesClient
 from .client import CaseClient, CrkClient
 from .context import CrkContext, TransportMode
+from .exports import CaseExportsClient, ExportsClient
 from .extractions import CaseExtractionsClient
 from .errors import (
     CASE_NOT_FOUND,
@@ -35,6 +36,7 @@ __all__ = [
     "CASE_NOT_FOUND",
     "CaseClient",
     "CaseExtractionsClient",
+    "CaseExportsClient",
     "CaseRecordsClient",
     "CaseReviewClient",
     "CaseSourcesClient",
@@ -45,6 +47,7 @@ __all__ = [
     "CrkError",
     "CrkErrorCode",
     "CrkErrorDetail",
+    "ExportsClient",
     "CrkInputError",
     "CrkPrivacyError",
     "CrkSafetyError",
