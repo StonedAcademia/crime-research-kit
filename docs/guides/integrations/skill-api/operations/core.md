@@ -22,12 +22,15 @@ Common response envelope:
 {
   "ok": true,
   "operation": "operationName",
-  "case_dir": "data/cases/<case_slug>",
+  "case_ref": "data/cases/<case_slug>",
+  "data": {},
+  "errors": [],
+  "warnings": [],
   "created": [],
   "updated": [],
   "outputs": [],
   "counts": {},
-  "warnings": []
+  "diagnostics": {}
 }
 ```
 

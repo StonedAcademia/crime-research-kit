@@ -17,10 +17,14 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 - Added `TransportMode` and expanded `CrkContext` so SDK callers can carry
   roots, resolved settings, privacy defaults, and runtime transport selection.
 - Added top-level `CrkClient` and case-scoped `CaseClient` handles for SDK
-  callers without wiring operation behavior yet.
+  callers.
+- Added SDK case and record read wrappers for case listing, public-safe case
+  info, record listing, and source-text reads.
 - Added a metadata-only `OperationSpec` catalog with safety tiers,
   side-effect descriptions, request/result model names, and CLI/MCP/Skill API
   mappings for the initial SDK operation set.
+- Added Skill API operation docs drift checks against the SDK catalog and
+  `OperationResult` envelope.
 - Added SDK catalog parity tests that ensure current CLI commands and MCP tools
   are represented by catalog entries.
 - Added SDK import tests that verify `crime_research_kit.sdk` does not import

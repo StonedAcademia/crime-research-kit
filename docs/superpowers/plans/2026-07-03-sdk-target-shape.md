@@ -137,7 +137,7 @@ Additional integration files:
   validation, review audits, public-safe exports, workflow plan/resume.
 - [x] Add parity tests proving every current MCP tool and relevant CLI command
   has a catalog entry or an explicit "not SDK" exemption.
-- [ ] Add docs generation or a drift check that compares Skill API operation
+- [x] Add docs generation or a drift check that compares Skill API operation
   docs to the catalog.
 - [x] Keep operation names snake_case internally and define camelCase/docs names
   as metadata, not separate behavior.
@@ -169,13 +169,19 @@ src/crime_research_kit/sdk/
 
 **Steps:**
 
-- [ ] Add tests using `data/examples/synthetic_case` and temp copies.
+- [x] Add tests using `data/examples/synthetic_case` and temp copies for the
+  first case/record read wrappers.
 - [x] Implement `CrkClient(context)` and `client.case(slug_or_path)`.
 - [x] Implement `CaseClient` with case-rooted methods; callers should not pass
   `case_dir` repeatedly after obtaining a case handle.
-- [ ] Wrap existing ops behind SDK methods, converting `OpResult` into
+- [x] Wrap case info, case listing, record listing, and source-text reads behind
+  SDK methods, converting `OpResult` into `OperationResult`.
+- [ ] Wrap remaining existing ops behind SDK methods, converting `OpResult` into
   `OperationResult`.
-- [ ] Make `include_private` explicit on reads/exports, defaulting to false.
+- [x] Make `include_private` explicit on case and record reads, defaulting to
+  false.
+- [ ] Make `include_private` explicit on remaining reads/exports, defaulting to
+  false.
 - [ ] Make canonical import method name explicit, for example
   `case.extractions.import_reviewed(packet, approved=True)`.
 - [ ] Add dependency-error tests for optional retrieval/OCR/discovery methods
