@@ -47,15 +47,15 @@ historical plan drift.
 
 **Steps:**
 
-- [ ] Record the current operation list from CLI, MCP tools, ops modules, and
+- [x] Record the current operation list from CLI, MCP tools, ops modules, and
   Skill API docs in one temporary inventory.
-- [ ] Mark each operation with domain, current function, current CLI command,
+- [x] Mark each operation with domain, current function, current CLI command,
   MCP tool if present, safety tier, and current result shape.
-- [ ] Identify historical docs that still mention `src/case_builder`, `tcr.py`,
+- [x] Identify historical docs that still mention `src/case_builder`, `tcr.py`,
   or zero-required-dependency assumptions. Treat them as archives unless the
   active docs still point at them.
-- [ ] Decide the public import namespace. Default: `crime_research_kit.sdk`.
-- [ ] Commit only documentation/inventory updates if any tracked docs are
+- [x] Decide the public import namespace. Default: `crime_research_kit.sdk`.
+- [x] Commit only documentation/inventory updates if any tracked docs are
   changed.
 
 **Acceptance:**

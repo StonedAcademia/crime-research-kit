@@ -17,6 +17,17 @@ never declared public. Preserve the command-line and ledger behavior that
 researchers already use, but do not preserve accidental Python imports such as
 top-level `adapters`, `core`, or `pipeline` as compatibility promises.
 
+## Namespace Decision
+
+Decision: the public Python SDK namespace is `crime_research_kit.sdk`.
+
+The distribution name remains `crime-research-kit`, and the existing console
+scripts remain `cr-kit`, `crk-ledger`, and `crk-mcp`. Do not add
+`case_builder.*` aliases, and do not document top-level `adapters`, `core`, or
+`pipeline` as public SDK imports. Those packages may remain implementation
+layout during the migration, but they are not compatibility promises for SDK
+consumers.
+
 ## Current Inventory
 
 | Surface | Current files | What exists now | Target disposition |

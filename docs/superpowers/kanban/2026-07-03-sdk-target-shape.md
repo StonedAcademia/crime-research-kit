@@ -18,8 +18,8 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | Card | Status | Owner | Depends on | Owned files/modules | Notes |
 | --- | --- | --- | --- | --- | --- |
 | SDK-000 Inventory and planning package | done | main | - | `docs/superpowers/{specs,plans,kanban}/2026-07-03-sdk-target-shape.md` | Planning package created. |
-| SDK-001 Freeze operation inventory | in_progress | main | SDK-000 | `docs/superpowers/inventories/2026-07-03-sdk-operation-inventory.md`, SDK spec/plan/kanban | Critical path. Inventory must reconcile CLI, MCP, ops, workflow, and Skill API docs. |
-| SDK-002 Decide public namespace | claimed | main | SDK-001 | SDK spec/plan/kanban | Record `crime_research_kit.sdk` as the public import surface; no legacy aliases. |
+| SDK-001 Freeze operation inventory | review | main | SDK-000 | `docs/superpowers/inventories/2026-07-03-sdk-operation-inventory.md`, SDK spec/plan/kanban | Inventory added; awaiting reviewer audit before done. |
+| SDK-002 Decide public namespace | review | main | SDK-001 | SDK spec/plan/kanban | `crime_research_kit.sdk` recorded as the public import surface; awaiting reviewer audit before done. |
 | SDK-003 Add SDK package skeleton | claimed | worker-sdk-skeleton | SDK-002 | `src/crime_research_kit/__init__.py`, `src/crime_research_kit/README.md`, `src/crime_research_kit/sdk/__init__.py`, `src/crime_research_kit/sdk/README.md`, `src/crime_research_kit/sdk/context.py`, `src/crime_research_kit/sdk/operations.py`, SDK import tests | Non-overlapping worker slice. Worker must not edit release metadata or unrelated files. |
 | SDK-004 Define public result/error types | claimed | worker-sdk-results | SDK-003 | `src/crime_research_kit/sdk/results.py`, `src/crime_research_kit/sdk/errors.py`, result/error tests | Non-overlapping worker slice. Worker must not edit SDK package `__init__` files unless asked during integration. |
 | SDK-005 Define `OperationSpec` catalog | ready | unassigned | SDK-004 | `src/crime_research_kit/sdk/operations.py`, operation catalog tests | Next P0 implementation slice after result/error types land. |
@@ -59,13 +59,19 @@ reach review or done.
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| SDK-001 Freeze operation inventory | main | Critical-path local task in the SDK worktree. |
+| None | - | First-wave code work is with bounded workers while SDK-001/SDK-002 are in review. |
+
+## Review
+
+| Card | Owner | Notes |
+| --- | --- | --- |
+| SDK-001 Freeze operation inventory | main | `docs/superpowers/inventories/2026-07-03-sdk-operation-inventory.md` added. |
+| SDK-002 Decide public namespace | main | Spec records `crime_research_kit.sdk` as the public namespace with no legacy aliases. |
 
 ## Claimed
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| SDK-002 Decide public namespace | main | Follows SDK-001 inventory; records `crime_research_kit.sdk` as the public import surface. |
 | SDK-003 Add SDK package skeleton | worker-sdk-skeleton | Bounded worker slice with SDK package skeleton and import tests only. |
 | SDK-004 Define public result/error types | worker-sdk-results | Bounded worker slice with result/error models and tests only. |
 
