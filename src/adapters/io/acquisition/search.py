@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import datetime as dt
 import json
-import urllib.parse
-import urllib.request
 from pathlib import Path
 from typing import Any
+
+import httpx
 
 from core.casefile import case_path, ensure_case, log_action, slugify
 
@@ -23,13 +23,14 @@ def discover_sources(
     """Search a local SearXNG instance and write a lead-only candidate report."""
     ensure_case(case_dir)
     base = searxng_url.rstrip("/")
-    params = urllib.parse.urlencode({"q": query, "format": "json", "language": "en"})
-    request = urllib.request.Request(
-        f"{base}/search?{params}",
-        headers={"User-Agent": "truecrime-research-kit/0.1 local-source-discovery"},
-    )
-    with urllib.request.urlopen(request, timeout=30) as response:  # noqa: S310 - user-configured local search
-        payload = json.loads(response.read().decode("utf-8"))
+    with httpx.Client(follow_redirects=True, timeout=30) as client:
+        response = client.get(
+            f"{base}/search",
+            params={"q": query, "format": "json", "language": "en"},
+            headers={"User-Agent": "truecrime-research-kit/0.1 local-source-discovery"},
+        )
+        response.raise_for_status()
+        payload = response.json()
 
     candidates = []
     for result in payload.get("results", [])[:limit]:
