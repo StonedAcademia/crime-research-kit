@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@source inline("crk-muted crk-table-wrap crk-filter-btn crk-metrics crk-metric crk-report-section crk-legend crk-swatch");
+@source inline("crk-muted crk-table-wrap crk-filter-btn crk-metrics crk-metric crk-report-section");
 
 @layer components {
   .crk-report { margin: 0; font-family: Arial, sans-serif; color: #1f2933; background: #f7f8fa; }
@@ -16,11 +16,6 @@
   .crk-metric span { color: #475569; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
   .crk-report-section { background: #fff; border: 1px solid #d8dee6; border-radius: 8px; padding: 18px; margin-top: 18px; }
   .crk-report-section h2 { font-size: 18px; font-weight: 700; margin: 0 0 14px; }
-  .crk-legend { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 0; color: #475569; font-size: 13px; }
-  .crk-legend span { display: inline-flex; align-items: center; gap: 6px; }
-  .crk-swatch { width: 22px; height: 0; border-top: 4px solid #1d4ed8; display: inline-block; }
-  .crk-swatch.medium { border-color: #64748b; }
-  .crk-swatch.weak { border-color: #94a3b8; border-top-style: dashed; }
   .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 16px; }
   .toolbar input { min-width: min(100%, 360px); border: 1px solid #cbd5e1; border-radius: 7px; background: #fff; padding: 7px 10px; font-size: 13px; }
   .chart-layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 18px; align-items: start; }

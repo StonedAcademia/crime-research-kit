@@ -10,6 +10,8 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 from adapters.ops.evidence.reports.analysis.command.builders.bridges import build_cluster_bridges
 from adapters.ops.evidence.reports.analysis.command.builders.evidence import build_evidence_products
 from adapters.ops.evidence.reports.analysis.command.builders.facets.boundary import (
@@ -139,7 +141,28 @@ def test_new_pipeline_preserves_page_content(tmp_path: Path):
     assert figure_signatures == expected["figures"]
 
 
-def test_case_chart_and_cluster_pages_preserve_content(tmp_path: Path):
+def test_case_chart_pages_preserve_content(tmp_path: Path):
+    case_dir = tmp_path / "synthetic_case"
+    shutil.copytree(SYNTHETIC_CASE, case_dir, ignore=shutil.ignore_patterns("__pycache__"))
+    charts_dir = tmp_path / "charts"
+    export_case_charts(argparse.Namespace(case_dir=str(case_dir), out_dir=str(charts_dir), include_private=False, skip_public_gate=True))
+    page_files = {
+        "people_graph": charts_dir / "people_graph.html",
+        "subcase_timelines": charts_dir / "subcase_timelines.html",
+    }
+    signatures = {key: _signature(path.read_text(encoding="utf-8")) for key, path in page_files.items()}
+    figures = {
+        "people_graph": svg_signature(_first_svg((charts_dir / "people_graph.html").read_text(encoding="utf-8"))),
+        "subcase_timeline": svg_signature(_first_svg((charts_dir / "subcase_timelines.html").read_text(encoding="utf-8"))),
+    }
+    expected = json.loads(FIXTURE.read_text(encoding="utf-8"))
+    assert signatures == expected["case_charts_pages"]
+    assert figures == expected["case_charts_figures"]
+
+
+def test_cluster_pages_preserve_content(tmp_path: Path):
+    pytest.importorskip("igraph")
+    pytest.importorskip("leidenalg")
     case_dir = tmp_path / "synthetic_case"
     shutil.copytree(SYNTHETIC_CASE, case_dir, ignore=shutil.ignore_patterns("__pycache__"))
     charts_dir = tmp_path / "charts"
@@ -156,25 +179,7 @@ def test_case_chart_and_cluster_pages_preserve_content(tmp_path: Path):
             sigma=None,
         )
     )
-    page_files = {
-        "case_charts_pages": {"people_graph": charts_dir / "people_graph.html", "subcase_timelines": charts_dir / "subcase_timelines.html"},
-        "clusters_pages": {"people_clusters": clusters_dir / "people_clusters.html"},
-    }
-    signatures = {
-        section: {key: _signature(path.read_text(encoding="utf-8")) for key, path in paths.items()}
-        for section, paths in page_files.items()
-    }
-    figures = {
-        "case_charts_figures": {
-            "people_graph": svg_signature(_first_svg((charts_dir / "people_graph.html").read_text(encoding="utf-8"))),
-            "subcase_timeline": svg_signature(_first_svg((charts_dir / "subcase_timelines.html").read_text(encoding="utf-8"))),
-        },
-        "clusters_figures": {
-            "people_clusters": svg_signature(_first_svg((clusters_dir / "people_clusters.html").read_text(encoding="utf-8"))),
-        },
-    }
+    page_path = clusters_dir / "people_clusters.html"
     expected = json.loads(FIXTURE.read_text(encoding="utf-8"))
-    assert signatures["case_charts_pages"] == expected["case_charts_pages"]
-    assert signatures["clusters_pages"] == expected["clusters_pages"]
-    assert figures["case_charts_figures"] == expected["case_charts_figures"]
-    assert figures["clusters_figures"] == expected["clusters_figures"]
+    assert {"people_clusters": _signature(page_path.read_text(encoding="utf-8"))} == expected["clusters_pages"]
+    assert {"people_clusters": svg_signature(_first_svg(page_path.read_text(encoding="utf-8")))} == expected["clusters_figures"]

@@ -134,8 +134,12 @@ def leiden_partition(
     try:
         import igraph as ig  # type: ignore
         import leidenalg  # type: ignore
-    except Exception:
-        return connected_component_partition(node_ids, edges)
+    except Exception as exc:
+        raise SystemExit(
+            "Leiden clustering requires igraph and leidenalg. "
+            "Run with: cd tc-c-kit && uv run --extra dev --with igraph --with leidenalg "
+            "crk-ledger export-people-clusters ..."
+        ) from exc
 
     graph = ig.Graph()
     graph.add_vertices(len(node_ids))
@@ -157,30 +161,3 @@ def leiden_partition(
     else:
         communities = [[node_id] for node_id in node_ids]
     return [sorted(community) for community in communities]
-
-
-def connected_component_partition(node_ids: list[str], edges: list[dict[str, Any]]) -> list[list[str]]:
-    adjacency = {node_id: set() for node_id in node_ids}
-    for edge in edges:
-        src = str(edge["src_entity_id"])
-        dst = str(edge["dst_entity_id"])
-        if src in adjacency and dst in adjacency and parse_float(edge.get("edge_weight"), evidence_edge_weight(edge)) > 0:
-            adjacency[src].add(dst)
-            adjacency[dst].add(src)
-    seen: set[str] = set()
-    communities: list[list[str]] = []
-    for node_id in node_ids:
-        if node_id in seen:
-            continue
-        stack = [node_id]
-        community: list[str] = []
-        seen.add(node_id)
-        while stack:
-            current = stack.pop()
-            community.append(current)
-            for neighbor in sorted(adjacency[current], reverse=True):
-                if neighbor not in seen:
-                    seen.add(neighbor)
-                    stack.append(neighbor)
-        communities.append(sorted(community))
-    return communities
