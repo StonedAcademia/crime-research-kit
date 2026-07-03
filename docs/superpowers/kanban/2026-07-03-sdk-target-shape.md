@@ -40,12 +40,13 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-020 Release-note and gate pass | done | main | SDK-019 | `CHANGELOG.md`, release/gate checks | Final full-series gate passed with `moon run crk:test`. |
 | SDK-021 Future HTTP route binding | backlog | unassigned | SDK-005 | catalog metadata only | Backlog; no HTTP server in this series. |
 | SDK-022 Move internals under `_runtime` | backlog | unassigned | SDK-018 | `_runtime` migration if chosen | Backlog; runtime modules are documented private for now. |
-| SDK-023 SDK examples package | backlog | unassigned | SDK-014 | SDK examples/docs | Backlog. |
+| SDK-023 SDK examples package | in_progress | main | SDK-014 | SDK examples/docs | Minimal packaged SDK examples in progress. |
 | SDK-024 Catalog-driven MCP registration | backlog | unassigned | SDK-006, SDK-016 | MCP registration code/tests | Dependency-unblocked backlog refinement; prompts/resources remain explicit. |
 | SDK-025 Strict request models | backlog | unassigned | SDK-005 | request models/tests | Backlog. |
 
 Dependency note: SDK-015, SDK-016, SDK-018, SDK-019, and SDK-020 are done.
-SDK-021 through SDK-025 remain backlog follow-up slices.
+SDK-023 is in progress as the next SDK examples slice. SDK-021, SDK-022,
+SDK-024, and SDK-025 remain backlog follow-up slices.
 
 ## Done
 
@@ -77,7 +78,7 @@ SDK-021 through SDK-025 remain backlog follow-up slices.
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| None | - | No cards currently in progress. |
+| SDK-023 SDK examples package | main | Add packaged SDK examples covering case info, source ingest dry-run, packet review, public-safe export, and workflow resume. |
 
 ## Review
 
@@ -109,7 +110,6 @@ SDK-021 through SDK-025 remain backlog follow-up slices.
 | --- | --- | --- | --- |
 | SDK-021 Future HTTP route binding | P3 | SDK-005 | HTTP mapping uses the catalog but no server is added in the SDK extraction series. |
 | SDK-022 Move internals under `_runtime` | P3 | SDK-018 | Top-level implementation packages stop being packaged after console scripts and imports migrate. |
-| SDK-023 SDK examples package | P3 | SDK-014 | Minimal examples cover case info, source ingest dry-run, packet review, public-safe export, and workflow resume. |
 | SDK-024 Catalog-driven MCP registration | P3 | SDK-016 | Tool registration is generated where safe; prompts/resources remain explicit. |
 | SDK-025 Strict request models | P3 | SDK-005 | Operation request models replace loose dict payloads for stable operations. |
 
