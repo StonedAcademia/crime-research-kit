@@ -1,12 +1,12 @@
 from pathlib import Path
 
-from pipeline.graph.nodes.pipeline import (
+from crime_research_kit._runtime.pipeline.graph.nodes.pipeline import (
     draft_packets_node,
     merge_results,
     source_capture_node,
 )
-from adapters.ops.result import OpResult
-from adapters.ops.runner import CrkRunner
+from crime_research_kit._runtime.adapters.ops.result import OpResult
+from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT, ledger_command_args, ledger_subcommand
 
 REPO_ROOT = KIT_ROOT
@@ -74,7 +74,7 @@ def test_draft_packets_plans_draft_per_source_id():
 
 
 def test_parse_or_ocr_skips_in_dry_run():
-    from pipeline.graph.nodes.pipeline import parse_or_ocr_node
+    from crime_research_kit._runtime.pipeline.graph.nodes.pipeline import parse_or_ocr_node
 
     node = parse_or_ocr_node(dry_runner())
 
@@ -84,7 +84,7 @@ def test_parse_or_ocr_skips_in_dry_run():
 
 
 def test_parse_or_ocr_records_runtime_errors_per_source(synthetic_case_copy):
-    from pipeline.graph.nodes.pipeline import parse_or_ocr_node
+    from crime_research_kit._runtime.pipeline.graph.nodes.pipeline import parse_or_ocr_node
 
     node = parse_or_ocr_node(CrkRunner(repo_root=REPO_ROOT, dry_run=False))
 
@@ -97,7 +97,7 @@ def test_parse_or_ocr_records_runtime_errors_per_source(synthetic_case_copy):
 
 
 def test_import_and_validate_skips_without_approvals():
-    from pipeline.graph.nodes.pipeline import import_and_validate_node
+    from crime_research_kit._runtime.pipeline.graph.nodes.pipeline import import_and_validate_node
 
     node = import_and_validate_node(dry_runner())
 
@@ -107,7 +107,7 @@ def test_import_and_validate_skips_without_approvals():
 
 
 def test_import_and_validate_imports_each_approved_packet_with_confirm():
-    from pipeline.graph.nodes.pipeline import import_and_validate_node
+    from crime_research_kit._runtime.pipeline.graph.nodes.pipeline import import_and_validate_node
 
     node = import_and_validate_node(dry_runner())
 
@@ -122,7 +122,7 @@ def test_import_and_validate_imports_each_approved_packet_with_confirm():
 
 
 def test_index_node_skips_unless_enabled():
-    from pipeline.graph.nodes.pipeline import index_case_node
+    from crime_research_kit._runtime.pipeline.graph.nodes.pipeline import index_case_node
 
     node = index_case_node(dry_runner())
 
@@ -131,8 +131,8 @@ def test_index_node_skips_unless_enabled():
 
 
 def test_index_node_reports_failure_without_raising(synthetic_case_copy):
-    from pipeline.graph.nodes.pipeline import index_case_node
-    from adapters.ops.runner import CrkRunner
+    from crime_research_kit._runtime.pipeline.graph.nodes.pipeline import index_case_node
+    from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
 
     node = index_case_node(CrkRunner(repo_root=REPO_ROOT, dry_run=False))
 
@@ -143,10 +143,10 @@ def test_index_node_reports_failure_without_raising(synthetic_case_copy):
 
 
 def test_index_node_threads_state_qdrant_url_and_embed_model(monkeypatch, synthetic_case_copy):
-    from pipeline.graph.nodes.pipeline import index_case_node
-    from adapters.ops import query as query_ops
-    from adapters.ops.result import OpResult
-    from adapters.ops.runner import CrkRunner
+    from crime_research_kit._runtime.pipeline.graph.nodes.pipeline import index_case_node
+    from crime_research_kit._runtime.adapters.ops import query as query_ops
+    from crime_research_kit._runtime.adapters.ops.result import OpResult
+    from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
 
     captured = {}
 
@@ -173,7 +173,7 @@ def test_index_node_threads_state_qdrant_url_and_embed_model(monkeypatch, synthe
 
 
 def test_readiness_audit_runs_four_audits():
-    from pipeline.graph.nodes.pipeline import readiness_audit_node
+    from crime_research_kit._runtime.pipeline.graph.nodes.pipeline import readiness_audit_node
 
     node = readiness_audit_node(dry_runner())
 
@@ -190,7 +190,7 @@ def test_readiness_audit_runs_four_audits():
 
 
 def test_export_bundle_exports_manim_and_report():
-    from pipeline.graph.nodes.pipeline import export_bundle_node
+    from crime_research_kit._runtime.pipeline.graph.nodes.pipeline import export_bundle_node
 
     node = export_bundle_node(dry_runner())
 

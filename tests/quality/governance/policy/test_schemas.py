@@ -9,8 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from adapters.ops.casework.records.validation import SCHEMA_BY_RECORD, load_schema
-from core.models.records import MODEL_BY_RECORD
+from crime_research_kit._runtime.adapters.ops.casework.records.validation import SCHEMA_BY_RECORD, load_schema
+from crime_research_kit._runtime.core.models.records import MODEL_BY_RECORD
 from tests.helpers import KIT_ROOT
 
 

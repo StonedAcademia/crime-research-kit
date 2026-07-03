@@ -71,7 +71,7 @@ local workspace:
 
 | Symptom | Check |
 |---|---|
-| `ModuleNotFoundError: cli` | Run commands through `moon run crk:<task>` or `uv run --cache-dir .uv-cache --no-project --with-editable . -- python -m cli ...`. |
+| `ModuleNotFoundError: cli` | Run commands through `moon run crk:<task>` or `uv run --cache-dir .uv-cache --no-project --with-editable . -- python -m crime_research_kit._runtime.cli ...`. |
 | `crk-ledger` not found | Run through `uv run --cache-dir .uv-cache --no-project --with-editable . -- crk-ledger ...` or install the package editable. |
 | Case files appear in the wrong directory | Use `data/cases/<case_slug>` from the repository root. |
 | LangGraph imports fail | Run with `uv run --cache-dir .uv-cache --no-project --with-editable '.[agentic]' -- ...`. |

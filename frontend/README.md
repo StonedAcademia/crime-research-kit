@@ -2,7 +2,8 @@
 
 This source tree builds the static CSS and JavaScript that report templates
 inline or package with rendered analysis pages. The generated outputs are
-committed under `src/adapters/ops/evidence/reports/analysis/pages/templates_data/static/`.
+committed under
+`src/crime_research_kit/_runtime/adapters/ops/evidence/reports/analysis/pages/templates_data/static/`.
 
 Regenerate the committed assets from the repository root with:
 

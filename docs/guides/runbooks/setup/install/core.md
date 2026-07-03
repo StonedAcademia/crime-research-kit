@@ -54,7 +54,7 @@ the same `moon run crk:<task>` form.
 Manual fallback without moon:
 
 ```bash
-uv run --cache-dir .uv-cache --no-project --with-editable '.[dev]' -- python -c "import pytest; import cli"
+uv run --cache-dir .uv-cache --no-project --with-editable '.[dev]' -- python -c "import pytest; import crime_research_kit._runtime.cli"
 ```
 
 The minimum install uses the core package only. The `dev` extra installs the

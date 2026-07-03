@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from adapters.interfaces.cli.app import build_click_command
-from cli import build_click_command as build_crkit_command
+from crime_research_kit._runtime.adapters.interfaces.cli.app import build_click_command
+from crime_research_kit._runtime.cli import build_click_command as build_crkit_command
 from tests.helpers import KIT_ROOT, moon_task_names
 
 

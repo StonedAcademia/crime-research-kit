@@ -53,7 +53,7 @@ class CaseRecordsClient:
         limit: int | None = None,
     ) -> OperationResult:
         """Read ledger records with public-safe filtering by default."""
-        from adapters.ops import query as query_ops
+        from crime_research_kit._runtime.adapters.ops import query as query_ops
 
         raw = query_ops.get_records(
             str(self.case_dir),
@@ -73,7 +73,7 @@ class CaseRecordsClient:
         max_chars: int | None = None,
     ) -> OperationResult:
         """Read extracted source text with public-safe filtering by default."""
-        from adapters.ops import query as query_ops
+        from crime_research_kit._runtime.adapters.ops import query as query_ops
 
         raw = query_ops.get_source_text(
             str(self.case_dir),
@@ -85,7 +85,7 @@ class CaseRecordsClient:
 
     def plan_public_records(self, subject: str, *, lanes: Sequence[str] = ()) -> OperationResult:
         """Plan public-record source lanes for a subject."""
-        from adapters.ops import sources as source_ops
+        from crime_research_kit._runtime.adapters.ops import sources as source_ops
 
         raw = source_ops.plan_public_records(_runner(self.context), str(self.case_dir), subject, list(lanes))
         return _from_op_result("records.plan_public_records", raw, case_ref=str(self.case_dir))
@@ -101,9 +101,9 @@ def case_info(
     include_private: bool | None = None,
 ) -> OperationResult:
     """Return case metadata and record counts for one case."""
-    from adapters.ops import case as case_ops
-    from adapters.ops.safety.policy import filter_public
-    from core.casefile import RECORD_FILES, load_records
+    from crime_research_kit._runtime.adapters.ops import case as case_ops
+    from crime_research_kit._runtime.adapters.ops.safety.policy import filter_public
+    from crime_research_kit._runtime.core.casefile import RECORD_FILES, load_records
 
     path = context.resolve_case_ref(case_ref)
     if path is None:
@@ -168,7 +168,7 @@ def _diagnostics(raw: Any) -> dict[str, Any]:
 
 
 def _runner(context: CrkContext):
-    from adapters.ops.runner import CrkRunner
+    from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
 
     return CrkRunner(repo_root=context.repo_root, dry_run=context.dry_run)
 

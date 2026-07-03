@@ -4,12 +4,12 @@ set -eu
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 "$SCRIPT_DIR/../../local/wait-for-local-stack.sh"
 
-python -m cli --help >/dev/null
+python -m crime_research_kit._runtime.cli --help >/dev/null
 cr-kit plan /tmp/crk_install_smoke \
   --title "CRK Container Smoke" \
   --subject "self-hosted deployment smoke test" >/tmp/crk-plan.json
 
-python -c "from adapters.interfaces.mcp.server import create_server; create_server()"
+python -c "from crime_research_kit._runtime.adapters.interfaces.mcp.server import create_server; create_server()"
 
 tesseract --version >/dev/null
 gs --version >/dev/null

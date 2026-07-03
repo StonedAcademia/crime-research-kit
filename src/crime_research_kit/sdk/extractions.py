@@ -29,7 +29,7 @@ class CaseExtractionsClient:
 
     def draft(self, source_id: str, *, template: str = "generic", excerpt_chars: int = 6000) -> OperationResult:
         """Plan or run a staged extraction packet draft for a source."""
-        from adapters.ops import extraction as extraction_ops
+        from crime_research_kit._runtime.adapters.ops import extraction as extraction_ops
 
         raw = extraction_ops.draft_extraction(
             _runner(self.context),
@@ -42,28 +42,28 @@ class CaseExtractionsClient:
 
     def list(self) -> OperationResult:
         """List staged extraction packet filenames."""
-        from adapters.ops import extraction as extraction_ops
+        from crime_research_kit._runtime.adapters.ops import extraction as extraction_ops
 
         raw = extraction_ops.list_packets(str(self.case_dir))
         return _result(_op("extractions.list"), raw, case_ref=str(self.case_dir))
 
     def read(self, packet_name: str) -> OperationResult:
         """Read one staged extraction packet by bare filename."""
-        from adapters.ops import extraction as extraction_ops
+        from crime_research_kit._runtime.adapters.ops import extraction as extraction_ops
 
         raw = extraction_ops.read_packet(str(self.case_dir), packet_name)
         return _result(_op("extractions.read"), raw, case_ref=str(self.case_dir))
 
     def save(self, packet_name: str, packet: dict[str, Any]) -> OperationResult:
         """Save a reviewed packet draft under staging/extractions."""
-        from adapters.ops import extraction as extraction_ops
+        from crime_research_kit._runtime.adapters.ops import extraction as extraction_ops
 
         raw = extraction_ops.save_packet(str(self.case_dir), packet_name, packet)
         return _result(_op("extractions.save"), raw, case_ref=str(self.case_dir))
 
     def import_reviewed(self, packet_name: str, *, approved: bool = False) -> OperationResult:
         """Import a human-reviewed staged packet into canonical records."""
-        from adapters.ops import extraction as extraction_ops
+        from crime_research_kit._runtime.adapters.ops import extraction as extraction_ops
 
         name = _bare_packet_name(packet_name)
         operation = _op("extractions.import_reviewed")
@@ -103,7 +103,7 @@ def _op(name: str) -> str:
 
 
 def _runner(context: CrkContext):
-    from adapters.ops.runner import CrkRunner
+    from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
 
     return CrkRunner(repo_root=context.repo_root, dry_run=context.dry_run)
 

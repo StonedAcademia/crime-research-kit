@@ -94,8 +94,8 @@ def test_branch_gate_dry_run_prints_resolved_targets():
 def test_cli_surface_matches_snapshot():
     import json
 
-    from adapters.interfaces.cli.app import build_click_command
-    from cli import build_click_command as build_crkit_command
+    from crime_research_kit._runtime.adapters.interfaces.cli.app import build_click_command
+    from crime_research_kit._runtime.cli import build_click_command as build_crkit_command
     from deployment.scripts.checks.core.surface import click_surface
 
     snapshot = json.loads((KIT_ROOT / "docs" / "guides" / "cli-surface.json").read_text(encoding="utf-8"))

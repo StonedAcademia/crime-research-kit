@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from adapters.ops.result import OpResult
+from crime_research_kit._runtime.adapters.ops.result import OpResult
 from crime_research_kit.sdk import CrkClient, CrkContext
 from crime_research_kit.sdk.errors import DEPENDENCY_MISSING
 from tests.helpers import KIT_ROOT, ledger_subcommand
@@ -18,7 +18,7 @@ def test_names_link_uses_runner(synthetic_case_copy: Path):
 
 
 def test_retrieval_query_uses_settings_and_sdk_result(monkeypatch, synthetic_case_copy: Path):
-    from adapters.ops import query as query_ops
+    from crime_research_kit._runtime.adapters.ops import query as query_ops
 
     calls = {}
 
@@ -71,7 +71,7 @@ def test_retrieval_query_uses_settings_and_sdk_result(monkeypatch, synthetic_cas
 
 
 def test_retrieval_query_maps_missing_dependency(monkeypatch, synthetic_case_copy: Path):
-    from adapters.ops import query as query_ops
+    from crime_research_kit._runtime.adapters.ops import query as query_ops
 
     def missing_dependency(*_args, **_kwargs) -> OpResult:
         raise ModuleNotFoundError("llama-index is not installed")

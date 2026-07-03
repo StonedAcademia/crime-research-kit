@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from adapters.interfaces.mcp.context import (
+from crime_research_kit._runtime.adapters.interfaces.mcp.context import (
     ServerContext,
     default_skill_root,
     error_dict,
@@ -10,8 +10,8 @@ from adapters.interfaces.mcp.context import (
     mcp_result,
     resolve_case,
 )
-from adapters.ops.runner import CrkRunner
-from core.config import CrkSettings
+from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
+from crime_research_kit._runtime.core.config import CrkSettings
 from crime_research_kit.sdk.results import OperationResult
 from tests.helpers import KIT_ROOT
 

@@ -17,8 +17,9 @@ paths, historical `case_builder` assumptions, or CLI-first operation design.
 - Work from `dev` or a focused `docs/*` / `feat/*` branch.
 - Stage only intended paths. This repo already has unrelated docs/test changes
   in the worktree.
-- Current live source layout is top-level `src/core`, `src/adapters`, and
-  `src/pipeline`. Do not target historical `src/case_builder` paths.
+- Current live source layout places private internals under
+  `src/crime_research_kit/_runtime/{adapters,core,pipeline}`. Do not target
+  historical `src/case_builder` paths.
 - Every Python module stays under 200 non-comment LOC and every Python-bearing
   package keeps a `README.md`.
 - Do not add required dependencies for the SDK skeleton.
@@ -40,9 +41,9 @@ historical plan drift.
 - Read: `docs/guides/integrations/skill-api/**`
 - Read: `docs/guides/architecture/system-overview.md`
 - Read: `docs/guides/architecture/case-builder-langgraph.md`
-- Read: `src/adapters/ops/**`
-- Read: `src/adapters/interfaces/{cli,mcp}/**`
-- Read: `src/pipeline/app/service.py`
+- Read: `src/crime_research_kit/_runtime/adapters/ops/**`
+- Read: `src/crime_research_kit/_runtime/adapters/interfaces/{cli,mcp}/**`
+- Read: `src/crime_research_kit/_runtime/pipeline/app/service.py`
 - Read: `tests/runtime/**`, `tests/quality/governance/**`
 
 **Steps:**
@@ -208,7 +209,7 @@ catalog-backed services, with subprocess transport kept private.
 
 **Target files:**
 - `src/crime_research_kit/sdk/workflows.py`
-- `src/pipeline/app/service.py`
+- `src/crime_research_kit/_runtime/pipeline/app/service.py`
 - `tests/runtime/e2e/test_sdk_workflows.py`
 
 **Steps:**
@@ -238,8 +239,8 @@ Dependency gate: do not repoint CLI or MCP until the operation catalog and
 catalog parity tests have landed.
 
 **Files:**
-- `src/adapters/interfaces/cli/**`
-- `src/adapters/interfaces/mcp/**`
+- `src/crime_research_kit/_runtime/adapters/interfaces/cli/**`
+- `src/crime_research_kit/_runtime/adapters/interfaces/mcp/**`
 - `tests/runtime/integration/test_mcp_tools_read.py`
 - `tests/runtime/integration/test_mcp_tools_write_gated.py`
 - `tests/quality/governance/docs/test_runbook_coverage.py`
@@ -277,15 +278,14 @@ catalog parity tests have landed.
 
 - [x] Decide whether to move implementation modules under
   `crime_research_kit._runtime` now or mark top-level packages as temporary
-  internal implementation in packaging docs. Decision: do not move modules in
-  this slice; document them as private runtime.
-- [x] If moving, move in small domain slices with import-boundary tests. Not
-  moving now; deferred to SDK-022 if the runtime migration is chosen later.
+  internal implementation in packaging docs. Decision: SDK-018 documented the
+  policy; SDK-022 performs the runtime move.
+- [x] Move runtime roots into `crime_research_kit._runtime` with
+  import-boundary and packaging tests.
 - [x] If not moving yet, add explicit docs saying only `crime_research_kit.sdk`
   is public pre-1.0 Python API.
-- [x] Update package discovery only when console scripts and internal imports
-  have been migrated. No package discovery change is needed for this policy
-  slice.
+- [x] Update package discovery after console scripts and internal imports have
+  migrated.
 - [x] Add a governance test that public docs do not advertise top-level
   implementation imports.
 
@@ -335,7 +335,7 @@ or unrelated governance cleanup into this SDK series.
 ## Backlog Follow-Ups
 
 - [x] SDK-021 Future HTTP route binding.
-- [ ] SDK-022 Move internals under `_runtime`.
+- [x] SDK-022 Move internals under `_runtime`.
 - [x] SDK-023 SDK examples package.
 - [x] SDK-024 Catalog-driven MCP registration.
 - [x] SDK-025 Strict request models.

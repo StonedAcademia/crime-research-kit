@@ -2,7 +2,7 @@ import pytest
 
 from types import SimpleNamespace
 
-from cli import build_click_command
+from crime_research_kit._runtime.cli import build_click_command
 
 
 def parse_command(command: str, args: list[str]) -> SimpleNamespace:
@@ -60,7 +60,7 @@ def test_plan_parser_accepts_llm_flag():
 
 
 def test_plan_handler_uses_sdk_workflow(monkeypatch):
-    from adapters.interfaces.cli.case_builder import handlers
+    from crime_research_kit._runtime.adapters.interfaces.cli.case_builder import handlers
     from crime_research_kit.sdk import OperationResult
     from crime_research_kit.sdk.workflows import WorkflowClient
 
@@ -97,7 +97,7 @@ def test_plan_handler_uses_sdk_workflow(monkeypatch):
 
 
 def test_resume_handler_uses_sdk_workflow(monkeypatch):
-    from adapters.interfaces.cli.case_builder import handlers
+    from crime_research_kit._runtime.adapters.interfaces.cli.case_builder import handlers
     from crime_research_kit.sdk import OperationResult
     from crime_research_kit.sdk.workflows import WorkflowClient
 
@@ -130,7 +130,7 @@ def test_resume_handler_uses_sdk_workflow(monkeypatch):
 
 
 def test_local_source_handlers_use_sdk_sources(monkeypatch):
-    from adapters.interfaces.cli.case_builder import handlers
+    from crime_research_kit._runtime.adapters.interfaces.cli.case_builder import handlers
     from crime_research_kit.sdk import OperationResult
     from crime_research_kit.sdk.sources import CaseSourcesClient
 
@@ -166,8 +166,8 @@ def test_local_source_handlers_use_sdk_sources(monkeypatch):
 
 
 def test_llm_disabled_state_never_builds_a_model(monkeypatch):
-    from pipeline.app import service
-    from core.models.state import CaseBuilderState
+    from crime_research_kit._runtime.pipeline.app import service
+    from crime_research_kit._runtime.core.models.state import CaseBuilderState
 
     def explode():
         raise AssertionError("model factory must not be constructed when llm is disabled")
@@ -185,8 +185,8 @@ def test_llm_disabled_state_never_builds_a_model(monkeypatch):
 
 
 def test_checkpoint_requires_langgraph_runner():
-    from pipeline.app.service import run_case_builder
-    from core.models.state import CaseBuilderState
+    from crime_research_kit._runtime.pipeline.app.service import run_case_builder
+    from crime_research_kit._runtime.core.models.state import CaseBuilderState
 
     with pytest.raises(RuntimeError):
         run_case_builder(CaseBuilderState(case_dir="data/cases/x"), runner="sequential", checkpoint=True)
@@ -194,8 +194,8 @@ def test_checkpoint_requires_langgraph_runner():
 
 def test_service_checkpoint_pause_and_resume(tmp_path):
     pytest.importorskip("langgraph")
-    from pipeline.app.service import resume_case_builder, run_case_builder
-    from core.models.state import CaseBuilderState
+    from crime_research_kit._runtime.pipeline.app.service import resume_case_builder, run_case_builder
+    from crime_research_kit._runtime.core.models.state import CaseBuilderState
 
     case_dir = str(tmp_path / "svc_case")
     state = CaseBuilderState(case_dir=case_dir, subject="missing person map", thread_id="svc-t1")

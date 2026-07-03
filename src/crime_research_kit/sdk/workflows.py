@@ -32,8 +32,8 @@ class WorkflowClient:
         if request.runner not in _RUNNERS:
             return _invalid(operation, f"runner must be one of {sorted(_RUNNERS)}", str(resolved))
         try:
-            from core.models.state import CaseBuilderState
-            from pipeline.app.service import run_case_builder
+            from crime_research_kit._runtime.core.models.state import CaseBuilderState
+            from crime_research_kit._runtime.pipeline.app.service import run_case_builder
 
             state = CaseBuilderState(
                 case_dir=str(resolved),
@@ -70,7 +70,7 @@ class WorkflowClient:
         if not request.thread_id:
             return _invalid(operation, "thread_id is required", str(resolved))
         try:
-            from pipeline.app.service import resume_case_builder
+            from crime_research_kit._runtime.pipeline.app.service import resume_case_builder
 
             raw = resume_case_builder(
                 str(resolved),

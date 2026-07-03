@@ -19,7 +19,8 @@ def test_system_overview_shows_sdk_as_public_python_layer():
 
     assert "## Public Python Boundary" in text
     assert "The public Python API is `crime_research_kit.sdk`." in text
-    assert "`adapters`, `core`, and `pipeline` remain private runtime packages" in flat
+    assert "The packaged private runtime modules now live under `crime_research_kit._runtime`." in flat
+    assert "Top-level `adapters`, `core`, and `pipeline` imports are not compatibility promises." in flat
     assert "`cr-kit` and `crk-mcp` are adapter surfaces over SDK/catalog-backed operations." in text
     assert "MCP-specific" in text
     assert "`run_report` remains a direct derived-report path" in text

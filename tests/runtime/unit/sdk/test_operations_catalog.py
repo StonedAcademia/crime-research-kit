@@ -5,7 +5,7 @@ import json
 import pytest
 from pydantic import BaseModel, ValidationError
 
-from adapters.interfaces.mcp.tools.registry import DIRECT_TOOL_NAMES, sdk_tool_registrations, tool_registrations
+from crime_research_kit._runtime.adapters.interfaces.mcp.tools.registry import DIRECT_TOOL_NAMES, sdk_tool_registrations, tool_registrations
 from crime_research_kit.sdk.operations import SafetyTier, get_operation, list_operations, operations_by_domain
 from tests.helpers import KIT_ROOT
 

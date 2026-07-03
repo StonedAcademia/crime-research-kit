@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-from adapters.ops.runner import LEDGER_CLI_MODULE, CrkRunner
+from crime_research_kit._runtime.adapters.ops.runner import LEDGER_CLI_MODULE, CrkRunner
 from tests.helpers import KIT_ROOT
 
 REPO_ROOT = KIT_ROOT

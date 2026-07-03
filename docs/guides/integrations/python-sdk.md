@@ -8,10 +8,10 @@ The public Python SDK import root is `crime_research_kit.sdk`.
 from crime_research_kit.sdk import CrkClient, CrkContext
 ```
 
-The distribution still packages implementation modules such as `adapters`,
-`core`, and `pipeline` because the current console scripts and app runtime need
-them. Those top-level modules are runtime internals, not supported SDK imports,
-and they may move or be renamed before 1.0 without compatibility aliases.
+The distribution packages private implementation modules under
+`crime_research_kit._runtime` because the console scripts and app runtime need
+them. That namespace is internal, not a supported SDK import, and may be
+reshaped before 1.0 without compatibility aliases.
 
 Do not build integrations against `adapters.*`, `core.*`, `pipeline.*`, or
 historical `case_builder.*` paths. If an operation is missing from the SDK,
@@ -106,15 +106,15 @@ The examples package covers these recipes:
 | --- | --- | --- |
 | `crime_research_kit.sdk` | Public pre-1.0 SDK | Stable entrypoint for Python callers. |
 | `cr-kit`, `crk-ledger`, `crk-mcp` | Public command surfaces | Console scripts remain supported separately from Python imports. |
-| `adapters.*`, `core.*`, `pipeline.*` | private runtime | Packaged for current implementation and scripts only. |
+| `crime_research_kit._runtime.*` | private runtime | Packaged for current implementation and scripts only. |
+| `adapters.*`, `core.*`, `pipeline.*` | Removed private layout | Not packaged as public SDK imports. |
 | `case_builder.*` | Historical | No compatibility aliases will be added. |
 
 ## Runtime Migration Rule
 
-The target private runtime namespace is `crime_research_kit._runtime`.
-Top-level `adapters.*`, `core.*`, and `pipeline.*` can be removed from package
-discovery only after console scripts, package-data resources, SDK lazy imports,
-MCP wiring, and workflow imports have moved to that private namespace.
+The private runtime namespace is `crime_research_kit._runtime`. Console scripts,
+package-data resources, SDK lazy imports, MCP wiring, and workflow imports must
+stay on that private namespace rather than top-level runtime packages.
 
 Do not add compatibility aliases for the historical top-level modules. During
 the migration, fix callers to use `crime_research_kit.sdk` for public

@@ -79,7 +79,7 @@ def test_sdk_examples_cover_minimal_recipes(synthetic_case_copy: Path, monkeypat
         source_ingest_dry_run_example,
         workflow_resume_example,
     )
-    from pipeline.app import service
+    from crime_research_kit._runtime.pipeline.app import service
 
     packet_path = synthetic_case_copy / "staging" / "extractions" / "SDEMO0001_extraction.json"
     packet = {"source_id": "SDEMO0001", "claims": [{"claim": "source-backed demo"}]}

@@ -1,5 +1,5 @@
-from core.models.state import CaseBuilderState
-from pipeline.app.service import run_case_builder
+from crime_research_kit._runtime.core.models.state import CaseBuilderState
+from crime_research_kit._runtime.pipeline.app.service import run_case_builder
 
 
 def test_case_builder_dry_run_infers_missing_and_geographical_lanes():

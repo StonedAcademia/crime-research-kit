@@ -17,7 +17,7 @@ private runtime internals, not Python SDK imports.
 | Case ledger | `data/cases/<case>/records/*.jsonl` | Canonical source, entity, event, claim, relationship, quote, redaction, and action records. |
 | Public workflow SDK | `crime_research_kit.sdk.WorkflowClient` | Public Python facade for plan/resume requests and `OperationResult` responses. |
 | CLI adapter | `cr-kit plan` / `cr-kit resume` | Command surface over the SDK workflow facade. |
-| Workflow state | `core.models.state.CaseBuilderState` | Serializable run state for planning, command outputs, errors, and review gates. |
+| Workflow state | `crime_research_kit._runtime.core.models.state.CaseBuilderState` | Serializable run state for planning, command outputs, errors, and review gates. |
 | Orchestration | LangGraph | Optional runtime for resumable step graphs. The sequential runner remains available for tests and local dry runs. |
 | Observability | Local logs and `research_actions.jsonl` | No managed tracing service is configured for the self-hosted stack. |
 | Analysis surface | Phanestead Apothecary | Consumes exported bundles and reports readiness, source quality, timelines, and graph metrics. |
@@ -26,12 +26,12 @@ private runtime internals, not Python SDK imports.
 
 | Directory | Responsibility |
 | --- | --- |
-| `src/core/` | Case ledger helpers, configuration, lane registry, state models, and workflow memory. |
+| `src/crime_research_kit/_runtime/core/` | Case ledger helpers, configuration, lane registry, state models, and workflow memory. |
 | `src/crime_research_kit/sdk/` | Public SDK facade, result envelope, context, and workflow request/response boundary. |
-| `src/pipeline/` | Deterministic agents, service boundary, and LangGraph/sequential workflow execution. |
-| `src/adapters/io/` | Local source discovery, parsing/OCR, and rebuildable evidence retrieval indexes. |
-| `src/adapters/ops/` | Typed operations, runner/result contracts, and safety policy shared by frontends. |
-| `src/adapters/interfaces/` | CLI, LLM, and MCP interface adapters. CLI/MCP call SDK facades where operations are promoted. |
+| `src/crime_research_kit/_runtime/pipeline/` | Deterministic agents, service boundary, and LangGraph/sequential workflow execution. |
+| `src/crime_research_kit/_runtime/adapters/io/` | Local source discovery, parsing/OCR, and rebuildable evidence retrieval indexes. |
+| `src/crime_research_kit/_runtime/adapters/ops/` | Typed operations, runner/result contracts, and safety policy shared by frontends. |
+| `src/crime_research_kit/_runtime/adapters/interfaces/` | CLI, LLM, and MCP interface adapters. CLI/MCP call SDK facades where operations are promoted. |
 
 Each package directory has a local `README.md`. Python modules are kept under
 200 non-comment LOC by `tests/quality/governance/test_repository_shape.py`.
@@ -94,7 +94,7 @@ Checkpoints persist in `data/cases/<case>/.runs/checkpoints.db`.
 Dry run with no optional dependencies:
 
 ```bash
-uv run --cache-dir .uv-cache --no-project --with-editable . -- python -m cli plan data/cases/example_case \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- python -m crime_research_kit._runtime.cli plan data/cases/example_case \
   --title "Example Case" \
   --subject "Jane Doe missing person last seen near Riverside Park map"
 ```
@@ -102,7 +102,7 @@ uv run --cache-dir .uv-cache --no-project --with-editable . -- python -m cli pla
 Execute the CRK commands:
 
 ```bash
-uv run --cache-dir .uv-cache --no-project --with-editable . -- python -m cli plan data/cases/example_case \
+uv run --cache-dir .uv-cache --no-project --with-editable . -- python -m crime_research_kit._runtime.cli plan data/cases/example_case \
   --title "Example Case" \
   --subject "Jane Doe missing person last seen near Riverside Park map" \
   --execute

@@ -14,12 +14,12 @@ from tests.helpers import KIT_ROOT
 # Policy source: docs/superpowers/specs/2026-07-02-governance-hardening-spec.md §5.
 SRC = KIT_ROOT / "src"
 FRONTEND_ROOTS = [
-    SRC / "cli.py",
-    SRC / "adapters" / "interfaces" / "mcp",
-    SRC / "pipeline" / "graph",
-    SRC / "pipeline" / "app",
+    SRC / "crime_research_kit" / "_runtime" / "cli.py",
+    SRC / "crime_research_kit" / "_runtime" / "adapters" / "interfaces" / "mcp",
+    SRC / "crime_research_kit" / "_runtime" / "pipeline" / "graph",
+    SRC / "crime_research_kit" / "_runtime" / "pipeline" / "app",
 ]
-FORBIDDEN_FOR_FRONTENDS = {"core.casefile"}
+FORBIDDEN_FOR_FRONTENDS = {"crime_research_kit._runtime.core.casefile"}
 OPTIONAL_PACKAGES = {
     "langgraph",
     "langchain",
@@ -39,7 +39,7 @@ OPTIONAL_PACKAGES = {
 }
 NETWORK_MODULES = {"socket", "requests", "httpx", "aiohttp"}
 NETWORK_ATTR_MODULES = {"urllib": {"request"}, "http": {"client"}}
-NETWORK_ALLOWED = {SRC / "adapters" / "io" / "acquisition"}
+NETWORK_ALLOWED = {SRC / "crime_research_kit" / "_runtime" / "adapters" / "io" / "acquisition"}
 
 
 def iter_py(root: Path):
@@ -100,7 +100,7 @@ def test_optional_packages_import_lazily():
 
 def test_base_cli_import_pulls_no_optional_packages():
     code = (
-        "import sys, cli; "
+        "import sys, crime_research_kit._runtime.cli; "
         f"hits = sorted({{m.split('.')[0] for m in sys.modules}} & {OPTIONAL_PACKAGES!r}); "
         "print(','.join(hits)); sys.exit(1 if hits else 0)"
     )

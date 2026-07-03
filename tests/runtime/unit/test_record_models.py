@@ -8,8 +8,8 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from core.casefile import RECORD_FILES
-from core.models.records import MODEL_BY_RECORD, ClaimRecord
+from crime_research_kit._runtime.core.casefile import RECORD_FILES
+from crime_research_kit._runtime.core.models.records import MODEL_BY_RECORD, ClaimRecord
 
 SYNTHETIC_RECORDS = Path(__file__).resolve().parents[3] / "data" / "examples" / "synthetic_case" / "records"
 
@@ -47,7 +47,7 @@ def test_extra_fields_survive_round_trip():
 
 
 def test_svg_doc_round_trips_nested_groups():
-    from core.models.reports import Group, Rect, SvgDoc, Text
+    from crime_research_kit._runtime.core.models.reports import Group, Rect, SvgDoc, Text
 
     doc = SvgDoc(
         width=100,
@@ -64,13 +64,13 @@ def test_svg_doc_round_trips_nested_groups():
     )
     dumped = doc.model_dump()
     assert dumped["elements"][0]["children"][0]["kind"] == "rect"
-    from core.models.reports import SvgDoc as _SvgDoc
+    from crime_research_kit._runtime.core.models.reports import SvgDoc as _SvgDoc
 
     assert _SvgDoc.model_validate(dumped) == doc
 
 
 def test_report_page_defaults():
-    from core.models.reports import ReportPage
+    from crime_research_kit._runtime.core.models.reports import ReportPage
 
     page = ReportPage(slug="x", title="X", case_title="Case")
     assert page.figure is None and page.filters == [] and page.include_private is False

@@ -9,6 +9,8 @@ package as they become stable.
 Pre-1.0 policy:
 
 - Public Python callers import from `crime_research_kit.sdk`.
-- Packaged top-level modules such as `adapters`, `core`, and `pipeline` are
-  current runtime internals for console scripts and the app layer.
+- Private runtime modules under `crime_research_kit._runtime` support console
+  scripts and the app layer, but are not public SDK imports.
+- Top-level `adapters`, `core`, and `pipeline` imports are not packaged
+  compatibility targets.
 - Historical `case_builder.*` import paths are not compatibility targets.

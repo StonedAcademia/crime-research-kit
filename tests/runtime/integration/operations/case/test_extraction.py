@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from adapters.ops import extraction as extraction_ops
-from adapters.ops.runner import CrkRunner
+from crime_research_kit._runtime.adapters.ops import extraction as extraction_ops
+from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
 from tests.helpers import KIT_ROOT, ledger_subcommand
 
 REPO_ROOT = KIT_ROOT

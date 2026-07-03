@@ -37,7 +37,7 @@ class CaseSourcesClient:
         **metadata: Any,
     ) -> OperationResult:
         """Plan or run manual source registration."""
-        from adapters.ops import sources as source_ops
+        from crime_research_kit._runtime.adapters.ops import sources as source_ops
 
         raw = source_ops.add_source(
             _runner(self.context),
@@ -60,7 +60,7 @@ class CaseSourcesClient:
         **metadata: Any,
     ) -> OperationResult:
         """Plan or run URL ingestion for a source."""
-        from adapters.ops import sources as source_ops
+        from crime_research_kit._runtime.adapters.ops import sources as source_ops
 
         raw = source_ops.ingest_url(
             _runner(self.context),
@@ -82,7 +82,7 @@ class CaseSourcesClient:
         out: str | None = None,
     ) -> OperationResult:
         """Plan or run source preservation metadata updates."""
-        from adapters.ops import sources as source_ops
+        from crime_research_kit._runtime.adapters.ops import sources as source_ops
 
         raw = source_ops.preserve_source(
             _runner(self.context),
@@ -96,7 +96,7 @@ class CaseSourcesClient:
 
     def discover(self, *, query: str, searxng_url: str | None = None, limit: int = 10, out: str | None = None) -> OperationResult:
         """Search configured SearXNG for lead-only source candidates."""
-        from adapters.ops import sources as source_ops
+        from crime_research_kit._runtime.adapters.ops import sources as source_ops
 
         try:
             raw = source_ops.discover_sources(
@@ -112,7 +112,7 @@ class CaseSourcesClient:
 
     def parse(self, source_id: str, *, force: bool = False) -> OperationResult:
         """Parse a registered source artifact with the optional documents extra."""
-        from adapters.ops import sources as source_ops
+        from crime_research_kit._runtime.adapters.ops import sources as source_ops
 
         try:
             raw = source_ops.parse_source(str(self.case_dir), source_id, force=force)
@@ -122,7 +122,7 @@ class CaseSourcesClient:
 
     def ocr(self, source_id: str, *, language: str = "eng", force: bool = False) -> OperationResult:
         """OCR a registered PDF source with optional local tooling."""
-        from adapters.ops import sources as source_ops
+        from crime_research_kit._runtime.adapters.ops import sources as source_ops
 
         try:
             raw = source_ops.ocr_source(str(self.case_dir), source_id, language=language, force=force)
@@ -136,7 +136,7 @@ def _op(name: str) -> str:
 
 
 def _runner(context: CrkContext):
-    from adapters.ops.runner import CrkRunner
+    from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
 
     return CrkRunner(repo_root=context.repo_root, dry_run=context.dry_run)
 

@@ -11,20 +11,20 @@ def find_repo_root(start: Path | None = None) -> Path:
     current = (start or Path(__file__)).resolve()
     search_from = current if current.is_dir() else current.parent
     for path in (search_from, *search_from.parents):
-        if (path / "pyproject.toml").exists() and (path / "src" / "cli.py").exists():
+        if (path / "pyproject.toml").exists() and (path / "src" / "crime_research_kit" / "_runtime" / "cli.py").exists():
             return path
     raise RuntimeError(f"Could not find tc-c-kit repo root from {current}")
 
 
 KIT_ROOT = find_repo_root()
-LEDGER_CLI_MODULE = "adapters.interfaces.cli"
+LEDGER_CLI_MODULE = "crime_research_kit._runtime.adapters.interfaces.cli"
 
 
 def load_ledger_cli() -> SimpleNamespace:
-    from adapters.interfaces.cli.app import app, build_click_command
-    from adapters.interfaces.cli.entry import main
-    from adapters.ops.casework.records.names.parsing import parse_name_entries
-    from core.casefile import (
+    from crime_research_kit._runtime.adapters.interfaces.cli.app import app, build_click_command
+    from crime_research_kit._runtime.adapters.interfaces.cli.entry import main
+    from crime_research_kit._runtime.adapters.ops.casework.records.names.parsing import parse_name_entries
+    from crime_research_kit._runtime.core.casefile import (
         append_jsonl,
         case_path,
         read_jsonl,

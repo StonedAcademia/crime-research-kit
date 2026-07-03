@@ -31,7 +31,7 @@ class CaseExportsClient:
 
     def manim(self, *, include_private: bool | None = None) -> OperationResult:
         """Plan or run public-safe Manim CSV exports."""
-        from adapters.ops import exports as export_ops
+        from crime_research_kit._runtime.adapters.ops import exports as export_ops
 
         is_internal = self._include_private(include_private)
         raw = export_ops.export_manim(_runner(self.context), str(self.case_dir), include_private=is_internal)
@@ -45,7 +45,7 @@ class CaseExportsClient:
 
     def case_charts(self, *, include_private: bool | None = None, out_dir: str | None = None) -> OperationResult:
         """Plan or run people graph and subcase timeline chart exports."""
-        from adapters.ops import exports as export_ops
+        from crime_research_kit._runtime.adapters.ops import exports as export_ops
 
         is_internal = self._include_private(include_private)
         raw = export_ops.export_case_charts(
@@ -70,7 +70,7 @@ class CaseExportsClient:
         clusters_dir: str | None = None,
     ) -> OperationResult:
         """Plan or run extended analysis chart exports."""
-        from adapters.ops import exports as export_ops
+        from crime_research_kit._runtime.adapters.ops import exports as export_ops
 
         is_internal = self._include_private(include_private)
         raw = export_ops.export_analysis_charts(
@@ -99,7 +99,7 @@ class CaseExportsClient:
         sigma: float | None = None,
     ) -> OperationResult:
         """Plan or run people clustering exports."""
-        from adapters.ops import exports as export_ops
+        from crime_research_kit._runtime.adapters.ops import exports as export_ops
 
         is_internal = self._include_private(include_private)
         raw = export_ops.export_people_clusters(
@@ -138,7 +138,7 @@ class ExportsClient:
         out_dir: str | None = None,
     ) -> OperationResult:
         """Plan or run the cross-case timeline and corroboration export."""
-        from adapters.ops import exports as export_ops
+        from crime_research_kit._runtime.adapters.ops import exports as export_ops
 
         root = cases_root or self.context.cases_root or Path("data/cases")
         is_internal = self.context.include_private if include_private is None else include_private
@@ -156,7 +156,7 @@ def _op(name: str) -> str:
 
 
 def _runner(context: CrkContext):
-    from adapters.ops.runner import CrkRunner
+    from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
 
     return CrkRunner(repo_root=context.repo_root, dry_run=context.dry_run)
 

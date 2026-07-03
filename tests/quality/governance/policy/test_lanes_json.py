@@ -1,8 +1,8 @@
 import json
 import re
 
-from adapters.interfaces.cli.app import build_click_command
-from core.lanes.registry import load_lanes
+from crime_research_kit._runtime.adapters.interfaces.cli.app import build_click_command
+from crime_research_kit._runtime.core.lanes.registry import load_lanes
 from tests.helpers import KIT_ROOT
 
 ROOT = KIT_ROOT
