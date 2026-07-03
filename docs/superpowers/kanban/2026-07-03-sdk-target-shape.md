@@ -29,7 +29,7 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-009 Wrap case and record reads | done | main | SDK-005, SDK-008 | SDK case/record modules and tests | Public-safe case info, case listing, record reads, and source-text reads landed. |
 | SDK-010 Wrap source operations | done | main | SDK-005, SDK-008 | SDK source modules and tests | Source add, ingest, preserve, discover, parse, and OCR wrappers landed with dependency errors. |
 | SDK-011 Wrap extraction operations | done | main | SDK-005, SDK-008 | SDK extraction modules and tests | Draft/list/read/save/import_reviewed/ner_suggest wrappers landed with explicit import approval. |
-| SDK-012 Wrap review operations | ready | unassigned | SDK-005, SDK-008 | SDK review modules and tests | Safety audit behavior remains unchanged. |
+| SDK-012 Wrap review operations | in_progress | main | SDK-005, SDK-008 | SDK review modules and tests | Safety audit behavior remains unchanged. |
 | SDK-013 Wrap export operations | ready | unassigned | SDK-005, SDK-008 | SDK export modules and tests | Exports are public-safe by default. |
 | SDK-014 Add workflow facade | ready | unassigned | SDK-005, SDK-008 | `src/crime_research_kit/sdk/workflows.py`, `src/pipeline/app/service.py`, workflow tests | App layer must consume SDK/catalog-backed facade without exposing graph nodes. |
 | SDK-015 Repoint CLI handlers | blocked | unassigned | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/cli/**`, CLI tests | Do not change command names or flags. |
@@ -69,7 +69,7 @@ and SDK-016 stay blocked until SDK-012 through SDK-014 land.
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| None | - | No cards currently in progress. |
+| SDK-012 Wrap review operations | main | Implement case review wrappers over existing validation and audit operations. |
 
 ## Review
 
@@ -87,7 +87,6 @@ and SDK-016 stay blocked until SDK-012 through SDK-014 land.
 
 | Card | Priority | Depends on | Acceptance |
 | --- | --- | --- | --- |
-| SDK-012 Wrap review operations | P1 | SDK-005, SDK-008 | Validate, dedupe, identity, contradiction, privacy, public export, independence, and readiness calls return stable SDK results. |
 | SDK-013 Wrap export operations | P1 | SDK-005, SDK-008 | Exports are public-safe by default and echo internal/private mode when requested. |
 | SDK-014 Add workflow facade | P1 | SDK-005, SDK-008 | `client.workflows.plan/resume` expose app workflow through SDK/catalog-backed services without graph-node imports. |
 
