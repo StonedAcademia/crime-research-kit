@@ -6,6 +6,13 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+## [0.13.13] - 2026-07-03
+
+### Added
+
+- Added strict SDK request models and catalog parity checks for operation
+  `request_model` names.
+
 ## [0.13.12] - 2026-07-03
 
 ### Changed
@@ -17,29 +24,23 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ### Added
 
-- Added packaged SDK example recipes for case info, source ingest dry-runs,
-  packet review, public-safe export planning, and workflow resume decisions.
+- Added packaged SDK example recipes for case info, source ingest dry-runs, packet review, public-safe export planning, and workflow resume decisions.
 - Added docs for importing `crime_research_kit.sdk.examples` recipes.
 
 ### Changed
 
-- Extended the fresh-build import smoke to include the packaged SDK examples
-  namespace.
+- Extended the fresh-build import smoke to include the packaged SDK examples namespace.
 
 ## [0.13.10] - 2026-07-03
 
 ### Added
 
-- Added a developer-integrator quick start for the public
-  `crime_research_kit.sdk` surface.
+- Added a developer-integrator quick start for the public `crime_research_kit.sdk` surface.
 
 ### Changed
 
-- Updated README and Skill API operation reference docs to describe the SDK,
-  adapter, and catalog drift-check boundaries for the final SDK extraction gate.
-- Kept the evidence-board report out of the SDK catalog until public/private
-  filtering semantics are explicit, with documented CLI/MCP direct-runtime
-  exemptions.
+- Updated README and Skill API operation reference docs to describe the SDK, adapter, and catalog drift-check boundaries for the final SDK extraction gate.
+- Kept the evidence-board report out of the SDK catalog until public/private filtering semantics are explicit, with documented CLI/MCP direct-runtime exemptions.
 
 ## [0.13.9] - 2026-07-03
 

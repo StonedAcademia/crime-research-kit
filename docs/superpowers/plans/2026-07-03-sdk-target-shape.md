@@ -338,4 +338,4 @@ or unrelated governance cleanup into this SDK series.
 - [ ] SDK-022 Move internals under `_runtime`.
 - [x] SDK-023 SDK examples package.
 - [x] SDK-024 Catalog-driven MCP registration.
-- [ ] SDK-025 Strict request models.
+- [x] SDK-025 Strict request models.

@@ -82,6 +82,7 @@ src/crime_research_kit/
     review.py          # validation and deterministic audits
     exports.py         # public-safe exports
     workflows.py       # plan/resume workflow facade
+    requests/          # strict request models keyed by OperationSpec
     examples/          # importable example recipes, not a runtime layer
   models/
     records/           # public record models already mirrored from schemas
@@ -115,6 +116,7 @@ and never import `adapters`, `core`, `pipeline`, `CrkRunner`, or MCP/CLI modules
 | `CrkClient` | Top-level entrypoint for cases, global exports, and workflows. | No direct file IO methods. |
 | `CaseClient` | Case-rooted operations so callers stop passing `case_dir` repeatedly. | Slug/path resolution is explicit and safe. |
 | `OperationSpec` | Name, request model, result model, safety tier, side effects, CLI/MCP/HTTP mapping. | Single source for adapters and docs. |
+| `OperationRequest` | Strict request payload base for catalog `request_model` names. | Pydantic models reject unknown fields and are resolved through `crime_research_kit.sdk.requests`. |
 | `OperationResult` | Stable result envelope with `ok`, `operation`, `case_ref`, `data`, `warnings`, `errors`, `created`, `updated`, `outputs`, `counts`. | Diagnostics such as commands/stdout are present only when requested. |
 | `CrkError` | Typed exception carrying error code and operation context. | SDK methods may return results or raise based on client mode; default should be result-returning for parity with current ops. |
 | `WorkflowClient` | `plan`, `resume`, `status`, and run-state helpers. | Owns app-layer orchestration facade, not graph internals. |
