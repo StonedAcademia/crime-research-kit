@@ -32,7 +32,7 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-012 Wrap review operations | done | main | SDK-005, SDK-008 | SDK review modules and tests | Validation, dedupe, identity, contradiction, readiness, privacy, public-export, and source-independence wrappers landed. |
 | SDK-013 Wrap export operations | done | main | SDK-005, SDK-008 | SDK export modules and tests | Public-safe export wrappers landed. |
 | SDK-014 Add workflow facade | done | main | SDK-005, SDK-008 | `src/crime_research_kit/sdk/workflows.py`, `src/pipeline/app/service.py`, workflow tests | Workflow facade landed without public graph-node imports. |
-| SDK-015 Repoint CLI handlers | ready | unassigned | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/cli/**`, CLI tests | Do not change command names or flags. |
+| SDK-015 Repoint CLI handlers | in_progress | main | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/cli/**`, CLI tests | Do not change command names or flags. |
 | SDK-016 Repoint MCP tools | ready | unassigned | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/mcp/**`, MCP tests | Tool safety tiers should come from catalog where possible. |
 | SDK-017 Generate or drift-check Skill API docs | done | worker-sdk-docs-drift + main integration | SDK-005 | docs drift tests, Skill API docs | Skill API operation docs now drift-check against the SDK catalog. |
 | SDK-018 Define private runtime policy | blocked | unassigned | SDK-006, SDK-015, SDK-016 | packaging docs/tests | Public docs declare only `crime_research_kit.sdk`. |
@@ -72,7 +72,7 @@ SDK-018 stays blocked until both adapter slices land.
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| None | - | No cards currently in progress. |
+| SDK-015 Repoint CLI handlers | main | Repoint bounded CLI handlers through SDK while preserving command names and flags. |
 
 ## Review
 
@@ -90,7 +90,6 @@ SDK-018 stays blocked until both adapter slices land.
 
 | Card | Priority | Depends on | Acceptance |
 | --- | --- | --- | --- |
-| SDK-015 Repoint CLI handlers | P2 | SDK-006, SDK-009 to SDK-014 | Existing `cr-kit` and `crk-ledger` command tests pass with SDK-backed handlers. |
 | SDK-016 Repoint MCP tools | P2 | SDK-006, SDK-009 to SDK-014 | Existing MCP read/write/gated tests pass with SDK-backed tools. |
 
 ## Blocked / Dependency-Gated
