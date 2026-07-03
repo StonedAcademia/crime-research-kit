@@ -86,4 +86,3 @@ def workflow_resume_example(
 
 def _client(cases_root: PathValue, *, repo_root: PathValue | None, dry_run: bool = False) -> CrkClient:
     return CrkClient(CrkContext(repo_root=repo_root, cases_root=cases_root, dry_run=dry_run))
-
