@@ -6,6 +6,8 @@ Current surface:
 
 - `CrkContext` carries caller-provided roots, privacy defaults, resolved
   settings, metadata, and transport mode.
+- `CrkClient` is the top-level SDK entrypoint.
+- `CaseClient` is a case-scoped handle that stores the resolved case context.
 - `TransportMode` records whether clients should use automatic, direct, or
   subprocess-backed runtime access.
 - `OperationResult` and `OperationWarning` define the stable SDK result

@@ -23,9 +23,10 @@ SIZE_EXEMPT_NAMES = {"LICENSE"}
 SRC_FILE_COUNT_EXEMPT_NAMES = {"README.md", "__init__.py"}
 DIR_LIMIT_OVERRIDES = {
     Path("src"): {"max_dirs": 4},
+    Path("src/crime_research_kit/sdk"): {"max_files": 5},
     Path("docs/guides"): {"max_dirs": 4},
     Path("tests/runtime/unit"): {"max_dirs": 4},
-    Path("tests/runtime/unit/sdk"): {"max_files": 5},
+    Path("tests/runtime/unit/sdk"): {"max_files": 6},
 }
 
 HASH_COMMENT_SUFFIXES = {".py", ".sh", ".yml", ".yaml", ".toml"}

@@ -19,6 +19,7 @@ def test_sdk_imports_without_legacy_runtime_packages():
     sdk = importlib.import_module("crime_research_kit.sdk")
 
     assert sdk.CrkContext().case_dir is None
+    assert sdk.CrkClient().case("demo").case_dir.as_posix() == "data/cases/demo"
     assert sdk.OperationResult(operation="case.info").ok is True
     assert sdk.OperationSpec.from_tags("example").tags == ()
     assert sdk.SafetyTier.READ.value == "read"

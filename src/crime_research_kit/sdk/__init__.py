@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from .client import CaseClient, CrkClient
 from .context import CrkContext, TransportMode
 from .errors import (
     CASE_NOT_FOUND,
@@ -28,7 +29,9 @@ from .results import OperationResult, OperationWarning
 
 __all__ = [
     "CASE_NOT_FOUND",
+    "CaseClient",
     "CrkContext",
+    "CrkClient",
     "CrkDependencyError",
     "CrkError",
     "CrkErrorCode",

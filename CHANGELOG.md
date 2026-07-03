@@ -16,6 +16,8 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
   error codes, and dependency/safety/privacy/input error subclasses.
 - Added `TransportMode` and expanded `CrkContext` so SDK callers can carry
   roots, resolved settings, privacy defaults, and runtime transport selection.
+- Added top-level `CrkClient` and case-scoped `CaseClient` handles for SDK
+  callers without wiring operation behavior yet.
 - Added a metadata-only `OperationSpec` catalog with safety tiers,
   side-effect descriptions, request/result model names, and CLI/MCP/Skill API
   mappings for the initial SDK operation set.

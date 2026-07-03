@@ -170,8 +170,8 @@ src/crime_research_kit/sdk/
 **Steps:**
 
 - [ ] Add tests using `data/examples/synthetic_case` and temp copies.
-- [ ] Implement `CrkClient(context)` and `client.case(slug_or_path)`.
-- [ ] Implement `CaseClient` with case-rooted methods; callers should not pass
+- [x] Implement `CrkClient(context)` and `client.case(slug_or_path)`.
+- [x] Implement `CaseClient` with case-rooted methods; callers should not pass
   `case_dir` repeatedly after obtaining a case handle.
 - [ ] Wrap existing ops behind SDK methods, converting `OpResult` into
   `OperationResult`.
