@@ -6,8 +6,10 @@ from dataclasses import dataclass, field, replace
 from os import PathLike
 from pathlib import Path
 
+from .cases import CaseRecordsClient, CasesClient, case_info
 from .context import CrkContext
 from .operations import OperationSpec, get_operation, operations_by_domain
+from .results import OperationResult
 
 CaseRef = str | PathLike[str] | Path
 
@@ -35,6 +37,15 @@ class CaseClient:
         """Return operation metadata for one SDK domain."""
         return operations_by_domain(domain)
 
+    @property
+    def records(self) -> CaseRecordsClient:
+        """Record read operations for this case."""
+        return CaseRecordsClient(context=self.context, case_ref=self.case_ref)
+
+    def info(self, *, include_private: bool | None = None) -> OperationResult:
+        """Return case metadata and public-safe record counts by default."""
+        return case_info(self.context, self.case_ref, include_private=include_private)
+
     def with_privacy(self, *, include_private: bool) -> "CaseClient":
         """Return a copy with a different privacy default."""
         return replace(self, context=self.context.with_privacy(include_private=include_private))
@@ -45,6 +56,11 @@ class CrkClient:
     """Top-level SDK client."""
 
     context: CrkContext = field(default_factory=CrkContext)
+
+    @property
+    def cases(self) -> CasesClient:
+        """Case workspace read operations."""
+        return CasesClient(context=self.context)
 
     def case(self, case_ref: CaseRef) -> CaseClient:
         """Return a case-scoped client so callers stop passing case_dir."""

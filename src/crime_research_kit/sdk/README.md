@@ -8,6 +8,8 @@ Current surface:
   settings, metadata, and transport mode.
 - `CrkClient` is the top-level SDK entrypoint.
 - `CaseClient` is a case-scoped handle that stores the resolved case context.
+- `CasesClient` and `CaseRecordsClient` expose case listing, case info, public
+  record reads, and source-text reads.
 - `TransportMode` records whether clients should use automatic, direct, or
   subprocess-backed runtime access.
 - `OperationResult` and `OperationWarning` define the stable SDK result
@@ -18,5 +20,5 @@ Current surface:
 - `list_operations()`, `get_operation()`, and `operations_by_domain()` expose
   the current public operation specification catalog.
 
-The operation catalog is metadata-only until operation wrappers are promoted
-into the SDK.
+The operation catalog remains the source of operation metadata as wrappers are
+promoted into the SDK.
