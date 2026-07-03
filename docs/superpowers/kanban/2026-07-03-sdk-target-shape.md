@@ -31,20 +31,21 @@ Plan: `docs/superpowers/plans/2026-07-03-sdk-target-shape.md`
 | SDK-011 Wrap extraction operations | done | main | SDK-005, SDK-008 | SDK extraction modules and tests | Draft/list/read/save/import_reviewed/ner_suggest wrappers landed with explicit import approval. |
 | SDK-012 Wrap review operations | done | main | SDK-005, SDK-008 | SDK review modules and tests | Validation, dedupe, identity, contradiction, readiness, privacy, public-export, and source-independence wrappers landed. |
 | SDK-013 Wrap export operations | done | main | SDK-005, SDK-008 | SDK export modules and tests | Public-safe export wrappers landed. |
-| SDK-014 Add workflow facade | in_progress | main | SDK-005, SDK-008 | `src/crime_research_kit/sdk/workflows.py`, `src/pipeline/app/service.py`, workflow tests | App layer must consume SDK/catalog-backed facade without exposing graph nodes. |
-| SDK-015 Repoint CLI handlers | blocked | unassigned | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/cli/**`, CLI tests | Do not change command names or flags. |
-| SDK-016 Repoint MCP tools | blocked | unassigned | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/mcp/**`, MCP tests | Tool safety tiers should come from catalog where possible. |
+| SDK-014 Add workflow facade | done | main | SDK-005, SDK-008 | `src/crime_research_kit/sdk/workflows.py`, `src/pipeline/app/service.py`, workflow tests | Workflow facade landed without public graph-node imports. |
+| SDK-015 Repoint CLI handlers | ready | unassigned | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/cli/**`, CLI tests | Do not change command names or flags. |
+| SDK-016 Repoint MCP tools | ready | unassigned | SDK-006, SDK-009 to SDK-014 | `src/adapters/interfaces/mcp/**`, MCP tests | Tool safety tiers should come from catalog where possible. |
 | SDK-017 Generate or drift-check Skill API docs | done | worker-sdk-docs-drift + main integration | SDK-005 | docs drift tests, Skill API docs | Skill API operation docs now drift-check against the SDK catalog. |
 | SDK-018 Define private runtime policy | blocked | unassigned | SDK-006, SDK-015, SDK-016 | packaging docs/tests | Public docs declare only `crime_research_kit.sdk`. |
 | SDK-019 Update architecture docs | blocked | unassigned | SDK-018 | architecture docs | System overview shows SDK as Python public layer and CLI/MCP as adapters. |
 | SDK-020 Release-note and gate pass | blocked | unassigned | SDK-019 | `CHANGELOG.md`, release/gate checks | Final full-series gate. |
 | SDK-021 Future HTTP route binding | backlog | unassigned | SDK-005 | catalog metadata only | Backlog; no HTTP server in this series. |
 | SDK-022 Move internals under `_runtime` | blocked | unassigned | SDK-018 | `_runtime` migration if chosen | Backlog; only after CLI/MCP import migration. |
-| SDK-023 SDK examples package | blocked | unassigned | SDK-014 | SDK examples/docs | Backlog. |
+| SDK-023 SDK examples package | backlog | unassigned | SDK-014 | SDK examples/docs | Backlog. |
 | SDK-024 Catalog-driven MCP registration | blocked | unassigned | SDK-006, SDK-016 | MCP registration code/tests | Backlog. |
 | SDK-025 Strict request models | backlog | unassigned | SDK-005 | request models/tests | Backlog. |
 
-Dependency note: SDK-015 and SDK-016 stay blocked until SDK-014 lands.
+Dependency note: SDK-015 and SDK-016 are now ready adapter-repointing slices.
+SDK-018 stays blocked until both adapter slices land.
 
 ## Done
 
@@ -64,13 +65,14 @@ Dependency note: SDK-015 and SDK-016 stay blocked until SDK-014 lands.
 | SDK-011 Wrap extraction operations | Extraction draft, list, read, save, reviewed import, and NER suggestion wrappers now return SDK results with explicit import approval. |
 | SDK-012 Wrap review operations | Validation, duplicate review, identity review, contradiction audits, narrative readiness, privacy redaction audits, public export audits, and source-independence audits now return SDK results. |
 | SDK-013 Wrap export operations | Manim, case-chart, analysis-chart, people-cluster, and cross-case timeline exports now return SDK results with public-safe defaults. |
+| SDK-014 Add workflow facade | Case-builder plan and resume workflows now return SDK results through `client.workflows` without public graph-node imports. |
 | SDK-017 Generate or drift-check Skill API docs | Skill API operation docs now drift-check names, safety tiers, and result envelope against the SDK catalog. |
 
 ## In Progress
 
 | Card | Owner | Notes |
 | --- | --- | --- |
-| SDK-014 Add workflow facade | main | Implement `client.workflows.plan/resume` without exposing graph nodes. |
+| None | - | No cards currently in progress. |
 
 ## Review
 
@@ -88,14 +90,13 @@ Dependency note: SDK-015 and SDK-016 stay blocked until SDK-014 lands.
 
 | Card | Priority | Depends on | Acceptance |
 | --- | --- | --- | --- |
-| None | - | No cards currently ready. |
+| SDK-015 Repoint CLI handlers | P2 | SDK-006, SDK-009 to SDK-014 | Existing `cr-kit` and `crk-ledger` command tests pass with SDK-backed handlers. |
+| SDK-016 Repoint MCP tools | P2 | SDK-006, SDK-009 to SDK-014 | Existing MCP read/write/gated tests pass with SDK-backed tools. |
 
 ## Blocked / Dependency-Gated
 
 | Card | Priority | Depends on | Acceptance |
 | --- | --- | --- | --- |
-| SDK-015 Repoint CLI handlers | P2 | SDK-006, SDK-009 to SDK-014 | Existing `cr-kit` and `crk-ledger` command tests pass with SDK-backed handlers. |
-| SDK-016 Repoint MCP tools | P2 | SDK-006, SDK-009 to SDK-014 | Existing MCP read/write/gated tests pass with SDK-backed tools. |
 | SDK-018 Define private runtime policy | P2 | SDK-006, SDK-015, SDK-016 | Public docs declare only `crime_research_kit.sdk`; implementation modules are private or moved under `_runtime`. |
 | SDK-019 Update architecture docs | P2 | SDK-018 | System overview shows SDK as Python public layer and CLI/MCP as adapters. |
 | SDK-020 Release-note and gate pass | P2 | SDK-019 | Changelog updated; targeted tests, `moon run crk:check`, and final `moon run crk:test` pass. |

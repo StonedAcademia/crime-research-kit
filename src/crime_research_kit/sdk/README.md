@@ -20,6 +20,9 @@ Current surface:
   people-cluster export wrappers.
 - `ExportsClient` exposes top-level export wrappers such as the cross-case
   timeline export.
+- `WorkflowClient` exposes case-builder plan and resume workflow wrappers.
+- `WorkflowPlanRequest` and `WorkflowResumeRequest` define workflow request
+  fields without exposing graph nodes.
 - `TransportMode` records whether clients should use automatic, direct, or
   subprocess-backed runtime access.
 - `OperationResult` and `OperationWarning` define the stable SDK result

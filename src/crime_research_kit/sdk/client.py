@@ -14,6 +14,7 @@ from .operations import OperationSpec, get_operation, operations_by_domain
 from .review import CaseReviewClient
 from .results import OperationResult
 from .sources import CaseSourcesClient
+from .workflows import WorkflowClient
 
 CaseRef = str | PathLike[str] | Path
 
@@ -90,6 +91,11 @@ class CrkClient:
     def exports(self) -> ExportsClient:
         """Top-level export operations."""
         return ExportsClient(context=self.context)
+
+    @property
+    def workflows(self) -> WorkflowClient:
+        """Case-builder workflow operations."""
+        return WorkflowClient(context=self.context)
 
     def case(self, case_ref: CaseRef) -> CaseClient:
         """Return a case-scoped client so callers stop passing case_dir."""

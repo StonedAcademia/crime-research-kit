@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any, Literal, Sequence
 
 from adapters.ops.runner import CrkRunner
@@ -33,13 +34,14 @@ def run_case_builder(
     model_spec: str | None = None,
     qdrant_url: str | None = None,
     embed_model: str | None = None,
+    repo_root: str | Path | None = None,
 ) -> dict[str, Any]:
     """Run a case-builder plan and return serializable state.
 
     Dry runs produce the exact CRK commands the app would execute. Executed
     runs still stop at human review gates before canonical import or export.
     """
-    crk = CrkRunner(dry_run=not execute)
+    crk = _runner(execute=execute, repo_root=repo_root)
     state.qdrant_url = qdrant_url or state.qdrant_url
     state.embed_model = embed_model or state.embed_model
     model_factory = _model_factory(state.llm_enabled, model_spec)
@@ -81,13 +83,14 @@ def resume_case_builder(
     model_spec: str | None = None,
     qdrant_url: str | None = None,
     embed_model: str | None = None,
+    repo_root: str | Path | None = None,
 ) -> dict[str, Any]:
     """Resume a checkpointed run with human review decisions."""
     if not langgraph_available():
         raise RuntimeError(LANGGRAPH_HINT)
     from langgraph.types import Command
 
-    crk = CrkRunner(dry_run=not execute)
+    crk = _runner(execute=execute, repo_root=repo_root)
     graph = build_case_builder_graph(
         crk,
         checkpointer=case_checkpointer(case_dir),
@@ -111,3 +114,7 @@ def _annotate(result: dict[str, Any], graph: Any, config: dict[str, Any], thread
     result["thread_id"] = thread_id
     result["runner"] = "langgraph"
     return result
+
+
+def _runner(*, execute: bool, repo_root: str | Path | None) -> CrkRunner:
+    return CrkRunner(repo_root=Path(repo_root) if repo_root else None, dry_run=not execute)

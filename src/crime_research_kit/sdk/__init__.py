@@ -31,6 +31,7 @@ from .operations import OPERATION_BY_NAME, OPERATION_SPECS, OperationSpec, Safet
 from .review import CaseReviewClient
 from .results import OperationResult, OperationWarning
 from .sources import CaseSourcesClient
+from .workflows import WorkflowClient, WorkflowPlanRequest, WorkflowResumeRequest
 
 __all__ = [
     "CASE_NOT_FOUND",
@@ -68,6 +69,9 @@ __all__ = [
     "SafetyTier",
     "TransportMode",
     "VALIDATION_FAILED",
+    "WorkflowClient",
+    "WorkflowPlanRequest",
+    "WorkflowResumeRequest",
     "get_operation",
     "list_operations",
     "operations_by_domain",

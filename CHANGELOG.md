@@ -6,6 +6,14 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+## [0.13.4] - 2026-07-03
+
+### Added
+
+- Added SDK workflow wrappers for case-builder plan and resume operations with
+  request objects, `OperationResult` envelopes, and dependency-aware agentic
+  failure mapping.
+
 ## [0.13.3] - 2026-07-03
 
 ### Added
