@@ -308,7 +308,7 @@ catalog parity tests have landed.
 - [ ] Generate or update operation reference docs from the catalog.
 - [x] Update architecture docs to show SDK as the public Python layer and
   CLI/MCP as adapters.
-- [x] Update changelog under `Unreleased`.
+- [x] Add dated changelog entry and bump version.
 - [x] Run `moon run crk:check`.
 - [x] Run targeted SDK, MCP, CLI, workflow, and governance tests.
 - [ ] Run `moon run crk:test` before merging the full series.

@@ -27,7 +27,7 @@ CRK has two implementation layers. Both read and write the same JSONL case
 ledger, and neither is allowed to bypass its contract:
 
 1. **Skills and ledger CLI** — `crk-ledger`
-   is a standard-library-only packaged CLI implementing the complete
+   is a base-install packaged CLI implementing the complete
    ledger contract: case init, URL ingest, extraction staging and import,
    validation, audits, and exports. Sixteen adjacent skills under
    `.agents/skills/` (legal-court-records, missing-persons-case,
@@ -46,7 +46,7 @@ ledger, and neither is allowed to bypass its contract:
 flowchart TB
   SRC["Public sources<br/>news, transcripts, PDFs, court/public records, archives"]
 
-  subgraph SKILL["Layer 1 · Skills and ledger CLI (standard library only)"]
+  subgraph SKILL["Layer 1 · Skills and ledger CLI (base install)"]
     TCR["crk-ledger packaged CLI<br/>init · ingest · extraction · validate · audit · export"]
     ADJ["16 adjacent skills<br/>legal · missing-persons · FOIA · privacy · ..."]
   end
@@ -58,17 +58,20 @@ flowchart TB
     MCP["crk-mcp adapter"]
     PY --> SDK
     CLI2 --> SDK
-    MCP --> SDK
+    MCP -->|SDK-backed tools| SDK
   end
 
   subgraph APP["Private runtime"]
     SVC["workflow app service"]
     GRAPH["LangGraph graph<br/>+ sequential fallback"]
     OPS["Typed ops core<br/>OpResult · CrkRunner · safety policy"]
+    RPT["derived-report runtime<br/>run_report direct exception"]
     SDK --> SVC
     SDK --> OPS
+    MCP -.run_report direct until public/private filtering.-> RPT
     SVC --> GRAPH
     GRAPH --> OPS
+    RPT --> OPS
   end
 
   subgraph OPT["Optional subsystems (degrade gracefully when absent)"]
@@ -110,7 +113,8 @@ and payload contract lives in the [Skill API Spec](../skill-api-spec.md).
 
 Each subsystem sits behind an optional extra in `pyproject.toml`, imports
 lazily, and skips its tests when the dependency is absent. The core `crk-ledger`
-CLI and base case-builder CLI run on the standard library alone.
+path and base case-builder commands avoid optional extras unless a feature
+explicitly needs one.
 
 | Subsystem | Extra | Provides |
 | --- | --- | --- |
@@ -143,8 +147,8 @@ The full loop is the [Case Workflow runbook](../runbooks/cases/case-workflow.md)
   through `crk-ledger` or the same ledger-safe command path.
 - AI-generated summaries are never evidence; extraction packets are staged
   for review before import.
-- Optional dependencies degrade gracefully — no required third-party packages
-  for the core workflow.
+- Optional dependencies degrade gracefully — no optional service packages are
+  required for the core workflow.
 - Lane and template vocabulary is registry-first: `docs/registry/` is
   canonical, reference tables are generated, and governance tests catch drift.
 - Governance tests bound module size and repository shape

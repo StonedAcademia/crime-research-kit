@@ -23,6 +23,11 @@ def test_system_overview_shows_sdk_as_public_python_layer():
     assert "`cr-kit` and `crk-mcp` are adapter surfaces over SDK/catalog-backed operations." in text
     assert "MCP-specific" in text
     assert "`run_report` remains a direct derived-report path" in text
+    assert "MCP -->|SDK-backed tools| SDK" in text
+    assert "run_report direct until public/private filtering" in text
+    assert "MCP --> SDK" not in text
+    assert "standard-library-only" not in text
+    assert "standard library alone" not in text.lower()
 
 
 def test_case_builder_doc_points_workflows_at_sdk_facade():
