@@ -10,6 +10,7 @@ from .cases import CaseRecordsClient, CasesClient, case_info
 from .context import CrkContext
 from .extractions import CaseExtractionsClient
 from .operations import OperationSpec, get_operation, operations_by_domain
+from .review import CaseReviewClient
 from .results import OperationResult
 from .sources import CaseSourcesClient
 
@@ -53,6 +54,11 @@ class CaseClient:
     def extractions(self) -> CaseExtractionsClient:
         """Extraction packet operations for this case."""
         return CaseExtractionsClient(context=self.context, case_ref=self.case_ref)
+
+    @property
+    def review(self) -> CaseReviewClient:
+        """Review and audit operations for this case."""
+        return CaseReviewClient(context=self.context, case_ref=self.case_ref)
 
     def info(self, *, include_private: bool | None = None) -> OperationResult:
         """Return case metadata and public-safe record counts by default."""

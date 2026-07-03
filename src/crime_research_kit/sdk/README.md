@@ -14,6 +14,8 @@ Current surface:
   preservation, discovery, parsing, and OCR wrappers.
 - `CaseExtractionsClient` exposes staged extraction draft, list, read, save,
   reviewed import, and lead-only NER suggestion wrappers.
+- `CaseReviewClient` exposes validation, duplicate/identity review, and safety
+  audit wrappers.
 - `TransportMode` records whether clients should use automatic, direct, or
   subprocess-backed runtime access.
 - `OperationResult` and `OperationWarning` define the stable SDK result

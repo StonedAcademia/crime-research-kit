@@ -13,7 +13,7 @@ never touch `crk-ledger`, the JSONL ledger, or local-stack modules directly.
 | `sources.py` | Source intake: planning, registration, ingestion, preservation, discovery, parsing, OCR. |
 | `extraction.py` | Extraction packets: drafting, staging reads/writes, gated canonical import. |
 | `query.py` | Ledger reads with privacy filtering, retrieval index/query, name linking. |
-| `review.py` | Deterministic audits: contradictions, narrative readiness, privacy, public export, source independence. |
+| `review.py` | Review reports and deterministic audits: dedupe, identity, contradictions, readiness, privacy, public export, source independence. |
 | `exports.py` | Public-safe-by-default export commands. |
 
 The safety contract (`docs/guides/skill-api-spec.md`) is enforced here,

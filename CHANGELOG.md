@@ -6,6 +6,14 @@ The format follows Keep a Changelog, and this project uses semantic versioning.
 
 ## [Unreleased]
 
+## [0.13.2] - 2026-07-03
+
+### Added
+
+- Added SDK review wrappers for validation, duplicate review, identity review,
+  contradiction audits, narrative readiness, privacy redaction audits, public
+  export audits, and source-independence audits.
+
 ## [0.13.1] - 2026-07-03
 
 ### Added

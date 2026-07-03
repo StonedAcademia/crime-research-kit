@@ -27,6 +27,7 @@ from .errors import (
     CrkValidationError,
 )
 from .operations import OPERATION_BY_NAME, OPERATION_SPECS, OperationSpec, SafetyTier, get_operation, list_operations, operations_by_domain
+from .review import CaseReviewClient
 from .results import OperationResult, OperationWarning
 from .sources import CaseSourcesClient
 
@@ -35,6 +36,7 @@ __all__ = [
     "CaseClient",
     "CaseExtractionsClient",
     "CaseRecordsClient",
+    "CaseReviewClient",
     "CaseSourcesClient",
     "CasesClient",
     "CrkContext",
