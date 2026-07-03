@@ -11,6 +11,8 @@ import httpx
 
 from crime_research_kit._runtime.core.casefile import case_path, ensure_case, log_action, slugify
 
+_transport_for_tests: httpx.BaseTransport | None = None
+
 
 def discover_sources(
     case_dir: str | Path,
@@ -23,7 +25,7 @@ def discover_sources(
     """Search a local SearXNG instance and write a lead-only candidate report."""
     ensure_case(case_dir)
     base = searxng_url.rstrip("/")
-    with httpx.Client(follow_redirects=True, timeout=30) as client:
+    with httpx.Client(follow_redirects=True, timeout=30, transport=_transport_for_tests) as client:
         response = client.get(
             f"{base}/search",
             params={"q": query, "format": "json", "language": "en"},
