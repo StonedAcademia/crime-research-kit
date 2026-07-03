@@ -9,12 +9,13 @@ from tests.helpers import KIT_ROOT
 
 PUBLIC_DOC_ROOTS = (
     KIT_ROOT / "README.md",
+    KIT_ROOT / "CHANGELOG.md",
     KIT_ROOT / "docs" / "README.md",
     KIT_ROOT / "docs" / "guides",
     KIT_ROOT / "src" / "crime_research_kit" / "README.md",
     KIT_ROOT / "src" / "crime_research_kit" / "sdk" / "README.md",
 )
-PRIVATE_IMPORT_RE = re.compile(r"^\s*(?:from|import)\s+(adapters|core|pipeline|case_builder)(?:\b|\.)")
+PRIVATE_IMPORT_RE = re.compile(r"(?:^|[`>])\s*(?:from|import)\s+(adapters|core|pipeline|case_builder)(?:\b|\.)")
 
 
 def iter_public_markdown() -> list[Path]:

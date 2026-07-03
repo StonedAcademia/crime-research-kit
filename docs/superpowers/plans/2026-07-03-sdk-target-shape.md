@@ -179,17 +179,18 @@ src/crime_research_kit/sdk/
 - [x] Wrap source add, ingest, preserve, discover, parse, and OCR operations
   behind SDK methods, converting `OpResult` or raised optional failures into
   `OperationResult`.
-- [ ] Wrap remaining existing ops behind SDK methods, converting `OpResult` into
-  `OperationResult`.
+- [x] Wrap promoted case, source, extraction, review, export, retrieval, name,
+  workflow, and public-record planning ops behind SDK methods, converting
+  `OpResult` into `OperationResult`.
 - [x] Make `include_private` explicit on case and record reads, defaulting to
   false.
-- [ ] Make `include_private` explicit on remaining reads/exports, defaulting to
+- [x] Make `include_private` explicit on remaining SDK-backed reads/exports, defaulting to
   false.
-- [ ] Make canonical import method name explicit, for example
+- [x] Make canonical import method name explicit, for example
   `case.extractions.import_reviewed(packet, approved=True)`.
 - [x] Add dependency-error tests for optional source discovery, OCR, and parsing
   methods when services or extras are absent.
-- [ ] Add dependency-error tests for remaining optional retrieval methods when
+- [x] Add dependency-error tests for remaining optional retrieval methods when
   extras are absent.
 
 **Acceptance:**
@@ -212,13 +213,13 @@ catalog-backed services, with subprocess transport kept private.
 
 **Steps:**
 
-- [ ] Define workflow request/result models for plan and resume.
-- [ ] Implement `client.workflows.plan(...)` and `client.workflows.resume(...)`
+- [x] Define workflow request/result models for plan and resume.
+- [x] Implement `client.workflows.plan(...)` and `client.workflows.resume(...)`
   over the existing app service.
-- [ ] Repoint `pipeline/app/service.py` to use SDK/context objects where it
+- [x] Repoint `pipeline/app/service.py` to use SDK/context objects where it
   simplifies the boundary, but keep graph nodes private.
-- [ ] Preserve sequential dry-run behavior and LangGraph checkpoint behavior.
-- [ ] Prove packet review and export review gates still fail closed without
+- [x] Preserve sequential dry-run behavior and LangGraph checkpoint behavior.
+- [x] Prove packet review and export review gates still fail closed without
   approvals.
 
 **Acceptance:**

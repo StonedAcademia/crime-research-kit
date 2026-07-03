@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from adapters.ops import query as query_ops
 from adapters.ops.result import OpResult
 from crime_research_kit.sdk import CrkClient, CrkContext
+from crime_research_kit.sdk.errors import DEPENDENCY_MISSING
 from tests.helpers import KIT_ROOT, ledger_subcommand
 
 
@@ -18,6 +18,8 @@ def test_names_link_uses_runner(synthetic_case_copy: Path):
 
 
 def test_retrieval_query_uses_settings_and_sdk_result(monkeypatch, synthetic_case_copy: Path):
+    from adapters.ops import query as query_ops
+
     calls = {}
 
     def fake_query_case(
@@ -66,3 +68,19 @@ def test_retrieval_query_uses_settings_and_sdk_result(monkeypatch, synthetic_cas
         "embed_model": "embedder",
         "top_k": 3,
     }
+
+
+def test_retrieval_query_maps_missing_dependency(monkeypatch, synthetic_case_copy: Path):
+    from adapters.ops import query as query_ops
+
+    def missing_dependency(*_args, **_kwargs) -> OpResult:
+        raise ModuleNotFoundError("llama-index is not installed")
+
+    monkeypatch.setattr(query_ops, "query_case", missing_dependency)
+    client = CrkClient(CrkContext(cases_root=synthetic_case_copy.parent))
+
+    result = client.case("synthetic_case").retrieval.query("who is cited?")
+
+    assert result.ok is False
+    assert result.operation == "retrieval.query"
+    assert result.errors[0].code == DEPENDENCY_MISSING
