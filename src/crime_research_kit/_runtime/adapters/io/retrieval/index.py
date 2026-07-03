@@ -17,6 +17,8 @@ def index_case(
     qdrant_url: str | None = None,
     collection: str | None = None,
     embed_model: str | None = None,
+    client=None,
+    embed=None,
 ) -> dict[str, Any]:
     documents = build_evidence_documents(case_dir, include_private=include_private)
     embed_name = embed_model or DEFAULT_EMBED_MODEL
@@ -26,6 +28,8 @@ def index_case(
         qdrant_url=qdrant_url or DEFAULT_QDRANT_URL,
         collection=collection,
         embed_model=embed_name,
+        client=client,
+        embed=embed,
     )
     return {
         "case_id": case_id(case_dir),
@@ -45,6 +49,8 @@ def query_case(
     collection: str | None = None,
     embed_model: str | None = None,
     top_k: int = 8,
+    client=None,
+    embed=None,
 ) -> dict[str, Any]:
     documents = build_evidence_documents(case_dir, include_private=include_private)
     index = _build_index(
@@ -53,6 +59,8 @@ def query_case(
         qdrant_url=qdrant_url or DEFAULT_QDRANT_URL,
         collection=collection,
         embed_model=embed_model or DEFAULT_EMBED_MODEL,
+        client=client,
+        embed=embed,
     )
     retriever = index.as_retriever(similarity_top_k=top_k)
     results = []
@@ -68,17 +76,23 @@ def _build_index(
     qdrant_url: str,
     collection: str | None,
     embed_model: str,
+    client=None,
+    embed=None,
 ):
     try:
         from llama_index.core import Settings, StorageContext, VectorStoreIndex  # type: ignore
-        from llama_index.embeddings.huggingface import HuggingFaceEmbedding  # type: ignore
         from llama_index.vector_stores.qdrant import QdrantVectorStore  # type: ignore
         from qdrant_client import QdrantClient  # type: ignore
     except ImportError as exc:
         raise RuntimeError("Install the local retrieval extra before indexing cases.") from exc
 
-    Settings.embed_model = HuggingFaceEmbedding(model_name=embed_model)
-    client = QdrantClient(url=qdrant_url)
+    if embed is None:
+        from llama_index.embeddings.huggingface import HuggingFaceEmbedding  # type: ignore
+
+        embed = HuggingFaceEmbedding(model_name=embed_model)
+    Settings.embed_model = embed
+    if client is None:
+        client = QdrantClient(url=qdrant_url)
     vector_store = QdrantVectorStore(client=client, collection_name=_collection_name(case_dir, collection))
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
     return VectorStoreIndex.from_documents(to_llama_documents(documents), storage_context=storage_context)
