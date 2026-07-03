@@ -2,7 +2,16 @@
 
 ## Future HTTP Mapping
 
-If this CLI is wrapped by an HTTP API, use these stable operation routes:
+SDK-021 does not add an HTTP server, ASGI app, or remote transport. It only
+records future HTTP route metadata on SDK operation specs so later service
+wrappers can bind routes without inventing a parallel operation list.
+
+Future HTTP wrappers must read route metadata from
+`crime_research_kit.sdk.operations` (`http_route_bindings()` or
+`OperationSpec.http_route` via `list_operations()`), not maintain a separate
+hand-written registry. The table below is the current catalog view of promoted
+routes: method and path come from `http_route`, and operation is the stable
+Skill API operation name.
 
 | Method | Path | Operation |
 |---|---|---|
@@ -23,8 +32,10 @@ If this CLI is wrapped by an HTTP API, use these stable operation routes:
 | `POST` | `/v1/cases/{case_slug}/exports:analysis-charts` | `exportAnalysisCharts` |
 | `POST` | `/v1/cases/{case_slug}/exports:people-clusters` | `exportPeopleClusters` |
 
-The HTTP wrapper must preserve local safety defaults, especially explicit
-opt-in for private records.
+Any future HTTP wrapper must preserve the SDK operation semantics in this
+mapping: method and path identify the route, operation identifies the cataloged
+Skill API operation, local safety defaults remain in force, and private records
+still require explicit opt-in.
 
 The evidence-board `reportCase` route is deferred until that report has
 explicit public/private filtering semantics and a public SDK operation.
