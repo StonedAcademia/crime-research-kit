@@ -188,9 +188,18 @@ OPERATION_BY_NAME: dict[str, OperationSpec] = {spec.name: spec for spec in OPERA
 HTTP_ROUTE_BINDINGS: tuple[HttpRouteBinding, ...] = tuple(
     binding for spec in OPERATION_SPECS if (binding := spec.http_binding()) is not None
 )
-OPERATION_BY_HTTP_ROUTE: dict[str, OperationSpec] = {
-    binding.route: OPERATION_BY_NAME[binding.operation_name] for binding in HTTP_ROUTE_BINDINGS
-}
+
+
+def _http_route_lookup(bindings: tuple[HttpRouteBinding, ...]) -> dict[str, OperationSpec]:
+    lookup: dict[str, OperationSpec] = {}
+    for binding in bindings:
+        if binding.route in lookup:
+            raise ValueError(f"Duplicate HTTP route binding: {binding.route}")
+        lookup[binding.route] = OPERATION_BY_NAME[binding.operation_name]
+    return lookup
+
+
+OPERATION_BY_HTTP_ROUTE: dict[str, OperationSpec] = _http_route_lookup(HTTP_ROUTE_BINDINGS)
 
 
 def list_operations() -> tuple[OperationSpec, ...]:
