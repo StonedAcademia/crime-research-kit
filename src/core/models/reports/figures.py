@@ -45,6 +45,7 @@ class Line(_El):
     stroke: str = ""
     stroke_width: float = 1.0
     stroke_opacity: float | str | None = None
+    stroke_dasharray: str = ""
 
 
 class Path(_El):

@@ -30,11 +30,14 @@ from adapters.ops.evidence.reports.analysis.command.context import load_analysis
 from adapters.ops.evidence.reports.analysis.command.output import _chart_data
 from adapters.ops.evidence.reports.analysis.pages.render import render_page, render_svg_doc
 from adapters.ops.evidence.reports.analysis.pages.specs import build_analysis_chart_specs
+from adapters.ops.evidence.reports.case_charts.command import export_case_charts
+from adapters.ops.evidence.reports.clusters.command import export_people_clusters
 
 
 ROOT = Path(__file__).resolve().parents[5]
 SYNTHETIC_CASE = ROOT / "data" / "examples" / "synthetic_case"
 FIXTURE = Path(__file__).with_name("analysis_page_signatures.json")
+SECTION_KEYS = {"case_charts_figures", "case_charts_pages", "clusters_figures", "clusters_pages", "figures"}
 
 
 def _signature(html_text: str) -> dict[str, Any]:
@@ -66,6 +69,14 @@ def svg_signature(svg_text: str) -> dict:
         if tag == "text" and (el.text or "").strip():
             labels.append(el.text.strip())
     return {"counts": dict(sorted(counts.items())), "labels": sorted(labels)}
+
+
+def _first_svg(html_text: str) -> str:
+    match = re.search(r"<svg\b.*?</svg>", html_text, flags=re.S)
+    if not match:
+        raise AssertionError("rendered page did not include an <svg>")
+    svg = match.group(0)
+    return svg if "xmlns=" in svg.split(">", 1)[0] else svg.replace("<svg", '<svg xmlns="http://www.w3.org/2000/svg"', 1)
 
 
 def _build_products(ctx: Any) -> dict[str, Any]:
@@ -102,7 +113,7 @@ def test_new_pipeline_preserves_page_content(tmp_path: Path):
         signatures[contextual_page.slug] = _signature(render_page(contextual_page))
 
     expected = json.loads(FIXTURE.read_text(encoding="utf-8"))
-    assert signatures == {key: value for key, value in expected.items() if key != "figures"}
+    assert signatures == {key: value for key, value in expected.items() if key not in SECTION_KEYS}
 
     figure_keys = {
         "bipartite": "11_person_source_bipartite",
@@ -126,3 +137,44 @@ def test_new_pipeline_preserves_page_content(tmp_path: Path):
         assert figure is not None
         figure_signatures[key] = svg_signature(render_svg_doc(figure))
     assert figure_signatures == expected["figures"]
+
+
+def test_case_chart_and_cluster_pages_preserve_content(tmp_path: Path):
+    case_dir = tmp_path / "synthetic_case"
+    shutil.copytree(SYNTHETIC_CASE, case_dir, ignore=shutil.ignore_patterns("__pycache__"))
+    charts_dir = tmp_path / "charts"
+    clusters_dir = tmp_path / "clusters"
+    export_case_charts(argparse.Namespace(case_dir=str(case_dir), out_dir=str(charts_dir), include_private=False, skip_public_gate=True))
+    export_people_clusters(
+        argparse.Namespace(
+            case_dir=str(case_dir),
+            out_dir=str(clusters_dir),
+            charts_dir=str(charts_dir),
+            include_private=False,
+            resolution=1.0,
+            seed=7,
+            sigma=None,
+        )
+    )
+    page_files = {
+        "case_charts_pages": {"people_graph": charts_dir / "people_graph.html", "subcase_timelines": charts_dir / "subcase_timelines.html"},
+        "clusters_pages": {"people_clusters": clusters_dir / "people_clusters.html"},
+    }
+    signatures = {
+        section: {key: _signature(path.read_text(encoding="utf-8")) for key, path in paths.items()}
+        for section, paths in page_files.items()
+    }
+    figures = {
+        "case_charts_figures": {
+            "people_graph": svg_signature(_first_svg((charts_dir / "people_graph.html").read_text(encoding="utf-8"))),
+            "subcase_timeline": svg_signature(_first_svg((charts_dir / "subcase_timelines.html").read_text(encoding="utf-8"))),
+        },
+        "clusters_figures": {
+            "people_clusters": svg_signature(_first_svg((clusters_dir / "people_clusters.html").read_text(encoding="utf-8"))),
+        },
+    }
+    expected = json.loads(FIXTURE.read_text(encoding="utf-8"))
+    assert signatures["case_charts_pages"] == expected["case_charts_pages"]
+    assert signatures["clusters_pages"] == expected["clusters_pages"]
+    assert figures["case_charts_figures"] == expected["case_charts_figures"]
+    assert figures["clusters_figures"] == expected["clusters_figures"]
