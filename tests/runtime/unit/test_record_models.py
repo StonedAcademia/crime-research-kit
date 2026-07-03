@@ -44,3 +44,33 @@ def test_extra_fields_survive_round_trip():
         "custom_field": "kept",
     }
     assert ClaimRecord.model_validate(row).model_dump(exclude_none=True) == row
+
+
+def test_svg_doc_round_trips_nested_groups():
+    from core.models.reports import Group, Rect, SvgDoc, Text
+
+    doc = SvgDoc(
+        width=100,
+        height=50,
+        elements=[
+            Group(
+                transform="translate(10,0)",
+                children=[
+                    Rect(x=0, y=0, width=10, height=10, css_class="node", data={"query": "alpha"}),
+                    Text(x=5, y=20, content="Alpha", anchor="middle"),
+                ],
+            ),
+        ],
+    )
+    dumped = doc.model_dump()
+    assert dumped["elements"][0]["children"][0]["kind"] == "rect"
+    from core.models.reports import SvgDoc as _SvgDoc
+
+    assert _SvgDoc.model_validate(dumped) == doc
+
+
+def test_report_page_defaults():
+    from core.models.reports import ReportPage
+
+    page = ReportPage(slug="x", title="X", case_title="Case")
+    assert page.figure is None and page.filters == [] and page.include_private is False
