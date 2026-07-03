@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+import click
 import typer
-import typer._click as click
 import typer.main
 
 from crime_research_kit._runtime.adapters.interfaces.cli.commands import casework, planning, quality, reports
