@@ -4,21 +4,21 @@ from __future__ import annotations
 
 from typing import Any
 
-from adapters.interfaces.mcp.context import ServerContext, error_dict, list_case_slugs, resolve_case
+from adapters.interfaces.mcp.context import ServerContext, error_dict, mcp_result, resolve_case, sdk_case, sdk_client
 from adapters.ops import case as case_ops
-from adapters.ops import extraction as extraction_ops
 from adapters.ops import query as query_ops
 
 
 def case_info_tool(ctx: ServerContext, case: str) -> dict[str, Any]:
     try:
-        return case_ops.case_info(resolve_case(ctx, case)).to_dict()
+        return mcp_result(sdk_case(ctx, case).info())
     except ValueError as exc:
         return error_dict(str(exc))
 
 
 def list_cases_tool(ctx: ServerContext) -> dict[str, Any]:
-    return {"ok": True, "cases": list_case_slugs(ctx)}
+    result = sdk_client(ctx).cases.list()
+    return {"ok": result.ok, "cases": result.data.get("cases", [])}
 
 
 def get_records_tool(
@@ -29,13 +29,10 @@ def get_records_tool(
     limit: int = 200,
 ) -> dict[str, Any]:
     try:
-        result = query_ops.get_records(resolve_case(ctx, case), record_type, include_private=include_private)
+        result = sdk_case(ctx, case).records.list(record_type, include_private=include_private, limit=limit)
     except ValueError as exc:
         return error_dict(str(exc))
-    if result.ok and limit and len(result.data["records"]) > limit:
-        result.data["records"] = result.data["records"][:limit]
-        result.data["truncated"] = True
-    return result.to_dict()
+    return mcp_result(result)
 
 
 def get_source_text_tool(
@@ -46,12 +43,8 @@ def get_source_text_tool(
     max_chars: int = 20000,
 ) -> dict[str, Any]:
     try:
-        return query_ops.get_source_text(
-            resolve_case(ctx, case),
-            source_id,
-            include_private=include_private,
-            max_chars=max_chars,
-        ).to_dict()
+        result = sdk_case(ctx, case).records.source_text(source_id, include_private=include_private, max_chars=max_chars)
+        return mcp_result(result)
     except ValueError as exc:
         return error_dict(str(exc))
 
@@ -80,7 +73,7 @@ def query_case_tool(
 
 def list_staged_packets_tool(ctx: ServerContext, case: str) -> dict[str, Any]:
     try:
-        return extraction_ops.list_packets(resolve_case(ctx, case)).to_dict()
+        return mcp_result(sdk_case(ctx, case).extractions.list())
     except ValueError as exc:
         return error_dict(str(exc))
 

@@ -5,6 +5,7 @@ from adapters.interfaces.mcp import tools_read
 from adapters.interfaces.mcp.context import ServerContext
 from adapters.ops.runner import CrkRunner
 from core.config import CrkSettings
+from crime_research_kit.sdk.results import OperationResult
 from tests.helpers import KIT_ROOT, ledger_subcommand
 
 
@@ -67,6 +68,34 @@ def test_get_records_tool_filters_private_and_truncates(synthetic_case_copy):
     assert all(row.get("claim_id") != "CPRIV" for row in public["data"]["records"])
     assert len(limited["data"]["records"]) == 1
     assert limited["data"]["truncated"] is True
+
+
+def test_get_records_tool_routes_through_sdk(monkeypatch, synthetic_case_copy):
+    ctx = make_ctx(synthetic_case_copy.parent)
+    calls = {}
+
+    class Records:
+        def list(self, record_type: str, *, include_private: bool, limit: int) -> OperationResult:
+            calls["args"] = (record_type, include_private, limit)
+            return OperationResult.success(
+                "records.list",
+                data={"records": [{"claim_id": "C1"}]},
+            )
+
+    class Case:
+        records = Records()
+
+    def fake_sdk_case(_ctx: ServerContext, case: str) -> Case:
+        calls["case"] = case
+        return Case()
+
+    monkeypatch.setattr(tools_read, "sdk_case", fake_sdk_case)
+
+    result = tools_read.get_records_tool(ctx, "synthetic_case", "claims", include_private=True, limit=7)
+
+    assert calls == {"case": "synthetic_case", "args": ("claims", True, 7)}
+    assert result["operation"] == "records.list"
+    assert result["data"]["records"] == [{"claim_id": "C1"}]
 
 
 def test_run_report_tool_plans_report_command(synthetic_case_copy):

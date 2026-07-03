@@ -4,24 +4,16 @@ from __future__ import annotations
 
 from typing import Any
 
-from adapters.interfaces.mcp.context import ServerContext, error_dict, resolve_case
-from adapters.ops import extraction as extraction_ops
+from adapters.interfaces.mcp.context import ServerContext, error_dict, mcp_result, resolve_case, sdk_case
 from adapters.ops import query as query_ops
 from adapters.ops import sources as source_ops
 
 
 def discover_sources_tool(ctx: ServerContext, case: str, query: str, limit: int = 10) -> dict[str, Any]:
     try:
-        return source_ops.discover_sources(
-            resolve_case(ctx, case),
-            query=query,
-            searxng_url=ctx.settings.searxng_url,
-            limit=limit,
-        ).to_dict()
+        return mcp_result(sdk_case(ctx, case).sources.discover(query=query, limit=limit))
     except ValueError as exc:
         return error_dict(str(exc))
-    except Exception as exc:
-        return error_dict(f"discover_sources failed: {exc}")
 
 
 def ingest_url_tool(
@@ -33,17 +25,15 @@ def ingest_url_tool(
     reliability_grade: str | None = None,
 ) -> dict[str, Any]:
     try:
-        case_dir = resolve_case(ctx, case)
+        result = sdk_case(ctx, case).sources.ingest_url(
+            url,
+            title=title,
+            source_type=source_type,
+            reliability_grade=reliability_grade,
+        )
     except ValueError as exc:
         return error_dict(str(exc))
-    return source_ops.ingest_url(
-        ctx.runner,
-        case_dir,
-        url,
-        title=title,
-        source_type=source_type,
-        reliability_grade=reliability_grade,
-    ).to_dict()
+    return mcp_result(result)
 
 
 def add_source_tool(
@@ -55,48 +45,42 @@ def add_source_tool(
     reliability_grade: str | None = None,
 ) -> dict[str, Any]:
     try:
-        case_dir = resolve_case(ctx, case)
+        result = sdk_case(ctx, case).sources.add(
+            title=title,
+            url=url,
+            source_type=source_type,
+            reliability_grade=reliability_grade,
+        )
     except ValueError as exc:
         return error_dict(str(exc))
-    return source_ops.add_source(
-        ctx.runner,
-        case_dir,
-        title=title,
-        url=url,
-        source_type=source_type,
-        reliability_grade=reliability_grade,
-    ).to_dict()
+    return mcp_result(result)
 
 
 def parse_source_tool(ctx: ServerContext, case: str, source_id: str) -> dict[str, Any]:
     try:
-        return source_ops.parse_source(resolve_case(ctx, case), source_id).to_dict()
+        return mcp_result(sdk_case(ctx, case).sources.parse(source_id))
     except ValueError as exc:
-        return error_dict(str(exc))
-    except RuntimeError as exc:
         return error_dict(str(exc))
 
 
 def ocr_source_tool(ctx: ServerContext, case: str, source_id: str, language: str = "eng") -> dict[str, Any]:
     try:
-        return source_ops.ocr_source(resolve_case(ctx, case), source_id, language=language).to_dict()
+        return mcp_result(sdk_case(ctx, case).sources.ocr(source_id, language=language))
     except ValueError as exc:
-        return error_dict(str(exc))
-    except RuntimeError as exc:
         return error_dict(str(exc))
 
 
 def draft_extraction_tool(ctx: ServerContext, case: str, source_id: str, template: str = "generic") -> dict[str, Any]:
     try:
-        case_dir = resolve_case(ctx, case)
+        result = sdk_case(ctx, case).extractions.draft(source_id, template=template)
     except ValueError as exc:
         return error_dict(str(exc))
-    return extraction_ops.draft_extraction(ctx.runner, case_dir, source_id, template=template).to_dict()
+    return mcp_result(result)
 
 
 def save_extraction_packet_tool(ctx: ServerContext, case: str, packet_name: str, packet: dict) -> dict[str, Any]:
     try:
-        return extraction_ops.save_packet(resolve_case(ctx, case), packet_name, packet).to_dict()
+        return mcp_result(sdk_case(ctx, case).extractions.save(packet_name, packet))
     except ValueError as exc:
         return error_dict(str(exc))
 

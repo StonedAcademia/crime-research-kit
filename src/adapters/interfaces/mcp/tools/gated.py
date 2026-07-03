@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from adapters.interfaces.mcp.context import ServerContext, error_dict, resolve_case
-from adapters.ops import exports as export_ops
-from adapters.ops import extraction as extraction_ops
+from crime_research_kit.sdk.results import OperationResult
+
+from adapters.interfaces.mcp.context import ServerContext, error_dict, mcp_result, sdk_case
 
 PUBLIC_NOTE = "public-safe: records with public_export=false were excluded"
 PRIVATE_NOTE = "include_private=true: for internal review only, do not publish"
@@ -16,15 +16,14 @@ def import_extraction_tool(ctx: ServerContext, case: str, packet: str, confirm: 
     if "/" in packet or "\\" in packet or packet.startswith("."):
         return error_dict(f"Packet must be a bare filename under staging/extractions/, got: {packet!r}")
     try:
-        case_dir = resolve_case(ctx, case)
+        result = sdk_case(ctx, case).extractions.import_reviewed(packet, approved=confirm)
     except ValueError as exc:
         return error_dict(str(exc))
-    packet_path = f"{case_dir.rstrip('/')}/staging/extractions/{packet}"
-    return extraction_ops.import_extraction(ctx.runner, case_dir, packet_path, confirm=confirm).to_dict()
+    return mcp_result(result)
 
 
-def _export(result, include_private: bool) -> dict[str, Any]:
-    payload = result.to_dict()
+def _export(result: OperationResult, include_private: bool) -> dict[str, Any]:
+    payload = mcp_result(result)
     payload.setdefault("data", {})
     payload["data"]["privacy"] = PRIVATE_NOTE if include_private else PUBLIC_NOTE
     return payload
@@ -32,26 +31,25 @@ def _export(result, include_private: bool) -> dict[str, Any]:
 
 def export_manim_tool(ctx: ServerContext, case: str, include_private: bool = False) -> dict[str, Any]:
     try:
-        case_dir = resolve_case(ctx, case)
+        result = sdk_case(ctx, case).exports.manim(include_private=include_private)
     except ValueError as exc:
         return error_dict(str(exc))
-    return _export(export_ops.export_manim(ctx.runner, case_dir, include_private=include_private), include_private)
+    return _export(result, include_private)
 
 
 def export_case_charts_tool(ctx: ServerContext, case: str, include_private: bool = False) -> dict[str, Any]:
     try:
-        case_dir = resolve_case(ctx, case)
+        result = sdk_case(ctx, case).exports.case_charts(include_private=include_private)
     except ValueError as exc:
         return error_dict(str(exc))
-    return _export(export_ops.export_case_charts(ctx.runner, case_dir, include_private=include_private), include_private)
+    return _export(result, include_private)
 
 
 def export_analysis_charts_tool(ctx: ServerContext, case: str, include_private: bool = False) -> dict[str, Any]:
     try:
-        case_dir = resolve_case(ctx, case)
+        result = sdk_case(ctx, case).exports.analysis_charts(include_private=include_private)
     except ValueError as exc:
         return error_dict(str(exc))
-    result = export_ops.export_analysis_charts(ctx.runner, case_dir, include_private=include_private)
     return _export(result, include_private)
 
 

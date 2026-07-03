@@ -7,10 +7,12 @@ from adapters.interfaces.mcp.context import (
     default_skill_root,
     error_dict,
     list_case_slugs,
+    mcp_result,
     resolve_case,
 )
 from adapters.ops.runner import CrkRunner
 from core.config import CrkSettings
+from crime_research_kit.sdk.results import OperationResult
 from tests.helpers import KIT_ROOT
 
 
@@ -65,3 +67,17 @@ def test_default_skill_root_points_at_repo_local_skill():
 
 def test_error_dict_shape():
     assert error_dict("boom") == {"ok": False, "errors": ["boom"]}
+
+
+def test_mcp_result_preserves_legacy_command_and_string_errors():
+    result = OperationResult.failure(
+        "extractions.import_reviewed",
+        {"code": "safety_blocked", "message": "confirm=True required"},
+        diagnostics={"command": ["crk-ledger", "import-extraction"], "dry_run": True},
+    )
+
+    payload = mcp_result(result)
+
+    assert payload["errors"] == ["confirm=True required"]
+    assert payload["command"] == ["crk-ledger", "import-extraction"]
+    assert payload["dry_run"] is True
