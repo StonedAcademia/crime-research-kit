@@ -111,26 +111,24 @@ def live_service(url: str | None, health_path: str) -> str:
     return base
 
 
-def register_pdf_source(case_dir, source_id: str, pdf_path):
-    from pathlib import Path as _Path
-    import shutil as _shutil
-
+def register_pdf_source(case_dir: Path, source_id: str, pdf_path: Path) -> str:
     from crime_research_kit._runtime.core.casefile import append_jsonl, record_path
 
-    case_dir = _Path(case_dir)
+    case_dir = Path(case_dir)
     rel = f"raw/sources/{source_id}.pdf"
     dest = case_dir / rel
     dest.parent.mkdir(parents=True, exist_ok=True)
-    _shutil.copyfile(_Path(pdf_path), dest)
+    shutil.copyfile(Path(pdf_path), dest)
     append_jsonl(
         record_path(case_dir, "sources"),
         {
             "source_id": source_id,
             "title": f"Fixture source {source_id}",
-            "source_type": "document",
+            "source_type": "other",
             "raw_path": rel,
             "public_export": True,
             "reliability_grade": "C",
+            "date_accessed": "2026-01-01",
             "notes": "Synthetic fixture source; not real evidence.",
         },
     )
