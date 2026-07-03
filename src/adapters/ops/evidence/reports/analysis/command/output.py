@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import datetime as dt
 from typing import Any
+
+from core.models.reports import Dashboard, ReportPage
 
 from adapters.ops.evidence.reports.analysis.command.context import AnalysisContext
 from adapters.ops.evidence.reports.analysis.command.manifest import write_analysis_index
-from adapters.ops.evidence.reports.analysis.pages.render import render_analysis_chart_page, render_analysis_dashboard
+from adapters.ops.evidence.reports.analysis.pages.render import render_dashboard, render_page, write_html
 from adapters.ops.evidence.reports.analysis.pages.specs import build_analysis_chart_specs
 from adapters.ops.evidence.ledger.records import write_csv
 
@@ -59,7 +62,7 @@ def write_analysis_outputs(ctx: AnalysisContext, products: dict[str, Any]) -> No
     ])
     _write_middle_csvs(ctx, products)
     _write_final_csvs(ctx, products)
-    chart_specs = build_analysis_chart_specs(_chart_data(products))
+    chart_specs = _contextualize_pages(ctx, build_analysis_chart_specs(_chart_data(products)))
     _write_chart_pages(ctx, chart_specs)
     write_analysis_index(ctx, chart_specs)
     print(f"Exported analysis charts to {out}")
@@ -160,13 +163,26 @@ def _chart_data(products: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _write_chart_pages(ctx: AnalysisContext, chart_specs: list[dict[str, Any]]) -> None:
-    for spec in chart_specs:
-        (ctx.out / str(spec["filename"])).write_text(
-            render_analysis_chart_page(ctx.case_title, ctx.include_private, spec),
-            encoding="utf-8",
-        )
-    (ctx.out / "analysis_charts.html").write_text(
-        render_analysis_dashboard(ctx.case_title, ctx.include_private, chart_specs),
-        encoding="utf-8",
+def _contextualize_pages(ctx: AnalysisContext, pages: list[ReportPage]) -> list[ReportPage]:
+    generated = dt.datetime.now(dt.timezone.utc).isoformat()
+    return [
+        page.model_copy(update={
+            "case_title": ctx.case_title,
+            "include_private": ctx.include_private,
+            "generated_at": generated,
+        })
+        for page in pages
+    ]
+
+
+def _write_chart_pages(ctx: AnalysisContext, chart_specs: list[ReportPage]) -> None:
+    for page in chart_specs:
+        write_html(ctx.out / f"{page.slug}.html", render_page(page))
+    generated = chart_specs[0].generated_at if chart_specs else dt.datetime.now(dt.timezone.utc).isoformat()
+    dashboard = Dashboard(
+        case_title=ctx.case_title,
+        include_private=ctx.include_private,
+        generated_at=generated,
+        pages=chart_specs,
     )
+    write_html(ctx.out / "analysis_charts.html", render_dashboard(dashboard))

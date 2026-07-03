@@ -93,6 +93,11 @@ namespaces = true
   "schemas_data/evidence/*.json",
   "schemas_data/review/*.json",
 ]
+"adapters.ops.evidence.reports.analysis.pages" = [
+  "templates_data/static/*",
+  "templates_data/layouts/*.j2",
+  "templates_data/figures/*.j2",
+]
 
 [tool.pytest.ini_options]
 testpaths = [

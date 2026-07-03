@@ -21,6 +21,8 @@ class Rect(_El):
     height: float
     rx: float = 0.0
     fill: str = ""
+    fill_opacity: float | str | None = None
+    stroke: str = ""
 
 
 class Circle(_El):
@@ -29,6 +31,9 @@ class Circle(_El):
     cy: float
     r: float
     fill: str = ""
+    fill_opacity: float | str | None = None
+    stroke: str = ""
+    stroke_width: float = 1.0
 
 
 class Line(_El):
@@ -39,14 +44,19 @@ class Line(_El):
     y2: float
     stroke: str = ""
     stroke_width: float = 1.0
+    stroke_opacity: float | str | None = None
+    stroke_dasharray: str = ""
 
 
 class Path(_El):
     kind: Literal["path"] = "path"
     d: str
     fill: str = ""
+    fill_opacity: float | str | None = None
     stroke: str = ""
     stroke_width: float = 1.0
+    stroke_opacity: float | str | None = None
+    stroke_dasharray: str = ""
 
 
 class Text(_El):
@@ -56,6 +66,7 @@ class Text(_El):
     content: str
     anchor: Literal["start", "middle", "end"] = "start"
     font_size: float = 12.0
+    transform: str = ""
 
 
 class Group(_El):
@@ -73,4 +84,7 @@ class SvgDoc(BaseModel):
     height: float
     view_box: str = ""
     css_class: str = ""
+    style: str = ""
+    role: str = ""
+    aria_label: str = ""
     elements: list[SvgElement] = Field(default_factory=list)

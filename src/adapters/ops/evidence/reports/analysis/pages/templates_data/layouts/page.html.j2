@@ -1,0 +1,57 @@
+{% import "figures/svg.j2" as figures %}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ page.title }} - {{ page.case_title }}</title>
+<style>{{ app_css | safe }}</style>
+</head>
+<body class="crk-report min-h-screen bg-slate-50 text-slate-900">
+<header class="border-b border-slate-200 bg-white px-6 py-6">
+<p><a class="text-sm font-semibold text-blue-700 hover:underline" href="{{ page.back_href }}">{{ page.back_label }}</a></p>
+<h1 class="text-2xl font-semibold">{{ page.title }}</h1>
+<p class="crk-muted">{{ page.case_title }}{% if page.generated_at %} &middot; generated {{ page.generated_at }}{% endif %}{% if page.include_private %} &middot; public and private/internal rows{% else %} &middot; public-export rows only{% endif %}</p>
+{% if page.summary %}<p class="mt-3 max-w-3xl text-sm leading-6 text-slate-700">{{ page.summary }}</p>{% endif %}
+{% for note in page.notes %}<p class="crk-muted mt-2">{{ note }}</p>{% endfor %}
+{% if page.metrics %}<div class="crk-metrics">{% for metric in page.metrics %}<div class="crk-metric"><strong>{{ metric.value }}</strong><span>{{ metric.label }}</span></div>{% endfor %}</div>{% endif %}
+</header>
+<main class="mx-auto max-w-7xl px-6 py-6">
+<section>
+<div class="toolbar">
+<input type="search" data-search placeholder="Filter visible marks by label, status, source, claim, or path">
+{% for term in page.filters %}<button type="button" class="crk-filter-btn" data-query="{{ term }}" aria-pressed="false">{{ term }}</button>{% endfor %}
+<button type="button" class="crk-filter-btn" data-query="" aria-pressed="false">All</button>
+<button type="button" class="crk-filter-btn" data-reset>Reset selection</button>
+</div>
+<div class="chart-layout">
+<div>
+{% if page.figure %}<section class="overflow-x-auto rounded border border-slate-200 bg-white p-4">{{ figures.svg(page.figure) }}</section>{% endif %}
+{% if page.table %}
+<details class="data-preview"><summary>Data preview</summary>
+{% if page.table.rows %}
+<div class="crk-table-wrap mt-6"><table class="min-w-full border-collapse text-sm"><thead><tr>{% for col in page.table.columns %}<th class="border-b border-slate-200 bg-slate-100 px-3 py-2 text-left">{{ col.replace("_", " ").title() }}</th>{% endfor %}</tr></thead>
+<tbody>{% for row in page.table.rows[:page.table.limit] %}<tr data-filterable="{{ row.values() | join(' ') }}">{% for col in page.table.columns %}<td class="border-b border-slate-100 px-3 py-2 align-top">{{ row.get(col, "") }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>
+{% if page.table.rows | length > page.table.limit %}<p class="crk-muted mt-2">Showing {{ page.table.limit }} of {{ page.table.rows | length }} rows.</p>{% endif %}
+{% else %}<p class="crk-muted">No rows.</p>{% endif %}
+</details>
+{% endif %}
+{% for table in page.tables %}
+<section class="crk-report-section">
+{% if table.title %}<h2>{{ table.title }}</h2>{% endif %}
+<div class="crk-table-wrap"><table class="min-w-full border-collapse text-sm"><thead><tr>{% for col in table.columns %}<th class="border-b border-slate-200 bg-slate-100 px-3 py-2 text-left">{{ col.replace("_", " ").title() }}</th>{% endfor %}</tr></thead>
+<tbody>{% for row in table.rows[:table.limit] %}<tr data-filterable="{{ row.values() | join(' ') }}">{% for col in table.columns %}<td class="border-b border-slate-100 px-3 py-2 align-top">{{ row.get(col, "") }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>
+{% if table.rows | length > table.limit %}<p class="crk-muted mt-2">Showing {{ table.limit }} of {{ table.rows | length }} rows.</p>{% endif %}
+{% if not table.rows %}<p class="crk-muted">No rows.</p>{% endif %}
+</section>
+{% endfor %}
+</div>
+<aside class="inspector" data-inspector>
+<p class="inspector-title">Inspector</p>
+<div class="inspector-body" data-inspector-body></div>
+</aside>
+</div>
+</section>
+</main>
+<script>{{ app_js | safe }}</script>
+</body>
+</html>

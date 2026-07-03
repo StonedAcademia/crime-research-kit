@@ -19,10 +19,11 @@ MAX_DIRS_PER_DIR = 3
 MAX_NON_COMMENT_LOC = 200
 SKIPPED_ROOTS = (Path(".agents"), Path("data"), Path("docs/superpowers"))
 SRC_ROOT = Path("src")
-SIZE_EXEMPT_NAMES = {"LICENSE"}
+SIZE_EXEMPT_NAMES = {"LICENSE", "package-lock.json"}
 SRC_FILE_COUNT_EXEMPT_NAMES = {"README.md", "__init__.py"}
 DIR_LIMIT_OVERRIDES = {
     Path("docs/guides"): {"max_dirs": 4},
+    Path("frontend"): {"max_files": 5},
 }
 
 HASH_COMMENT_SUFFIXES = {".py", ".sh", ".yml", ".yaml", ".toml"}

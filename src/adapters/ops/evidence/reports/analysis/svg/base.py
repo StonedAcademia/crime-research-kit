@@ -2,12 +2,9 @@
 
 from __future__ import annotations
 
-import html
 import math
 import re
 from typing import Any
-
-from adapters.ops.evidence.ledger.records import flatten
 
 PALETTE = {
     "verified": "#1f7a4f",
@@ -39,24 +36,6 @@ def color_for(value: Any, fallback_index: int = 0) -> str:
 def short_label(value: Any, max_len: int = 26) -> str:
     text = str(value or "")
     return text if len(text) <= max_len else text[: max_len - 1] + "..."
-
-
-def svg_no_data() -> str:
-    return (
-        '<div class="chart-shell">'
-        '<svg class="chart-svg" viewBox="0 0 900 220" role="img" aria-label="No chart data">'
-        '<rect x="0" y="0" width="900" height="220" rx="8" class="chart-bg"/>'
-        '<text x="450" y="112" class="axis-label" text-anchor="middle">No chart data</text>'
-        "</svg></div>"
-    )
-
-
-def html_title(value: Any) -> str:
-    return f"<title>{html.escape(flatten(value))}</title>"
-
-
-def chart_with_preview(chart_html: str, preview_html: str) -> str:
-    return f"{chart_html}" '<details class="data-preview"><summary>Data preview</summary>' f"{preview_html}" "</details>"
 
 
 def parse_year(value: Any) -> int | None:

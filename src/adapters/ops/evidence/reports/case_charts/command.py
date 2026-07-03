@@ -11,8 +11,9 @@ from typing import Any
 from core.casefile import case_path, ensure_case, read_jsonl, record_path
 
 from adapters.ops.evidence.public_gate import enforce_public_output_gate
-from adapters.ops.evidence.reports.case_charts.people import render_people_graph_html
-from adapters.ops.evidence.reports.case_charts.timeline import render_subcase_timeline_html
+from adapters.ops.evidence.reports.analysis.pages.render import render_page, write_html
+from adapters.ops.evidence.reports.case_charts.people import build_people_graph_page
+from adapters.ops.evidence.reports.case_charts.timeline import build_subcase_timeline_page
 from adapters.ops.evidence.reports.common import (
     SUBCASE_TITLES,
     best_pair_relation,
@@ -51,12 +52,12 @@ def export_case_charts(args: argparse.Namespace) -> None:
     people_nodes = _people_nodes(people, include_private, claim_by_id)
     write_csv(out / "people_nodes.csv", people_nodes, ["entity_id", "name", "display_name", "aliases", "status", "role_tags", "privacy_level", "living_status", "source_ids", "claim_ids", "public_export"])
     write_csv(out / "people_edges.csv", people_edges, ["src_entity_id", "dst_entity_id", "src_name", "dst_name", "connection_types", "event_ids", "rel_ids", "claim_ids", "source_ids", "statuses", "confidence", "public_export", "notes"])
-    (out / "people_graph.html").write_text(render_people_graph_html(case_title, people_nodes, people_edges, include_private), encoding="utf-8")
+    write_html(out / "people_graph.html", render_page(build_people_graph_page(case_title, people_nodes, people_edges, include_private)))
 
     timeline_rows, subcase_rows = _subcase_rows(events, claim_by_id, source_by_id)
     write_csv(out / "subcase_summary.csv", subcase_rows, ["subcase_id", "subcase_title", "event_count", "claim_count", "first_date", "last_date"])
     write_csv(out / "subcase_timelines.csv", timeline_rows, ["subcase_id", "subcase_title", "event_id", "start_date", "end_date", "date_precision", "event_type", "title", "status", "confidence", "claim_ids", "evidence_levels", "source_grades", "source_ids", "public_export"])
-    (out / "subcase_timelines.html").write_text(render_subcase_timeline_html(case_title, subcase_rows, timeline_rows, include_private), encoding="utf-8")
+    write_html(out / "subcase_timelines.html", render_page(build_subcase_timeline_page(case_title, subcase_rows, timeline_rows, include_private)))
     _write_index(out, case_title, include_private, people_nodes, people_edges, subcase_rows)
     print(f"Exported case charts to {out}")
 
