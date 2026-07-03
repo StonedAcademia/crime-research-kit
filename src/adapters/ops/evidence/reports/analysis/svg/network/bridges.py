@@ -7,7 +7,6 @@ from typing import Any
 from core.models.reports import Group, Path, Rect, SvgDoc, SvgElement, Text
 
 from adapters.ops.evidence.ledger.records import flatten
-from adapters.ops.evidence.reports.analysis.pages.render import render_svg_doc
 from adapters.ops.evidence.reports.analysis.svg.base import color_for, short_label
 
 
@@ -85,7 +84,3 @@ def build_sankey_figure(nodes: list[dict[str, Any]], links: list[dict[str, Any]]
         )
     axis = Text(x=20, y=30, content="Audited inter-cluster bridge flow; dashed links are category/lead/context bridges.", css_class="axis-label")
     return _chart_doc(width, height, "Cluster bridge Sankey", [*paths, *rects, axis])
-
-
-def render_sankey_svg(nodes: list[dict[str, Any]], links: list[dict[str, Any]]) -> str:
-    return render_svg_doc(build_sankey_figure(nodes, links))

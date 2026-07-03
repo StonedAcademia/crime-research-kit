@@ -8,7 +8,6 @@ from typing import Any
 from core.models.reports import Circle, Group, Line, Path, Rect, SvgDoc, SvgElement, Text
 
 from adapters.ops.evidence.ledger.records import flatten
-from adapters.ops.evidence.reports.analysis.pages.render import render_svg_doc
 from adapters.ops.evidence.reports.analysis.svg.base import color_for, short_label
 from adapters.ops.evidence.reports.weights import parse_float
 
@@ -76,10 +75,6 @@ def build_layered_graph_figure(nodes: list[dict[str, Any]], edges: list[dict[str
         for idx, layer in enumerate(layers)
     ]
     return _chart_doc(width, height, "Layered knowledge graph", [*layer_labels, *edge_lines, *node_marks])
-
-
-def render_layered_graph_svg(nodes: list[dict[str, Any]], edges: list[dict[str, Any]]) -> str:
-    return render_svg_doc(build_layered_graph_figure(nodes, edges))
 
 
 def build_layered_graph_v2_figure(nodes: list[dict[str, Any]], edges: list[dict[str, Any]]) -> SvgDoc:
@@ -192,7 +187,3 @@ def build_layered_graph_v2_figure(nodes: list[dict[str, Any]], edges: list[dict[
         css_class="axis-label",
     )
     return _chart_doc(width, height, "Layered knowledge graph v2", [headline, *layer_guides, *edge_marks, *node_marks, *legend_marks], style=f"min-width:{width}px")
-
-
-def render_layered_graph_v2_svg(nodes: list[dict[str, Any]], edges: list[dict[str, Any]]) -> str:
-    return render_svg_doc(build_layered_graph_v2_figure(nodes, edges))

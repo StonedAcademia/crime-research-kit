@@ -30,7 +30,6 @@ class ReportPage(BaseModel):
     back_label: str = "Back to chart index"
     filters: list[str] = Field(default_factory=list)
     figure: SvgDoc | None = None
-    legacy_figure_svg: str = ""
     metrics: list[MetricBlock] = Field(default_factory=list)
     table: TableBlock | None = None
     tables: list[TableBlock] = Field(default_factory=list)

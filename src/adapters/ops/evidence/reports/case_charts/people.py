@@ -8,7 +8,7 @@ from typing import Any
 from core.models.reports import Circle, Group, Line, MetricBlock, ReportPage, SvgDoc, SvgElement, TableBlock, Text
 
 from adapters.ops.evidence.ledger.records import flatten
-from adapters.ops.evidence.reports.analysis.pages.render import render_page, render_svg_doc
+from adapters.ops.evidence.reports.analysis.pages.render import render_page
 from adapters.ops.evidence.reports.common import (
     edge_evidence_label,
     edge_is_lead_only,
@@ -63,10 +63,6 @@ def build_people_graph_page(
 def build_people_graph_figure(nodes: list[dict[str, Any]], edges: list[dict[str, Any]]) -> SvgDoc:
     weighted_edges, group_by_id, groups, degree, weighted_degree = _graph_state(nodes, edges)
     return _people_graph_figure_from(nodes, weighted_edges, group_by_id, groups, degree, weighted_degree)
-
-
-def render_people_graph_svg(nodes: list[dict[str, Any]], edges: list[dict[str, Any]]) -> str:
-    return render_svg_doc(build_people_graph_figure(nodes, edges))
 
 
 def _scope(include_private: bool) -> str:

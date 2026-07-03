@@ -7,7 +7,7 @@ from typing import Any
 
 from core.models.reports import Circle, Line, ReportPage, SvgDoc, SvgElement, TableBlock, Text
 
-from adapters.ops.evidence.reports.analysis.pages.render import render_page, render_svg_doc
+from adapters.ops.evidence.reports.analysis.pages.render import render_page
 from adapters.ops.evidence.reports.common import entity_display, parse_cell_list, truncate_label
 from adapters.ops.evidence.reports.weights import parse_float
 
@@ -58,10 +58,6 @@ def build_people_clusters_figure(
     positions = _positions(width, height, nodes, cluster_by_id)
     elements = [*_edge_lines(edges, positions), *_node_shapes(nodes, positions, cluster_by_id, density_by_id)]
     return SvgDoc(width=width, height=height, view_box=f"0 0 {width} {height}", role="img", aria_label="Leiden people clusters", elements=elements)
-
-
-def render_people_clusters_svg(nodes: list[dict[str, Any]], edges: list[dict[str, Any]], cluster_by_id: dict[str, str], density_by_id: dict[str, float]) -> str:
-    return render_svg_doc(build_people_clusters_figure(nodes, edges, cluster_by_id, density_by_id))
 
 
 def _positions(width: int, height: int, nodes: list[dict[str, Any]], cluster_by_id: dict[str, str]) -> dict[str, tuple[float, float]]:

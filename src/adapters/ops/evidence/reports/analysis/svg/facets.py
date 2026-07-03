@@ -8,7 +8,6 @@ from typing import Any
 from core.models.reports import Circle, Group, Line, Path, Rect, SvgDoc, SvgElement, Text
 
 from adapters.ops.evidence.ledger.records import flatten
-from adapters.ops.evidence.reports.analysis.pages.render import render_svg_doc
 from adapters.ops.evidence.reports.analysis.svg.base import color_for, parse_year, short_label
 from adapters.ops.evidence.reports.weights import parse_float
 
@@ -53,10 +52,6 @@ def build_path_atlas_figure(rows: list[dict[str, Any]]) -> SvgDoc:
     return _chart_doc(width, height, "6DOF path atlas", [axis, *parts], style=f"min-width:{width}px")
 
 
-def render_path_atlas_svg(rows: list[dict[str, Any]]) -> str:
-    return render_svg_doc(build_path_atlas_figure(rows))
-
-
 def build_boundary_overlay_figure(rows: list[dict[str, Any]]) -> SvgDoc:
     if not rows:
         return _no_data_figure()
@@ -85,10 +80,6 @@ def build_boundary_overlay_figure(rows: list[dict[str, Any]]) -> SvgDoc:
                 ])
     headers = [Text(x=f"{left + idx * x_step:.1f}", y=36, content=short_label(status, 16), css_class="mini-label", anchor="middle") for idx, status in enumerate(statuses)]
     return _chart_doc(width, height, "Contradiction and boundary overlay", [*headers, *bubbles], style=f"min-width:{width}px")
-
-
-def render_boundary_overlay_svg(rows: list[dict[str, Any]]) -> str:
-    return render_svg_doc(build_boundary_overlay_figure(rows))
 
 
 def build_swimlanes_figure(rows: list[dict[str, Any]]) -> SvgDoc:
@@ -124,10 +115,6 @@ def build_swimlanes_figure(rows: list[dict[str, Any]]) -> SvgDoc:
     return _chart_doc(width, height, "Temporal cluster swimlanes", parts)
 
 
-def render_swimlanes_svg(rows: list[dict[str, Any]]) -> str:
-    return render_svg_doc(build_swimlanes_figure(rows))
-
-
 def build_treemap_figure(rows: list[dict[str, Any]]) -> SvgDoc:
     if not rows:
         return _no_data_figure()
@@ -161,10 +148,6 @@ def build_treemap_figure(rows: list[dict[str, Any]]) -> SvgDoc:
     return _chart_doc(width, height, "Relationship type treemap", rects, style=f"min-width:{width}px")
 
 
-def render_treemap_svg(rows: list[dict[str, Any]]) -> str:
-    return render_svg_doc(build_treemap_figure(rows))
-
-
 def build_bipartite_figure(nodes: list[dict[str, Any]], edges: list[dict[str, Any]]) -> SvgDoc:
     if not nodes or not edges:
         return _no_data_figure()
@@ -195,7 +178,3 @@ def build_bipartite_figure(nodes: list[dict[str, Any]], edges: list[dict[str, An
         labels.append(Text(x=x0 + 12, y=y0 + 4, content=short_label(row.get("label"), 36), css_class="mini-label"))
     axes = [Text(x=250, y=30, content="people", css_class="axis-label", anchor="middle"), Text(x=820, y=30, content="sources", css_class="axis-label", anchor="middle")]
     return _chart_doc(width, height, "Person source bipartite graph", [*axes, *paths, *labels], style=f"min-width:{width}px")
-
-
-def render_bipartite_svg(nodes: list[dict[str, Any]], edges: list[dict[str, Any]]) -> str:
-    return render_svg_doc(build_bipartite_figure(nodes, edges))

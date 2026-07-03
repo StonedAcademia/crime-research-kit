@@ -9,7 +9,6 @@ from core.models.reports import Circle, Group, Line, Path, Rect, SvgDoc, SvgElem
 
 from adapters.ops.evidence.ledger.records import flatten
 from adapters.ops.evidence.reports.analysis.classifiers import status_score
-from adapters.ops.evidence.reports.analysis.pages.render import render_svg_doc
 from adapters.ops.evidence.reports.analysis.svg.base import CHART_COLORS, color_for, pie_path, short_label
 from adapters.ops.evidence.reports.weights import parse_float
 
@@ -58,10 +57,6 @@ def build_heatmap_figure(rows: list[dict[str, Any]]) -> SvgDoc:
     return _chart_doc(width, height, "Evidence confidence heatmap", elements, style=f"min-width:{width}px")
 
 
-def render_heatmap_svg(rows: list[dict[str, Any]]) -> str:
-    return render_svg_doc(build_heatmap_figure(rows))
-
-
 def build_fragility_figure(rows: list[dict[str, Any]]) -> SvgDoc:
     if not rows:
         return _no_data_figure()
@@ -83,10 +78,6 @@ def build_fragility_figure(rows: list[dict[str, Any]]) -> SvgDoc:
         point = Circle(cx=round(x, 1), cy=round(y, 1), r=7, fill=color_for(row.get("fragility_tier"), idx), fill_opacity="0.86", title=flatten(row.get("record_id")))
         elements.append(Group(children=[line, point]))
     return _chart_doc(width, height, "Bridge fragility scatterplot", elements)
-
-
-def render_fragility_svg(rows: list[dict[str, Any]]) -> str:
-    return render_svg_doc(build_fragility_figure(rows))
 
 
 def build_claim_matrix_figure(rows: list[dict[str, Any]]) -> SvgDoc:
@@ -118,10 +109,6 @@ def build_claim_matrix_figure(rows: list[dict[str, Any]]) -> SvgDoc:
             title = f"{claim_id} / {source_id} / {grade or 'no link'}"
             elements.append(Rect(x=x, y=y, width=cell - 3, height=cell - 3, rx=2, fill=fill, fill_opacity="0.9" if grade else "0.55", title=title))
     return _chart_doc(width, height, "Claim source matrix", elements, style=f"min-width:{width}px")
-
-
-def render_claim_matrix_svg(rows: list[dict[str, Any]]) -> str:
-    return render_svg_doc(build_claim_matrix_figure(rows))
 
 
 def build_source_quality_figure(grade_rows: list[dict[str, Any]], source_rows: list[dict[str, Any]]) -> SvgDoc:
@@ -157,10 +144,6 @@ def build_source_quality_figure(grade_rows: list[dict[str, Any]], source_rows: l
     return _chart_doc(width, height, "Source quality dashboard", elements)
 
 
-def render_source_quality_svg(grade_rows: list[dict[str, Any]], source_rows: list[dict[str, Any]]) -> str:
-    return render_svg_doc(build_source_quality_figure(grade_rows, source_rows))
-
-
 def build_readiness_figure(rows: list[dict[str, Any]]) -> SvgDoc:
     if not rows:
         return _no_data_figure()
@@ -179,7 +162,3 @@ def build_readiness_figure(rows: list[dict[str, Any]]) -> SvgDoc:
         start = end
     elements.extend([Circle(cx=170, cy=160, r=58, fill="#fff"), Text(x=170, y=158, content=str(total), css_class="metric", anchor="middle"), Text(x=170, y=180, content="records", css_class="mini-label", anchor="middle")])
     return _chart_doc(width, height, "Public narrative readiness donut", elements)
-
-
-def render_readiness_svg(rows: list[dict[str, Any]]) -> str:
-    return render_svg_doc(build_readiness_figure(rows))

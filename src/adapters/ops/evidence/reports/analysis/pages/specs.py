@@ -42,7 +42,7 @@ def _page(
     slug: str,
     title: str,
     summary: str,
-    figure: SvgDoc | str,
+    figure: SvgDoc,
     rows: list[dict[str, Any]],
     columns: list[str],
     limit: int,
@@ -54,8 +54,7 @@ def _page(
         case_title="",
         summary=summary,
         filters=filters,
-        figure=figure if isinstance(figure, SvgDoc) else None,
-        legacy_figure_svg=figure if isinstance(figure, str) else "",
+        figure=figure,
         table=_table_block(rows, columns, limit),
     )
 

@@ -8,7 +8,7 @@ from core.models.reports import Circle, Line, ReportPage, SvgDoc, SvgElement, Ta
 
 from adapters.ops.evidence.ledger.records import flatten
 from adapters.ops.evidence.ledger.scoring import date_sort_key
-from adapters.ops.evidence.reports.analysis.pages.render import render_page, render_svg_doc
+from adapters.ops.evidence.reports.analysis.pages.render import render_page
 from adapters.ops.evidence.reports.common import truncate_label
 
 
@@ -55,10 +55,6 @@ def build_subcase_timeline_figure(subcase_rows: list[dict[str, Any]], event_rows
     lane_y = {row["subcase_id"]: top + idx * lane_h for idx, row in enumerate(subcase_rows)}
     elements = [*_axis(width, right, top, height, left, min_year, max_year, span), *_lanes(subcase_rows, lane_y, left, width, right), *_points(event_rows, lane_y, left, width, right, min_year, span)]
     return SvgDoc(width=width, height=height, view_box=f"0 0 {width} {height}", role="img", aria_label="Subcase timeline chart", elements=elements)
-
-
-def render_subcase_timeline_svg(subcase_rows: list[dict[str, Any]], event_rows: list[dict[str, Any]]) -> str:
-    return render_svg_doc(build_subcase_timeline_figure(subcase_rows, event_rows))
 
 
 def _axis(width: int, right: int, top: int, height: int, left: int, min_year: int, max_year: int, span: int) -> list[SvgElement]:
