@@ -106,6 +106,13 @@
       "prefix_class": "CRK_"
     },
     {
+      "name": "CRK_SEARXNG_SETTINGS_FILE",
+      "purpose": "Host path mounted as the SearXNG settings file when bootstrap generates local secret material.",
+      "scope": "deployment",
+      "default": "deployment/searxng/settings.yml",
+      "prefix_class": "CRK_"
+    },
+    {
       "name": "OLLAMA_HOST",
       "purpose": "Local Ollama endpoint for deployment smoke checks and containers.",
       "scope": "deployment",

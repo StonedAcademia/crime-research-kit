@@ -24,6 +24,7 @@ paths = [
   '''^data/cases/''',
   '''^data/exports/''',
   '''^data/examples/''',
+  '''^deployment/searxng/settings\.local\.yml$''',
   '''^deployment/tooling/bin/''',
   '''^dist/''',
   '''^uv\.lock$''',
