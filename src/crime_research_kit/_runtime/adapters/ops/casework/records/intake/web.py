@@ -10,7 +10,7 @@ import re
 import urllib.parse
 from typing import Any
 
-from crime_research_kit._runtime.adapters.io.acquisition.http import fetch_url
+from crime_research_kit._runtime.adapters.io.acquisition.http import fetch_url_or_archive
 from crime_research_kit._runtime.core.casefile import case_path, ensure_case, file_sha256, log_action, now_utc, slugify
 
 from ..workspace import add_source_record
@@ -50,9 +50,10 @@ def ingest_url(args: argparse.Namespace) -> None:
     raw_path = cdir / "raw" / "downloads" / f"{safe_filename_from_url(args.url)}.html"
     text_path = cdir / "raw" / "sources" / f"{safe_filename_from_url(args.url)}.txt"
     try:
-        content_type, raw, headers = fetch_url(args.url, timeout=args.timeout)
+        content_type, raw, headers, served_url = fetch_url_or_archive(args.url, timeout=args.timeout)
     except Exception as exc:
         raise SystemExit(f"Failed to fetch {args.url}: {exc}") from exc
+    archive_url = args.archive_url or (served_url if served_url != args.url else None)
 
     raw_path.write_bytes(raw)
     text, meta = extract_html_text(raw, content_type)
@@ -69,7 +70,7 @@ def ingest_url(args: argparse.Namespace) -> None:
         author=args.author or meta.get("author"),
         publisher=publisher,
         date_published=args.date_published or meta.get("date_published"),
-        archive_url=args.archive_url,
+        archive_url=archive_url,
         raw_path=str(raw_path.relative_to(cdir)),
         text_path=str(text_path.relative_to(cdir)),
         content_type=content_type,

@@ -12,8 +12,31 @@ _RETRY_ATTEMPTS = 3
 _transport_for_tests: httpx.BaseTransport | None = None
 
 
+_ANTI_BOT_STATUSES = frozenset({401, 403, 429, 451})
+
+
 def _sleep(seconds: float) -> None:
     time.sleep(seconds)
+
+
+def fetch_url_or_archive(url: str, timeout: int = 25) -> tuple[str, bytes, dict[str, str], str]:
+    """Fetch ``url``; on an anti-bot/blocked response, retry via the Internet Archive.
+
+    Returns ``(content_type, raw, headers, served_url)`` where ``served_url`` is the URL
+    that actually delivered the content — the Wayback Machine URL when the fallback fired,
+    otherwise the original. Used by public-source capture so anti-bot pages (e.g. some
+    court-opinion republishers) still yield an archived copy instead of failing outright.
+    """
+    try:
+        content_type, raw, headers = fetch_url(url, timeout=timeout)
+        return content_type, raw, headers, url
+    except httpx.HTTPStatusError as exc:
+        status = exc.response.status_code if exc.response is not None else None
+        if status not in _ANTI_BOT_STATUSES:
+            raise
+        archive_url = f"https://web.archive.org/web/2/{url}"
+        content_type, raw, headers = fetch_url(archive_url, timeout=timeout)
+        return content_type, raw, headers, archive_url
 
 
 def fetch_url(url: str, timeout: int = 25) -> tuple[str, bytes, dict[str, str]]:
