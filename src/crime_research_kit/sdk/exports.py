@@ -44,81 +44,23 @@ class CaseExportsClient:
             outputs=[str(self.case_dir / "exports" / "manim")],
         )
 
-    def case_charts(self, *, include_private: bool | None = None, out_dir: str | None = None) -> OperationResult:
-        """Plan or run people graph and subcase timeline chart exports."""
+    def case_visuals(self, *, include_private: bool | None = None, out_dir: str | None = None) -> OperationResult:
+        """Plan or run the curated case visual package export."""
         from crime_research_kit._runtime.adapters.ops import exports as export_ops
 
         is_internal = self._include_private(include_private)
-        raw = export_ops.export_case_charts(
+        raw = export_ops.export_case_visuals(
             _runner(self.context),
             str(self.case_dir),
             include_private=is_internal,
             out_dir=out_dir,
         )
         return _result(
-            _op("exports.case_charts"),
+            _op("exports.case_visuals"),
             raw,
             case_ref=str(self.case_dir),
             include_private=is_internal,
-            outputs=[out_dir or str(self.case_dir / "exports" / "charts")],
-        )
-
-    def analysis_charts(
-        self,
-        *,
-        include_private: bool | None = None,
-        out_dir: str | None = None,
-        clusters_dir: str | None = None,
-    ) -> OperationResult:
-        """Plan or run extended analysis chart exports."""
-        from crime_research_kit._runtime.adapters.ops import exports as export_ops
-
-        is_internal = self._include_private(include_private)
-        raw = export_ops.export_analysis_charts(
-            _runner(self.context),
-            str(self.case_dir),
-            include_private=is_internal,
-            out_dir=out_dir,
-            clusters_dir=clusters_dir,
-        )
-        return _result(
-            _op("exports.analysis_charts"),
-            raw,
-            case_ref=str(self.case_dir),
-            include_private=is_internal,
-            outputs=[out_dir or str(self.case_dir / "exports" / "analysis_charts")],
-        )
-
-    def people_clusters(
-        self,
-        *,
-        include_private: bool | None = None,
-        out_dir: str | None = None,
-        charts_dir: str | None = None,
-        resolution: float = 1.0,
-        seed: int = 7,
-        sigma: float | None = None,
-    ) -> OperationResult:
-        """Plan or run people clustering exports."""
-        from crime_research_kit._runtime.adapters.ops import exports as export_ops
-
-        is_internal = self._include_private(include_private)
-        raw = export_ops.export_people_clusters(
-            _runner(self.context),
-            str(self.case_dir),
-            include_private=is_internal,
-            out_dir=out_dir,
-            charts_dir=charts_dir,
-            resolution=resolution,
-            seed=seed,
-            sigma=sigma,
-        )
-        return _result(
-            _op("exports.people_clusters"),
-            raw,
-            case_ref=str(self.case_dir),
-            include_private=is_internal,
-            outputs=[out_dir or str(self.case_dir / "exports" / "clusters")],
+            outputs=[out_dir or str(self.case_dir / ("exports/internal/visuals" if is_internal else "exports/visuals"))],
         )
 
     def _include_private(self, explicit: bool | None) -> bool:

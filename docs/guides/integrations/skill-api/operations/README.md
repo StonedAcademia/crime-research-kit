@@ -25,10 +25,8 @@ report has explicit public/private filtering semantics.
 | `auditSourceIndependence` | `review.audit_source_independence` | `staged_write` | `OperationResult` |
 | `dedupeRecords` | `review.dedupe` | `staged_write` | `OperationResult` |
 | `draftExtraction` | `extractions.draft` | `staged_write` | `OperationResult` |
-| `exportAnalysisCharts` | `exports.analysis_charts` | `public_export` | `OperationResult` |
-| `exportCaseCharts` | `exports.case_charts` | `public_export` | `OperationResult` |
+| `exportCaseVisuals` | `exports.case_visuals` | `public_export` | `OperationResult` |
 | `exportManim` | `exports.manim` | `public_export` | `OperationResult` |
-| `exportPeopleClusters` | `exports.people_clusters` | `public_export` | `OperationResult` |
 | `exportTimeline` | `exports.timeline` | `public_export` | `OperationResult` |
 | `importExtraction` | `extractions.import_reviewed` | `canonical_gated` | `OperationResult` |
 | `indexTranscript` | `records.index_transcript` | `staged_write` | `OperationResult` |

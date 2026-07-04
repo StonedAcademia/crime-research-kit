@@ -27,67 +27,28 @@ Payload fields: `cases_root`, `out_dir`, and `include_private`. Creates
 `cases.csv`, `timeline.csv`, `corroborations.csv`, and `timeline.md`. The
 default output path is `data/exports/timeline/`.
 
-## `exportCaseCharts`
+## `exportCaseVisuals`
 
-Exports case-level chart artifacts for people graph and subcase timeline
-review.
-
-CLI:
-
-```bash
-crk-ledger export-case-charts data/cases/<case_slug>
-```
-
-Payload fields: `out_dir` and `include_private`. Creates
-`people_graph.html`, `people_nodes.csv`, `people_edges.csv`,
-`subcase_timelines.html`, `subcase_timelines.csv`, and `subcase_summary.csv`.
-The default output path is `data/cases/<case_slug>/exports/charts/`.
-
-## `exportAnalysisCharts`
-
-Exports public-readiness, source-quality, corroboration, path, and relationship
-analysis artifacts. This is the main source-independence tooling surface.
+Exports the curated case visual package: a native HTML deck, visual console
+index, four focused console pages, audit CSVs, and a manifest.
 
 CLI:
 
 ```bash
-crk-ledger export-analysis-charts data/cases/<case_slug> --include-private
+crk-ledger export-case-visuals data/cases/<case_slug>
 ```
 
-Payload fields: `out_dir`, `clusters_dir`, and `include_private`. Creates:
+Payload fields: `out_dir` and `include_private`. Creates:
 
-- `analysis_charts.html`
-- `analysis_charts.md`
-- Sankey and layered knowledge graph CSVs
-- bridge fragility CSVs
-- claim corroboration matrix and edges
-- source quality dashboard
-- evidence confidence heatmap CSVs
-- contradiction boundary overlay
-- temporal cluster swimlanes
-- public narrative readiness
-- relationship type treemap
-- person-source bipartite CSVs
-- six degree path atlas and segments
+- `deck.html`
+- `explorer.html`
+- `consoles/evidence_readiness.html`
+- `consoles/relationship_network.html`
+- `consoles/timeline_movement.html`
+- `consoles/claim_source_matrix.html`
+- `audit/*.csv`
+- `manifest.json`
 
-Use `source_quality_dashboard.csv` and `claim_corroboration_matrix.csv` to
-check reliability grades, source counts, independent source counts, and
-public-readiness before upgrading claims or exporting public scripts.
-
-## `exportPeopleClusters`
-
-Runs evidence-weighted Leiden clustering and graph-kernel/KDE density analysis
-over the people graph.
-
-CLI:
-
-```bash
-uv run --cache-dir .uv-cache --no-project --with-editable '.[dev]' --with igraph --with leidenalg \
-  crk-ledger export-people-clusters data/cases/<case_slug> --include-private
-```
-
-Payload fields: `out_dir`, `charts_dir`, `include_private`, `resolution`,
-`seed`, and `sigma`. Creates `people_clusters.html`, `people_clusters.csv`,
-`cluster_summary.csv`, `people_cluster_edges.csv`, `people_kernel_matrix.csv`,
-and `clusters.md`. The default output path is
-`data/cases/<case_slug>/exports/clusters/`.
+The default output path is `data/cases/<case_slug>/exports/visuals/`.
+Internal-review output with `include_private=true` defaults to
+`data/cases/<case_slug>/exports/internal/visuals/`.

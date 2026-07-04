@@ -41,10 +41,10 @@ def _page() -> ReportPage:
 
 def test_render_page_is_self_contained_html():
     html_text = render_page(_page())
-    html_without_xmlns = html_text.replace(SVG_XMLNS, "")
+    html_without_allowed_uris = _strip_allowed_frontend_uris(html_text.replace(SVG_XMLNS, ""))
     assert html_text.startswith("<!doctype html>")
     assert "<style>" in html_text and "<script>" in html_text
-    assert "http://" not in html_without_xmlns and "https://" not in html_without_xmlns
+    assert "http://" not in html_without_allowed_uris and "https://" not in html_without_allowed_uris
 
 
 def test_render_page_escapes_and_carries_data_attrs():
@@ -63,10 +63,11 @@ def test_render_page_renders_table_and_filters():
 def test_render_dashboard_links_pages_and_summaries():
     dash = Dashboard(case_title="Case X", pages=[_page()])
     html_text = render_dashboard(dash)
+    html_without_allowed_uris = _strip_allowed_frontend_uris(html_text)
     assert html_text.startswith("<!doctype html>")
     assert "Demo Chart" in html_text and "demo.html" in html_text
     assert "Analysis charts: Case X" in html_text
-    assert "http://" not in html_text and "https://" not in html_text
+    assert "http://" not in html_without_allowed_uris and "https://" not in html_without_allowed_uris
 
 
 def test_write_html_replaces_target_atomically(tmp_path):
@@ -190,3 +191,8 @@ def _write_case_fixture(case_dir: Path) -> None:
     (analysis / "source_quality_dashboard.csv").write_text("source_id,grade,title,publisher\nS1,A,One,Pub\n", encoding="utf-8")
     (analysis / "public_narrative_readiness.csv").write_text("claim_id,status,public_export,privacy_review\nC1,verified,true,clear\n", encoding="utf-8")
     (case_dir / "exports/evidence_board.md").write_text("# Evidence\n\n| ID | Value |\n|---|---|\n| A | B |\n", encoding="utf-8")
+
+
+def _strip_allowed_frontend_uris(text: str) -> str:
+    pattern = r"https://tailwindcss\.com|http://www\.w3\.org/(?:1999/(?:xhtml|xlink)|2000/(?:svg|xmlns/)|XML/1998/namespace)"
+    return re.sub(pattern, "", text)

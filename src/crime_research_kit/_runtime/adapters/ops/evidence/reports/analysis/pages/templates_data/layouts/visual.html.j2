@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% if console %}{{ console.title }}{% else %}Case visuals{% endif %} - {{ package.case_title }}</title>
+<style>{{ app_css | safe }}</style>
+</head>
+<body class="crk-report visual-page">
+<header class="visual-header">
+{% if console %}<p><a href="../explorer.html">Back to visual console index</a></p>{% endif %}
+<h1>{% if console %}{{ console.title }}{% else %}Case visuals: {{ package.case_title }}{% endif %}</h1>
+<p>{{ package.case_title }} · {{ package.scope }} · generated {{ package.generated_at }}</p>
+{% if not console %}<p><a href="deck.html">Open curated deck</a></p>{% endif %}
+{% if package.warnings %}<p class="visual-warning">{{ package.warnings | join(" ") }}</p>{% endif %}
+</header>
+{% if console %}
+<main class="visual-layout">
+<section>
+<div class="visual-toolbar">
+<input type="search" data-visual-search placeholder="Filter visible marks">
+<button type="button" data-visual-reset>Reset</button>
+</div>
+<div class="visual-root" data-crk-visual-console="{{ console.slug }}" data-visual-kind="{{ console.kind }}" data-visual-data-id="data-{{ console.slug }}"></div>
+<script id="data-{{ console.slug }}" type="application/json">{{ console | tojson }}</script>
+<details class="evidence-drawer">
+<summary>Evidence and audit data</summary>
+<p>Dense provenance rows are exported under <code>audit/</code> and intentionally kept out of the default chart viewport.</p>
+<ul>{% for file in console.audit_files %}<li><code>audit/{{ file }}</code></li>{% endfor %}</ul>
+</details>
+</section>
+<aside class="visual-inspector" data-visual-inspector><b>Inspector</b><p data-visual-inspector-body>Select or hover a mark to inspect its evidence state.</p></aside>
+</main>
+{% else %}
+<main class="visual-index">
+{% for item in package.consoles.values() %}
+<article><h2>{{ item.title }}</h2><p>{{ item.audit_files | length }} audit tables available.</p><a href="consoles/{{ item.slug }}.html">Open console</a></article>
+{% endfor %}
+</main>
+{% endif %}
+<script>{{ app_js | safe }}</script>
+</body>
+</html>
+

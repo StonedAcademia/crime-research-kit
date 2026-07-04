@@ -56,7 +56,7 @@ Useful MCP operations:
 | Parse or OCR sources | `parse_source`, `ocr_source`. |
 | Draft staged work | `draft_extraction`, `save_extraction_packet`. |
 | Import reviewed packets | `import_extraction` with explicit confirmation. |
-| Build outputs | `run_report`, `export_manim`, `export_case_charts`. |
+| Build outputs | `run_report`, `export_manim`, `export_case_visuals`. |
 
 ## Skill Layer
 

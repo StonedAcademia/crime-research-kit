@@ -77,70 +77,38 @@ crk-ledger export-timeline data/cases \
   --out-dir data/exports/timeline_internal
 ```
 
-## Case Charts
+## Case Visual Package
 
-Export the people graph and subcase timeline charts:
+Export the curated case visual package:
 
 ```bash
-crk-ledger export-case-charts data/cases/<case_slug>
+crk-ledger export-case-visuals data/cases/<case_slug>
 ```
 
 Outputs:
 
 ```text
-data/cases/<case_slug>/exports/charts/people_graph.html
-data/cases/<case_slug>/exports/charts/people_nodes.csv
-data/cases/<case_slug>/exports/charts/people_edges.csv
-data/cases/<case_slug>/exports/charts/subcase_timelines.html
-data/cases/<case_slug>/exports/charts/subcase_timelines.csv
-data/cases/<case_slug>/exports/charts/subcase_summary.csv
+data/cases/<case_slug>/exports/visuals/deck.html
+data/cases/<case_slug>/exports/visuals/explorer.html
+data/cases/<case_slug>/exports/visuals/consoles/evidence_readiness.html
+data/cases/<case_slug>/exports/visuals/consoles/relationship_network.html
+data/cases/<case_slug>/exports/visuals/consoles/timeline_movement.html
+data/cases/<case_slug>/exports/visuals/consoles/claim_source_matrix.html
+data/cases/<case_slug>/exports/visuals/audit/*.csv
+data/cases/<case_slug>/exports/visuals/manifest.json
 ```
 
-## People Clusters
-
-Run evidence-weighted Leiden clustering and graph-kernel/KDE analysis:
+The default package is public-safe and keeps dense provenance rows in
+`audit/*.csv` plus the console evidence drawers, not below the charts. For
+internal review, opt in explicitly:
 
 ```bash
-uv run --cache-dir .uv-cache --no-project --with-editable '.[dev]' --with igraph --with leidenalg \
-  crk-ledger export-people-clusters data/cases/<case_slug> --include-private
+crk-ledger export-case-visuals data/cases/<case_slug> --include-private
 ```
 
-This export is typically internal review because graph clustering can surface
-weak co-mentions and bridge hypotheses. Treat dashed or weak links as leads,
-not public claims.
-
-Outputs:
-
-```text
-data/cases/<case_slug>/exports/clusters/people_clusters.html
-data/cases/<case_slug>/exports/clusters/people_clusters.csv
-data/cases/<case_slug>/exports/clusters/cluster_summary.csv
-data/cases/<case_slug>/exports/clusters/people_cluster_edges.csv
-data/cases/<case_slug>/exports/clusters/people_kernel_matrix.csv
-data/cases/<case_slug>/exports/clusters/clusters.md
-```
-
-## Analysis Charts
-
-Build the extended analysis chart package:
-
-```bash
-crk-ledger export-analysis-charts data/cases/<case_slug> --include-private
-```
-
-Outputs include:
-
-```text
-data/cases/<case_slug>/exports/analysis_charts/analysis_charts.html
-data/cases/<case_slug>/exports/analysis_charts/cluster_bridge_sankey_nodes.csv
-data/cases/<case_slug>/exports/analysis_charts/cluster_bridge_sankey_links.csv
-data/cases/<case_slug>/exports/analysis_charts/evidence_confidence_heatmap.csv
-data/cases/<case_slug>/exports/analysis_charts/claim_corroboration_matrix.csv
-data/cases/<case_slug>/exports/analysis_charts/source_quality_dashboard.csv
-data/cases/<case_slug>/exports/analysis_charts/public_narrative_readiness.csv
-```
-
-Use these artifacts for review and readiness decisions. Do not treat chart
+Internal outputs default to
+`data/cases/<case_slug>/exports/internal/visuals/`. Treat relationship
+clusters, weak links, and path views as review aids only; do not treat visual
 structure as evidence unless the underlying ledger rows are source-supported.
 
 ## UFB v2 Bundle

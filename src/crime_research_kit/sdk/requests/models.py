@@ -109,16 +109,7 @@ _F: dict[str, Fields] = {
     },
     "ExportManimRequest": {"include_private": (bool | None, None)},
     "ExportTimelineRequest": {"cases_root": (PathValue | None, None), "include_private": (bool | None, None), "out_dir": (str | None, None)},
-    "ExportCaseChartsRequest": {"include_private": (bool | None, None), "out_dir": (str | None, None)},
-    "ExportAnalysisChartsRequest": {"include_private": (bool | None, None), "out_dir": (str | None, None), "clusters_dir": (str | None, None)},
-    "ExportPeopleClustersRequest": {
-        "include_private": (bool | None, None),
-        "out_dir": (str | None, None),
-        "charts_dir": (str | None, None),
-        "resolution": (float, 1.0),
-        "seed": (int, 7),
-        "sigma": (float | None, None),
-    },
+    "ExportCaseVisualsRequest": {"include_private": (bool | None, None), "out_dir": (str | None, None)},
     "WorkflowPlanRequest": {
         "case_dir": (PathValue | None, None),
         "title": (str | None, None),

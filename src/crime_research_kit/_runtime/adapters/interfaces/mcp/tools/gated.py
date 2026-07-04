@@ -38,17 +38,9 @@ def export_manim_tool(ctx: ServerContext, case: str, include_private: bool = Fal
     return _export(result, include_private)
 
 
-def export_case_charts_tool(ctx: ServerContext, case: str, include_private: bool = False) -> dict[str, Any]:
+def export_case_visuals_tool(ctx: ServerContext, case: str, include_private: bool = False) -> dict[str, Any]:
     try:
-        result = sdk_case(ctx, case).exports.case_charts(include_private=include_private)
-    except ValueError as exc:
-        return error_dict(str(exc))
-    return _export(result, include_private)
-
-
-def export_analysis_charts_tool(ctx: ServerContext, case: str, include_private: bool = False) -> dict[str, Any]:
-    try:
-        result = sdk_case(ctx, case).exports.analysis_charts(include_private=include_private)
+        result = sdk_case(ctx, case).exports.case_visuals(include_private=include_private)
     except ValueError as exc:
         return error_dict(str(exc))
     return _export(result, include_private)
@@ -65,12 +57,7 @@ def register(mcp: Any, ctx: ServerContext) -> None:
         """Export public-safe Manim CSVs. include_private is internal review only."""
         return export_manim_tool(ctx, case, include_private)
 
-    @catalog_tool(mcp, "gated", "export_case_charts")
-    def export_case_charts(case: str, include_private: bool = False) -> dict:
-        """Export people graph and subcase timeline charts, public-safe by default."""
-        return export_case_charts_tool(ctx, case, include_private)
-
-    @catalog_tool(mcp, "gated", "export_analysis_charts")
-    def export_analysis_charts(case: str, include_private: bool = False) -> dict:
-        """Export extended analysis charts, public-safe by default."""
-        return export_analysis_charts_tool(ctx, case, include_private)
+    @catalog_tool(mcp, "gated", "export_case_visuals")
+    def export_case_visuals(case: str, include_private: bool = False) -> dict:
+        """Export curated case visual deck, consoles, and audit CSVs."""
+        return export_case_visuals_tool(ctx, case, include_private)

@@ -40,7 +40,7 @@ Avoid unsupported language:
 Before public release, run `validate` and review `public_export`,
 `privacy_review`, `privacy_level`, and `living_status`. Use
 `audit-public-export` when available; otherwise use `report` and
-`export-analysis-charts` public-readiness outputs as the audit trail. Record the
+`export-case-visuals` public-readiness outputs as the audit trail. Record the
 decision in `research_actions.jsonl`.
 
 ## Evidence-board language

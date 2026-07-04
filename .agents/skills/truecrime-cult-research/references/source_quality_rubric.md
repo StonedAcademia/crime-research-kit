@@ -72,7 +72,7 @@ then publisher, URL host, and source ID as fallbacks for independent-source
 counts.
 
 Do not mark a claim `corroborated` only because the same source was repeated in
-several outlets. Use `export-analysis-charts` source-quality and corroboration
+several outlets. Use `export-case-visuals` source-quality and corroboration
 outputs, when available, to spot claims that still depend on a single
 independence group.
 

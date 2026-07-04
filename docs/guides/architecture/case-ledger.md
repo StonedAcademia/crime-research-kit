@@ -47,7 +47,7 @@ flowchart LR
 - Use `independence_group` on sources to avoid treating repeated wire stories, copied articles, shared dockets, or common archive packets as independent corroboration.
 - Use `references/controlled_vocabularies.md` and `references/topic_extraction_templates.md` from the skill directory before creating new terms.
 - Use JSON Schemas from `docs/schemas/` when validating machine-facing records.
-- Before public output, run `validate`, review `public_export` and `privacy_review`, and use `audit-public-export` when available. `report` and `export-analysis-charts` provide the fallback public-readiness review surface.
+- Before public output, run `validate`, review `public_export` and `privacy_review`, and use `audit-public-export` when available. `report` and `export-case-visuals` provide the fallback public-readiness review surface.
 
 ## Validation and audit commands
 

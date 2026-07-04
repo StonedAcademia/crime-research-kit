@@ -62,7 +62,7 @@ class AnalysisContext:
 
 def load_analysis_context(args: argparse.Namespace) -> AnalysisContext:
     ensure_case(args.case_dir)
-    enforce_public_output_gate(args.case_dir, "export-analysis-charts", args.include_private)
+    enforce_public_output_gate(args.case_dir, getattr(args, "gate_name", "export-analysis-charts"), args.include_private)
     cdir = case_path(args.case_dir)
     packs = load_case_packs(cdir)
     include_private = args.include_private

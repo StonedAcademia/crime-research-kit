@@ -32,8 +32,7 @@ LEGACY_RESULT_NAMES = {
     "names.link": "link_names",
     "records.plan_public_records": "plan_public_records",
     "exports.manim": "export_manim",
-    "exports.case_charts": "export_case_charts",
-    "exports.analysis_charts": "export_analysis_charts",
+    "exports.case_visuals": "export_case_visuals",
 }
 
 

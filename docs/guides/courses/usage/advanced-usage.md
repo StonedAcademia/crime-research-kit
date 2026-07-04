@@ -80,7 +80,7 @@ uv run --cache-dir .uv-cache --no-project --with-editable . -- \
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
   crk-ledger export-manim data/cases/mkultra_course
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
-  crk-ledger export-case-charts data/cases/mkultra_course
+  crk-ledger export-case-visuals data/cases/mkultra_course
 ```
 
 ## Hard-Case Review Pattern

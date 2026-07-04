@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ package.case_title }} - Case Visual Deck</title>
+<style>{{ app_css | safe }}</style>
+</head>
+<body class="crk-report deck-page">
+<nav class="deck-nav" data-deck-nav></nav>
+<main class="deck-stage" data-deck-stage>
+<section class="deck-slide active" data-title="Overview">
+<div>
+<p class="eyebrow">Case visual deck</p>
+<h1>{{ package.case_title }}</h1>
+<p>{{ package.scope }}</p>
+<div class="crk-metrics">{% for label, value in package.counts.items() %}<div class="crk-metric"><strong>{{ value }}</strong><span>{{ label }}</span></div>{% endfor %}</div>
+</div>
+</section>
+<section class="deck-slide" data-title="Safety Gate">
+<div>
+<p class="eyebrow">Public-output boundary</p>
+<h2>{% if package.include_private %}Internal review export{% else %}Public-safe export{% endif %}</h2>
+<p>{{ package.scope }}</p>
+{% for warning in package.warnings %}<p class="visual-warning">{{ warning }}</p>{% endfor %}
+</div>
+</section>
+{% for console in package.consoles.values() %}
+<section class="deck-slide visual-slide" data-title="{{ console.title }}">
+<div class="slide-visual">
+<h2>{{ console.title }}</h2>
+<div class="visual-root deck-visual" data-crk-visual-console="{{ console.slug }}" data-visual-kind="{{ console.kind }}" data-visual-data-id="deck-data-{{ console.slug }}"></div>
+<script id="deck-data-{{ console.slug }}" type="application/json">{{ console | tojson }}</script>
+</div>
+</section>
+{% endfor %}
+</main>
+<div class="deck-controls"><button type="button" data-deck-prev>Prev</button><span data-deck-count></span><button type="button" data-deck-next>Next</button><a href="explorer.html">Explorer</a></div>
+<script>{{ app_js | safe }}</script>
+</body>
+</html>
+

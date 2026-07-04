@@ -4,11 +4,15 @@
   "scripts": {
     "build": "npm run build:css && npm run build:js",
     "build:css": "tailwindcss -i styles.css -o ../src/crime_research_kit/_runtime/adapters/ops/evidence/reports/analysis/pages/templates_data/static/app.css --minify --content '../src/crime_research_kit/_runtime/adapters/ops/evidence/reports/analysis/pages/templates_data/**/*.j2'",
-    "build:js": "esbuild app.ts --bundle --minify --outfile=../src/crime_research_kit/_runtime/adapters/ops/evidence/reports/analysis/pages/templates_data/static/app.js"
+    "build:js": "esbuild app.ts --bundle --minify --legal-comments=none --outfile=../src/crime_research_kit/_runtime/adapters/ops/evidence/reports/analysis/pages/templates_data/static/app.js && sed -i 's/[[:blank:]]\\+$//' ../src/crime_research_kit/_runtime/adapters/ops/evidence/reports/analysis/pages/templates_data/static/app.js"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.0.0",
     "esbuild": "^0.24.0",
     "htmx.org": "^2.0.0"
+  },
+  "dependencies": {
+    "cytoscape": "^3.34.0",
+    "d3": "^7.9.0"
   }
 }

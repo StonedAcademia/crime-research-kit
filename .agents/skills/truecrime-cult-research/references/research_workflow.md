@@ -90,7 +90,7 @@ Before script, report, Manim, or public bundle output:
 1. Run `validate` and fix broken references.
 2. Review `privacy_review`, `privacy_level`, `living_status`, and `public_export`.
 3. Treat `audit-public-export` output, when available, as the public-readiness checklist.
-4. If no dedicated audit command is available, use `report`, public-safe exports, and `export-analysis-charts` public-readiness files for the same review.
+4. If no dedicated audit command is available, use `report`, public-safe exports, and `export-case-visuals` public-readiness files for the same review.
 5. Keep private-person details, minors, contact/location-sensitive details, weak allegations, and lead-only co-mentions out of public exports.
 
 ## Phase 1 review commands
