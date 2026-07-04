@@ -79,6 +79,14 @@ tasks:
     options: { cache: false, outputStyle: stream }
     toolchains: system
 
+  test-mkultra-surfaces:
+    description: "Run the opt-in MKULTRA CLI, MCP, and agent/skill surface acceptance test."
+    command: "uv"
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".[dev,mcp,llm,documents,retrieval,agentic,memory-local]", "--", "python", "-m", "pytest", "tests/runtime/e2e/mkultra_live/services/test_surface_acceptance.py", "-q"]
+    inputs: ["@group(python)", "@group(tests)", "pyproject.toml", "docs/guides/courses/samples/mkultra/**/*"]
+    options: { cache: false, outputStyle: stream }
+    toolchains: system
+
   test-governance:
     description: "Run governance tests."
     command: "uv"

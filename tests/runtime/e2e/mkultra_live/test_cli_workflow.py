@@ -79,24 +79,24 @@ def test_parse_official_pdf_when_documents_extra_is_available(mkultra_live_case:
     assert output["skipped"] is False
 
 
-def test_ocr_boundary_pdf_when_ocr_tooling_is_available(mkultra_live_case: Path, crkit_runner):
+def test_ocr_heavy_official_pdf_when_ocr_tooling_is_available(mkultra_live_case: Path, crkit_runner):
     import shutil
 
     import pytest
 
     source = next(
-        row for row in read_jsonl(record_path(mkultra_live_case, "sources")) if row["source_id"] == "S_FBI_FINDERS_PART_01"
+        row for row in read_jsonl(record_path(mkultra_live_case, "sources")) if row["source_id"] == "S_CIA_MKULTRA_IG_1963"
     )
     raw_path = resolve_case_path(mkultra_live_case, source.get("raw_path"))
     if raw_path is None or not raw_path.exists():
-        pytest.skip("S_FBI_FINDERS_PART_01 was registered metadata-only in this live run")
+        pytest.skip("S_CIA_MKULTRA_IG_1963 was registered metadata-only in this live run")
 
     if shutil.which("ocrmypdf") is None or shutil.which("tesseract") is None:
         pytest.skip("ocrmypdf or tesseract is not installed")
 
-    output = crkit_runner("ocr-source", str(mkultra_live_case), "S_FBI_FINDERS_PART_01", "--force")
+    output = crkit_runner("ocr-source", str(mkultra_live_case), "S_CIA_MKULTRA_IG_1963", "--force")
 
-    assert output["source_id"] == "S_FBI_FINDERS_PART_01"
+    assert output["source_id"] == "S_CIA_MKULTRA_IG_1963"
     assert (mkultra_live_case / output["text_path"]).exists()
     assert (mkultra_live_case / output["ocr_pdf_path"]).exists()
 

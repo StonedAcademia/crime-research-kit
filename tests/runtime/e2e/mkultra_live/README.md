@@ -10,5 +10,12 @@ Expected live services:
 - Ollama through `OLLAMA_HOST` and `CRK_MODEL=ollama:<model>`
 - Codex through `CRK_LIVE_CODEX=1` and `CRK_CODEX_BIN` when that lane is wanted
 
+Focused targets:
+
+- `moon run crk:test-mkultra-surfaces` checks one temp case through CLI,
+  MCP stdio, and a Codex skill-style agent call.
+- `moon run crk:test-mkultra-live` runs the full live suite, including
+  retrieval, model, OCR, parser, MCP, CLI, and Codex lanes.
+
 The tests use a temporary case workspace and never write to
 `data/cases/mkultra_course`.

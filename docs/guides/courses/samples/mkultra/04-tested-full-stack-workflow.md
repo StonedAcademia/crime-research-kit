@@ -31,6 +31,16 @@ export CRK_MODEL=ollama:llama3.1
 moon run crk:test-mkultra-live
 ```
 
+Run just the CLI, MCP, and agent/skill surface acceptance path:
+
+```bash
+export CRK_LIVE_MKULTRA=1
+export CRK_LIVE_CODEX=1
+export CRK_CODEX_BIN=codex
+
+moon run crk:test-mkultra-surfaces
+```
+
 The Codex host lane is separate and uses the Codex service directly through
 `codex exec`, not `CRK_MODEL` and not the OpenAI API:
 
@@ -46,15 +56,16 @@ The suite covers a curated subset from `sources/manifest.json`:
 | Source ID | Workflow Purpose |
 | --- | --- |
 | `S_NSARCHIVE_MKULTRA_CONTEXT_2024` | HTML capture, extraction packet, reviewed import, reports, audits, retrieval. |
-| `S_CIA_MKULTRA_IG_1963` | Official PDF download and Docling parse. |
-| `S_FBI_FINDERS_PART_01` | OCR-needed FBI Vault boundary PDF when OCRmyPDF is installed. |
+| `S_CIA_MKULTRA_IG_1963` | Official PDF download, Docling/RapidOCR parse, and OCRmyPDF smoke when `tesseract` is on `PATH`. |
+| `S_FBI_FINDERS_PART_01` | FBI Vault boundary record; direct live capture may become metadata-only when the endpoint returns an anti-bot challenge. |
 | `S_FBI_JONESTOWN_HISTORY` | Boundary-source capture without treating it as an MKULTRA relationship. |
 
 Expected artifacts in the temp case include source ledger rows, raw downloads,
 text sidecars, source-preservation reports, staged extraction packets, a
 reviewed canonical packet, name-link research brief, evidence-board Markdown,
 Manim CSVs, timeline/corroboration CSVs, Qdrant query output, an Ollama
-readiness brief, and an optional Codex reviewer brief.
+readiness brief, an optional Codex reviewer brief, and a surface-acceptance
+transcript covering CLI, MCP, and agent/skill operation.
 
 LLM and Codex outputs are candidate review material only. They are not evidence
 and do not replace source IDs, source spans, validation, contradiction review,
@@ -86,7 +97,7 @@ Parse or OCR local files after the raw paths exist:
 uv run --cache-dir .uv-cache --no-project --with-editable '.[documents]' -- \
   cr-kit parse-source data/cases/mkultra_course S_CIA_MKULTRA_IG_1963
 uv run --cache-dir .uv-cache --no-project --with-editable '.[documents]' -- \
-  cr-kit ocr-source data/cases/mkultra_course S_FBI_FINDERS_PART_01
+  cr-kit ocr-source data/cases/mkultra_course S_CIA_MKULTRA_IG_1963
 ```
 
 Draft packets and keep them staged until reviewed:

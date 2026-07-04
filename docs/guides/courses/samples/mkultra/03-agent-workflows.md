@@ -39,6 +39,32 @@ Expected agent outputs:
   `unverified`, and `excluded_from_public_script`.
 - A contradiction/missing-evidence note for each controversy lane.
 
+## Test All Three Surfaces
+
+The live surface-acceptance test runs the same temporary MKULTRA case through
+CLI commands, MCP stdio calls, and a Codex skill-style agent prompt:
+
+```bash
+export CRK_LIVE_MKULTRA=1
+export CRK_LIVE_CODEX=1
+export CRK_CODEX_BIN=codex
+
+moon run crk:test-mkultra-surfaces
+```
+
+The test writes a temp-case `surface_acceptance_transcript.json` with three
+sections:
+
+| Section | What It Proves |
+| --- | --- |
+| `cli` | `crk-ledger` validation/readiness and a dry-run `cr-kit plan` can operate the case. |
+| `mcp` | `case_info`, `get_source_text`, `draft_extraction`, `save_extraction_packet`, prompts, and reference resources work over stdio. |
+| `agent_skill` | Codex can receive the `truecrime-cult-research` skill-style prompt and return candidate-only review JSON. |
+
+The MCP leg deliberately calls `import_extraction` without `confirm=true` and
+expects refusal. The agent leg must report `candidate_only=true` and
+`evidence_claim=false`.
+
 ## Use CRK Through MCP
 
 Run the MCP server through the `mcp` optional extra:
