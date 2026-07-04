@@ -74,3 +74,38 @@ def test_neutral_labels_pass():
     packet = {"entities": [{"name": "A Person", "role": "witness"}, {"name": "B", "role": "former_member"}]}
 
     assert lint_guilt_labels(packet) == []
+
+
+ADDRESS_MATCHES = [
+    "123 Main Street",
+    "1307 4th St NE",
+    "5 Elm Dr",
+    "1600 Pennsylvania Ave NW",
+    "500 Fifth Ave New York",
+    "10 Downing St, London",
+    "45 Martin Luther King Jr Blvd",
+]
+
+ADDRESS_NON_MATCHES = [
+    # A number in prose followed by a title must not read as a street address:
+    "the CIA approved a $60,000 grant to Dr. Ewen Cameron, a world-renowned psychiatrist",
+    "12 people met Dr. Cameron at the clinic",
+    "Building 5, Dr. Smith's office",
+    "St. John's Hospital admitted 40 patients",
+    "Subproject 68 cost $59,267.54 in total",
+    "Dr. Ewen Cameron developed psychic driving",
+]
+
+
+@pytest.mark.parametrize("text", ADDRESS_MATCHES)
+def test_address_regex_matches_real_addresses(text):
+    from crime_research_kit._runtime.adapters.ops.evidence.quality.safety.public_export import ADDRESS_RE
+
+    assert ADDRESS_RE.search(text), f"expected an address match in {text!r}"
+
+
+@pytest.mark.parametrize("text", ADDRESS_NON_MATCHES)
+def test_address_regex_ignores_title_and_currency_prose(text):
+    from crime_research_kit._runtime.adapters.ops.evidence.quality.safety.public_export import ADDRESS_RE
+
+    assert not ADDRESS_RE.search(text), f"false positive: {text!r} should not read as an address"
