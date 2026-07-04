@@ -33,40 +33,21 @@ def test_exports_use_case_privacy_default(synthetic_case_copy: Path):
     assert "internal review" in result.data["privacy"]["note"]
 
 
-def test_exports_case_and_analysis_charts_plan_options(synthetic_case_copy: Path):
+def test_exports_case_visuals_plan_options(synthetic_case_copy: Path):
     case = dry_client_for(synthetic_case_copy).case("synthetic_case")
 
-    charts = case.exports.case_charts(out_dir="tmp/charts")
-    analysis = case.exports.analysis_charts(include_private=True, out_dir="tmp/analysis", clusters_dir="tmp/clusters")
+    visuals = case.exports.case_visuals(out_dir="tmp/visuals")
+    internal = case.exports.case_visuals(include_private=True, out_dir="tmp/internal-visuals")
 
-    chart_args = ledger_command_args(charts.diagnostics["command"])
-    analysis_args = ledger_command_args(analysis.diagnostics["command"])
-    assert charts.operation == "exports.case_charts"
-    assert chart_args[:2] == ["export-case-charts", str(synthetic_case_copy)]
-    assert chart_args[chart_args.index("--out-dir") + 1] == "tmp/charts"
-    assert analysis.operation == "exports.analysis_charts"
-    assert analysis_args[analysis_args.index("--out-dir") + 1] == "tmp/analysis"
-    assert analysis_args[analysis_args.index("--clusters-dir") + 1] == "tmp/clusters"
-    assert "--include-private" in analysis_args
-
-
-def test_exports_people_clusters_plan_optional_parameters(synthetic_case_copy: Path):
-    result = dry_client_for(synthetic_case_copy).case("synthetic_case").exports.people_clusters(
-        out_dir="tmp/clusters",
-        charts_dir="tmp/charts",
-        resolution=1.25,
-        seed=11,
-        sigma=0.75,
-    )
-
-    args = ledger_command_args(result.diagnostics["command"])
-    assert result.operation == "exports.people_clusters"
-    assert args[:2] == ["export-people-clusters", str(synthetic_case_copy)]
-    assert args[args.index("--out-dir") + 1] == "tmp/clusters"
-    assert args[args.index("--charts-dir") + 1] == "tmp/charts"
-    assert args[args.index("--resolution") + 1] == "1.25"
-    assert args[args.index("--seed") + 1] == "11"
-    assert args[args.index("--sigma") + 1] == "0.75"
+    visual_args = ledger_command_args(visuals.diagnostics["command"])
+    internal_args = ledger_command_args(internal.diagnostics["command"])
+    assert visuals.operation == "exports.case_visuals"
+    assert visual_args[:2] == ["export-case-visuals", str(synthetic_case_copy)]
+    assert visual_args[visual_args.index("--out-dir") + 1] == "tmp/visuals"
+    assert "--include-private" not in visual_args
+    assert internal.operation == "exports.case_visuals"
+    assert internal_args[internal_args.index("--out-dir") + 1] == "tmp/internal-visuals"
+    assert "--include-private" in internal_args
 
 
 def test_top_level_exports_timeline_uses_cases_root_and_privacy(synthetic_case_copy: Path):

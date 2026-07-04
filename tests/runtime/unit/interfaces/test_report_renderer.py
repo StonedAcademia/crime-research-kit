@@ -16,6 +16,14 @@ REPORT_BUILDERS = ROOT / "src" / "adapters" / "ops" / "evidence" / "reports"
 FRONTEND_CSS = ROOT / "frontend" / "styles.css"
 CSS_CLASS_ALLOWLIST: dict[str, str] = {}
 CSS_TOKEN = re.compile(r"[A-Za-z_][A-Za-z0-9_-]*")
+ALLOWED_FRONTEND_URIS = (
+    "https://tailwindcss.com",
+    "http://www.w3.org/1999/xhtml",
+    "http://www.w3.org/2000/svg",
+    "http://www.w3.org/1999/xlink",
+    "http://www.w3.org/XML/1998/namespace",
+    "http://www.w3.org/2000/xmlns/",
+)
 
 
 def _page() -> ReportPage:
@@ -38,10 +46,10 @@ def _page() -> ReportPage:
 
 def test_render_page_is_self_contained_html():
     html_text = render_page(_page())
-    html_without_xmlns = html_text.replace(SVG_XMLNS, "")
+    html_without_allowed_uris = _strip_allowed_frontend_uris(html_text.replace(SVG_XMLNS, ""))
     assert html_text.startswith("<!doctype html>")
     assert "<style>" in html_text and "<script>" in html_text
-    assert "http://" not in html_without_xmlns and "https://" not in html_without_xmlns
+    assert "http://" not in html_without_allowed_uris and "https://" not in html_without_allowed_uris
 
 
 def test_render_page_escapes_and_carries_data_attrs():
@@ -60,10 +68,11 @@ def test_render_page_renders_table_and_filters():
 def test_render_dashboard_links_pages_and_summaries():
     dash = Dashboard(case_title="Case X", pages=[_page()])
     html_text = render_dashboard(dash)
+    html_without_allowed_uris = _strip_allowed_frontend_uris(html_text)
     assert html_text.startswith("<!doctype html>")
     assert "Demo Chart" in html_text and "demo.html" in html_text
     assert "Analysis charts: Case X" in html_text
-    assert "http://" not in html_text and "https://" not in html_text
+    assert "http://" not in html_without_allowed_uris and "https://" not in html_without_allowed_uris
 
 
 def test_write_html_replaces_target_atomically(tmp_path):
@@ -128,3 +137,9 @@ def _css_class_literals(path: Path) -> list[str]:
         elif isinstance(node.value, ast.JoinedStr):
             literals.extend(part.value for part in node.value.values if isinstance(part, ast.Constant) and isinstance(part.value, str))
     return literals
+
+
+def _strip_allowed_frontend_uris(text: str) -> str:
+    for uri in ALLOWED_FRONTEND_URIS:
+        text = text.replace(uri, "")
+    return text

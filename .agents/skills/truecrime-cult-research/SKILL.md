@@ -53,7 +53,7 @@ Prefer MCP tools when `crk-mcp` is registered:
 | Draft packets | `draft_extraction` | `crk-ledger draft-extraction --template <template>` |
 | Save staged packets | `save_extraction_packet` | write reviewed JSON under `staging/extractions/` through repo tooling |
 | Import canonical records | `import_extraction(confirm=true)` after explicit user approval | `crk-ledger import-extraction` after explicit user approval |
-| Public exports | `export_manim`, `export_case_charts`, `export_analysis_charts` | matching `crk-ledger export-*` commands |
+| Public exports | `export_manim`, `export_case_visuals` | matching `crk-ledger export-*` commands |
 
 Lane and template names come from `docs/registry/`; generated reference tables
 live in `references/lane_registry.md` and
@@ -391,9 +391,7 @@ audit-privacy-redactions
 report
 export-manim
 export-timeline
-export-case-charts
-export-analysis-charts
-export-people-clusters
+export-case-visuals
 ```
 
 ## Outputs intended for Manim

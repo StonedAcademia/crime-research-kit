@@ -10,46 +10,14 @@ def export_manim(runner: CrkRunner, case_dir: str, *, include_private: bool = Fa
     return runner.run("export_manim", _args("export-manim", case_dir, include_private))
 
 
-def export_case_charts(
+def export_case_visuals(
     runner: CrkRunner,
     case_dir: str,
     *,
     include_private: bool = False,
     out_dir: str | None = None,
 ) -> OpResult:
-    return runner.run("export_case_charts", _args("export-case-charts", case_dir, include_private, out_dir))
-
-
-def export_analysis_charts(
-    runner: CrkRunner,
-    case_dir: str,
-    *,
-    include_private: bool = False,
-    out_dir: str | None = None,
-    clusters_dir: str | None = None,
-) -> OpResult:
-    args = _args("export-analysis-charts", case_dir, include_private, out_dir)
-    _option(args, "--clusters-dir", clusters_dir)
-    return runner.run("export_analysis_charts", args)
-
-
-def export_people_clusters(
-    runner: CrkRunner,
-    case_dir: str,
-    *,
-    include_private: bool = False,
-    out_dir: str | None = None,
-    charts_dir: str | None = None,
-    resolution: float = 1.0,
-    seed: int = 7,
-    sigma: float | None = None,
-) -> OpResult:
-    args = _args("export-people-clusters", case_dir, include_private, out_dir)
-    _option(args, "--charts-dir", charts_dir)
-    args.extend(["--resolution", str(resolution), "--seed", str(seed)])
-    if sigma is not None:
-        args.extend(["--sigma", str(sigma)])
-    return runner.run("export_people_clusters", args)
+    return runner.run("export_case_visuals", _args("export-case-visuals", case_dir, include_private, out_dir))
 
 
 def export_timeline(

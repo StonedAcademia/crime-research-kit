@@ -28,9 +28,7 @@ Skill API operation name.
 | `POST` | `/v1/cases/{case_slug}:audit-public-export` | `auditPublicExport` |
 | `POST` | `/v1/cases/{case_slug}:audit-source-independence` | `auditSourceIndependence` |
 | `POST` | `/v1/cases:export-timeline` | `exportTimeline` |
-| `POST` | `/v1/cases/{case_slug}/exports:charts` | `exportCaseCharts` |
-| `POST` | `/v1/cases/{case_slug}/exports:analysis-charts` | `exportAnalysisCharts` |
-| `POST` | `/v1/cases/{case_slug}/exports:people-clusters` | `exportPeopleClusters` |
+| `POST` | `/v1/cases/{case_slug}/exports:visuals` | `exportCaseVisuals` |
 
 Any future HTTP wrapper must preserve the SDK operation semantics in this
 mapping: method and path identify the route, operation identifies the cataloged

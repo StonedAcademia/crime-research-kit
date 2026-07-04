@@ -88,26 +88,14 @@ def test_export_timeline_accepts_out_dir():
     assert result.command[result.command.index("--out-dir") + 1] == "data/exports/timeline_internal"
 
 
-def test_export_wrappers_cover_analysis_and_cluster_options():
-    analysis = export_ops.export_analysis_charts(
+def test_export_wrapper_covers_case_visual_options():
+    visuals = export_ops.export_case_visuals(
         dry_runner(),
         "data/cases/x",
-        out_dir="data/exports/analysis",
-        clusters_dir="data/exports/clusters",
-    )
-    clusters = export_ops.export_people_clusters(
-        dry_runner(),
-        "data/cases/x",
-        charts_dir="data/exports/charts",
-        resolution=1.5,
-        seed=13,
-        sigma=0.8,
+        out_dir="data/exports/visuals",
+        include_private=True,
     )
 
-    assert ledger_subcommand(analysis.command) == "export-analysis-charts"
-    assert analysis.command[analysis.command.index("--clusters-dir") + 1] == "data/exports/clusters"
-    assert ledger_subcommand(clusters.command) == "export-people-clusters"
-    assert clusters.command[clusters.command.index("--charts-dir") + 1] == "data/exports/charts"
-    assert clusters.command[clusters.command.index("--resolution") + 1] == "1.5"
-    assert clusters.command[clusters.command.index("--seed") + 1] == "13"
-    assert clusters.command[clusters.command.index("--sigma") + 1] == "0.8"
+    assert ledger_subcommand(visuals.command) == "export-case-visuals"
+    assert visuals.command[visuals.command.index("--out-dir") + 1] == "data/exports/visuals"
+    assert "--include-private" in visuals.command

@@ -16,4 +16,4 @@ Use these when moving from README examples to repeatable operator workflows.
 | [Case Workflow](cases/case-workflow.md) | Source-backed case creation, extraction review, agent prompts, and case-level validation. |
 | [Self-Hosted Deployment](setup/self-hosted-deployment.md) | Docker stack first run, daily operation, logs, smoke checks, and shutdown. |
 | [Public Output Readiness](cases/public-output-readiness.md) | Validation, contradiction/source-independence/privacy gates, and public-export blockers. |
-| [Export Artifacts](outputs/export-artifacts.md) | Manim, evidence board, timeline, charts, clusters, analysis charts, and UFB v2 bundle exports. |
+| [Export Artifacts](outputs/export-artifacts.md) | Manim, evidence board, timeline, case visuals, audit CSVs, and UFB bundle exports. |

@@ -183,11 +183,16 @@ def test_report_frontend_assets_are_committed_and_selfcontained():
     css, js = css_path.read_text(encoding="utf-8"), js_path.read_text(encoding="utf-8")
     assert len(css) > 500 and len(js) > 500
     assert "https://tailwindcss.com" in css
-    for text in (css.replace("https://tailwindcss.com", ""), js):
+    for text in (_strip_allowed_frontend_uris(css), _strip_allowed_frontend_uris(js)):
         assert "http://" not in text
         assert "https://" not in text
         assert "fetch(" not in text
         assert re.search(r"""(?:src|href)=["']https?://""", text) is None
+
+
+def _strip_allowed_frontend_uris(text: str) -> str:
+    pattern = r"https://tailwindcss\.com|http://www\.w3\.org/(?:1999/(?:xhtml|xlink)|2000/(?:svg|xmlns/)|XML/1998/namespace)"
+    return re.sub(pattern, "", text)
 
 
 def test_license_policy_allows_agpl_project_and_copyleft_dependencies(tmp_path):

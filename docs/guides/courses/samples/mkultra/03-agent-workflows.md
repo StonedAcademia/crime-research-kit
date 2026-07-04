@@ -91,7 +91,7 @@ stdio transport. Useful MCP operations for this case:
 | Parse or OCR sources | `parse_source`, `ocr_source`. |
 | Draft and save packets | `draft_extraction`, `save_extraction_packet`. |
 | Import after review | `import_extraction` with `confirm=true`. |
-| Public outputs | `run_report`, `export_manim`, `export_case_charts`. |
+| Public outputs | `run_report`, `export_manim`, `export_case_visuals`. |
 
 Example MCP-host prompt:
 

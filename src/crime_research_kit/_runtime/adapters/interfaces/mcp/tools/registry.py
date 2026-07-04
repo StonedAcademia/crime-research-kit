@@ -75,15 +75,10 @@ _SDK_HANDLERS = {
         "export_manim_tool",
         "Export public-safe Manim CSVs. include_private is internal review only.",
     ),
-    "export_case_charts": (
+    "export_case_visuals": (
         "gated",
-        "export_case_charts_tool",
-        "Export people graph and subcase timeline charts, public-safe by default.",
-    ),
-    "export_analysis_charts": (
-        "gated",
-        "export_analysis_charts_tool",
-        "Export extended analysis charts, public-safe by default.",
+        "export_case_visuals_tool",
+        "Export curated case visual deck, consoles, and audit CSVs.",
     ),
 }
 
