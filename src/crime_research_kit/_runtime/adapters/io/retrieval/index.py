@@ -52,10 +52,8 @@ def query_case(
     client=None,
     embed=None,
 ) -> dict[str, Any]:
-    documents = build_evidence_documents(case_dir, include_private=include_private)
-    index = _build_index(
+    index = _query_index(
         case_dir,
-        documents,
         qdrant_url=qdrant_url or DEFAULT_QDRANT_URL,
         collection=collection,
         embed_model=embed_model or DEFAULT_EMBED_MODEL,
@@ -65,20 +63,15 @@ def query_case(
     retriever = index.as_retriever(similarity_top_k=top_k)
     results = []
     for item in retriever.retrieve(query):
-        results.append({"score": item.score, "text": item.node.get_text(), "metadata": dict(item.node.metadata)})
+        metadata = dict(item.node.metadata)
+        if not include_private and metadata.get("public_export") is False:
+            continue
+        results.append({"score": item.score, "text": item.node.get_text(), "metadata": metadata})
     return {"query": query, "collection": _collection_name(case_dir, collection), "results": results}
 
 
-def _build_index(
-    case_dir: str | Path,
-    documents,
-    *,
-    qdrant_url: str,
-    collection: str | None,
-    embed_model: str,
-    client=None,
-    embed=None,
-):
+def _backend(case_dir, *, qdrant_url, collection, embed_model, client, embed):
+    """Resolve the embedder + Qdrant vector store shared by indexing and querying."""
     try:
         from llama_index.core import Settings, StorageContext, VectorStoreIndex  # type: ignore
         from llama_index.vector_stores.qdrant import QdrantVectorStore  # type: ignore
@@ -97,8 +90,44 @@ def _build_index(
     if client is None:
         client = QdrantClient(url=qdrant_url)
     vector_store = QdrantVectorStore(client=client, collection_name=_collection_name(case_dir, collection))
+    return StorageContext, VectorStoreIndex, vector_store, embed
+
+
+def _build_index(
+    case_dir: str | Path,
+    documents,
+    *,
+    qdrant_url: str,
+    collection: str | None,
+    embed_model: str,
+    client=None,
+    embed=None,
+):
+    StorageContext, VectorStoreIndex, vector_store, _embed = _backend(
+        case_dir, qdrant_url=qdrant_url, collection=collection, embed_model=embed_model, client=client, embed=embed
+    )
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
     return VectorStoreIndex.from_documents(to_llama_documents(documents), storage_context=storage_context)
+
+
+def _query_index(
+    case_dir: str | Path,
+    *,
+    qdrant_url: str,
+    collection: str | None,
+    embed_model: str,
+    client=None,
+    embed=None,
+):
+    """Attach to the existing Qdrant collection for retrieval WITHOUT re-embedding the corpus.
+
+    ``index_case`` populates the collection; querying only needs to embed the query and
+    search, so it connects via ``from_vector_store`` instead of re-inserting every document.
+    """
+    _StorageContext, VectorStoreIndex, vector_store, embed = _backend(
+        case_dir, qdrant_url=qdrant_url, collection=collection, embed_model=embed_model, client=client, embed=embed
+    )
+    return VectorStoreIndex.from_vector_store(vector_store, embed_model=embed)
 
 
 def _collection_name(case_dir: str | Path, collection: str | None) -> str:
