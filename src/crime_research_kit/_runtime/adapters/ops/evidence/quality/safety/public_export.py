@@ -16,8 +16,13 @@ PUBLIC_CONTACT_RE = re.compile(
     r"(?i)(?:\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b|\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}\b|\b\d{3}-\d{2}-\d{4}\b)"
 )
 ADDRESS_RE = re.compile(
-    r"(?i)\b\d{1,6}\s+[A-Z0-9][A-Z0-9'.-]*(?:\s+[A-Z0-9][A-Z0-9'.-]*){0,5}\s+"
-    r"(?:street|st\.?|avenue|ave\.?|road|rd\.?|drive|dr\.?|lane|ln\.?|boulevard|blvd\.?|court|ct\.?|place|pl\.?|way)\b"
+    # House number, then a street name whose tokens each start capitalized or numeric
+    # (case-sensitive), then a street suffix (case-insensitive). Real street names are
+    # proper nouns, so requiring capitalized tokens keeps genuine addresses ("123 Main St",
+    # "1307 4th Ave") while rejecting running prose where a number precedes a title, e.g.
+    # "a $60,000 grant to Dr. Ewen Cameron" ("Dr." = Doctor, not Drive).
+    r"\b\d{1,6}\s+[A-Z0-9][A-Za-z0-9'.-]*(?:\s+[A-Z0-9][A-Za-z0-9'.-]*){0,5}\s+"
+    r"(?i:street|st\.?|avenue|ave\.?|road|rd\.?|drive|dr\.?|lane|ln\.?|boulevard|blvd\.?|court|ct\.?|place|pl\.?|way)\b"
 )
 CONTACT_FIELD_RE = re.compile(r"(?:^|_)(?:address|phone|telephone|email|contact|home_address|mailing_address)(?:$|_)", re.I)
 ALLEGATION_RE = re.compile(
