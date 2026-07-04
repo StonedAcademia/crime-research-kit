@@ -23,11 +23,19 @@ source-independence review, and privacy review. SearXNG results are leads only.
 From the repo root:
 
 ```bash
-cp deployment/.env.example deployment/.env
+./deployment/scripts/bootstrap.sh --configure --workflow self-hosted
 moon run crk:docker-build
 moon run crk:docker-up
 moon run crk:docker-pull-model
 moon run crk:docker-smoke
+```
+
+For a non-interactive default profile, run:
+
+```bash
+python deployment/scripts/bootstrap_env.py configure \
+  --workflow self-hosted \
+  --non-interactive
 ```
 
 The first image build and model pull require network access. After that, model
@@ -83,8 +91,9 @@ expose self-hosted local APIs.
 SearXNG is bound to localhost by default. `deployment/.env.example` uses host
 port `18080` to avoid common local dev collisions; override
 `CRK_SEARXNG_HOST_PORT` and `SEARXNG_BASE_URL` together if needed. If you expose
-SearXNG beyond localhost, change `server.secret_key` and revisit the local
-limiter setting in `deployment/searxng/settings.yml` first.
+SearXNG beyond localhost, use the bootstrap helper's `exposed-searxng` workflow
+so it writes an ignored `deployment/searxng/settings.local.yml` with a generated
+`secret_key` and leaves the tracked settings file unchanged.
 
 ## Volumes
 

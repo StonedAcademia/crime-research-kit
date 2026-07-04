@@ -88,12 +88,17 @@ them with local services: SearXNG, Valkey, Qdrant, Ollama, OCR tooling,
 retrieval, memory, LangGraph, and MCP.
 
 ```bash
-cp deployment/.env.example deployment/.env
+./deployment/scripts/bootstrap.sh --configure --workflow self-hosted
 moon run crk:docker-build
 moon run crk:docker-up
 moon run crk:docker-pull-model
 moon run crk:docker-smoke
 ```
+
+Use `./deployment/scripts/bootstrap.sh --toolchain-only` when you only want the
+toolchain install. Non-interactive shells do not prompt; for default local stack
+settings use `python deployment/scripts/bootstrap_env.py configure --workflow
+self-hosted --non-interactive`.
 
 Codex and Claude Code can operate the self-hosted stack through CLI or MCP.
 They are agent hosts, not CRK runtime model providers. No LangSmith, managed
