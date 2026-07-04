@@ -88,8 +88,8 @@ def _text_indexable(source: dict[str, Any]) -> bool:
 
     Source *record* metadata (title/publisher) is always indexed; the raw text is
     skipped for sources explicitly flagged ``exclude_text_from_index`` or carrying a
-    preservation warning that marks PII / boundary material (e.g. the FBI Finders
-    scans, which hold b6/b7C redactions, private-person data, and minors).
+    preservation warning that marks PII / boundary material (e.g. investigative files
+    that retain agency privacy redactions, private-person data, or minors).
     """
     if source.get("exclude_text_from_index"):
         return False
