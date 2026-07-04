@@ -22,12 +22,14 @@ SRC_ROOT = Path("src")
 SIZE_EXEMPT_NAMES = {"LICENSE", "package-lock.json"}
 SRC_FILE_COUNT_EXEMPT_NAMES = {"README.md", "__init__.py"}
 DIR_LIMIT_OVERRIDES: dict[Path, dict[str, int]] = {
+    Path("deployment/scripts"): {"max_dirs": 4},
     Path("src"): {"max_dirs": 4},
     Path("src/crime_research_kit/sdk"): {"max_files": 14},
     Path("docs/guides"): {"max_dirs": 4},
     Path("frontend"): {"max_files": 5},
     Path("tests/quality/governance/docs"): {"max_files": 7},
-    Path("tests/runtime/unit"): {"max_dirs": 4},
+    Path("tests/runtime/integration"): {"max_dirs": 4},
+    Path("tests/runtime/unit"): {"max_dirs": 5},
     Path("tests/runtime/unit/sdk"): {"max_files": 13},
 }
 

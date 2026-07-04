@@ -126,7 +126,7 @@ The self-hosted Docker image installs those packages in
 Start the full local stack only when you need those services:
 
 ```bash
-cp deployment/.env.example deployment/.env
+./deployment/scripts/bootstrap.sh --configure --workflow self-hosted
 moon run crk:docker-build
 moon run crk:docker-up
 moon run crk:docker-pull-model
@@ -179,8 +179,17 @@ OCR, retrieval, and export workflows can run locally.
 
 Do not expose local services to the public internet by default. The compose
 stack binds SearXNG, Qdrant, and Ollama to localhost. If SearXNG is exposed
-beyond localhost, change `server.secret_key` in
-`deployment/searxng/settings.yml` before exposure.
+beyond localhost, generate an ignored local settings file instead of editing the
+tracked one:
+
+```bash
+python deployment/scripts/bootstrap_env.py configure \
+  --workflow exposed-searxng \
+  --non-interactive
+```
+
+The helper writes ignored local files with restricted permissions and redacts the
+generated SearXNG secret in command output.
 
 ## Minimum Fresh Install Checklist
 

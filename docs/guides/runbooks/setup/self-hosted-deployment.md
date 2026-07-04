@@ -30,7 +30,15 @@ self-hosted Ollama.
 Create the deployment environment file:
 
 ```bash
-cp deployment/.env.example deployment/.env
+./deployment/scripts/bootstrap.sh --configure --workflow self-hosted
+```
+
+For an unattended default profile:
+
+```bash
+python deployment/scripts/bootstrap_env.py configure \
+  --workflow self-hosted \
+  --non-interactive
 ```
 
 Validate the composed configuration:
@@ -97,7 +105,7 @@ moon run crk:docker-down
 
 ## Environment Defaults
 
-Important default values from `deployment/.env.example`:
+Important runtime defaults and generated local-stack values:
 
 ```text
 CRK_MODEL=ollama:llama3.1
@@ -141,5 +149,6 @@ moon run crk:docker-smoke
 `deployment/.env.example` uses SearXNG host port `18080` to avoid common local
 dev collisions. Override `CRK_SEARXNG_HOST_PORT` and `SEARXNG_BASE_URL`
 together when another port is preferred. If SearXNG is exposed beyond
-localhost, change `server.secret_key` and revisit the local limiter setting in
-`deployment/searxng/settings.yml` before exposure.
+localhost, run the `exposed-searxng` bootstrap workflow so
+`deployment/searxng/settings.local.yml` receives a generated `secret_key` and
+`CRK_SEARXNG_SETTINGS_FILE` points Compose at that ignored local file.

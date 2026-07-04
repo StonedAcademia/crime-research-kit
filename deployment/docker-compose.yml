@@ -39,7 +39,7 @@ services:
     ports:
       - "127.0.0.1:${CRK_SEARXNG_HOST_PORT:-8080}:8080"
     volumes:
-      - ${CRK_REPO_ROOT:-..}/deployment/searxng/settings.yml:/etc/searxng/settings.yml:ro
+      - ${CRK_SEARXNG_SETTINGS_FILE:-../deployment/searxng/settings.yml}:/etc/searxng/settings.yml:ro
       - ${CRK_REPO_ROOT:-..}/deployment/searxng/limiter.toml:/etc/searxng/limiter.toml:ro
       - searxng-cache:/var/cache/searxng
     depends_on:
