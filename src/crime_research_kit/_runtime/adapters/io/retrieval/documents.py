@@ -31,7 +31,8 @@ def build_evidence_documents(case_dir: str | Path, *, include_private: bool = Fa
     documents: list[EvidenceDocument] = []
     for source in sources.values():
         if source and public_allowed(source, include_private=include_private):
-            documents.extend(_source_text_documents(case_dir, cid, source))
+            if _text_indexable(source):
+                documents.extend(_source_text_documents(case_dir, cid, source))
             documents.append(_source_record_document(cid, source))
     for record_name in ["claims", "events", "relationships", "event_links", "quotes", "source_spans"]:
         for row in load_records(case_dir, record_name):
@@ -80,6 +81,20 @@ def _record_document(
     )
     doc_id = f"{case_id_value}:{record_name}:{record_id}"
     return EvidenceDocument(doc_id=doc_id, text=text, metadata=compact_metadata(metadata))
+
+
+def _text_indexable(source: dict[str, Any]) -> bool:
+    """Whether a source's full text may be embedded into the retrieval index.
+
+    Source *record* metadata (title/publisher) is always indexed; the raw text is
+    skipped for sources explicitly flagged ``exclude_text_from_index`` or carrying a
+    preservation warning that marks PII / boundary material (e.g. investigative files
+    that retain agency privacy redactions, private-person data, or minors).
+    """
+    if source.get("exclude_text_from_index"):
+        return False
+    warnings = source.get("preservation_warnings") or []
+    return not any(("PII" in str(w)) or ("not for public" in str(w)) for w in warnings)
 
 
 def _source_text_documents(case_dir: str | Path, case_id_value: str, source: dict[str, Any]) -> list[EvidenceDocument]:

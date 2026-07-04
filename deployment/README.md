@@ -118,3 +118,27 @@ moon run crk:docker-down
 ```
 
 `moon run crk:docker-down` stops containers without deleting volumes.
+
+## OCR of scanned PDFs
+
+The `crk` image already bundles `tesseract-ocr`, `ocrmypdf`, and `ghostscript`, and
+bind-mounts `data/cases`, so OCR runs inside the built image with no extra setup:
+
+```bash
+moon run crk:docker-build            # one-time; builds the full crk image
+docker compose -f deployment/docker-compose.yml run --rm crk \
+  cr-kit ocr-source data/cases/<case_slug> <SOURCE_ID>
+```
+
+For bulk OCR-only work without the multi-GB app image, a lean throwaway image is
+enough (tesseract + ocrmypdf + ghostscript), producing a text sidecar per file:
+
+```bash
+docker run --rm -v "$PWD/data/cases/<case_slug>":/work <ocr-image> \
+  ocrmypdf --redo-ocr --sidecar /work/raw/ocr/<SID>.txt \
+  /work/raw/downloads/<file>.pdf /work/raw/ocr/<SID>.pdf
+```
+
+Wire the resulting sidecar into the source record's `text_path` before indexing.
+Sources holding PII/minors (e.g. FBI boundary files) are automatically excluded
+from the retrieval index via the source `preservation_warnings` marker.
