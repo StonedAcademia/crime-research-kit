@@ -102,6 +102,8 @@ def _package(ctx: AnalysisContext, products: dict[str, Any]) -> dict[str, Any]:
             "claim_edges": products["claim_edge_rows"],
         }, ["claim_source_matrix.csv", "claim_edges.csv"]),
     }
+    for console in consoles.values():
+        console["include_private"] = ctx.include_private
     return {
         "case_title": ctx.case_title,
         "include_private": ctx.include_private,

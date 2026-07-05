@@ -92,7 +92,8 @@ function renderNetwork(root: HTMLElement, data: ConsoleData): void {
     .map((row, idx) => ({ data: { id: text(row.edge_id || idx), source: text(row.src_id), target: text(row.dst_id), label: text(row.relationship_class || row.edge_type), row } }))
     .filter((item) => rawNodeIds.has(item.data.source) && rawNodeIds.has(item.data.target));
   const connectedIds = new Set(rawEdges.flatMap((edge) => [edge.data.source, edge.data.target]));
-  const nodes = rawEdges.length ? rawNodes.filter((node) => connectedIds.has(node.data.id)) : rawNodes.slice(0, 80);
+  const includeAllNodes = data.include_private === true;
+  const nodes = includeAllNodes ? rawNodes : rawEdges.length ? rawNodes.filter((node) => connectedIds.has(node.data.id)) : rawNodes.slice(0, 80);
   const nodeIds = new Set(nodes.map((item) => item.data.id));
   const edges = rawEdges.filter((edge) => nodeIds.has(edge.data.source) && nodeIds.has(edge.data.target));
   const omitted = rawNodes.length - nodes.length;
@@ -100,7 +101,9 @@ function renderNetwork(root: HTMLElement, data: ConsoleData): void {
   shell.className = "visual-network-shell";
   const summary = document.createElement("div");
   summary.className = "visual-network-summary";
-  summary.textContent = `${nodes.length} connected records, ${edges.length} relationships${omitted > 0 ? `; ${omitted} unconnected records omitted from the drawing` : ""}.`;
+  summary.textContent = includeAllNodes
+    ? `${nodes.length} records, ${edges.length} relationships.`
+    : `${nodes.length} connected records, ${edges.length} relationships${omitted > 0 ? `; ${omitted} unconnected records omitted from the drawing` : ""}.`;
   const canvas = document.createElement("div");
   canvas.className = "visual-network-canvas";
   shell.append(summary, canvas);

@@ -1,5 +1,5 @@
 export type Row = Record<string, unknown>;
-export type ConsoleData = { slug: string; title: string; kind: string; data: Record<string, Row[]> };
+export type ConsoleData = { slug: string; title: string; kind: string; include_private?: boolean; data: Record<string, Row[]> };
 
 export function text(value: unknown): string {
   return Array.isArray(value) ? value.join("; ") : String(value ?? "");

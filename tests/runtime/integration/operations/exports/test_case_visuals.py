@@ -180,5 +180,7 @@ def test_export_case_visuals_include_private_uses_internal_scope(tmp_path):
     manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["include_private"] is True
     assert "internal review" in manifest["scope"]
+    network_html = (out / "consoles" / "relationship_network.html").read_text(encoding="utf-8")
+    assert '"include_private": true' in network_html
     people_edges = read_csv(out / "audit" / "people_edges.csv")
     assert any("E_PRIVATE" in {row["src_entity_id"], row["dst_entity_id"]} for row in people_edges)
