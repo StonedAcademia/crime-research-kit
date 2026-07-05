@@ -38,7 +38,6 @@
 {% endfor %}
 </main>
 {% endif %}
-<script>{{ app_js | safe }}</script>
+{% if console %}<script>{{ app_js | safe }}</script>{% endif %}
 </body>
 </html>
-

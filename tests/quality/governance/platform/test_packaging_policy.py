@@ -183,6 +183,7 @@ def test_report_frontend_assets_are_committed_and_selfcontained():
     css, js = css_path.read_text(encoding="utf-8"), js_path.read_text(encoding="utf-8")
     assert len(css) > 500 and len(js) > 500
     assert "https://tailwindcss.com" in css
+    assert "htmx" not in js.lower() and "maybeCall" not in js
     for text in (_strip_allowed_frontend_uris(css), _strip_allowed_frontend_uris(js)):
         assert "http://" not in text
         assert "https://" not in text

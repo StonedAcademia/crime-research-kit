@@ -77,11 +77,15 @@
   .evidence-drawer { margin-top: 14px; }
   .evidence-drawer summary { cursor: pointer; font-weight: 700; }
   .visual-index { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 24px clamp(18px, 4vw, 48px); }
-  .deck-page { margin: 0; overflow: hidden; background: #f7f4ee; color: #191817; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+  .deck-page { margin: 0; overflow: auto; background: #f7f4ee; color: #191817; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
   .deck-nav { position: fixed; left: 0; top: 0; bottom: 0; width: 260px; overflow: auto; border-right: 1px solid #d6cec2; background: #fffdf8; padding: 16px; display: grid; align-content: start; gap: 6px; z-index: 3; }
-  .deck-stage { margin-left: 260px; height: 100vh; position: relative; }
-  .deck-slide { position: absolute; inset: 0; display: none; padding: 6vh 5vw; align-items: center; justify-content: center; }
-  .deck-slide.active { display: flex; }
+  .deck-stage { min-height: 100vh; position: relative; }
+  .deck-slide { position: relative; min-height: 100vh; display: flex; padding: 6vh 5vw; align-items: center; justify-content: center; }
+  .deck-page:not(.deck-enhanced) .deck-nav, .deck-page:not(.deck-enhanced) .deck-controls { display: none; }
+  .deck-page.deck-enhanced { overflow: hidden; }
+  .deck-page.deck-enhanced .deck-stage { margin-left: 260px; height: 100vh; }
+  .deck-page.deck-enhanced .deck-slide { position: absolute; min-height: 0; inset: 0; display: none; }
+  .deck-page.deck-enhanced .deck-slide.active { display: flex; }
   .deck-slide h1, .deck-slide h2 { font-family: Georgia, serif; font-weight: 500; line-height: 1.05; margin: 0 0 14px; }
   .deck-slide h1 { font-size: clamp(42px, 7vw, 82px); }
   .deck-slide h2 { font-size: clamp(30px, 5vw, 56px); }

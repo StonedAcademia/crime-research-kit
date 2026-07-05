@@ -157,9 +157,12 @@ def test_export_case_visuals_writes_curated_package(tmp_path):
 
     assert "<iframe" not in deck_html
     assert "data-deck-stage" in deck_html
+    assert "deck-enhanced" in deck_html
     assert "Evidence Readiness" in deck_html
     assert "Relationship Network" in explorer_html
+    assert "<script>" not in explorer_html
     assert "data-visual-kind=\"cytoscape-network\"" in network_html
+    assert "<script>" in network_html
     assert "Layered Knowledge Graph" not in deck_html + explorer_html + network_html
     assert "Data preview" not in network_html
 

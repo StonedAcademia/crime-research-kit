@@ -1,5 +1,3 @@
-import "htmx.org";
-
 import type { ConsoleData } from "./visuals/model";
 import { renderConsoleRoot } from "./visuals/renderers";
 
@@ -32,6 +30,8 @@ function bootVisuals(): void {
 
 function bootDeck(): void {
   const slides = Array.from(document.querySelectorAll<HTMLElement>(".deck-slide"));
+  if (!slides.length) return;
+  document.body.classList.add("deck-enhanced");
   const nav = document.querySelector<HTMLElement>("[data-deck-nav]");
   const count = document.querySelector<HTMLElement>("[data-deck-count]");
   let current = 0;

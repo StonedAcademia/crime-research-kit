@@ -8,8 +8,7 @@
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.0.0",
-    "esbuild": "^0.24.0",
-    "htmx.org": "^2.0.0"
+    "esbuild": "^0.24.0"
   },
   "dependencies": {
     "cytoscape": "^3.34.0",
