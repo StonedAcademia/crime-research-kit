@@ -26,7 +26,9 @@ ADDRESS_RE = re.compile(
 )
 CONTACT_FIELD_RE = re.compile(r"(?:^|_)(?:address|phone|telephone|email|contact|home_address|mailing_address)(?:$|_)", re.I)
 ALLEGATION_RE = re.compile(
-    r"\b(?:accus(?:e|ed|ation)|alleg(?:e|ed|ation)|abuse|assault|charged|criminal|"
+    # "charged" only in a criminal sense: exclude accounting uses ("charged to/against/off
+    # an allotment"), which are not allegations. Other terms keep their bare word match.
+    r"\b(?:accus(?:e|ed|ation)|alleg(?:e|ed|ation)|abuse|assault|charged(?!\s+(?:to|against|off)\b)|criminal|"
     r"cult member|perpetrator|person of interest|suspect|rumou?r|unverified)\b",
     re.I,
 )

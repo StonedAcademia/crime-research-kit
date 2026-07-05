@@ -109,3 +109,33 @@ def test_address_regex_ignores_title_and_currency_prose(text):
     from crime_research_kit._runtime.adapters.ops.evidence.quality.safety.public_export import ADDRESS_RE
 
     assert not ADDRESS_RE.search(text), f"false positive: {text!r} should not read as an address"
+
+
+ALLEGATION_MATCHES = [
+    "he was charged with murder",
+    "charged in the death of the researcher",
+    "criminal charges were filed",
+    "accused of abuse",
+    "alleged assault",
+]
+
+ALLEGATION_NON_MATCHES = [
+    # Accounting uses of "charged" are not allegations:
+    "the cost was charged to a TSD accounting allotment",
+    "the amount was charged against the account",
+    "$5,000 charged off to overhead",
+]
+
+
+@pytest.mark.parametrize("text", ALLEGATION_MATCHES)
+def test_allegation_regex_matches_criminal_language(text):
+    from crime_research_kit._runtime.adapters.ops.evidence.quality.safety.public_export import ALLEGATION_RE
+
+    assert ALLEGATION_RE.search(text), f"expected an allegation match in {text!r}"
+
+
+@pytest.mark.parametrize("text", ALLEGATION_NON_MATCHES)
+def test_allegation_regex_ignores_accounting_charged(text):
+    from crime_research_kit._runtime.adapters.ops.evidence.quality.safety.public_export import ALLEGATION_RE
+
+    assert not ALLEGATION_RE.search(text), f"false positive: {text!r} should not read as an allegation"
