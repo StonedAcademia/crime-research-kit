@@ -156,6 +156,7 @@ def esc(value: object) -> str:
 
 def render(data: dict) -> str:
     case = data["case"]
+    deck_label = case.get("short_title") or case.get("title") or case.get("case_id") or "Case review deck"
     counts_html = "".join(f"<div class='metric'><b>{v}</b><span>{esc(k)}</span></div>" for k, v in data["counts"].items())
     audit_html = "".join(
         f"<article class='audit'><b>{esc(a['count'])}</b><span>{esc(a['label'])}</span><p>{esc(a['summary'])}</p></article>"
@@ -195,7 +196,7 @@ def render(data: dict) -> str:
 </head>
 <body>
 <div class="deck">
-<aside class="rail"><div class="brand">Roach / Morava / WWASPS</div><div class="notice">Internal review deck. Includes private/excluded and weak-claim rows because chart exports used --include-private.</div><nav class="nav" id="nav"></nav></aside>
+<aside class="rail"><div class="brand">{esc(deck_label)}</div><div class="notice">Internal review deck. Includes private/excluded and weak-claim rows because chart exports used --include-private.</div><nav class="nav" id="nav"></nav></aside>
 <main class="stage" id="stage">
 <section class="slide active" data-title="Title"><div class="inner"><div class="eyebrow">Internal evidence deck</div><h1>{esc(case.get('title'))}</h1><p class="subtitle">One-file slide wrapper around the generated CRK evidence board, case charts, and analysis dashboards. This is not a public-safe export.</p><div class="metrics">{counts_html}</div></div></section>
 <section class="slide" data-title="Safety Gate"><div class="inner"><div class="eyebrow">Public-output status</div><h2>Public chart exports are blocked; this deck is for internal review.</h2><div class="audit-grid">{audit_html}</div></div></section>
