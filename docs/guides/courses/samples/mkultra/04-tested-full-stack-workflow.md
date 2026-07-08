@@ -63,7 +63,7 @@ The suite covers a curated subset from `sources/manifest.json`:
 Expected artifacts in the temp case include source ledger rows, raw downloads,
 text sidecars, source-preservation reports, staged extraction packets, a
 reviewed canonical packet, name-link research brief, evidence-board Markdown,
-Manim CSVs, timeline/corroboration CSVs, Qdrant query output, an Ollama
+internal visuals, timeline/corroboration CSVs, Qdrant query output, an Ollama
 readiness brief, an optional Codex reviewer brief, and a surface-acceptance
 transcript covering CLI, MCP, and agent/skill operation.
 
@@ -143,9 +143,9 @@ Build public-safe exports after review:
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
   crk-ledger report data/cases/mkultra_course
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
-  crk-ledger export-manim data/cases/mkultra_course
+  crk-ledger export-case-visuals data/cases/mkultra_course --include-private
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
-  crk-ledger export-timeline data/cases --out-dir data/cases/mkultra_course/exports/timeline
+  crk-ledger export-timeline data/cases/mkultra_course --include-private
 ```
 
 Index and query with Qdrant plus HuggingFace embeddings:

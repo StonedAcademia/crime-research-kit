@@ -26,10 +26,10 @@ crk-ledger audit-source-independence data/cases/harbor_study_circle
 crk-ledger review-narrative-readiness data/cases/harbor_study_circle
 ```
 
-Export Manim-ready CSVs after review:
+Export canonical visuals after review:
 
 ```bash
-crk-ledger export-manim data/cases/harbor_study_circle
+crk-ledger export-case-visuals data/cases/harbor_study_circle
 ```
 
 Export a public-safe Phanestead bundle:

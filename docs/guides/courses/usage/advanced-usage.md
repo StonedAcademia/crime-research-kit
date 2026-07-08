@@ -63,7 +63,7 @@ retrieval result -> source text -> extraction packet -> human review -> import
 
 ## Export Only After Gates Pass
 
-Before Manim CSVs, charts, evidence boards, scripts, or reports:
+Before visual exports, evidence boards, scripts, or reports:
 
 ```bash
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
@@ -77,8 +77,6 @@ Then generate outputs:
 ```bash
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
   crk-ledger report data/cases/mkultra_course
-uv run --cache-dir .uv-cache --no-project --with-editable . -- \
-  crk-ledger export-manim data/cases/mkultra_course
 uv run --cache-dir .uv-cache --no-project --with-editable . -- \
   crk-ledger export-case-visuals data/cases/mkultra_course
 ```

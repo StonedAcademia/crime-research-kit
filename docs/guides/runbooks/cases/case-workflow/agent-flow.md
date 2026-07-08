@@ -116,5 +116,5 @@ Return redaction blockers before any public export.
 
 ```text
 Use the $truecrime-cult-research skill and route public-output review through narrative-readiness-review.
-Review data/cases/harbor_study_circle for source support, contradiction handling, source independence, privacy blockers, caveat needs, and unsupported narrative points before script, report, evidence-board, or Manim use.
+Review data/cases/harbor_study_circle for source support, contradiction handling, source independence, privacy blockers, caveat needs, and unsupported narrative points before script, report, evidence-board, or visual export use.
 ```

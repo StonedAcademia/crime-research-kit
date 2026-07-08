@@ -1,7 +1,7 @@
 # Public Output Readiness Runbook
 
-Use this runbook before any report, public script, evidence board, Manim export,
-chart package, or UFB bundle leaves the local workspace.
+Use this runbook before any report, public script, evidence board, visual
+package, or UFB bundle leaves the local workspace.
 
 ## Rule
 

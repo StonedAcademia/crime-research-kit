@@ -26,7 +26,6 @@ report has explicit public/private filtering semantics.
 | `dedupeRecords` | `review.dedupe` | `staged_write` | `OperationResult` |
 | `draftExtraction` | `extractions.draft` | `staged_write` | `OperationResult` |
 | `exportCaseVisuals` | `exports.case_visuals` | `public_export` | `OperationResult` |
-| `exportManim` | `exports.manim` | `public_export` | `OperationResult` |
 | `exportTimeline` | `exports.timeline` | `public_export` | `OperationResult` |
 | `importExtraction` | `extractions.import_reviewed` | `canonical_gated` | `OperationResult` |
 | `indexTranscript` | `records.index_transcript` | `staged_write` | `OperationResult` |

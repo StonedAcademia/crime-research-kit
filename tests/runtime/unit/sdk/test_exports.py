@@ -10,14 +10,15 @@ def dry_client_for(case_dir: Path) -> CrkClient:
     return CrkClient(CrkContext(repo_root=KIT_ROOT, cases_root=case_dir.parent, dry_run=True))
 
 
-def test_exports_manim_public_safe_by_default(synthetic_case_copy: Path):
-    result = dry_client_for(synthetic_case_copy).case("synthetic_case").exports.manim()
+def test_exports_case_visuals_public_safe_by_default(synthetic_case_copy: Path):
+    result = dry_client_for(synthetic_case_copy).case("synthetic_case").exports.case_visuals()
 
     args = ledger_command_args(result.diagnostics["command"])
     assert result.ok is True
-    assert result.operation == "exports.manim"
-    assert args[:2] == ["export-manim", str(synthetic_case_copy)]
+    assert result.operation == "exports.case_visuals"
+    assert args[:2] == ["export-case-visuals", str(synthetic_case_copy)]
     assert "--include-private" not in args
+    assert result.outputs == [str(synthetic_case_copy / "exports" / "internal" / "visuals")]
     assert result.data["privacy"]["include_private"] is False
     assert "public-safe" in result.data["privacy"]["note"]
 
@@ -25,7 +26,7 @@ def test_exports_manim_public_safe_by_default(synthetic_case_copy: Path):
 def test_exports_use_case_privacy_default(synthetic_case_copy: Path):
     case = dry_client_for(synthetic_case_copy).case("synthetic_case").with_privacy(include_private=True)
 
-    result = case.exports.manim()
+    result = case.exports.case_visuals()
 
     args = ledger_command_args(result.diagnostics["command"])
     assert "--include-private" in args

@@ -42,7 +42,7 @@ def init_case(args: argparse.Namespace) -> None:
         "records",
         "staging/extractions",
         "staging/candidates",
-        "exports/manim",
+        "exports/internal",
         "notes",
     ):
         (cdir / subdir).mkdir(parents=True, exist_ok=True)

@@ -189,7 +189,7 @@ def test_readiness_audit_runs_four_audits():
     assert update["status"] == "readiness_audited"
 
 
-def test_export_bundle_exports_manim_and_report():
+def test_export_bundle_exports_visuals_and_report():
     from crime_research_kit._runtime.pipeline.graph.nodes.pipeline import export_bundle_node
 
     node = export_bundle_node(dry_runner())
@@ -197,7 +197,7 @@ def test_export_bundle_exports_manim_and_report():
     update = node({"case_dir": "data/cases/x"})
 
     subcommands = [ledger_subcommand(command) for command in update["planned_commands"]]
-    assert subcommands == ["export-manim", "report"]
+    assert subcommands == ["export-case-visuals", "report"]
     assert update["status"] == "bundle_exported"
     assert update["review_required"] is False
-    assert "--include-private" not in update["planned_commands"][0]
+    assert "--include-private" in update["planned_commands"][0]

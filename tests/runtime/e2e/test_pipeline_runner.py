@@ -24,6 +24,7 @@ def test_sequential_dry_run_stops_at_packet_gate():
     subcommands = [ledger_subcommand(command) for command in result["planned_commands"]]
     assert "import-extraction" not in subcommands
     assert "export-manim" not in subcommands
+    assert "export-case-visuals" not in subcommands
 
 
 def test_sequential_full_pass_with_preapprovals_runs_whole_pipeline():
@@ -54,7 +55,7 @@ def test_sequential_full_pass_with_preapprovals_runs_whole_pipeline():
         "review-narrative-readiness",
         "audit-privacy-redactions",
         "audit-source-independence",
-        "export-manim",
+        "export-case-visuals",
         "report",
     ]
 

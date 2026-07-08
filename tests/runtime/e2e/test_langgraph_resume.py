@@ -50,7 +50,7 @@ def test_interrupt_resume_survives_graph_rebuild(tmp_path):
     assert result["status"] == "bundle_exported"
     assert result["review_required"] is False
     subcommands = [ledger_subcommand(command) for command in result["planned_commands"]]
-    assert subcommands[-2:] == ["export-manim", "report"]
+    assert subcommands[-2:] == ["export-case-visuals", "report"]
 
 
 def test_rejecting_all_packets_ends_the_run(tmp_path):

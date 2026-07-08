@@ -113,7 +113,7 @@ def test_readiness_brief_node_writes_brief_from_audit_results(synthetic_case_cop
         "tool_results": [
             {"name": "audit_contradictions", "stdout": "0 contradictions"},
             {"name": "audit_privacy_redactions", "stdout": "1 flag"},
-            {"name": "export_manim", "stdout": "not an audit"},
+            {"name": "export_case_visuals", "stdout": "not an audit"},
         ],
     }
 

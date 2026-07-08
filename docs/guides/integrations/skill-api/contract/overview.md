@@ -58,6 +58,5 @@ Generated files are written under:
 | Claim contradiction audit | `exports/claim_contradiction_audit.json` |
 | Narrative readiness review | `exports/narrative_readiness_review.json` |
 | Privacy redaction audit | `exports/privacy_redaction_audit.json` |
-| Manim CSVs | `exports/manim/*.csv` |
-| Case charts | `exports/charts/*` |
-| Cross-case timeline | `data/exports/timeline/*` or caller-provided `out_dir` |
+| Case visuals | `exports/internal/visuals/*` |
+| Cross-case timeline | `exports/internal/timeline/*` or caller-provided `out_dir` |

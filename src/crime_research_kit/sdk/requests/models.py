@@ -107,7 +107,6 @@ _F: dict[str, Fields] = {
         "fail_on_flags": (bool, False),
         "out": (str | None, None),
     },
-    "ExportManimRequest": {"include_private": (bool | None, None)},
     "ExportTimelineRequest": {"cases_root": (PathValue | None, None), "include_private": (bool | None, None), "out_dir": (str | None, None)},
     "ExportCaseVisualsRequest": {"include_private": (bool | None, None), "out_dir": (str | None, None)},
     "WorkflowPlanRequest": {

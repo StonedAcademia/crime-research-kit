@@ -28,14 +28,15 @@ def read_csv(path):
 def test_public_export_filters_private_rows_and_keeps_provenance(tmp_path):
     tcr = load_tcr()
     case_dir = copy_fixture(tmp_path, "synthetic_case")
+    out = tmp_path / "visuals"
 
-    tcr.main(["export-manim", str(case_dir)])
+    tcr.main(["export-case-visuals", str(case_dir), "--out-dir", str(out)])
 
-    people = read_csv(case_dir / "exports" / "manim" / "people.csv")
-    claims = read_csv(case_dir / "exports" / "manim" / "claims.csv")
-    assert all(row["public_export"] != "False" for row in people + claims)
-    assert all(row["source_ids"] for row in claims)
-    assert "123 Main Street" not in (case_dir / "exports" / "manim" / "people.csv").read_text(encoding="utf-8")
+    nodes = read_csv(out / "audit" / "relationship_nodes.csv")
+    claims = read_csv(out / "audit" / "claim_confidence.csv")
+    assert all(row["public_export"] != "False" for row in nodes + claims)
+    assert all(row["source_count"] for row in claims)
+    assert "123 Main Street" not in (out / "audit" / "relationship_nodes.csv").read_text(encoding="utf-8")
 
 
 def test_unsafe_fixture_public_export_fails_with_named_blockers(tmp_path, capsys):
@@ -43,7 +44,7 @@ def test_unsafe_fixture_public_export_fails_with_named_blockers(tmp_path, capsys
     case_dir = copy_fixture(tmp_path, "unsafe_case_fixture")
 
     with pytest.raises(SystemExit) as exc:
-        tcr.main(["export-manim", str(case_dir)])
+        tcr.main(["export-case-visuals", str(case_dir)])
 
     captured = capsys.readouterr()
     output = captured.out + captured.err
@@ -59,9 +60,11 @@ def test_include_private_export_skips_public_gate_for_internal_review(tmp_path, 
     tcr = load_tcr()
     case_dir = copy_fixture(tmp_path, "unsafe_case_fixture")
 
-    tcr.main(["export-manim", str(case_dir), "--include-private"])
+    tcr.main(["export-case-visuals", str(case_dir), "--include-private"])
 
     captured = capsys.readouterr()
-    people = read_csv(case_dir / "exports" / "manim" / "people.csv")
+    public_nodes = read_csv(case_dir / "exports" / "internal" / "visuals" / "audit" / "relationship_nodes.csv")
+    nodes = read_csv(case_dir / "exports" / "internal" / "visuals" / "audit" / "private" / "relationship_nodes.csv")
     assert "internal export requested" in captured.out
-    assert {row["entity_id"] for row in people} >= {"EUNSAFE_PRIVATE", "EUNSAFE_MINOR"}
+    assert "EUNSAFE_PRIVATE" not in {row["node_id"] for row in public_nodes}
+    assert {row["node_id"] for row in nodes} >= {"EUNSAFE_PRIVATE", "EUNSAFE_MINOR"}

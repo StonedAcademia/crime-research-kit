@@ -23,7 +23,6 @@ Skill API operation name.
 | `POST` | `/v1/cases/{case_slug}/candidates:ner-suggest` | `nerSuggest` |
 | `POST` | `/v1/cases/{case_slug}/links:names` | `linkNames` |
 | `POST` | `/v1/cases/{case_slug}:validate` | `validateCase` |
-| `POST` | `/v1/cases/{case_slug}/exports:manim` | `exportManim` |
 | `POST` | `/v1/cases/{case_slug}:dedupe` | `dedupeRecords` |
 | `POST` | `/v1/cases/{case_slug}:audit-public-export` | `auditPublicExport` |
 | `POST` | `/v1/cases/{case_slug}:audit-source-independence` | `auditSourceIndependence` |

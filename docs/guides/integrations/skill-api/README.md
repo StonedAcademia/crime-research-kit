@@ -12,7 +12,7 @@ changing the case ledger.
 | Controlled vocabularies, templates, preservation, citations, and dedupe | [Record conventions](contract/record-conventions.md) |
 | Common envelope and core case/source/extraction operations | [Core operations](operations/core.md) |
 | Dedupe, audit, public-records, transcript, FOIA, and readiness operations | [Review operations](operations/review-planning.md) |
-| Manim, timeline, chart, analysis, and cluster exports | [Export artifacts](exports/artifacts.md) |
+| Timeline and canonical visual exports | [Export artifacts](exports/artifacts.md) |
 | Future HTTP route mapping, versioning, and open questions | [HTTP and versioning](exports/http-versioning.md) |
 
 ## Covered Skills

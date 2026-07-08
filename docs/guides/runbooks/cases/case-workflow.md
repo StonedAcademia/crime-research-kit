@@ -25,5 +25,5 @@ claim -> source_ids -> reliability grade -> confidence/status -> privacy review 
 ```
 
 If that chain is incomplete, keep the point out of public scripts, evidence
-boards, Manim exports, and public bundles except as explicitly unknown,
+boards, visual exports, and public bundles except as explicitly unknown,
 lead-only, or disputed.

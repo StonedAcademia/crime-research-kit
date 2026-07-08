@@ -30,20 +30,6 @@ class CaseExportsClient:
             raise ValueError("CaseExportsClient requires a case reference.")
         return resolved
 
-    def manim(self, *, include_private: bool | None = None) -> OperationResult:
-        """Plan or run public-safe Manim CSV exports."""
-        from crime_research_kit._runtime.adapters.ops import exports as export_ops
-
-        is_internal = self._include_private(include_private)
-        raw = export_ops.export_manim(_runner(self.context), str(self.case_dir), include_private=is_internal)
-        return _result(
-            _op("exports.manim"),
-            raw,
-            case_ref=str(self.case_dir),
-            include_private=is_internal,
-            outputs=[str(self.case_dir / "exports" / "manim")],
-        )
-
     def case_visuals(self, *, include_private: bool | None = None, out_dir: str | None = None) -> OperationResult:
         """Plan or run the curated case visual package export."""
         from crime_research_kit._runtime.adapters.ops import exports as export_ops
@@ -60,7 +46,7 @@ class CaseExportsClient:
             raw,
             case_ref=str(self.case_dir),
             include_private=is_internal,
-            outputs=[out_dir or str(self.case_dir / ("exports/internal/visuals" if is_internal else "exports/visuals"))],
+            outputs=[out_dir or str(self.case_dir / "exports" / "internal" / "visuals")],
         )
 
     def _include_private(self, explicit: bool | None) -> bool:
@@ -113,7 +99,10 @@ def _result(
 
 
 def _default_timeline_dir(cases_root: Path) -> Path:
-    return cases_root.parent / "exports" / "timeline"
+    root = cases_root.expanduser().resolve()
+    if (root / "case.json").exists():
+        return root / "exports" / "internal" / "timeline"
+    return root.parent / "exports" / "internal" / "timeline"
 
 
 __all__ = ["CaseExportsClient", "ExportsClient"]

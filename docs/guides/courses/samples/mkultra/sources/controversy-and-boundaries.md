@@ -56,5 +56,5 @@ that relationship.
 
 ```text
 Run narrative-readiness, privacy-redaction, and source-independence review for
-all MKUltra course subcases before exporting Manim CSVs or an evidence board.
+all MKUltra course subcases before exporting visuals or an evidence board.
 ```

@@ -52,7 +52,7 @@ public-output review.
 
 ## Public-Output Checklist
 
-Before any report, script, evidence board, Manim export, or bundle leaves the
+Before any report, script, evidence board, visual export, or bundle leaves the
 local workspace:
 
 1. Run `validate`.

@@ -43,9 +43,9 @@ def test_cli_capture_preserve_etl_link_score_and_exports(
     ledger_command(ledger_runner, "public_export", ["audit-public-export", str(case_dir), "--warn-only"])
     ledger_command(ledger_runner, "readiness", ["review-narrative-readiness", str(case_dir)])
     ledger_command(ledger_runner, "report", ["report", str(case_dir)])
-    ledger_command(ledger_runner, "export_manim", ["export-manim", str(case_dir)])
+    ledger_command(ledger_runner, "export_case_visuals", ["export-case-visuals", str(case_dir), "--include-private"])
 
-    timeline_dir = case_dir / "exports" / "timeline"
+    timeline_dir = case_dir / "exports" / "internal" / "timeline"
     ledger_command(
         ledger_runner,
         "export_timeline",
@@ -59,7 +59,7 @@ def test_cli_capture_preserve_etl_link_score_and_exports(
     assert any(row.get("claim_id") == "C_MKULTRA_E2E_NSARCHIVE_COLLECTION" for row in claims)
     assert any(row.get("action") == "link_names" for row in actions)
     assert (case_dir / "exports" / "evidence_board.md").exists()
-    assert (case_dir / "exports" / "manim" / "claims.csv").exists()
+    assert (case_dir / "exports" / "internal" / "visuals" / "manifest.json").exists()
 
     corroborations = list(csv.DictReader((timeline_dir / "corroborations.csv").open(encoding="utf-8")))
     target = next(row for row in corroborations if row["claim_id"] == "C_MKULTRA_E2E_NSARCHIVE_COLLECTION")

@@ -137,8 +137,8 @@ def test_import_extraction_plans_command_with_confirm(synthetic_case_copy):
 def test_exports_echo_privacy_mode(synthetic_case_copy):
     ctx = make_ctx(synthetic_case_copy.parent)
 
-    public = tools_gated.export_manim_tool(ctx, "synthetic_case")
-    internal = tools_gated.export_manim_tool(ctx, "synthetic_case", include_private=True)
+    public = tools_gated.export_case_visuals_tool(ctx, "synthetic_case")
+    internal = tools_gated.export_case_visuals_tool(ctx, "synthetic_case", include_private=True)
 
     assert "--include-private" not in public["command"]
     assert "excluded" in public["data"]["privacy"]
@@ -146,17 +146,17 @@ def test_exports_echo_privacy_mode(synthetic_case_copy):
     assert "internal review" in internal["data"]["privacy"]
 
 
-def test_export_manim_tool_routes_through_sdk_and_keeps_privacy_note(monkeypatch, synthetic_case_copy):
+def test_export_case_visuals_tool_routes_through_sdk_and_keeps_privacy_note(monkeypatch, synthetic_case_copy):
     ctx = make_ctx(synthetic_case_copy.parent)
     calls = {}
 
     class Exports:
-        def manim(self, *, include_private: bool) -> OperationResult:
+        def case_visuals(self, *, include_private: bool) -> OperationResult:
             calls["include_private"] = include_private
             return OperationResult.success(
-                "exports.manim",
+                "exports.case_visuals",
                 data={"privacy": {"include_private": include_private, "note": "sdk note"}},
-                diagnostics={"command": ["crk-ledger", "export-manim", "--include-private"]},
+                diagnostics={"command": ["crk-ledger", "export-case-visuals", "--include-private"]},
             )
 
     class Case:
@@ -168,11 +168,11 @@ def test_export_manim_tool_routes_through_sdk_and_keeps_privacy_note(monkeypatch
 
     monkeypatch.setattr(tools_gated, "sdk_case", fake_sdk_case)
 
-    result = tools_gated.export_manim_tool(ctx, "synthetic_case", include_private=True)
+    result = tools_gated.export_case_visuals_tool(ctx, "synthetic_case", include_private=True)
 
     assert calls == {"case": "synthetic_case", "include_private": True}
-    assert result["operation"] == "exports.manim"
-    assert result["command"] == ["crk-ledger", "export-manim", "--include-private"]
+    assert result["operation"] == "exports.case_visuals"
+    assert result["command"] == ["crk-ledger", "export-case-visuals", "--include-private"]
     assert "internal review" in result["data"]["privacy"]
 
 

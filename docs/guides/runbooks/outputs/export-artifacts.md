@@ -32,29 +32,9 @@ Output:
 data/cases/<case_slug>/exports/evidence_board.md
 ```
 
-## Manim CSVs
+## Internal Timeline
 
-Export public-safe Manim-ready CSVs:
-
-```bash
-crk-ledger export-manim data/cases/<case_slug>
-```
-
-Outputs:
-
-```text
-data/cases/<case_slug>/exports/manim/sources.csv
-data/cases/<case_slug>/exports/manim/people.csv
-data/cases/<case_slug>/exports/manim/events.csv
-data/cases/<case_slug>/exports/manim/event_links.csv
-data/cases/<case_slug>/exports/manim/relationships.csv
-data/cases/<case_slug>/exports/manim/claims.csv
-data/cases/<case_slug>/exports/manim/places.csv
-```
-
-## Cross-Case Timeline
-
-Export the public-safe timeline and claim corroboration index:
+Export the timeline and claim corroboration index:
 
 ```bash
 crk-ledger export-timeline data/cases
@@ -63,10 +43,10 @@ crk-ledger export-timeline data/cases
 Outputs:
 
 ```text
-data/exports/timeline/cases.csv
-data/exports/timeline/timeline.csv
-data/exports/timeline/corroborations.csv
-data/exports/timeline/timeline.md
+data/exports/internal/timeline/cases.csv
+data/exports/internal/timeline/timeline.csv
+data/exports/internal/timeline/corroborations.csv
+data/exports/internal/timeline/timeline.md
 ```
 
 For internal review, opt in explicitly:
@@ -74,7 +54,7 @@ For internal review, opt in explicitly:
 ```bash
 crk-ledger export-timeline data/cases \
   --include-private \
-  --out-dir data/exports/timeline_internal
+  --out-dir data/exports/internal/timeline
 ```
 
 ## Case Visual Package
@@ -88,14 +68,13 @@ crk-ledger export-case-visuals data/cases/<case_slug>
 Outputs:
 
 ```text
-data/cases/<case_slug>/exports/visuals/deck.html
-data/cases/<case_slug>/exports/visuals/explorer.html
-data/cases/<case_slug>/exports/visuals/consoles/evidence_readiness.html
-data/cases/<case_slug>/exports/visuals/consoles/relationship_network.html
-data/cases/<case_slug>/exports/visuals/consoles/timeline_movement.html
-data/cases/<case_slug>/exports/visuals/consoles/claim_source_matrix.html
-data/cases/<case_slug>/exports/visuals/audit/*.csv
-data/cases/<case_slug>/exports/visuals/manifest.json
+data/cases/<case_slug>/exports/internal/visuals/index.html
+data/cases/<case_slug>/exports/internal/visuals/consoles/evidence_readiness.html
+data/cases/<case_slug>/exports/internal/visuals/consoles/relationship_network.html
+data/cases/<case_slug>/exports/internal/visuals/consoles/timeline_movement.html
+data/cases/<case_slug>/exports/internal/visuals/consoles/claim_source_matrix.html
+data/cases/<case_slug>/exports/internal/visuals/audit/*.csv
+data/cases/<case_slug>/exports/internal/visuals/manifest.json
 ```
 
 The default package is public-safe and keeps dense provenance rows in

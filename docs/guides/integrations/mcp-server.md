@@ -25,7 +25,7 @@ Optional environment:
 | --- | --- | --- |
 | Read/query/report | `case_info`, `list_cases`, `get_records`, `get_source_text`, `query_case`, `list_staged_packets`, `run_report` | No canonical records; `run_report` may write a derived evidence-board export. |
 | Staged write | `discover_sources`, `ingest_url`, `add_source`, `parse_source`, `ocr_source`, `draft_extraction`, `save_extraction_packet`, `link_names`, `plan_public_records` | `staging/`, `raw/`, and source registry. |
-| Gated | `import_extraction`, `export_manim`, `export_case_visuals` | Canonical records or exports. `import_extraction` requires `confirm=true` after explicit user approval. Exports are public-safe by default. |
+| Gated | `import_extraction`, `export_case_visuals` | Canonical records or exports. `import_extraction` requires `confirm=true` after explicit user approval. Exports are public-safe by default. |
 
 `run_report` remains a direct MCP/runtime exception rather than an SDK-backed
 tool until the evidence-board report has explicit public/private filtering

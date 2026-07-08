@@ -57,10 +57,10 @@ def test_link_names_writes_private_unverified_co_mentions(tmp_path):
     assert "Co-mention is not evidence" in briefs[0].read_text(encoding="utf-8")
 
     tcr.main(["validate", str(case_dir)])
-    tcr.main(["export-manim", str(case_dir), "--include-private"])
-    event_links_csv = case_dir / "exports" / "manim" / "event_links.csv"
+    tcr.main(["export-case-visuals", str(case_dir), "--include-private"])
+    event_links_csv = case_dir / "exports" / "internal" / "visuals" / "audit" / "timeline_events.csv"
     assert event_links_csv.exists()
-    assert event_links_csv.read_text(encoding="utf-8").startswith("event_link_id,entity_id,event_id")
+    assert "event_link_id" in event_links_csv.read_text(encoding="utf-8").splitlines()[0]
 
 
 def test_link_names_rerun_updates_candidate_sources_without_duplicate_rows(tmp_path):

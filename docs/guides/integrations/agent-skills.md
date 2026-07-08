@@ -8,7 +8,7 @@ the case-ledger and safety baseline skill. Agents discover repo skills there.
 These prompts work for Codex and similar skill-aware agents.
 
 ```text
-Use the $truecrime-cult-research skill. Build a case file for [topic]. Find public news sources, eyewitness accounts, and official records. Save sources, extract entities/events/claims, flag contradictions, and export Manim-ready CSVs.
+Use the $truecrime-cult-research skill. Build a case file for [topic]. Find public news sources, eyewitness accounts, and official records. Save sources, extract entities/events/claims, flag contradictions, and export canonical visuals.
 ```
 
 Or ask:

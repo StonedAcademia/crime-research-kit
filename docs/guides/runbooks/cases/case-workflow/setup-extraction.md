@@ -28,7 +28,7 @@ data/cases/<case_slug>/
     candidates/
   exports/
     evidence_board.md
-    manim/
+    internal/
 ```
 
 ## Example Case
@@ -101,7 +101,7 @@ crk-ledger plan-open-records data/cases/harbor_study_circle \
 | Corrections, denials, conflicting accounts | `claim-contradiction-audit` | Claim conflict report and status recommendations. |
 | Same-source chains and repeated wire copy | `source-independence-audit` | Independence groups and corroboration warnings. |
 | Privacy and redactions | `privacy-redaction-audit` | Private-person, minor, address, contact, medical, financial, and weak-allegation blockers. |
-| Public scripts, reports, Manim output, evidence boards | `narrative-readiness-review` | Readiness blockers, caveats, unsupported narrative points. |
+| Public scripts, reports, visual output, evidence boards | `narrative-readiness-review` | Readiness blockers, caveats, unsupported narrative points. |
 
 ## Register Sources Before Extracting Claims
 

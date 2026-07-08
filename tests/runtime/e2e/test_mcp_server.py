@@ -40,7 +40,8 @@ def test_server_exposes_tools_and_enforces_gate(synthetic_case_copy):
         async with client_session(low_level_server(server)) as client:
             tools = await client.list_tools()
             names = {tool.name for tool in tools.tools}
-            assert {"case_info", "get_records", "save_extraction_packet", "import_extraction", "export_manim"} <= names
+            assert {"case_info", "get_records", "save_extraction_packet", "import_extraction", "export_case_visuals"} <= names
+            assert "export_manim" not in names
 
             info = tool_payload(await client.call_tool("case_info", {"case": "synthetic_case"}))
             assert info["ok"] is True

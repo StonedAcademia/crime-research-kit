@@ -66,11 +66,11 @@ def test_review_audits_plan_expected_subcommands():
         assert ledger_subcommand(func(runner, "data/cases/x").command) == subcommand
 
 
-def test_exports_default_public_safe():
+def test_case_visuals_default_public_safe():
     runner = dry_runner()
 
-    public = export_ops.export_manim(runner, "data/cases/x")
-    internal = export_ops.export_manim(runner, "data/cases/x", include_private=True)
+    public = export_ops.export_case_visuals(runner, "data/cases/x")
+    internal = export_ops.export_case_visuals(runner, "data/cases/x", include_private=True)
 
     assert "--include-private" not in public.command
     assert "--include-private" in internal.command
@@ -80,22 +80,22 @@ def test_export_timeline_accepts_out_dir():
     result = export_ops.export_timeline(
         dry_runner(),
         "data/cases",
-        out_dir="data/exports/timeline_internal",
+        out_dir="data/exports/internal/timeline",
         include_private=True,
     )
 
     assert ledger_subcommand(result.command) == "export-timeline"
-    assert result.command[result.command.index("--out-dir") + 1] == "data/exports/timeline_internal"
+    assert result.command[result.command.index("--out-dir") + 1] == "data/exports/internal/timeline"
 
 
 def test_export_wrapper_covers_case_visual_options():
     visuals = export_ops.export_case_visuals(
         dry_runner(),
         "data/cases/x",
-        out_dir="data/exports/visuals",
+        out_dir="data/exports/internal/visuals",
         include_private=True,
     )
 
     assert ledger_subcommand(visuals.command) == "export-case-visuals"
-    assert visuals.command[visuals.command.index("--out-dir") + 1] == "data/exports/visuals"
+    assert visuals.command[visuals.command.index("--out-dir") + 1] == "data/exports/internal/visuals"
     assert "--include-private" in visuals.command

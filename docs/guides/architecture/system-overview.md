@@ -93,7 +93,7 @@ flowchart TB
   MEM -.not evidence.-> APP
   LED --> VAL["validate + contradiction / independence / privacy audits"]
   VAL --> GATE{"Review gates<br/>human approval required"}
-  GATE --> EXP["Public-safe exports<br/>boards · timelines · Manim CSV · bundles"]
+  GATE --> EXP["Public-safe exports<br/>boards · timelines · visuals · bundles"]
 ```
 
 ## The canonical ledger

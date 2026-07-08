@@ -133,7 +133,7 @@ def test_sdk_examples_cover_minimal_recipes(synthetic_case_copy: Path, monkeypat
     assert ingest.diagnostics["dry_run"] is True
     assert "--no-public-export" in ledger_command_args(ingest.diagnostics["command"])
     assert packet_result.data["packet"] == packet
-    assert export.operation == "exports.manim"
+    assert export.operation == "exports.case_visuals"
     assert export.data["privacy"]["include_private"] is False
     assert resumed.operation == "workflows.resume"
     assert resumed.data["thread_id"] == "sdk-example-thread"

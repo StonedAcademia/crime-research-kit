@@ -60,8 +60,8 @@ def public_safe_export_example(
     case_slug: str,
     repo_root: PathValue | None = None,
 ) -> OperationResult:
-    """Plan a public-safe Manim CSV export with private rows excluded."""
-    return _client(cases_root, repo_root=repo_root, dry_run=True).case(case_slug).exports.manim(include_private=False)
+    """Plan a public-safe canonical visual export with private rows excluded."""
+    return _client(cases_root, repo_root=repo_root, dry_run=True).case(case_slug).exports.case_visuals(include_private=False)
 
 
 def workflow_resume_example(

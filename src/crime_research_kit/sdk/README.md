@@ -18,8 +18,7 @@ Current surface:
 - `CaseNamesClient` exposes lead-only name-linking wrappers.
 - `CaseReviewClient` exposes validation, duplicate/identity review, and safety
   audit wrappers.
-- `CaseExportsClient` exposes Manim, case-chart, analysis-chart, and
-  people-cluster export wrappers.
+- `CaseExportsClient` exposes canonical case visual export wrappers.
 - `ExportsClient` exposes top-level export wrappers such as the cross-case
   timeline export.
 - `WorkflowClient` exposes case-builder plan and resume workflow wrappers.

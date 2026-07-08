@@ -1,6 +1,10 @@
 import csv
 import json
 
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.clustered_rules import (
+    cluster_for,
+    semantic_facets,
+)
 from tests.helpers import load_ledger_cli
 
 
@@ -11,6 +15,17 @@ def load_tcr():
 def read_csv(path):
     with path.open(encoding="utf-8", newline="") as f:
         return list(csv.DictReader(f))
+
+
+def test_cluster_rules_prioritize_ranges_and_emit_activity_facets():
+    cid, label = cluster_for("event", "Subproject 3 university grant for LSD materials")
+
+    assert cid == "SP_001_020"
+    assert label == "Subprojects 001-020"
+    assert set(semantic_facets("Subproject 3 university grant for LSD materials")) >= {
+        "activity_academic_front",
+        "activity_drug_chemical_bio",
+    }
 
 
 def append_source(tcr, case_dir, source_id, grade="B"):
@@ -129,8 +144,7 @@ def test_export_case_visuals_writes_curated_package(tmp_path):
     tcr.main(["export-case-visuals", str(case_dir), "--out-dir", str(out)])
 
     expected = [
-        "deck.html",
-        "explorer.html",
+        "index.html",
         "manifest.json",
         "static/app.css",
         "static/app.js",
@@ -140,7 +154,6 @@ def test_export_case_visuals_writes_curated_package(tmp_path):
         "data/cluster_detail.context.js",
         "data/cluster_detail.all.js",
         "data/source_subproject.js",
-        "data/subproject_matrix.js",
         "data/relationship_network.js",
         "data/relationship_network.context.js",
         "data/relationship_network.all.js",
@@ -150,7 +163,6 @@ def test_export_case_visuals_writes_curated_package(tmp_path):
         "consoles/cluster_overview.html",
         "consoles/cluster_detail.html",
         "consoles/source_subproject.html",
-        "consoles/subproject_matrix.html",
         "consoles/relationship_network.html",
         "consoles/timeline_movement.html",
         "consoles/claim_source_matrix.html",
@@ -174,46 +186,98 @@ def test_export_case_visuals_writes_curated_package(tmp_path):
 
     manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["include_private"] is False
+    assert manifest["default_mode"] == "public"
+    assert manifest["available_modes"] == ["public"]
+    assert manifest["contains_private_bundle"] is False
+    assert manifest["modes"]["public"]["data_prefix"] == "data"
+    assert manifest["modes"]["public"]["audit_prefix"] == "audit"
+    assert manifest["main"] == "index.html"
     assert manifest["consoles"] == [
         "evidence_readiness",
         "cluster_overview",
         "cluster_detail",
         "source_subproject",
-        "subproject_matrix",
         "relationship_network",
         "timeline_movement",
         "claim_source_matrix",
+    ]
+    assert manifest["nav_groups"] == [
+        {
+            "id": "evidence_overview",
+            "title": "Evidence Overview",
+            "consoles": ["evidence_readiness", "cluster_overview", "claim_source_matrix"],
+        },
+        {
+            "id": "relationship_graphs",
+            "title": "Relationship Graphs",
+            "consoles": ["cluster_detail", "relationship_network"],
+        },
+        {
+            "id": "timeline_source_map",
+            "title": "Timeline & Source Map",
+            "consoles": ["timeline_movement", "source_subproject"],
+        },
     ]
     assert manifest["cluster_policy"]["default_edge_visibility"].startswith("default edges")
     assert "static/app.js" in manifest["artifacts"]
     assert "data/relationship_network.context.js" in manifest["artifacts"]
 
-    deck_html = (out / "deck.html").read_text(encoding="utf-8")
-    explorer_html = (out / "explorer.html").read_text(encoding="utf-8")
+    main_html = (out / "index.html").read_text(encoding="utf-8")
     network_html = (out / "consoles" / "relationship_network.html").read_text(encoding="utf-8")
     network_data = (out / "data" / "relationship_network.js").read_text(encoding="utf-8")
+    cluster_data = (out / "data" / "cluster_overview.js").read_text(encoding="utf-8")
+    static_js = (out / "static" / "app.js").read_text(encoding="utf-8")
 
-    assert "<iframe" not in deck_html
-    assert "data-crk-nav-toggle" in deck_html
-    assert "data-crk-sidebar" in deck_html
-    assert "data-deck-slide-nav" in deck_html
-    assert "data-deck-stage" in deck_html
-    assert "static/app.js" in deck_html
-    assert "type=\"application/json\"" not in deck_html
-    assert "Evidence Readiness" in deck_html
-    assert "Relationship Network" in explorer_html
-    assert "data-crk-nav-toggle" in explorer_html
-    assert "static/app.js" in explorer_html
+    assert not (out / "deck.html").exists()
+    assert not (out / "explorer.html").exists()
+    assert "<iframe" not in main_html
+    assert "data-crk-nav-toggle" in main_html
+    assert "data-crk-sidebar" in main_html
+    assert "data-crk-mode-option=\"public\"" in main_html
+    assert "data-crk-mode-option=\"private\"" in main_html
+    assert "Internal data was not bundled" in main_html
+    assert "data-deck" not in main_html
+    assert "deck-slide" not in main_html
+    assert "crk-nav-group" in main_html
+    assert ">Main</a>" in main_html
+    assert "static/app.js" in main_html
+    assert "type=\"application/json\"" not in main_html
+    assert "Evidence Readiness" in main_html
+    assert "Subproject Matrix" not in main_html
+    assert not (out / "data" / "subproject_matrix.js").exists()
+    assert not (out / "consoles" / "subproject_matrix.html").exists()
+    assert not (out / "data" / "private").exists()
+    assert not (out / "audit" / "private").exists()
+    assert "Relationship Network" in main_html
+    assert "Evidence Overview" in main_html
+    assert "Relationship Graphs" in main_html
+    assert "Timeline &amp; Source Map" in main_html
+    assert "visual-index-group" in main_html
     assert "data-visual-kind=\"cytoscape-network\"" in network_html
     assert "data-crk-sidebar" in network_html
+    assert "../index.html" in network_html
     assert "../static/app.js" in network_html
     assert "../data/relationship_network.js" in network_html
     assert "type=\"application/json\"" not in network_html
     assert "window.__CRK_VISUAL_DATA__" in network_data
     assert "\"graph_variants\":[\"default\",\"context\",\"all\"]" in network_data
-    assert "Layered Knowledge Graph" not in deck_html + explorer_html + network_html
+    assert "\"overview_mode\":\"cluster_aggregate\"" in network_data
+    assert "\"node_id\":\"CLUSTER:" in network_data
+    assert "\"show_all_nodes\":true" in network_data
+    assert "\"evidence_footprint_score\":" in cluster_data
+    assert "\"record_count\":" in cluster_data
+    assert "\"relationship_count\":" in cluster_data
+    assert "\"default_relationship_count\":" in cluster_data
+    assert "Cluster evidence footprint" in static_js
+    assert "Strongest" in static_js
+    assert "Full" in static_js
+    assert "crkVisualMode" in static_js
+    assert "data/private" in static_js
+    assert "Layered Knowledge Graph" not in main_html + network_html
     assert "Data preview" not in network_html
 
+    cluster_rows = read_csv(out / "audit" / "cluster_overview.csv")
+    assert {"evidence_footprint_score", "record_count", "relationship_count", "default_relationship_count"} <= set(cluster_rows[0])
     people_edges = read_csv(out / "audit" / "people_edges.csv")
     assert any(row["src_entity_id"] == "E_A" and row["dst_entity_id"] == "E_B" for row in people_edges)
     assert all("E_PRIVATE" not in {row["src_entity_id"], row["dst_entity_id"]} for row in people_edges)
@@ -231,9 +295,22 @@ def test_export_case_visuals_include_private_uses_internal_scope(tmp_path):
 
     manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["include_private"] is True
-    assert "internal review" in manifest["scope"]
+    assert manifest["default_mode"] == "public"
+    assert manifest["available_modes"] == ["public", "private"]
+    assert manifest["contains_private_bundle"] is True
+    assert manifest["modes"]["public"]["data_prefix"] == "data"
+    assert manifest["modes"]["private"]["data_prefix"] == "data/private"
+    assert manifest["modes"]["private"]["audit_prefix"] == "audit/private"
+    assert "public-export rows only" in manifest["scope"]
+    assert "internal review" in manifest["modes"]["private"]["scope"]
     network_html = (out / "consoles" / "relationship_network.html").read_text(encoding="utf-8")
     network_data = (out / "data" / "relationship_network.all.js").read_text(encoding="utf-8")
-    assert '"include_private":true' in network_data
+    private_network_data = (out / "data" / "private" / "relationship_network.all.js").read_text(encoding="utf-8")
+    assert "data-crk-private-available=\"true\"" in network_html
+    assert "Public data loads first" in network_html
+    assert '"include_private":false' in network_data
+    assert '"include_private":true' in private_network_data
     people_edges = read_csv(out / "audit" / "people_edges.csv")
-    assert any("E_PRIVATE" in {row["src_entity_id"], row["dst_entity_id"]} for row in people_edges)
+    private_people_edges = read_csv(out / "audit" / "private" / "people_edges.csv")
+    assert all("E_PRIVATE" not in {row["src_entity_id"], row["dst_entity_id"]} for row in people_edges)
+    assert any("E_PRIVATE" in {row["src_entity_id"], row["dst_entity_id"]} for row in private_people_edges)

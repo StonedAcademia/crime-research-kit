@@ -18,7 +18,7 @@ def test_operation_catalog_has_unique_names_and_required_metadata():
     specs = list_operations()
     names = [spec.name for spec in specs]
 
-    assert len(specs) >= 37
+    assert len(specs) >= 36
     assert len(names) == len(set(names))
     assert names == sorted(names)
     assert all(spec.domain for spec in specs)
@@ -173,7 +173,6 @@ def test_catalog_can_be_grouped_by_domain():
 
     assert {spec.name for spec in exports} == {
         "exports.case_visuals",
-        "exports.manim",
         "exports.timeline",
     }
 
