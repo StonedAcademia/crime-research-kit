@@ -70,11 +70,6 @@ _SDK_HANDLERS = {
         "import_extraction_tool",
         "Import a staged packet into canonical records. GATED: requires confirm=true.",
     ),
-    "export_manim": (
-        "gated",
-        "export_manim_tool",
-        "Export public-safe Manim CSVs. include_private is internal review only.",
-    ),
     "export_case_visuals": (
         "gated",
         "export_case_visuals_tool",

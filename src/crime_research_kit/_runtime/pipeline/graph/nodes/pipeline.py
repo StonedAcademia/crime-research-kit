@@ -152,7 +152,7 @@ def readiness_audit_node(runner: CrkRunner):
 def export_bundle_node(runner: CrkRunner):
     def node(state: GraphState) -> GraphState:
         case_dir = required_case_dir(state)
-        results = [export_ops.export_manim(runner, case_dir), case_ops.report(runner, case_dir)]
+        results = [export_ops.export_case_visuals(runner, case_dir, include_private=True), case_ops.report(runner, case_dir)]
         merged = merge_results(state, results, "bundle_exported")
         merged["review_required"] = False
         return merged

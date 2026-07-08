@@ -192,10 +192,10 @@ tasks:
     toolchains: system
 
   export-sample:
-    description: "Export Manim CSVs and an evidence board for the sample case."
+    description: "Export canonical internal visuals for the sample case."
     command: "uv"
-    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "crk-ledger", "export-manim", "data/cases/sample_case"]
+    args: ["run", "--cache-dir", ".uv-cache", "--no-project", "--with-editable", ".", "--", "crk-ledger", "export-case-visuals", "data/cases/sample_case", "--include-private"]
     deps: ["~:validate-sample"]
-    outputs: ["data/cases/sample_case/exports/manim/**/*"]
+    outputs: ["data/cases/sample_case/exports/internal/visuals/**/*"]
     options: { cache: false, outputStyle: stream }
     toolchains: system

@@ -31,7 +31,6 @@ LEGACY_RESULT_NAMES = {
     "extractions.import_reviewed": "import_extraction",
     "names.link": "link_names",
     "records.plan_public_records": "plan_public_records",
-    "exports.manim": "export_manim",
     "exports.case_visuals": "export_case_visuals",
 }
 

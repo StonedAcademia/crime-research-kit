@@ -20,6 +20,7 @@ from crime_research_kit._runtime.adapters.ops.evidence.reports.common import (
     entity_display,
     infer_subcase,
     merge_people_edge,
+    reject_legacy_export_dir,
 )
 from crime_research_kit._runtime.adapters.ops.evidence.ledger.markdown import md_table
 from crime_research_kit._runtime.adapters.ops.evidence.ledger.records import public_rows, write_csv
@@ -29,10 +30,13 @@ from crime_research_kit._runtime.adapters.ops.evidence.ledger.scoring import dat
 def export_case_charts(args: argparse.Namespace) -> None:
     ensure_case(args.case_dir)
     if not getattr(args, "skip_public_gate", False):
-        enforce_public_output_gate(args.case_dir, "export-case-charts", args.include_private)
+        enforce_public_output_gate(args.case_dir, "case-chart-renderer", args.include_private)
     cdir = case_path(args.case_dir)
     include_private = args.include_private
-    out = Path(args.out_dir).expanduser().resolve() if args.out_dir else cdir / "exports" / "charts"
+    if not args.out_dir:
+        raise SystemExit("Standalone case chart exports are retired; use export-case-visuals.")
+    out = Path(args.out_dir).expanduser().resolve()
+    reject_legacy_export_dir(out)
     out.mkdir(parents=True, exist_ok=True)
 
     case_meta = json.loads((cdir / "case.json").read_text(encoding="utf-8"))

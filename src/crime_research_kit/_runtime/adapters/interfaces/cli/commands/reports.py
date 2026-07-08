@@ -11,14 +11,6 @@ from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages im
 app = typer.Typer(no_args_is_help=True)
 
 
-@app.command("export-manim", help="Export public-safe Manim-ready CSVs")
-def export_manim(
-    case_dir: str = typer.Argument(...),
-    include_private: bool = typer.Option(False, "--include-private"),
-) -> None:
-    dispatch(case_outputs.export_manim, case_dir=case_dir, include_private=include_private)
-
-
 @app.command("export-timeline", help="Export cross-case timeline and claim corroboration CSVs")
 def export_timeline(
     cases_root: str = typer.Argument(...),

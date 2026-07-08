@@ -6,10 +6,6 @@ from crime_research_kit._runtime.adapters.ops.result import OpResult
 from crime_research_kit._runtime.adapters.ops.runner import CrkRunner
 
 
-def export_manim(runner: CrkRunner, case_dir: str, *, include_private: bool = False) -> OpResult:
-    return runner.run("export_manim", _args("export-manim", case_dir, include_private))
-
-
 def export_case_visuals(
     runner: CrkRunner,
     case_dir: str,

@@ -1,3 +1,4 @@
-# Analysis Command
+# Analysis Data Adapters
 
-Command orchestration and data assembly helpers for analysis chart exports.
+Data assembly helpers retained for the canonical case visual package.
+Standalone analysis chart exports are retired.

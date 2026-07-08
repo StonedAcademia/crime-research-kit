@@ -7,16 +7,16 @@ import json
 from pathlib import Path
 from typing import Any
 
-from crime_research_kit._runtime.core.casefile import case_path, ensure_case
+from crime_research_kit._runtime.core.casefile import case_path, ensure_case, read_jsonl, record_path
 
 from crime_research_kit._runtime.adapters.ops.evidence.public_gate import enforce_public_output_gate
 from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.render import render_page, write_html
-from crime_research_kit._runtime.adapters.ops.evidence.reports.case_charts.command import export_case_charts
+from crime_research_kit._runtime.adapters.ops.evidence.reports.case_charts.command import _people_edges, _people_nodes
 from crime_research_kit._runtime.adapters.ops.evidence.reports.clusters.renderers import build_people_clusters_page
-from crime_research_kit._runtime.adapters.ops.evidence.reports.common import entity_display, read_csv_dicts
+from crime_research_kit._runtime.adapters.ops.evidence.reports.common import entity_display
 from crime_research_kit._runtime.adapters.ops.evidence.reports.weights import evidence_edge_weight, kernel_affinity_matrix, leiden_partition, parse_float, weighted_distances
 from crime_research_kit._runtime.adapters.ops.evidence.ledger.markdown import md_table
-from crime_research_kit._runtime.adapters.ops.evidence.ledger.records import write_csv
+from crime_research_kit._runtime.adapters.ops.evidence.ledger.records import public_rows, write_csv
 
 
 def export_people_clusters(args: argparse.Namespace) -> None:
@@ -24,13 +24,10 @@ def export_people_clusters(args: argparse.Namespace) -> None:
     enforce_public_output_gate(args.case_dir, "export-people-clusters", args.include_private)
     cdir = case_path(args.case_dir)
     out = Path(args.out_dir).expanduser().resolve() if args.out_dir else cdir / "exports" / "clusters"
-    charts_dir = Path(args.charts_dir).expanduser().resolve() if args.charts_dir else cdir / "exports" / "charts"
     out.mkdir(parents=True, exist_ok=True)
-    export_case_charts(argparse.Namespace(case_dir=args.case_dir, out_dir=str(charts_dir), include_private=args.include_private, skip_public_gate=True))
     case_meta = json.loads((cdir / "case.json").read_text(encoding="utf-8"))
     case_title = str(case_meta.get("title", cdir.name))
-    nodes = read_csv_dicts(charts_dir / "people_nodes.csv")
-    raw_edges = read_csv_dicts(charts_dir / "people_edges.csv")
+    nodes, raw_edges = _people_graph_rows(cdir, args.include_private)
     node_ids = [str(node["entity_id"]) for node in nodes]
     node_by_id = {str(node["entity_id"]): node for node in nodes}
     weighted_edges = _weighted_edges(raw_edges)
@@ -47,6 +44,18 @@ def export_people_clusters(args: argparse.Namespace) -> None:
     write_html(out / "people_clusters.html", render_page(build_people_clusters_page(case_title, nodes, edge_rows, cluster_by_id, kde_by_id, args.include_private)))
     _write_report(out, case_title, args, sigma, summary_rows)
     print(f"Exported Leiden people clusters to {out}")
+
+
+def _people_graph_rows(cdir: Path, include_private: bool) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    entities = public_rows(read_jsonl(record_path(cdir, "entities")), include_private)
+    claims = public_rows(read_jsonl(record_path(cdir, "claims")), include_private)
+    events = public_rows(read_jsonl(record_path(cdir, "events")), include_private)
+    event_links = public_rows(read_jsonl(record_path(cdir, "event_links")), include_private)
+    relationships = public_rows(read_jsonl(record_path(cdir, "relationships")), include_private)
+    people = [entity for entity in entities if entity.get("entity_type") == "person"]
+    people_by_id = {str(person.get("entity_id")): person for person in people}
+    claim_by_id = {claim.get("claim_id"): claim for claim in claims}
+    return _people_nodes(people, include_private, claim_by_id), _people_edges(relationships, events, event_links, people_by_id)
 
 
 def _weighted_edges(raw_edges: list[dict[str, str]]) -> list[dict[str, Any]]:

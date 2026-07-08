@@ -30,14 +30,6 @@ def _export(result: OperationResult, include_private: bool) -> dict[str, Any]:
     return payload
 
 
-def export_manim_tool(ctx: ServerContext, case: str, include_private: bool = False) -> dict[str, Any]:
-    try:
-        result = sdk_case(ctx, case).exports.manim(include_private=include_private)
-    except ValueError as exc:
-        return error_dict(str(exc))
-    return _export(result, include_private)
-
-
 def export_case_visuals_tool(ctx: ServerContext, case: str, include_private: bool = False) -> dict[str, Any]:
     try:
         result = sdk_case(ctx, case).exports.case_visuals(include_private=include_private)
@@ -51,11 +43,6 @@ def register(mcp: Any, ctx: ServerContext) -> None:
     def import_extraction(case: str, packet: str, confirm: bool = False) -> dict:
         """Import a staged packet into canonical records. GATED: requires confirm=true."""
         return import_extraction_tool(ctx, case, packet, confirm)
-
-    @catalog_tool(mcp, "gated", "export_manim")
-    def export_manim(case: str, include_private: bool = False) -> dict:
-        """Export public-safe Manim CSVs. include_private is internal review only."""
-        return export_manim_tool(ctx, case, include_private)
 
     @catalog_tool(mcp, "gated", "export_case_visuals")
     def export_case_visuals(case: str, include_private: bool = False) -> dict:

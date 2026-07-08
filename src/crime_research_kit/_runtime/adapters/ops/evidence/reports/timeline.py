@@ -14,13 +14,15 @@ from crime_research_kit._runtime.adapters.ops.evidence.public_gate import enforc
 from crime_research_kit._runtime.adapters.ops.evidence.ledger.markdown import md_table
 from crime_research_kit._runtime.adapters.ops.evidence.ledger.records import discover_cases, flatten, public_rows, source_independence_key, write_csv
 from crime_research_kit._runtime.adapters.ops.evidence.ledger.scoring import date_sort_key, evidence_level, grade_summary
+from crime_research_kit._runtime.adapters.ops.evidence.reports.common import reject_legacy_export_dir
 
 
 def export_timeline(args: argparse.Namespace) -> None:
     enforce_public_output_gate(args.cases_root, "export-timeline", args.include_private)
     case_dirs = discover_cases(args.cases_root)
     include_private = args.include_private
-    out = Path(args.out_dir).expanduser().resolve() if args.out_dir else case_dirs[0].parent.parent / "exports" / "timeline"
+    out = Path(args.out_dir).expanduser().resolve() if args.out_dir else _default_timeline_dir(args.cases_root, case_dirs)
+    reject_legacy_export_dir(out)
     out.mkdir(parents=True, exist_ok=True)
 
     case_rows: list[dict[str, Any]] = []
@@ -184,3 +186,10 @@ def _write_markdown(
         md_table(["Case", "Claim", "Status", "Evidence", "Sources", "Events", "Public"], [[row.get("case_title", ""), row.get("claim_id", ""), row.get("status", ""), row.get("evidence_level", ""), row.get("source_grades", ""), flatten(row.get("event_ids")), row.get("public_export", "")] for row in claim_rows]),
     ]
     (out / "timeline.md").write_text("\n".join(str(line) for line in content) + "\n", encoding="utf-8")
+
+
+def _default_timeline_dir(cases_root: str | Path, case_dirs: list[Path]) -> Path:
+    root = Path(cases_root).expanduser().resolve()
+    if len(case_dirs) == 1 and (root / "case.json").exists():
+        return case_dirs[0] / "exports" / "internal" / "timeline"
+    return root.parent / "exports" / "internal" / "timeline"

@@ -8,34 +8,8 @@ from typing import Any
 
 from crime_research_kit._runtime.core.casefile import case_path, ensure_case, read_jsonl, record_path
 
-from crime_research_kit._runtime.adapters.ops.evidence.public_gate import enforce_public_output_gate
 from crime_research_kit._runtime.adapters.ops.evidence.ledger.markdown import md_table
-from crime_research_kit._runtime.adapters.ops.evidence.ledger.records import flatten, public_rows, write_csv
-
-
-def export_manim(args: argparse.Namespace) -> None:
-    ensure_case(args.case_dir)
-    enforce_public_output_gate(args.case_dir, "export-manim", args.include_private)
-    cdir = case_path(args.case_dir)
-    out = cdir / "exports" / "manim"
-    include_private = args.include_private
-    sources = public_rows(read_jsonl(record_path(args.case_dir, "sources")), include_private)
-    entities = public_rows(read_jsonl(record_path(args.case_dir, "entities")), include_private)
-    people = entities
-    places = public_rows(read_jsonl(record_path(args.case_dir, "places")), include_private)
-    claims = public_rows(read_jsonl(record_path(args.case_dir, "claims")), include_private)
-    events = public_rows(read_jsonl(record_path(args.case_dir, "events")), include_private)
-    event_links = public_rows(read_jsonl(record_path(args.case_dir, "event_links")), include_private)
-    relationships = public_rows(read_jsonl(record_path(args.case_dir, "relationships")), include_private)
-
-    write_csv(out / "sources.csv", sources, ["source_id", "title", "source_type", "publisher", "author", "date_published", "url", "archive_url", "reliability_grade"])
-    write_csv(out / "people.csv", people, ["entity_id", "entity_type", "name", "display_name", "role_tags", "privacy_level", "public_export", "source_ids"])
-    write_csv(out / "places.csv", places, ["place_id", "name", "place_type", "admin_area", "country", "lat", "lon", "precision", "privacy_sensitive", "public_export", "source_ids"])
-    write_csv(out / "claims.csv", claims, ["claim_id", "claim", "claim_type", "status", "confidence", "source_ids", "contradicts", "public_export"])
-    write_csv(out / "events.csv", events, ["event_id", "title", "event_type", "start_date", "end_date", "date_precision", "place_ids", "entity_ids", "claim_ids", "source_ids", "confidence", "status", "public_export"])
-    write_csv(out / "event_links.csv", event_links, ["event_link_id", "entity_id", "event_id", "relation_type", "relationship_class", "basis", "claim_ids", "source_ids", "confidence", "status", "public_export"])
-    write_csv(out / "relationships.csv", relationships, ["rel_id", "src_entity_id", "dst_entity_id", "relation_type", "relationship_class", "start_date", "end_date", "claim_ids", "source_ids", "confidence", "status", "public_export"])
-    print(f"Exported Manim CSVs to {out}")
+from crime_research_kit._runtime.adapters.ops.evidence.ledger.records import flatten
 
 
 def report(args: argparse.Namespace) -> None:

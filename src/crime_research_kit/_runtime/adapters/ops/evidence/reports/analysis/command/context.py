@@ -13,7 +13,7 @@ from crime_research_kit._runtime.core.casefile import case_path, ensure_case, re
 from crime_research_kit._runtime.adapters.ops.evidence.public_gate import enforce_public_output_gate
 from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.paths import analysis_graph, parse_cluster_bridge_audit, read_cluster_metadata
 from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.vocabulary import VocabPacks, load_case_packs
-from crime_research_kit._runtime.adapters.ops.evidence.reports.common import entity_display, read_csv_dicts
+from crime_research_kit._runtime.adapters.ops.evidence.reports.common import entity_display, read_csv_dicts, reject_legacy_export_dir
 from crime_research_kit._runtime.adapters.ops.evidence.ledger.records import public_rows, source_independence_key
 
 
@@ -62,11 +62,15 @@ class AnalysisContext:
 
 def load_analysis_context(args: argparse.Namespace) -> AnalysisContext:
     ensure_case(args.case_dir)
-    enforce_public_output_gate(args.case_dir, getattr(args, "gate_name", "export-analysis-charts"), args.include_private)
+    if not getattr(args, "skip_public_gate", False):
+        enforce_public_output_gate(args.case_dir, getattr(args, "gate_name", "export-case-visuals"), args.include_private)
     cdir = case_path(args.case_dir)
     packs = load_case_packs(cdir)
     include_private = args.include_private
-    out = Path(args.out_dir).expanduser().resolve() if args.out_dir else cdir / "exports" / "analysis_charts"
+    if not args.out_dir:
+        raise SystemExit("Standalone analysis chart exports are retired; use export-case-visuals.")
+    out = Path(args.out_dir).expanduser().resolve()
+    reject_legacy_export_dir(out)
     out.mkdir(parents=True, exist_ok=True)
 
     case_meta = json.loads((cdir / "case.json").read_text(encoding="utf-8"))

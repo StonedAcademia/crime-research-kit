@@ -33,6 +33,32 @@ RELATIONSHIP_CLASS_TITLES = {
     "unclassified": "Unclassified (no pack or rule matched)",
 }
 
+LEGACY_EXPORT_DIRS = frozenset(
+    {
+        "analysis_charts",
+        "charts",
+        "charts_public",
+        "charts_internal",
+        "timeline",
+        "visuals",
+        "manim",
+    }
+)
+
+
+def reject_legacy_export_dir(path: Path) -> None:
+    """Block writes into retired siblings of exports/internal."""
+    parts = path.resolve().parts
+    for index, part in enumerate(parts[:-1]):
+        if part != "exports":
+            continue
+        next_part = parts[index + 1]
+        if next_part in LEGACY_EXPORT_DIRS:
+            raise SystemExit(
+                f"Retired export directory refused: {path}. "
+                "Use exports/internal/visuals or exports/internal/timeline."
+            )
+
 
 def entity_display(entity: dict[str, Any] | None, fallback: str = "") -> str:
     if not entity:
