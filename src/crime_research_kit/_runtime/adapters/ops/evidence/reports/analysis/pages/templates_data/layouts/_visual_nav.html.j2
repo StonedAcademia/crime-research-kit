@@ -5,7 +5,7 @@
 </button>
 <div class="crk-topbar-title">
 <strong>{{ page_title }}</strong>
-<span>{{ package.scope }}</span>
+<span data-crk-scope>{{ package.scope }}</span>
 </div>
 </header>
 <div class="crk-sidebar-scrim" data-crk-sidebar-scrim></div>
@@ -16,23 +16,27 @@
 <h2>{{ package.case_title }}</h2>
 </div>
 <nav class="crk-sidebar-nav" aria-label="Visual export navigation">
-<a class="crk-nav-link" href="{{ asset_prefix }}deck.html"{% if current_page == "deck" %} aria-current="page"{% endif %}>Deck</a>
-<a class="crk-nav-link" href="{{ asset_prefix }}explorer.html"{% if current_page == "explorer" %} aria-current="page"{% endif %}>Explorer</a>
-{% for item in package.consoles.values() %}
-<a class="crk-nav-link" href="{{ asset_prefix }}consoles/{{ item.slug }}.html"{% if current_page == item.slug %} aria-current="page"{% endif %}>{{ item.title }}</a>
+<a class="crk-nav-link" href="{{ asset_prefix }}index.html"{% if current_page == "main" %} aria-current="page"{% endif %}>Main</a>
+{% for group in package.nav_groups %}
+<details class="crk-nav-group"{% if current_page in group.slugs %} open{% endif %}>
+<summary><span>{{ group.title }}</span><span class="crk-nav-chevron" aria-hidden="true"></span></summary>
+<div class="crk-nav-group-links">
+{% for item in group.entries %}
+<a class="crk-nav-link crk-nav-child" href="{{ asset_prefix }}consoles/{{ item.slug }}.html"{% if current_page == item.slug %} aria-current="page"{% endif %}>{{ item.title }}</a>
+{% endfor %}
+</div>
+</details>
 {% endfor %}
 </nav>
-{% if current_page == "deck" %}
-<section class="crk-sidebar-section crk-deck-sidebar">
-<h3>Slides</h3>
-<nav class="deck-nav" data-deck-nav data-deck-slide-nav aria-label="Deck slides"></nav>
-<div class="deck-controls"><button type="button" data-deck-prev>Prev</button><span data-deck-count></span><button type="button" data-deck-next>Next</button></div>
-</section>
-{% endif %}
 <section class="crk-sidebar-section">
 <h3>Export</h3>
-<p>{{ package.scope }}</p>
+<div class="crk-mode-toggle" data-crk-mode-toggle aria-label="Visual data mode">
+<button type="button" data-crk-mode-option="public" aria-pressed="true">Public</button>
+<button type="button" data-crk-mode-option="private" aria-pressed="false"{% if not package.contains_private_bundle %} disabled{% endif %}>Internal</button>
+</div>
+<p class="crk-mode-note" data-crk-mode-note>{% if package.contains_private_bundle %}Public data loads first. Internal mode switches to the bundled private review data.{% else %}Internal data was not bundled in this export.{% endif %}</p>
+<p data-crk-scope>{{ package.scope }}</p>
 <p>Generated {{ package.generated_at }}</p>
-{% if package.warnings %}<p class="visual-warning">{{ package.warnings | join(" ") }}</p>{% endif %}
+<p class="visual-warning"{% if not package.warnings %} hidden{% endif %} data-crk-warning>{{ package.warnings | join(" ") }}</p>
 </section>
 </aside>

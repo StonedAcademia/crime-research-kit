@@ -26,8 +26,8 @@ class ReportPage(BaseModel):
     summary: str = ""
     include_private: bool = False
     generated_at: str = ""
-    back_href: str = "analysis_charts.html"
-    back_label: str = "Back to chart index"
+    back_href: str = "index.html"
+    back_label: str = "Back to index"
     filters: list[str] = Field(default_factory=list)
     figure: SvgDoc | None = None
     metrics: list[MetricBlock] = Field(default_factory=list)

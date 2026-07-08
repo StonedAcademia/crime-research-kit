@@ -3,18 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{% if console %}{{ console.title }}{% else %}Case visuals{% endif %} - {{ package.case_title }}</title>
-<link rel="stylesheet" href="{{ asset_prefix }}static/app.css">
+<title>{% if console %}{{ console.title }}{% else %}Main{% endif %} - {{ package.case_title }}</title>
+<link rel="stylesheet" href="{{ asset_prefix }}static/app.css?v={{ package.asset_version }}">
 </head>
-<body class="crk-report visual-page crk-nav-page">
-{% set current_page = console.slug if console else "explorer" %}
-{% set page_title = console.title if console else "Case visuals: " ~ package.case_title %}
+<body class="crk-report visual-page crk-nav-page"
+  data-crk-default-mode="{{ package.default_mode }}"
+  data-crk-visual-mode="{{ package.default_mode }}"
+  data-crk-private-available="{{ 'true' if package.contains_private_bundle else 'false' }}"
+  data-crk-public-scope="{{ package.modes.public.scope | e }}"
+  data-crk-public-warnings="{{ package.modes.public.warnings | join(' ') | e }}"
+  data-crk-private-scope="{{ package.modes.private.scope | e if package.contains_private_bundle else '' }}"
+  data-crk-private-warnings="{{ package.modes.private.warnings | join(' ') | e if package.contains_private_bundle else '' }}">
+{% set current_page = console.slug if console else "main" %}
+{% set page_title = console.title if console else "Main" %}
 {% include "layouts/_visual_nav.html.j2" %}
 <main class="crk-nav-main">
 <header class="visual-header">
 <h1>{{ page_title }}</h1>
-<p>{{ package.case_title }} · {{ package.scope }} · generated {{ package.generated_at }}</p>
-{% if package.warnings %}<p class="visual-warning">{{ package.warnings | join(" ") }}</p>{% endif %}
+<p>{{ package.case_title }} · <span data-crk-scope>{{ package.scope }}</span> · generated {{ package.generated_at }}</p>
+<p class="visual-warning"{% if not package.warnings %} hidden{% endif %} data-crk-warning>{{ package.warnings | join(" ") }}</p>
 </header>
 {% if console %}
 <div class="visual-layout">
@@ -23,23 +30,33 @@
 <input type="search" data-visual-search placeholder="Filter visible marks">
 <button type="button" data-visual-reset>Reset</button>
 </div>
-<div class="visual-root" data-crk-visual-console="{{ console.slug }}" data-visual-kind="{{ console.kind }}" data-visual-data-src="{{ asset_prefix }}data/{{ console.slug }}.js"></div>
+<div class="visual-root" data-crk-visual-console="{{ console.slug }}" data-visual-kind="{{ console.kind }}" data-visual-data-src="{{ asset_prefix }}data/{{ console.slug }}.js?v={{ package.asset_version }}"></div>
 <details class="evidence-drawer">
 <summary>Evidence and audit data</summary>
 <p>Dense provenance rows are exported under <code>audit/</code> and intentionally kept out of the default chart viewport.</p>
-<ul>{% for file in console.audit_files %}<li><code>audit/{{ file }}</code></li>{% endfor %}</ul>
+<ul>{% for file in console.audit_files %}<li data-visual-audit-file="{{ file }}"><code>audit/{{ file }}</code></li>{% endfor %}</ul>
 </details>
 </section>
-<aside class="visual-inspector" data-visual-inspector><b>Inspector</b><p data-visual-inspector-body>Select or hover a mark to inspect its evidence state.</p></aside>
+<aside class="visual-inspector" data-visual-inspector>
+<div class="visual-inspector-heading"><b>Inspector</b><span>Evidence summary</span></div>
+<div class="visual-inspector-body" data-visual-inspector-body><p>Select or hover a mark to inspect its evidence state.</p></div>
+</aside>
 </div>
 {% else %}
 <div class="visual-index">
-{% for item in package.consoles.values() %}
+{% for group in package.nav_groups %}
+<section class="visual-index-group">
+<h2>{{ group.title }}</h2>
+<div class="visual-index-grid">
+{% for item in group.entries %}
 <article><h2>{{ item.title }}</h2><p>{{ item.audit_files | length }} audit tables available.</p><a href="consoles/{{ item.slug }}.html">Open console</a></article>
+{% endfor %}
+</div>
+</section>
 {% endfor %}
 </div>
 {% endif %}
 </main>
-<script src="{{ asset_prefix }}static/app.js"></script>
+<script src="{{ asset_prefix }}static/app.js?v={{ package.asset_version }}"></script>
 </body>
 </html>

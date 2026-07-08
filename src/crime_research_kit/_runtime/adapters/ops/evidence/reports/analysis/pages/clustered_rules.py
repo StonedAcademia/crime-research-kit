@@ -10,25 +10,19 @@ from crime_research_kit._runtime.adapters.ops.evidence.reports.common import par
 SUBPROJECT_RE = re.compile(r"\bSUB(?:PROJECT|PROJ)?[_\s-]*(\d{1,3})|\bSubproject\s+(\d{1,3})", re.I)
 
 CLUSTER_LABELS = {
-    "SP_FIELD_TESTING": "Field testing and safehouse operations",
-    "SP_ACADEMIC_FRONT": "Academic fronts, grants, and institutions",
-    "SP_DRUG_CHEM_BIO": "Drug, chemical, and biological materials",
-    "SP_BEHAVIORAL": "Behavioral, hypnosis, and interrogation methods",
-    "SP_TECH_REMOTE": "Technical, sensor, and remote-effect research",
-    "SP_ADMIN_ACCOUNTING": "Administration, approvals, and accounting",
     "PROGRAM_CONTEXT": "Program and agency context",
     "DOCUMENT_CONTEXT": "Omnibus document and hearing context",
     "EVENT_CONTEXT": "Other dated events",
     "ENTITY_CONTEXT": "Other entities",
 }
 
-KEYWORD_CLUSTERS = [
-    ("SP_FIELD_TESTING", ("safehouse", "safe house", "midnight climax", "unwitting", "field test")),
-    ("SP_ACADEMIC_FRONT", ("human ecology", "university", "college", "foundation", "grant", "gorman", "academic")),
-    ("SP_DRUG_CHEM_BIO", ("lsd", "drug", "chemical", "toxin", "biological", "bw/cw", "staphylococcus", "material")),
-    ("SP_BEHAVIORAL", ("hypnosis", "psychic driving", "depattern", "behavior", "interrogation", "sensory", "sleep")),
-    ("SP_TECH_REMOTE", ("sensor", "radio", "remote", "electromagnetic", "detection", "microwave")),
-    ("SP_ADMIN_ACCOUNTING", ("approval", "obligation", "advance", "invoice", "accounting", "budget", "liquidation")),
+SEMANTIC_FACETS = [
+    ("activity_field_testing", ("safehouse", "safe house", "midnight climax", "unwitting", "field test")),
+    ("activity_academic_front", ("human ecology", "university", "college", "foundation", "grant", "gorman", "academic")),
+    ("activity_drug_chemical_bio", ("lsd", "drug", "chemical", "toxin", "biological", "bw/cw", "staphylococcus", "material")),
+    ("activity_behavioral", ("hypnosis", "psychic driving", "depattern", "behavior", "interrogation", "sensory", "sleep")),
+    ("activity_tech_remote", ("sensor", "radio", "remote", "electromagnetic", "detection", "microwave")),
+    ("activity_admin_accounting", ("approval", "obligation", "advance", "invoice", "accounting", "budget", "liquidation")),
 ]
 
 
@@ -51,22 +45,24 @@ def subproject_numbers(*values: Any) -> list[int]:
 
 def cluster_for(layer: str, *values: Any) -> tuple[str, str]:
     text = " ".join(str(value or "") for value in values).lower()
-    for cluster_id, keywords in KEYWORD_CLUSTERS:
-        if any(keyword in text for keyword in keywords):
-            return cluster_id, CLUSTER_LABELS[cluster_id]
     number = subproject_number(*values)
     if number is not None:
         start = ((number - 1) // 20) * 20 + 1
         end = start + 19
         cluster_id = f"SP_{start:03d}_{end:03d}"
         return cluster_id, f"Subprojects {start:03d}-{end:03d}"
-    if any(token in text for token in ["mkultra", "mk-ultra", "mksearch", "mkdelta", "mknaomi", "cia", "technical services"]):
-        return "PROGRAM_CONTEXT", CLUSTER_LABELS["PROGRAM_CONTEXT"]
     if any(token in text for token in ["senate", "hearing", "report", "briefing book", "reading room", "inspector general"]):
         return "DOCUMENT_CONTEXT", CLUSTER_LABELS["DOCUMENT_CONTEXT"]
+    if any(token in text for token in ["mkultra", "mk-ultra", "mksearch", "mkdelta", "mknaomi", "cia", "technical services"]):
+        return "PROGRAM_CONTEXT", CLUSTER_LABELS["PROGRAM_CONTEXT"]
     if layer == "event":
         return "EVENT_CONTEXT", CLUSTER_LABELS["EVENT_CONTEXT"]
     return "ENTITY_CONTEXT", CLUSTER_LABELS["ENTITY_CONTEXT"]
+
+
+def semantic_facets(*values: Any) -> list[str]:
+    text = " ".join(str(value or "") for value in values).lower()
+    return [facet for facet, keywords in SEMANTIC_FACETS if any(keyword in text for keyword in keywords)]
 
 
 def hub_role(row: dict[str, Any], degree_threshold: int) -> str:
@@ -86,7 +82,9 @@ def hub_role(row: dict[str, Any], degree_threshold: int) -> str:
 
 
 def facet_types(edge: dict[str, Any]) -> str:
-    text = " ".join(str(edge.get(field, "")) for field in ["relation_type", "relationship_class", "relation_family", "bridge_class", "src_label", "dst_label"]).lower()
+    fields = ["relation_type", "relationship_class", "relation_family", "bridge_class", "src_label", "dst_label", "notes"]
+    raw_text = " ".join(str(edge.get(field, "")) for field in fields)
+    text = raw_text.lower()
     facets: list[str] = []
     for facet, tokens in [
         ("funding", ("fund", "grant", "allot", "obligation", "budget", "advance", "invoice", "reimburse")),
@@ -98,6 +96,7 @@ def facet_types(edge: dict[str, Any]) -> str:
     ]:
         if any(token in text for token in tokens):
             facets.append(facet)
+    facets.extend(semantic_facets(raw_text))
     return ";".join(facets or ["context"])
 
 

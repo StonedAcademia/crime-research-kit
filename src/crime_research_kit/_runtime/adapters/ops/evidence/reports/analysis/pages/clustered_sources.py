@@ -7,7 +7,12 @@ from typing import Any
 
 from crime_research_kit._runtime.adapters.ops.evidence.ledger.scoring import date_sort_key
 from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.command.context import AnalysisContext
-from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.clustered_rules import cluster_for, subproject_number, subproject_numbers
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.clustered_rules import (
+    cluster_for,
+    semantic_facets,
+    subproject_number,
+    subproject_numbers,
+)
 from crime_research_kit._runtime.adapters.ops.evidence.reports.common import parse_cell_list
 
 
@@ -25,6 +30,7 @@ def subproject_index(ctx: AnalysisContext, node_by_id: dict[str, dict[str, Any]]
             "event_ids": set(),
             "relationship_ids": set(),
             "source_counts": Counter(),
+            "facets": set(),
             "statuses": set(),
             "cluster_id": cid,
             "cluster_label": cluster_label,
@@ -44,11 +50,13 @@ def subproject_index(ctx: AnalysisContext, node_by_id: dict[str, dict[str, Any]]
             ensure(num, str(node.get("label", "")), node)
     for kind, records in [("claim", ctx.claims), ("event", ctx.events), ("relationship", ctx.relationships), ("event_link", ctx.event_links), ("entity", ctx.entities)]:
         for record in records:
-            nums = subproject_numbers(_record_text(record))
+            text = _record_text(record)
+            nums = subproject_numbers(text)
             if not nums:
                 continue
             for num in nums:
                 item = ensure(num)
+                item["facets"].update(semantic_facets(text))
                 source_ids = parse_cell_list(record.get("source_ids"))
                 claim_ids = parse_cell_list(record.get("claim_ids"))
                 if kind == "claim":
@@ -81,6 +89,7 @@ def subproject_matrix(subprojects: dict[int, dict[str, Any]]) -> list[dict[str, 
             "relationship_count": len(item["relationship_ids"]),
             "status": ";".join(sorted(item["statuses"])),
             "readiness": item["readiness"] or "review_needed",
+            "facet_types": ";".join(sorted(item["facets"])),
             "source_ids": sorted(item["source_ids"]),
             "claim_ids": sorted(item["claim_ids"]),
         })
@@ -105,6 +114,7 @@ def source_subproject_edges(ctx: AnalysisContext, subprojects: dict[int, dict[st
                 "edge_weight": round(min(2.0, 0.35 + count * 0.12), 3),
                 "status": ";".join(sorted(item["statuses"])),
                 "readiness": item["readiness"] or "review_needed",
+                "facet_types": ";".join(sorted(item["facets"])),
             })
     return rows
 

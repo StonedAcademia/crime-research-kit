@@ -12,6 +12,7 @@ from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.cl
     edge_weight,
     facet_types,
     hub_role,
+    semantic_facets,
 )
 from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.clustered_sources import (
     cluster_timeline,
@@ -44,7 +45,7 @@ def build_clustered_visual_products(ctx: AnalysisContext, products: dict[str, An
         "facet_counts": _facet_counts(edges),
         "cluster_policy": {
             "hub_degree_threshold": threshold,
-            "method": "deterministic structural rules after marking broad program, agency, document, and high-degree context hubs",
+            "method": "deterministic structural rules using subproject ranges and document/context packets; activity keywords remain filter facets",
             "default_edge_visibility": "default edges only; hub and omnibus-context edges are kept as context filters",
         },
     }
@@ -58,6 +59,7 @@ def _augment_nodes(nodes: list[dict[str, Any]], threshold: int) -> dict[str, dic
         node.update({
             "cluster_id": cid,
             "cluster_label": label,
+            "facet_types": ";".join(semantic_facets(node.get("node_id"), node.get("label"))),
             "hub_role": role,
             "node_visibility": "collapsed_by_default" if role else "default",
         })
@@ -89,6 +91,7 @@ def _augment_edges(edges: list[dict[str, Any]], node_by_id: dict[str, dict[str, 
             "facet_types": facet_types(edge),
         })
 
+
 def _cluster_overview(nodes: list[dict[str, Any]], edges: list[dict[str, Any]], matrix: list[dict[str, Any]], timeline: list[dict[str, Any]]) -> list[dict[str, Any]]:
     grouped: dict[str, dict[str, Any]] = defaultdict(lambda: {"source_ids": set(), "claim_ids": set(), "facets": Counter(), "readiness": Counter()})
     for node in nodes:
@@ -98,6 +101,7 @@ def _cluster_overview(nodes: list[dict[str, Any]], edges: list[dict[str, Any]], 
         item["hub_node_count"] = item.get("hub_node_count", 0) + int(bool(node.get("hub_role")))
         item["source_ids"].update(parse_cell_list(node.get("source_ids")))
         item["claim_ids"].update(parse_cell_list(node.get("claim_ids")))
+        item["facets"].update(parse_cell_list(node.get("facet_types")))
         item["readiness"][str(node.get("readiness", "review_needed"))] += 1
     for edge in edges:
         item = grouped[str(edge.get("cluster_id"))]
@@ -111,6 +115,7 @@ def _cluster_overview(nodes: list[dict[str, Any]], edges: list[dict[str, Any]], 
         item = grouped[str(row.get("cluster_id"))]
         item["cluster_label"] = row.get("cluster_label", item.get("cluster_label", ""))
         item["subproject_count"] = item.get("subproject_count", 0) + 1
+        item["facets"].update(parse_cell_list(row.get("facet_types")))
     for row in timeline:
         item = grouped[str(row.get("cluster_id"))]
         item["event_count"] = item.get("event_count", 0) + 1
@@ -118,23 +123,34 @@ def _cluster_overview(nodes: list[dict[str, Any]], edges: list[dict[str, Any]], 
     overview = []
     for cid, item in grouped.items():
         dates = sorted([date for date in item.get("dates", []) if date])
+        node_count = item.get("node_count", 0)
+        edge_count = item.get("edge_count", 0)
+        visible_edge_count = item.get("visible_edge_count", 0)
+        event_count = item.get("event_count", 0)
+        source_count = len(item["source_ids"])
+        claim_count = len(item["claim_ids"])
+        evidence_footprint_score = node_count + edge_count + claim_count + source_count + event_count
         overview.append({
             "cluster_id": cid,
             "cluster_label": item.get("cluster_label") or cid,
-            "node_count": item.get("node_count", 0),
-            "edge_count": item.get("edge_count", 0),
-            "visible_edge_count": item.get("visible_edge_count", 0),
+            "node_count": node_count,
+            "record_count": node_count,
+            "edge_count": edge_count,
+            "relationship_count": edge_count,
+            "visible_edge_count": visible_edge_count,
+            "default_relationship_count": visible_edge_count,
             "hub_node_count": item.get("hub_node_count", 0),
             "subproject_count": item.get("subproject_count", 0),
-            "event_count": item.get("event_count", 0),
-            "source_count": len(item["source_ids"]),
-            "claim_count": len(item["claim_ids"]),
+            "event_count": event_count,
+            "source_count": source_count,
+            "claim_count": claim_count,
+            "evidence_footprint_score": evidence_footprint_score,
             "top_facets": ";".join(name for name, _ in item["facets"].most_common(4)),
             "readiness": ";".join(f"{name}:{count}" for name, count in sorted(item["readiness"].items())),
             "first_date": dates[0] if dates else "",
             "last_date": dates[-1] if dates else "",
         })
-    return sorted(overview, key=lambda row: (-int(row["subproject_count"]), str(row["cluster_label"])))
+    return sorted(overview, key=lambda row: (-int(row["evidence_footprint_score"]), -int(row["default_relationship_count"]), str(row["cluster_label"])))
 
 
 def _facet_counts(edges: list[dict[str, Any]]) -> list[dict[str, Any]]:
