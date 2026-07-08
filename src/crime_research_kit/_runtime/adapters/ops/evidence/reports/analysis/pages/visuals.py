@@ -80,7 +80,9 @@ def export_case_visuals(args: argparse.Namespace) -> None:
     else:
         shutil.rmtree(ctx.out / "audit" / "private", ignore_errors=True)
     _write_html_package(ctx.out, package)
+    github_dir = _write_github_static_site(ctx)
     print(f"Exported case visuals to {ctx.out}")
+    print(f"Prepared GitHub Pages static site at {github_dir}")
 
 
 def _load_visual_context(args: argparse.Namespace, out: Path, *, include_private: bool, skip_public_gate: bool = False) -> AnalysisContext:
@@ -305,6 +307,16 @@ def _write_html_package(out: Path, package: dict[str, Any]) -> None:
     for slug, console in package["consoles"].items():
         write_html(out / "consoles" / f"{slug}.html", _render("layouts/visual.html.j2", package=package, console=console, asset_prefix="../"))
     (out / "manifest.json").write_text(json.dumps(_manifest(package), indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def _write_github_static_site(ctx: AnalysisContext) -> Path:
+    github_dir = ctx.cdir / "github_export"
+    if ctx.out.resolve() != github_dir.resolve():
+        shutil.rmtree(github_dir, ignore_errors=True)
+        shutil.copytree(ctx.out, github_dir)
+    github_dir.mkdir(parents=True, exist_ok=True)
+    (github_dir / ".nojekyll").write_text("", encoding="utf-8")
+    return github_dir
 
 
 def _remove_retired_visual_artifacts(out: Path) -> None:

@@ -184,7 +184,14 @@ def test_export_case_visuals_writes_curated_package(tmp_path):
     for name in expected:
         assert (out / name).exists(), name
 
+    github_out = case_dir / "github_export"
+    for name in expected:
+        assert (github_out / name).exists(), name
+    assert (github_out / ".nojekyll").exists()
+
     manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
+    github_manifest = json.loads((github_out / "manifest.json").read_text(encoding="utf-8"))
+    assert github_manifest == manifest
     assert manifest["include_private"] is False
     assert manifest["default_mode"] == "public"
     assert manifest["available_modes"] == ["public"]
@@ -248,6 +255,8 @@ def test_export_case_visuals_writes_curated_package(tmp_path):
     assert not (out / "consoles" / "subproject_matrix.html").exists()
     assert not (out / "data" / "private").exists()
     assert not (out / "audit" / "private").exists()
+    assert not (github_out / "data" / "private").exists()
+    assert not (github_out / "audit" / "private").exists()
     assert "Relationship Network" in main_html
     assert "Evidence Overview" in main_html
     assert "Relationship Graphs" in main_html
@@ -294,6 +303,9 @@ def test_export_case_visuals_include_private_uses_internal_scope(tmp_path):
     tcr.main(["export-case-visuals", str(case_dir), "--out-dir", str(out), "--include-private"])
 
     manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
+    github_out = case_dir / "github_export"
+    github_manifest = json.loads((github_out / "manifest.json").read_text(encoding="utf-8"))
+    assert github_manifest == manifest
     assert manifest["include_private"] is True
     assert manifest["default_mode"] == "public"
     assert manifest["available_modes"] == ["public", "private"]
@@ -306,6 +318,9 @@ def test_export_case_visuals_include_private_uses_internal_scope(tmp_path):
     network_html = (out / "consoles" / "relationship_network.html").read_text(encoding="utf-8")
     network_data = (out / "data" / "relationship_network.all.js").read_text(encoding="utf-8")
     private_network_data = (out / "data" / "private" / "relationship_network.all.js").read_text(encoding="utf-8")
+    assert (github_out / ".nojekyll").exists()
+    assert (github_out / "data" / "private" / "relationship_network.all.js").exists()
+    assert (github_out / "audit" / "private" / "people_edges.csv").exists()
     assert "data-crk-private-available=\"true\"" in network_html
     assert "Public data loads first" in network_html
     assert '"include_private":false' in network_data
