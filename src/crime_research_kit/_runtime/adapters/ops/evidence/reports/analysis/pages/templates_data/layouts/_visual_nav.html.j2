@@ -1,0 +1,38 @@
+<header class="crk-topbar">
+<button class="crk-nav-toggle" type="button" data-crk-nav-toggle aria-controls="crk-visual-sidebar" aria-expanded="true">
+<span class="crk-hamburger" aria-hidden="true"></span>
+<span class="crk-sr-only">Toggle navigation</span>
+</button>
+<div class="crk-topbar-title">
+<strong>{{ page_title }}</strong>
+<span>{{ package.scope }}</span>
+</div>
+</header>
+<div class="crk-sidebar-scrim" data-crk-sidebar-scrim></div>
+<aside id="crk-visual-sidebar" class="crk-sidebar" data-crk-sidebar>
+<div class="crk-sidebar-brand">
+<button class="crk-sidebar-close" type="button" data-crk-nav-close aria-label="Close navigation"></button>
+<p class="eyebrow">Case visuals</p>
+<h2>{{ package.case_title }}</h2>
+</div>
+<nav class="crk-sidebar-nav" aria-label="Visual export navigation">
+<a class="crk-nav-link" href="{{ asset_prefix }}deck.html"{% if current_page == "deck" %} aria-current="page"{% endif %}>Deck</a>
+<a class="crk-nav-link" href="{{ asset_prefix }}explorer.html"{% if current_page == "explorer" %} aria-current="page"{% endif %}>Explorer</a>
+{% for item in package.consoles.values() %}
+<a class="crk-nav-link" href="{{ asset_prefix }}consoles/{{ item.slug }}.html"{% if current_page == item.slug %} aria-current="page"{% endif %}>{{ item.title }}</a>
+{% endfor %}
+</nav>
+{% if current_page == "deck" %}
+<section class="crk-sidebar-section crk-deck-sidebar">
+<h3>Slides</h3>
+<nav class="deck-nav" data-deck-nav data-deck-slide-nav aria-label="Deck slides"></nav>
+<div class="deck-controls"><button type="button" data-deck-prev>Prev</button><span data-deck-count></span><button type="button" data-deck-next>Next</button></div>
+</section>
+{% endif %}
+<section class="crk-sidebar-section">
+<h3>Export</h3>
+<p>{{ package.scope }}</p>
+<p>Generated {{ package.generated_at }}</p>
+{% if package.warnings %}<p class="visual-warning">{{ package.warnings | join(" ") }}</p>{% endif %}
+</section>
+</aside>

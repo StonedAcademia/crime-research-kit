@@ -4,25 +4,26 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% if console %}{{ console.title }}{% else %}Case visuals{% endif %} - {{ package.case_title }}</title>
-<style>{{ app_css | safe }}</style>
+<link rel="stylesheet" href="{{ asset_prefix }}static/app.css">
 </head>
-<body class="crk-report visual-page">
+<body class="crk-report visual-page crk-nav-page">
+{% set current_page = console.slug if console else "explorer" %}
+{% set page_title = console.title if console else "Case visuals: " ~ package.case_title %}
+{% include "layouts/_visual_nav.html.j2" %}
+<main class="crk-nav-main">
 <header class="visual-header">
-{% if console %}<p><a href="../explorer.html">Back to visual console index</a></p>{% endif %}
-<h1>{% if console %}{{ console.title }}{% else %}Case visuals: {{ package.case_title }}{% endif %}</h1>
+<h1>{{ page_title }}</h1>
 <p>{{ package.case_title }} · {{ package.scope }} · generated {{ package.generated_at }}</p>
-{% if not console %}<p><a href="deck.html">Open curated deck</a></p>{% endif %}
 {% if package.warnings %}<p class="visual-warning">{{ package.warnings | join(" ") }}</p>{% endif %}
 </header>
 {% if console %}
-<main class="visual-layout">
+<div class="visual-layout">
 <section>
 <div class="visual-toolbar">
 <input type="search" data-visual-search placeholder="Filter visible marks">
 <button type="button" data-visual-reset>Reset</button>
 </div>
-<div class="visual-root" data-crk-visual-console="{{ console.slug }}" data-visual-kind="{{ console.kind }}" data-visual-data-id="data-{{ console.slug }}"></div>
-<script id="data-{{ console.slug }}" type="application/json">{{ console | tojson }}</script>
+<div class="visual-root" data-crk-visual-console="{{ console.slug }}" data-visual-kind="{{ console.kind }}" data-visual-data-src="{{ asset_prefix }}data/{{ console.slug }}.js"></div>
 <details class="evidence-drawer">
 <summary>Evidence and audit data</summary>
 <p>Dense provenance rows are exported under <code>audit/</code> and intentionally kept out of the default chart viewport.</p>
@@ -30,14 +31,15 @@
 </details>
 </section>
 <aside class="visual-inspector" data-visual-inspector><b>Inspector</b><p data-visual-inspector-body>Select or hover a mark to inspect its evidence state.</p></aside>
-</main>
+</div>
 {% else %}
-<main class="visual-index">
+<div class="visual-index">
 {% for item in package.consoles.values() %}
 <article><h2>{{ item.title }}</h2><p>{{ item.audit_files | length }} audit tables available.</p><a href="consoles/{{ item.slug }}.html">Open console</a></article>
 {% endfor %}
-</main>
+</div>
 {% endif %}
-{% if console %}<script>{{ app_js | safe }}</script>{% endif %}
+</main>
+<script src="{{ asset_prefix }}static/app.js"></script>
 </body>
 </html>

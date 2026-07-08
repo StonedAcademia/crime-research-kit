@@ -4,11 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ package.case_title }} - Case Visual Deck</title>
-<style>{{ app_css | safe }}</style>
+<link rel="stylesheet" href="static/app.css">
 </head>
-<body class="crk-report deck-page">
-<nav class="deck-nav" data-deck-nav></nav>
-<main class="deck-stage" data-deck-stage>
+<body class="crk-report deck-page crk-nav-page">
+{% set asset_prefix = "" %}
+{% set current_page = "deck" %}
+{% set page_title = package.case_title ~ " deck" %}
+{% include "layouts/_visual_nav.html.j2" %}
+<main class="crk-nav-main deck-main">
+<div class="deck-stage" data-deck-stage>
 <section class="deck-slide active" data-title="Overview">
 <div>
 <p class="eyebrow">Case visual deck</p>
@@ -29,14 +33,12 @@
 <section class="deck-slide visual-slide" data-title="{{ console.title }}">
 <div class="slide-visual">
 <h2>{{ console.title }}</h2>
-<div class="visual-root deck-visual" data-crk-visual-console="{{ console.slug }}" data-visual-kind="{{ console.kind }}" data-visual-data-id="deck-data-{{ console.slug }}"></div>
-<script id="deck-data-{{ console.slug }}" type="application/json">{{ console | tojson }}</script>
+<div class="visual-root deck-visual" data-crk-visual-console="{{ console.slug }}" data-visual-kind="{{ console.kind }}" data-visual-data-src="data/{{ console.slug }}.js"></div>
 </div>
 </section>
 {% endfor %}
+</div>
 </main>
-<div class="deck-controls"><button type="button" data-deck-prev>Prev</button><span data-deck-count></span><button type="button" data-deck-next>Next</button><a href="explorer.html">Explorer</a></div>
-<script>{{ app_js | safe }}</script>
+<script src="static/app.js"></script>
 </body>
 </html>
-

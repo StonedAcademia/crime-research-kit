@@ -18,11 +18,22 @@ from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.command.
 from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.command.builders.layered import build_layered_graphs
 from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.command.builders.paths import build_path_atlas
 from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.command.context import AnalysisContext, load_analysis_context
-from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.render import _environment, _static_assets, write_html
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.clustered import build_clustered_visual_products
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.render import _environment, write_html
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.visual_assets import write_visual_assets
 from crime_research_kit._runtime.adapters.ops.evidence.reports.case_charts.command import _people_edges, _people_nodes, _subcase_rows
 from crime_research_kit._runtime.core.casefile import case_path
 
-CONSOLE_SLUGS = ("evidence_readiness", "relationship_network", "timeline_movement", "claim_source_matrix")
+CONSOLE_SLUGS = (
+    "evidence_readiness",
+    "cluster_overview",
+    "cluster_detail",
+    "source_subproject",
+    "subproject_matrix",
+    "relationship_network",
+    "timeline_movement",
+    "claim_source_matrix",
+)
 RELATIONSHIP_GRAPH_KEY = "layered_" + "v" + "2"
 
 
@@ -58,6 +69,7 @@ def _analysis_products(ctx: AnalysisContext) -> dict[str, Any]:
     products["boundary_rows"] = build_boundary_rows(ctx)
     products["swimlanes"] = build_swimlanes(ctx)
     products["relation_type_counts"] = build_relation_type_counts(ctx)
+    products.update(build_clustered_visual_products(ctx, products))
     products.update(build_person_source_products(ctx))
     readiness = build_readiness_products(ctx)
     products["readiness_rows"] = readiness["readiness_rows"]
@@ -85,6 +97,26 @@ def _package(ctx: AnalysisContext, products: dict[str, Any]) -> dict[str, Any]:
             "confidence": products["heatmap_aggregate"],
             "boundaries": products["boundary_rows"][:80],
         }, ["readiness_rows.csv", "source_quality.csv", "claim_confidence.csv", "boundaries.csv"]),
+        "cluster_overview": _console("cluster_overview", "Cluster Overview", "d3-cluster-overview", {
+            "clusters": products["cluster_overview"],
+            "facets": products["facet_counts"],
+            "hubs": products["hub_nodes"],
+        }, ["cluster_overview.csv", "facet_counts.csv", "hub_nodes.csv"]),
+        "cluster_detail": _console("cluster_detail", "Cluster Detail Graph", "cytoscape-clustered-network", {
+            "nodes": products["relationship_network_nodes"],
+            "edges": products["cluster_detail_edges"],
+            "clusters": products["cluster_overview"],
+            "hubs": products["hub_nodes"],
+        }, ["relationship_nodes.csv", "cluster_detail_edges.csv"]),
+        "source_subproject": _console("source_subproject", "Source-to-Subproject Map", "d3-source-subproject", {
+            "edges": products["source_subproject_edges"],
+            "matrix": products["subproject_matrix"],
+            "clusters": products["cluster_overview"],
+        }, ["source_subproject_edges.csv", "subproject_matrix.csv"]),
+        "subproject_matrix": _console("subproject_matrix", "Subproject Matrix", "d3-subproject-matrix", {
+            "matrix": products["subproject_matrix"],
+            "clusters": products["cluster_overview"],
+        }, ["subproject_matrix.csv", "cluster_overview.csv"]),
         "relationship_network": _console("relationship_network", "Relationship Network", "cytoscape-network", {
             "nodes": products["relationship_network_nodes"],
             "edges": products["relationship_network_edges"],
@@ -92,10 +124,10 @@ def _package(ctx: AnalysisContext, products: dict[str, Any]) -> dict[str, Any]:
             "people_edges": products["people_edges"],
         }, ["relationship_nodes.csv", "relationship_edges.csv", "people_edges.csv"]),
         "timeline_movement": _console("timeline_movement", "Timeline Movement", "d3-timeline", {
-            "events": products["swimlanes"],
+            "events": products["cluster_timeline"],
             "subcases": products["timeline_rows"],
             "paths": products["path_atlas"],
-        }, ["timeline_events.csv", "path_atlas.csv"]),
+        }, ["cluster_timeline.csv", "path_atlas.csv"]),
         "claim_source_matrix": _console("claim_source_matrix", "Claim Source Matrix", "d3-matrix", {
             "claims": products["claim_heatmap"],
             "matrix": products["claim_matrix"],
@@ -113,6 +145,7 @@ def _package(ctx: AnalysisContext, products: dict[str, Any]) -> dict[str, Any]:
         "warnings": _warnings(ctx, products),
         "consoles": consoles,
         "audit": audit,
+        "cluster_policy": products["cluster_policy"],
     }
 
 
@@ -128,6 +161,13 @@ def _audit(products: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
         "boundaries": products["boundary_rows"],
         "relationship_nodes": products["relationship_network_nodes"],
         "relationship_edges": products["relationship_network_edges"],
+        "cluster_overview": products["cluster_overview"],
+        "cluster_detail_edges": products["cluster_detail_edges"],
+        "source_subproject_edges": products["source_subproject_edges"],
+        "subproject_matrix": products["subproject_matrix"],
+        "cluster_timeline": products["cluster_timeline"],
+        "hub_nodes": products["hub_nodes"],
+        "facet_counts": products["facet_counts"],
         "people_edges": products["people_edges"],
         "timeline_events": products["swimlanes"],
         "path_atlas": products["path_atlas"],
@@ -157,17 +197,17 @@ def _write_html_package(out: Path, package: dict[str, Any]) -> None:
     artifacts = ["deck.html", "explorer.html"]
     for slug in CONSOLE_SLUGS:
         artifacts.append(f"consoles/{slug}.html")
-    package["artifacts"] = artifacts + [f"audit/{name}.csv" for name in sorted(package["audit"])]
+    asset_artifacts = write_visual_assets(out, package)
+    package["artifacts"] = artifacts + asset_artifacts + [f"audit/{name}.csv" for name in sorted(package["audit"])]
     write_html(out / "deck.html", _render("layouts/visual_deck.html.j2", package=package))
-    write_html(out / "explorer.html", _render("layouts/visual.html.j2", package=package, console=None))
+    write_html(out / "explorer.html", _render("layouts/visual.html.j2", package=package, console=None, asset_prefix=""))
     for slug, console in package["consoles"].items():
-        write_html(out / "consoles" / f"{slug}.html", _render("layouts/visual.html.j2", package=package, console=console))
+        write_html(out / "consoles" / f"{slug}.html", _render("layouts/visual.html.j2", package=package, console=console, asset_prefix="../"))
     (out / "manifest.json").write_text(json.dumps(_manifest(package), indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
 def _render(template: str, **data: Any) -> str:
-    css, js = _static_assets()
-    return _environment().get_template(template).render(**data, app_css=css, app_js=js)
+    return _environment().get_template(template).render(**data)
 
 
 def _manifest(package: dict[str, Any]) -> dict[str, Any]:
@@ -179,4 +219,5 @@ def _manifest(package: dict[str, Any]) -> dict[str, Any]:
         "artifacts": package["artifacts"],
         "warnings": package["warnings"],
         "consoles": list(CONSOLE_SLUGS),
+        "cluster_policy": package["cluster_policy"],
     }
