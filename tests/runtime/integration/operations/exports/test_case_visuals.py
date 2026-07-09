@@ -1,20 +1,10 @@
-import csv
 import json
 
-from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.clustered_rules import (
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.clustered.rules import (
     cluster_for,
     semantic_facets,
 )
-from tests.helpers import load_ledger_cli
-
-
-def load_tcr():
-    return load_ledger_cli()
-
-
-def read_csv(path):
-    with path.open(encoding="utf-8", newline="") as f:
-        return list(csv.DictReader(f))
+from tests.runtime.integration.operations.exports.helpers.case_visuals import build_visual_case, read_csv
 
 
 def test_cluster_rules_prioritize_ranges_and_emit_activity_facets():
@@ -26,115 +16,6 @@ def test_cluster_rules_prioritize_ranges_and_emit_activity_facets():
         "activity_academic_front",
         "activity_drug_chemical_bio",
     }
-
-
-def append_source(tcr, case_dir, source_id, grade="B"):
-    tcr.append_jsonl(tcr.record_path(case_dir, "sources"), {
-        "source_id": source_id,
-        "title": f"Synthetic source {source_id}",
-        "source_type": "news_article",
-        "author": "Demo Reporter",
-        "publisher": "Demo Daily",
-        "date_published": "1970-01-01",
-        "date_accessed": "2026-06-30",
-        "url": f"https://example.test/{source_id.lower()}",
-        "archive_url": None,
-        "raw_path": None,
-        "text_path": None,
-        "reliability_grade": grade,
-        "independence_group": "Demo Daily",
-        "notes": "Synthetic visual source.",
-        "public_export": True,
-    })
-
-
-def append_person(tcr, case_dir, entity_id, name, public=True):
-    tcr.append_jsonl(tcr.record_path(case_dir, "entities"), {
-        "entity_id": entity_id,
-        "entity_type": "person",
-        "name": name,
-        "display_name": name,
-        "aliases": [],
-        "status": "confirmed" if public else "candidate",
-        "role_tags": ["person_mentioned"],
-        "privacy_level": "public_figure" if public else "unknown",
-        "living_status": "unknown",
-        "source_ids": ["SA"],
-        "claim_ids": ["C_A"],
-        "public_export": public,
-        "notes": "Synthetic person.",
-    })
-
-
-def build_visual_case(tmp_path):
-    tcr = load_tcr()
-    case_dir = tmp_path / "case"
-    tcr.main(["init-case", str(case_dir), "--title", "Visual Case"])
-    append_source(tcr, case_dir, "SA", "A")
-    append_source(tcr, case_dir, "SB", "B")
-    append_person(tcr, case_dir, "E_A", "Public A")
-    append_person(tcr, case_dir, "E_B", "Public B")
-    append_person(tcr, case_dir, "E_PRIVATE", "Private Person", public=False)
-    tcr.append_jsonl(tcr.record_path(case_dir, "claims"), {
-        "claim_id": "C_A",
-        "claim": "Synthetic claim supported by two sources.",
-        "claim_type": "event",
-        "status": "corroborated",
-        "confidence": 0.85,
-        "source_ids": ["SA", "SB"],
-        "contradicts": [],
-        "supports": [],
-        "privacy_review": "clear",
-        "public_export": True,
-        "notes": "Synthetic claim.",
-    })
-    tcr.append_jsonl(tcr.record_path(case_dir, "events"), {
-        "event_id": "EV_A",
-        "title": "Synthetic event",
-        "event_type": "timeline_anchor",
-        "start_date": "1970",
-        "end_date": None,
-        "date_precision": "year",
-        "place_ids": [],
-        "entity_ids": ["E_A", "E_B", "E_PRIVATE"],
-        "artifact_ids": [],
-        "claim_ids": ["C_A"],
-        "source_ids": ["SA"],
-        "confidence": 0.8,
-        "status": "single_source",
-        "public_export": True,
-        "notes": "Synthetic event.",
-    })
-    tcr.append_jsonl(tcr.record_path(case_dir, "event_links"), {
-        "event_link_id": "EL_A",
-        "event_id": "EV_A",
-        "entity_id": "E_A",
-        "relation_type": "participant",
-        "relationship_class": "personnel_bridge",
-        "basis": "Synthetic event link.",
-        "claim_ids": ["C_A"],
-        "source_ids": ["SA"],
-        "confidence": 0.8,
-        "status": "single_source",
-        "public_export": True,
-        "notes": "Synthetic event link.",
-    })
-    tcr.append_jsonl(tcr.record_path(case_dir, "relationships"), {
-        "rel_id": "R_A",
-        "src_entity_id": "E_A",
-        "dst_entity_id": "E_B",
-        "relation_type": "co_participant_in_event",
-        "relationship_class": "personnel_bridge",
-        "start_date": "1970",
-        "end_date": None,
-        "claim_ids": ["C_A"],
-        "source_ids": ["SA", "SB"],
-        "confidence": 0.85,
-        "status": "corroborated",
-        "public_export": True,
-        "notes": "Synthetic relationship.",
-    })
-    return tcr, case_dir
 
 
 def test_export_case_visuals_writes_curated_package(tmp_path):
@@ -294,38 +175,3 @@ def test_export_case_visuals_writes_curated_package(tmp_path):
     assert {"cluster_id", "cluster_label", "edge_weight", "edge_visibility", "facet_types"} <= set(relationship_edges[0])
     relationship_nodes = read_csv(out / "audit" / "relationship_nodes.csv")
     assert {"cluster_id", "cluster_label", "hub_role", "node_visibility"} <= set(relationship_nodes[0])
-
-
-def test_export_case_visuals_include_private_uses_internal_scope(tmp_path):
-    tcr, case_dir = build_visual_case(tmp_path)
-    out = tmp_path / "internal-visuals"
-
-    tcr.main(["export-case-visuals", str(case_dir), "--out-dir", str(out), "--include-private"])
-
-    manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
-    github_out = case_dir / "github_export"
-    github_manifest = json.loads((github_out / "manifest.json").read_text(encoding="utf-8"))
-    assert github_manifest == manifest
-    assert manifest["include_private"] is True
-    assert manifest["default_mode"] == "public"
-    assert manifest["available_modes"] == ["public", "private"]
-    assert manifest["contains_private_bundle"] is True
-    assert manifest["modes"]["public"]["data_prefix"] == "data"
-    assert manifest["modes"]["private"]["data_prefix"] == "data/private"
-    assert manifest["modes"]["private"]["audit_prefix"] == "audit/private"
-    assert "public-export rows only" in manifest["scope"]
-    assert "internal review" in manifest["modes"]["private"]["scope"]
-    network_html = (out / "consoles" / "relationship_network.html").read_text(encoding="utf-8")
-    network_data = (out / "data" / "relationship_network.all.js").read_text(encoding="utf-8")
-    private_network_data = (out / "data" / "private" / "relationship_network.all.js").read_text(encoding="utf-8")
-    assert (github_out / ".nojekyll").exists()
-    assert (github_out / "data" / "private" / "relationship_network.all.js").exists()
-    assert (github_out / "audit" / "private" / "people_edges.csv").exists()
-    assert "data-crk-private-available=\"true\"" in network_html
-    assert "Public data loads first" in network_html
-    assert '"include_private":false' in network_data
-    assert '"include_private":true' in private_network_data
-    people_edges = read_csv(out / "audit" / "people_edges.csv")
-    private_people_edges = read_csv(out / "audit" / "private" / "people_edges.csv")
-    assert all("E_PRIVATE" not in {row["src_entity_id"], row["dst_entity_id"]} for row in people_edges)
-    assert any("E_PRIVATE" in {row["src_entity_id"], row["dst_entity_id"]} for row in private_people_edges)

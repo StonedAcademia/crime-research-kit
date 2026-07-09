@@ -6,7 +6,7 @@ from collections import Counter, defaultdict
 from typing import Any
 
 from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.command.context import AnalysisContext
-from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.clustered_rules import (
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.clustered.rules import (
     cluster_for,
     edge_visibility,
     edge_weight,
@@ -14,7 +14,7 @@ from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.cl
     hub_role,
     semantic_facets,
 )
-from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.clustered_sources import (
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.clustered.sources import (
     cluster_timeline,
     source_subproject_edges,
     subproject_index,

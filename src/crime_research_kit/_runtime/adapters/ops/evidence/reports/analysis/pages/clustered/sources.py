@@ -7,7 +7,7 @@ from typing import Any
 
 from crime_research_kit._runtime.adapters.ops.evidence.ledger.scoring import date_sort_key
 from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.command.context import AnalysisContext
-from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.clustered_rules import (
+from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.clustered.rules import (
     cluster_for,
     semantic_facets,
     subproject_number,
