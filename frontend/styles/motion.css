@@ -1,0 +1,55 @@
+@keyframes selectedPulse {
+  0%, 100% { filter: drop-shadow(0 0 7px rgba(35, 122, 87, .55)); }
+  50% { filter: drop-shadow(0 0 13px rgba(35, 122, 87, .9)); }
+}
+
+@keyframes clickFlash {
+  to { opacity: 0; transform: translate(-50%, -50%) scale(9); }
+}
+
+@keyframes visualSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes visualProgress {
+  0% { transform: translateX(-105%); }
+  50% { transform: translateX(72%); }
+  100% { transform: translateX(242%); }
+}
+
+@keyframes inspectorReveal {
+  from { opacity: .72; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes inspectorPin {
+  0% { opacity: .82; transform: translateY(5px) scale(.985); }
+  70% { opacity: 1; transform: translateY(-1px) scale(1.006); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interactive-mark, .chart-tooltip, .click-flash, .crk-sidebar, .crk-nav-main, .visual-loading-spinner, .visual-loading-bar-fill, .visual-inspector, .visual-inspector-card, .visual-network-action, .visual-network-zoom button { transition: none; animation: none; }
+  .interactive-mark:hover, .interactive-mark:focus, .interactive-mark.is-selected { transform: none; }
+  .visual-inspector.is-preview, .visual-inspector.is-pinned { transform: none; }
+  .visual-network-action:hover, .visual-network-action:focus, .visual-network-zoom button:hover, .visual-network-zoom button:focus { transform: none; }
+}
+
+@media (max-width: 860px) {
+  .crk-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .chart-layout { grid-template-columns: 1fr; }
+  .inspector { position: static; }
+  .crk-table-wrap table { font-size: 12px; }
+  .crk-topbar-title span { display: none; }
+  .crk-nav-main, .crk-nav-page.nav-collapsed .crk-nav-main { margin-left: 0; }
+  .crk-sidebar { top: 0; z-index: 40; width: min(86vw, 320px); transform: translateX(-100%); }
+  .crk-nav-page.nav-open .crk-sidebar { transform: translateX(0); }
+  .crk-nav-page.nav-open .crk-sidebar-scrim { position: fixed; inset: 0; z-index: 35; display: block; background: rgba(24, 28, 32, .42); }
+  .crk-nav-page:not(.nav-ready) .crk-topbar { position: static; }
+  .crk-nav-page:not(.nav-ready) .crk-sidebar { position: static; width: auto; transform: none; border-right: 0; border-bottom: 1px solid var(--line); }
+  .crk-nav-page:not(.nav-ready) .crk-nav-main { padding-top: 0; }
+  .crk-sidebar-close { display: inline-grid; }
+  .visual-layout, .visual-index, .visual-index-grid { grid-template-columns: 1fr; }
+  .visual-inspector { position: static; }
+  .visual-loading { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+}
