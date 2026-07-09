@@ -20,7 +20,7 @@ EXPECTED_REQUIRED_DEPENDENCIES = {
     "pydantic",
     "pydantic-settings",
     "httpx",
-    "typer",
+    "click", "typer",
     "jinja2",
 }
 EXPECTED_EXTRAS = {
