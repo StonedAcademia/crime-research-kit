@@ -68,7 +68,7 @@ tasks:
     description: "Build committed report frontend assets."
     command: "npm"
     args: ["--prefix", "frontend", "run", "build"]
-    inputs: ["frontend/package.json", "frontend/app.ts", "frontend/styles.css", "frontend/visuals/**/*.ts"]
+    inputs: ["frontend/package.json", "frontend/app.ts", "frontend/styles.css", "frontend/visuals/**/*.ts", "src/crime_research_kit/_runtime/adapters/ops/evidence/reports/analysis/pages/templates_data/**/*.j2"]
     outputs:
       - "src/crime_research_kit/_runtime/adapters/ops/evidence/reports/analysis/pages/templates_data/static/app.css"
       - "src/crime_research_kit/_runtime/adapters/ops/evidence/reports/analysis/pages/templates_data/static/app.js"

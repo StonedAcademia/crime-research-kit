@@ -10,6 +10,16 @@ const PRIMARY_KEYS = new Set([
 ]);
 
 export type DetailMode = "preview" | "pinned";
+export type DetailSearchContext = {
+  query: string;
+  tokens?: string[];
+};
+
+const MATCH_KEYS = [
+  "label", "title", "record_id", "node_id", "cluster_label", "source_title", "src_label", "dst_label",
+  "relationship_class", "relation_type", "edge_type", "layer", "record_type", "event_type", "claim_type",
+  "status", "confidence", "readiness", "facet_types", "top_facets", "caveat", "best_source_grade",
+];
 
 export function detail(row: Row): string {
   if (row.src_label || row.dst_label) return edgeDetail(row);
@@ -17,14 +27,17 @@ export function detail(row: Row): string {
   return recordDetail(row);
 }
 
-export function renderDetail(root: HTMLElement, row: Row, mode: DetailMode = "preview"): void {
+export function renderDetail(root: HTMLElement, row: Row, mode: DetailMode = "preview", search?: DetailSearchContext): void {
   root.replaceChildren();
   const frame = el("article", "visual-inspector-card");
   frame.classList.add(`is-${mode}`);
   const heading = el("div", "visual-inspector-card-heading");
   heading.append(el("span", "visual-inspector-kind", kind(row)), el("h3", "", title(row)));
   if (mode === "pinned") heading.append(el("span", "visual-inspector-pin", "Pinned"));
-  frame.append(heading, facts(primaryFacts(row)));
+  const matches = matchedFields(row, search);
+  frame.append(heading);
+  if (matches.length) frame.append(matchDetails(matches));
+  frame.append(facts(primaryFacts(row)));
   const facets = pretty(row.facet_types || row.top_facets);
   if (facets) frame.append(chips(facets));
   const meta = metadata(row);
@@ -159,6 +172,38 @@ function metadataDetails(rows: [string, string][]): HTMLElement {
   const details = el("details", "visual-inspector-meta");
   details.append(el("summary", "", `Metadata (${rows.length})`), facts(rows));
   return details;
+}
+
+function matchedFields(row: Row, search?: DetailSearchContext): [string, string][] {
+  const tokens = search?.tokens?.length ? search.tokens : searchTokens(search?.query || "");
+  if (!tokens.length) return [];
+  const rows: [string, string][] = [];
+  for (const key of MATCH_KEYS) {
+    const value = text(row[key]).trim();
+    if (!value) continue;
+    if (tokens.every((token) => normalizeSearch(`${key} ${value}`).includes(token))) {
+      rows.push([pretty(key), short(value, 180)]);
+    }
+  }
+  return rows.slice(0, 6);
+}
+
+function matchDetails(rows: [string, string][]): HTMLElement {
+  const section = el("section", "visual-inspector-matches");
+  section.append(el("h4", "", "Matched fields"), facts(rows));
+  return section;
+}
+
+function searchTokens(query: string): string[] {
+  return normalizeSearch(query).split(" ").filter(Boolean);
+}
+
+function normalizeSearch(value: string): string {
+  return value.toLowerCase()
+    .replace(/[_:/|,;()[\]{}-]+/g, " ")
+    .replace(/[^a-z0-9.]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function el<K extends keyof HTMLElementTagNameMap>(tag: K, className = "", value = ""): HTMLElementTagNameMap[K] {

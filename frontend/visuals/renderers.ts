@@ -1,7 +1,7 @@
 import cytoscape from "cytoscape";
 import * as d3 from "d3";
 
-import { detail, renderDetail, type DetailMode } from "./detail";
+import { detail, renderDetail, type DetailMode, type DetailSearchContext } from "./detail";
 import { applyRadiusForcefield, type ForcefieldProfile } from "./forcefield";
 import type { ConsoleData, Row } from "./model";
 import { clearVisualLoading, inspector, loadConsoleData, short, shortId, showVisualLoading, text, waitForVisualPaint } from "./model";
@@ -12,6 +12,14 @@ const NETWORK_ZOOM_MAX_FACTOR = 1.18;
 const NETWORK_ZOOM_MIN_FACTOR = 0.82;
 const NETWORK_ZOOM_STEP = 1.22;
 const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
+const VISUAL_SEARCH_EVENT = "crk:visual-search";
+
+const NETWORK_SEARCH_KEYS = [
+  "label", "title", "record_id", "node_id", "cluster_id", "cluster_label", "source_title", "src_id", "src_label",
+  "dst_id", "dst_label", "relationship_class", "relation_type", "edge_type", "layer", "record_type", "event_title",
+  "event_type", "claim_label", "claim_type", "status", "confidence", "readiness", "facet_types", "top_facets",
+  "caveat", "best_source_grade", "subproject_id", "subproject_label",
+];
 
 type NetworkSpacing = ForcefieldProfile;
 
@@ -24,13 +32,30 @@ type NetworkLayoutProfile = {
   localSpacing: number;
 };
 
+type NetworkSearchState = {
+  query: string;
+  tokens: string[];
+  includeContext: boolean;
+};
+
+type NetworkFilterResult = {
+  visibleNodes: cytoscape.ElementDefinition[];
+  visibleEdges: cytoscape.ElementDefinition[];
+  directNodeIds: Set<string>;
+  directEdgeIds: Set<string>;
+  visibleIds: Set<string>;
+  hasSearch: boolean;
+};
+
+const networkBindings = new WeakMap<HTMLElement, AbortController>();
+
 function bindMark<GElement extends Element, PElement extends d3.BaseType, PDatum>(el: d3.Selection<GElement, Row, PElement, PDatum>, root: HTMLElement): void {
   el.classed("visual-mark", true)
     .attr("tabindex", 0)
-    .attr("data-search", (row) => detail(row).toLowerCase())
+    .attr("data-search", (row) => rowSearchText(row))
     .on("mouseenter focus click", (_, row) => {
       const body = inspector(root);
-      if (body) renderDetail(body, row);
+      if (body) renderDetail(body, row, "preview", detailSearchContext(root.dataset.visualSearchQuery || ""));
     });
 }
 
@@ -59,6 +84,32 @@ function clusterColor(value: unknown): string {
 
 function rowFacets(row: Row): string[] {
   return text(row.facet_types).split(";").map((item) => item.trim()).filter(Boolean);
+}
+
+function searchTokens(query: string): string[] {
+  return normalizeSearch(query).split(" ").filter(Boolean);
+}
+
+function normalizeSearch(value: string): string {
+  return value.toLowerCase()
+    .replace(/[_:/|,;()[\]{}-]+/g, " ")
+    .replace(/[^a-z0-9.]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function rowSearchText(row: Row): string {
+  const keyed = NETWORK_SEARCH_KEYS.map((key) => row[key]);
+  return normalizeSearch([detail(row), ...keyed, ...Object.values(row)].map((value) => text(value)).join(" "));
+}
+
+function elementMatches(element: cytoscape.ElementDefinition, tokens: string[]): boolean {
+  const searchText = text(element.data?.searchText);
+  return tokens.length > 0 && tokens.every((token) => searchText.includes(token));
+}
+
+function detailSearchContext(query: string, tokens = searchTokens(query)): DetailSearchContext | undefined {
+  return tokens.length ? { query, tokens } : undefined;
 }
 
 function metricValue(row: Row, key: string, fallback?: string): number {
@@ -607,6 +658,10 @@ function renderNetwork(root: HTMLElement, data: ConsoleData): void {
   spacing.add(new Option("Compact spacing", "compact"));
   spacing.add(new Option("Expanded spacing", "expanded"));
   spacing.value = "balanced";
+  const searchScope = document.createElement("select");
+  searchScope.setAttribute("aria-label", "Search result scope");
+  searchScope.add(new Option("Matches + context", "context"));
+  searchScope.add(new Option("Matches only", "matches"));
   const detangle = document.createElement("button");
   detangle.type = "button";
   detangle.className = "visual-network-action";
@@ -623,11 +678,12 @@ function renderNetwork(root: HTMLElement, data: ConsoleData): void {
   summary.className = "visual-network-summary";
   const canvas = document.createElement("div");
   canvas.className = "visual-network-canvas";
-  controls.append(scope, facet, spacing, detangle, zoomControls);
+  controls.append(scope, facet, spacing, searchScope, detangle, zoomControls);
   shell.append(controls, summary, canvas);
   root.appendChild(shell);
 
   const dataByVariant = new Map<string, ConsoleData>([["default", data]]);
+  let searchQuery = root.dataset.visualSearchQuery || "";
   let pinnedId = "";
   let layoutRun = 0;
   let currentVisible: cytoscape.CollectionReturnValue | undefined;
@@ -647,6 +703,9 @@ function renderNetwork(root: HTMLElement, data: ConsoleData): void {
       { selector: "edge[parallelCount > 1]", style: { opacity: 0.78 } },
       { selector: "edge[selfLoop]", style: { "curve-style": "bezier", "loop-direction": "data(loopDirection)", "loop-sweep": "data(loopSweep)" } },
       { selector: "edge[visibility = 'context']", style: { "line-style": "dashed", opacity: 0.36 } },
+      { selector: "node.is-search-match", style: { width: 32, height: 32, "border-color": "#315b77", "border-width": 3.4, "overlay-color": "#315b77", "overlay-opacity": 0.14, "z-index": 18 } },
+      { selector: "edge.is-search-match", style: { width: "mapData(weight, 1, 7, 3, 7)", "line-color": "#315b77", "target-arrow-color": "#315b77", opacity: 0.96, "z-index": 18 } },
+      { selector: ".is-search-context", style: { opacity: 0.38, "text-opacity": 0.42 } },
       { selector: "node.is-hovered", style: { width: 30, height: 30, "border-color": "#315b77", "border-width": 3, "overlay-color": "#315b77", "overlay-opacity": 0.08, "z-index": 12 } },
       { selector: "edge.is-hovered", style: { "line-color": "#315b77", "target-arrow-color": "#315b77", opacity: 1, "z-index": 12 } },
       { selector: "node.is-pinned", style: { width: 36, height: 36, "border-color": "#b9472d", "border-width": 4, "background-blacken": -0.08, "overlay-color": "#b9472d", "overlay-opacity": 0.16, "z-index": 24 } },
@@ -684,25 +743,27 @@ function renderNetwork(root: HTMLElement, data: ConsoleData): void {
       const raw = toElements(variantData);
       refreshFacetOptions(raw.edges);
       const wantedFacet = facet.value;
-      const visibleEdges = raw.edges.filter((edge) => !wantedFacet || rowFacets(edge.data.row).includes(wantedFacet));
+      const facetedEdges = raw.edges.filter((edge) => !wantedFacet || rowFacets(edge.data.row).includes(wantedFacet));
+      const result = filterNetwork(raw.nodes, facetedEdges, variantData, currentSearchState());
+      const { visibleNodes, visibleEdges, visibleIds } = result;
       routeParallelEdges(visibleEdges);
       const added = addMissingElements(raw.nodes, raw.edges);
-      const connectedIds = new Set(visibleEdges.flatMap((edge) => [edge.data.source, edge.data.target]));
-      const visibleNodes = variantData.show_all_nodes ? raw.nodes : raw.nodes.filter((node) => connectedIds.has(node.data.id));
-      const visibleIds = new Set([...visibleNodes.map((node) => node.data.id), ...visibleEdges.map((edge) => edge.data.id)]);
       cy.elements().forEach((element) => element.toggleClass("is-hidden", !visibleIds.has(element.id())));
       cy.elements().hide();
       let visible = cy.collection();
       visibleIds.forEach((id) => { visible = visible.union(cy.getElementById(id)); });
       visible.show();
+      applySearchClasses(result);
       currentVisible = visible;
-      summary.textContent = `${visibleNodes.length} records, ${visibleEdges.length} relationships; ${Math.max(0, raw.edges.length - visibleEdges.length)} filtered relationships hidden.`;
+      summary.textContent = summaryText(result, raw.edges.length);
       if (!visibleNodes.length) {
         canvas.dataset.empty = "true";
+        canvas.dataset.emptyLabel = result.hasSearch ? "No records or relationships match this search." : "No visible graph data.";
         clearPinned(true);
         return;
       }
       delete canvas.dataset.empty;
+      delete canvas.dataset.emptyLabel;
       reconcilePinned(visibleIds);
       if (runLayout || added) {
         const preset = variantData.layout === "preset" || raw.nodes.some((node) => node.position);
@@ -727,6 +788,86 @@ function renderNetwork(root: HTMLElement, data: ConsoleData): void {
     if (!loaded) throw new Error(`Unable to load ${variant} graph data.`);
     dataByVariant.set(variant, loaded);
     return loaded;
+  }
+
+  function currentSearchState(): NetworkSearchState {
+    const query = normalizeSearch(searchQuery);
+    return { query, tokens: searchTokens(query), includeContext: searchScope.value !== "matches" };
+  }
+
+  function filterNetwork(
+    nodes: cytoscape.ElementDefinition[],
+    edges: cytoscape.ElementDefinition[],
+    variantData: ConsoleData,
+    search: NetworkSearchState,
+  ): NetworkFilterResult {
+    const directNodeIds = new Set<string>();
+    const directEdgeIds = new Set<string>();
+    const hasSearch = search.tokens.length > 0;
+    if (!hasSearch) {
+      const connectedIds = new Set(edges.flatMap((edge) => [text(edge.data?.source), text(edge.data?.target)]));
+      const visibleNodes = variantData.show_all_nodes ? nodes : nodes.filter((node) => connectedIds.has(text(node.data?.id)));
+      const visibleIds = new Set([...visibleNodes.map((node) => text(node.data?.id)), ...edges.map((edge) => text(edge.data?.id))]);
+      return { visibleNodes, visibleEdges: edges, directNodeIds, directEdgeIds, visibleIds, hasSearch };
+    }
+
+    nodes.forEach((node) => {
+      const id = text(node.data?.id);
+      if (id && elementMatches(node, search.tokens)) directNodeIds.add(id);
+    });
+    edges.forEach((edge) => {
+      const id = text(edge.data?.id);
+      if (id && elementMatches(edge, search.tokens)) directEdgeIds.add(id);
+    });
+
+    const seedNodeIds = new Set(directNodeIds);
+    edges.forEach((edge) => {
+      if (!directEdgeIds.has(text(edge.data?.id))) return;
+      seedNodeIds.add(text(edge.data?.source));
+      seedNodeIds.add(text(edge.data?.target));
+    });
+
+    const visibleEdges = search.includeContext
+      ? edges.filter((edge) => (
+        directEdgeIds.has(text(edge.data?.id))
+        || seedNodeIds.has(text(edge.data?.source))
+        || seedNodeIds.has(text(edge.data?.target))
+      ))
+      : edges.filter((edge) => (
+        directEdgeIds.has(text(edge.data?.id))
+        || (directNodeIds.has(text(edge.data?.source)) && directNodeIds.has(text(edge.data?.target)))
+      ));
+    const visibleNodeIds = new Set(seedNodeIds);
+    visibleEdges.forEach((edge) => {
+      visibleNodeIds.add(text(edge.data?.source));
+      visibleNodeIds.add(text(edge.data?.target));
+    });
+    const visibleNodes = nodes.filter((node) => visibleNodeIds.has(text(node.data?.id)));
+    const visibleIds = new Set([...visibleNodes.map((node) => text(node.data?.id)), ...visibleEdges.map((edge) => text(edge.data?.id))]);
+    return { visibleNodes, visibleEdges, directNodeIds, directEdgeIds, visibleIds, hasSearch };
+  }
+
+  function applySearchClasses(result: NetworkFilterResult): void {
+    cy.elements().removeClass("is-search-match is-search-context");
+    if (!result.hasSearch) return;
+    result.visibleIds.forEach((id) => {
+      const element = cy.getElementById(id);
+      if (element.empty()) return;
+      if (result.directNodeIds.has(id) || result.directEdgeIds.has(id)) element.addClass("is-search-match");
+      else element.addClass("is-search-context");
+    });
+  }
+
+  function summaryText(result: NetworkFilterResult, rawEdgeCount: number): string {
+    const hiddenEdges = Math.max(0, rawEdgeCount - result.visibleEdges.length);
+    if (!result.hasSearch) {
+      return `${result.visibleNodes.length} records, ${result.visibleEdges.length} relationships; ${hiddenEdges} filtered relationships hidden.`;
+    }
+    if (!result.directNodeIds.size && !result.directEdgeIds.size) {
+      return `Search "${searchQuery}": no matching records or relationships.`;
+    }
+    const contextRecords = Math.max(0, result.visibleNodes.length - result.directNodeIds.size);
+    return `Search "${searchQuery}": ${result.directNodeIds.size} matching records, ${result.directEdgeIds.size} matching relationships; ${contextRecords} context records and ${result.visibleEdges.length} relationships shown; ${hiddenEdges} relationships hidden.`;
   }
 
   function addMissingElements(nodes: cytoscape.ElementDefinition[], edges: cytoscape.ElementDefinition[]): boolean {
@@ -764,7 +905,7 @@ function renderNetwork(root: HTMLElement, data: ConsoleData): void {
   function inspect(element: cytoscape.SingularElementReturnValue, mode: DetailMode): void {
     const body = inspector(root);
     if (!body) return;
-    renderDetail(body, element.data("row") ?? {}, mode);
+    renderDetail(body, element.data("row") ?? {}, mode, detailSearchContext(searchQuery));
     setInspectorState(body, mode);
   }
 
@@ -883,6 +1024,14 @@ function renderNetwork(root: HTMLElement, data: ConsoleData): void {
     return { x: event.clientX - rect.left, y: event.clientY - rect.top };
   }
 
+  networkBindings.get(root)?.abort();
+  const binding = new AbortController();
+  networkBindings.set(root, binding);
+  root.addEventListener(VISUAL_SEARCH_EVENT, (event) => {
+    searchQuery = normalizeSearch((event as CustomEvent<{ query?: string }>).detail?.query || "");
+    void draw(false);
+  }, { signal: binding.signal });
+
   canvas.addEventListener("wheel", handleWheel, { passive: false });
   zoomOut.addEventListener("click", () => smoothZoom(cy.zoom() / NETWORK_ZOOM_STEP));
   zoomIn.addEventListener("click", () => smoothZoom(cy.zoom() * NETWORK_ZOOM_STEP));
@@ -892,6 +1041,7 @@ function renderNetwork(root: HTMLElement, data: ConsoleData): void {
     void draw(true);
   });
   spacing.addEventListener("change", () => { void draw(true); });
+  searchScope.addEventListener("change", () => { void draw(false); });
   detangle.addEventListener("click", () => { void draw(true); });
   facet.addEventListener("change", () => { void draw(false); });
   void draw(true).catch((error) => {
@@ -923,6 +1073,7 @@ function toElements(data: ConsoleData): { nodes: cytoscape.ElementDefinition[]; 
         id: text(row.node_id),
         label: short(row.label, 28),
         row,
+        searchText: rowSearchText(row),
         color: clusterColor(row.cluster_id),
         hub: text(row.hub_role) || undefined,
         degree,
@@ -933,7 +1084,7 @@ function toElements(data: ConsoleData): { nodes: cytoscape.ElementDefinition[]; 
   }).filter((item) => item.data.id);
   const nodeIds = new Set(nodes.map((item) => item.data.id));
   const edges = (data.data.edges ?? [])
-    .map((row, idx) => ({ data: { id: text(row.edge_id || idx), source: text(row.src_id), target: text(row.dst_id), label: text(row.relationship_class || row.edge_type), row, weight: Math.max(1, Math.min(7, Number(row.edge_weight || row.evidence_weight || 1) * 2.2)), visibility: text(row.edge_visibility || "default"), parallelCount: 1, parallelIndex: 0, controlDistance: 0 } }))
+    .map((row, idx) => ({ data: { id: text(row.edge_id || idx), source: text(row.src_id), target: text(row.dst_id), label: text(row.relationship_class || row.edge_type), row, searchText: rowSearchText(row), weight: Math.max(1, Math.min(7, Number(row.edge_weight || row.evidence_weight || 1) * 2.2)), visibility: text(row.edge_visibility || "default"), parallelCount: 1, parallelIndex: 0, controlDistance: 0 } }))
     .filter((item) => nodeIds.has(item.data.source) && nodeIds.has(item.data.target));
   return { nodes, edges };
 }

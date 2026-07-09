@@ -4,6 +4,8 @@ import { renderConsoleRoot } from "./visuals/renderers";
 
 const MOBILE_NAV_QUERY = "(max-width: 860px)";
 const MODE_STORAGE_KEY = "crkVisualMode";
+const VISUAL_SEARCH_EVENT = "crk:visual-search";
+const SEARCH_DEBOUNCE_MS = 140;
 
 function renderVisuals(scope: ParentNode = document): void {
   scope.querySelectorAll<HTMLElement>("[data-crk-visual-console]").forEach((root) => {
@@ -18,6 +20,12 @@ function renderVisuals(scope: ParentNode = document): void {
       clearVisualLoading(root);
       renderConsoleRoot(root, data);
       root.dataset.visualRendered = "true";
+      const search = root.closest(".visual-layout")?.querySelector<HTMLInputElement>("[data-visual-search]");
+      if (search?.value) {
+        const query = normalizeSearch(search.value);
+        root.dataset.visualSearchQuery = query;
+        applySvgSearch(root.closest<HTMLElement>(".visual-layout") ?? document, query);
+      }
     })().catch((error) => {
       showVisualError(root, error instanceof Error ? error.message : "Unable to load visual data.");
     }).finally(() => {
@@ -142,12 +150,17 @@ function bootVisualShell(): void {
 function bootVisuals(): void {
   setVisualMode(initialMode());
   renderVisuals();
-  document.querySelectorAll<HTMLInputElement>("[data-visual-search]").forEach((input) => input.addEventListener("input", () => {
-    const query = input.value.toLowerCase();
-    document.querySelectorAll<SVGElement>(".visual-mark").forEach((mark) => mark.classList.toggle("is-dim", query.length > 0 && !(mark.dataset.search || "").includes(query)));
-  }));
+  document.querySelectorAll<HTMLInputElement>("[data-visual-search]").forEach((input) => {
+    let timer = 0;
+    input.addEventListener("input", () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => applyVisualSearch(input), SEARCH_DEBOUNCE_MS);
+    });
+  });
   document.querySelectorAll<HTMLButtonElement>("[data-visual-reset]").forEach((button) => button.addEventListener("click", () => {
-    document.querySelectorAll<HTMLInputElement>("[data-visual-search]").forEach((input) => {
+    const layout = button.closest<HTMLElement>(".visual-layout");
+    const inputs = layout?.querySelectorAll<HTMLInputElement>("[data-visual-search]") ?? document.querySelectorAll<HTMLInputElement>("[data-visual-search]");
+    inputs.forEach((input) => {
       input.value = "";
       input.dispatchEvent(new Event("input"));
     });
@@ -161,3 +174,36 @@ document.addEventListener("DOMContentLoaded", () => {
   bootVisualShell();
   bootVisuals();
 });
+
+function applyVisualSearch(input: HTMLInputElement): void {
+  const layout = input.closest<HTMLElement>(".visual-layout");
+  const root = layout?.querySelector<HTMLElement>("[data-crk-visual-console]");
+  const query = normalizeSearch(input.value);
+  if (root) {
+    root.dataset.visualSearchQuery = query;
+    root.dispatchEvent(new CustomEvent(VISUAL_SEARCH_EVENT, { detail: { query } }));
+  }
+  applySvgSearch(layout ?? document, query);
+}
+
+function applySvgSearch(scope: ParentNode, query: string): void {
+  const tokens = searchTokens(query);
+  scope.querySelectorAll<SVGElement>(".visual-mark").forEach((mark) => {
+    const search = mark.dataset.search || "";
+    const matches = tokens.length === 0 || tokens.every((token) => search.includes(token));
+    mark.classList.toggle("is-dim", tokens.length > 0 && !matches);
+    mark.classList.toggle("is-search-match", tokens.length > 0 && matches);
+  });
+}
+
+function searchTokens(query: string): string[] {
+  return normalizeSearch(query).split(" ").filter(Boolean);
+}
+
+function normalizeSearch(value: string): string {
+  return value.toLowerCase()
+    .replace(/[_:/|,;()[\]{}-]+/g, " ")
+    .replace(/[^a-z0-9.]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
