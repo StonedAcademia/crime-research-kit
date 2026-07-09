@@ -4,7 +4,7 @@ from crime_research_kit._runtime.adapters.ops.evidence.reports.analysis.pages.cl
     cluster_for,
     semantic_facets,
 )
-from tests.runtime.integration.operations.exports.helpers.case_visuals import build_visual_case, read_csv
+from tests.runtime.integration.operations.exports.visual_case_fixtures.case_visuals import build_visual_case, read_csv
 
 
 def test_cluster_rules_prioritize_ranges_and_emit_activity_facets():

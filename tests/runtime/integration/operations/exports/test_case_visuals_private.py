@@ -1,6 +1,6 @@
 import json
 
-from tests.runtime.integration.operations.exports.helpers.case_visuals import build_visual_case, read_csv
+from tests.runtime.integration.operations.exports.visual_case_fixtures.case_visuals import build_visual_case, read_csv
 
 
 def test_export_case_visuals_include_private_uses_internal_scope(tmp_path):
