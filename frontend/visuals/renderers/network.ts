@@ -25,6 +25,7 @@ import {
   seedClusterPositions,
   spacingMode,
 } from "./network/layout";
+import { bindMobilePinchZoom, networkFitPadding, networkZoomBounds, renderedCanvasCenter } from "./network/viewport";
 
 const VISUAL_SEARCH_EVENT = "crk:visual-search";
 const networkBindings = new WeakMap<HTMLElement, AbortController>();
@@ -36,11 +37,12 @@ export function renderNetwork(root: HTMLElement, data: ConsoleData): void {
   let searchQuery = root.dataset.visualSearchQuery || "";
   let layoutRun = 0;
   let currentVisible: cytoscape.CollectionReturnValue | undefined;
+  const zoomBounds = networkZoomBounds();
   const cy = cytoscape({
     container: shell.canvas,
     boxSelectionEnabled: false,
-    minZoom: 0.25,
-    maxZoom: 2.4,
+    minZoom: zoomBounds.minZoom,
+    maxZoom: zoomBounds.maxZoom,
     userZoomingEnabled: false,
     wheelSensitivity: 0.08,
     elements: [],
@@ -149,7 +151,7 @@ export function renderNetwork(root: HTMLElement, data: ConsoleData): void {
   function fitVisible(visible = currentVisible, duration = 180): void {
     if (!visible?.length) return;
     cy.stop();
-    cy.animate({ fit: { eles: visible, padding: NETWORK_LAYOUT_PADDING } }, { duration, easing: "ease-out" });
+    cy.animate({ fit: { eles: visible, padding: networkFitPadding(shell.canvas) } }, { duration, easing: "ease-out" });
   }
 
   function smoothZoom(targetZoom: number, renderedPosition?: cytoscape.Position): void {
@@ -175,6 +177,7 @@ export function renderNetwork(root: HTMLElement, data: ConsoleData): void {
   networkBindings.get(root)?.abort();
   const binding = new AbortController();
   networkBindings.set(root, binding);
+  bindMobilePinchZoom(shell.canvas, cy, binding.signal);
   root.addEventListener(VISUAL_SEARCH_EVENT, (event) => {
     searchQuery = normalizeSearch((event as CustomEvent<{ query?: string }>).detail?.query || "");
     void draw(false);
@@ -185,8 +188,8 @@ export function renderNetwork(root: HTMLElement, data: ConsoleData): void {
     const factor = Math.max(NETWORK_ZOOM_MIN_FACTOR, Math.min(NETWORK_ZOOM_MAX_FACTOR, Math.exp(-event.deltaY * 0.002)));
     smoothZoom(cy.zoom() * factor, renderedPoint(event));
   }, { passive: false });
-  shell.zoomOut.addEventListener("click", () => smoothZoom(cy.zoom() / NETWORK_ZOOM_STEP));
-  shell.zoomIn.addEventListener("click", () => smoothZoom(cy.zoom() * NETWORK_ZOOM_STEP));
+  shell.zoomOut.addEventListener("click", () => smoothZoom(cy.zoom() / NETWORK_ZOOM_STEP, renderedCanvasCenter(shell.canvas)));
+  shell.zoomIn.addEventListener("click", () => smoothZoom(cy.zoom() * NETWORK_ZOOM_STEP, renderedCanvasCenter(shell.canvas)));
   shell.fitGraph.addEventListener("click", () => fitVisible());
   shell.scope.addEventListener("change", () => {
     root.dataset.visualVariant = shell.scope.value;

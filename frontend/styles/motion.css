@@ -53,3 +53,16 @@
   .visual-inspector { position: static; }
   .visual-loading { grid-template-columns: 1fr; justify-items: center; text-align: center; }
 }
+
+@media (max-width: 700px) {
+  .visual-layout { gap: 12px; padding: 14px 12px 24px; }
+  .visual-toolbar input { flex: 1 1 100%; width: 100%; }
+  .visual-root { min-height: 560px; }
+  .visual-network-controls { display: grid; grid-template-columns: repeat(2, calc(50% - 3px)); gap: 6px; width: 100%; max-width: 100%; overflow: hidden; padding: 8px; }
+  .visual-network-controls select { width: 100%; min-width: 0; max-width: 100%; }
+  .visual-network-action { width: 100%; min-height: 44px; }
+  .visual-network-zoom { display: grid; grid-template-columns: repeat(3, 44px); justify-content: end; width: 100%; min-width: 0; margin-left: 0; }
+  .visual-network-zoom button { width: 44px; height: 44px; font-size: 16px; }
+  .visual-network-summary { min-height: 48px; padding: 8px; }
+  .visual-network-canvas { min-height: clamp(390px, 58svh, 620px); }
+}
